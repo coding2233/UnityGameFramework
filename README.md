@@ -114,8 +114,74 @@ ChangeState<StartState>();
 
 ---
 ### 三、资源管理模块 `ResourceManager`
-1. 资源更新
-
-2. 资源加载(AssetBundle)
-
+1. 资源加载
+```csharp
+TextAsset textAsset= GameFrameworkMode.GetModule<ResourceManager>().LoadAsset<TextAsset>("Assets/TextAssets/test.txt");
+```
+2. 资源异步加载（待添加）
 3. 内置对象池
+* 添加预设
+```csharp
+GameFrameworkMode.GetModule<ResourceManager>().AddPrefab("Assets/Prefab/Player.prefab",
+					new PoolPrefabInfo() {Prefab = playerPrefab,PreloadAmount=3, MaxAmount = 10});
+```
+* 生成对象
+```csharp
+GameObject player= GameFrameworkMode.GetModule<ResourceManager>().Spawn("Assets/Prefab/Player.prefab");
+```
+* 销毁对象
+```csharp
+GameFrameworkMode.GetModule<ResourceManager>().Despawn(player);
+```
+3. 加载场景,场景只支持异步加载
+```csharp
+AsyncOperation asyncOperation= GameFrameworkMode.GetModule<ResourceManager>().LoadSceneAsync("Assets/Scene/Main.unity");
+```
+4. 支持编辑器内资源的直接读取和AssetBundle资源读取两种方式的一键切换，避免测试的时候需要重复的打包AssetBundle资源
+
+---
+### 四、UI管理模块 `UIManager`
+1. 新建ui预设，新建ui类，继承类`UIView`,绑定并在类名上标明预设的资源路径
+```csharp
+[UIView("Assets/Prefab/UI/LoadingView.prefab")]
+public class LoadingUIView : UIView
+{
+	/// <summary>
+	/// 打开界面
+	/// </summary>
+	/// <param name="parameters">不确定参数</param>
+	public override void OnEnter(params object[] parameters)
+	{
+		throw new System.NotImplementedException();
+	}
+	/// <summary>
+	/// 退出界面
+	/// </summary>
+	public override void OnExit()
+	{
+		throw new System.NotImplementedException();
+	}
+	/// <summary>
+	/// 暂停界面
+	/// </summary>
+	public override void OnPause()
+	{
+		throw new System.NotImplementedException();
+	}
+	/// <summary>
+	/// 恢复界面
+	/// </summary>
+	public override void OnResume()
+	{
+		throw new System.NotImplementedException();
+	}
+}
+```
+2. 打开ui
+```csharp
+GameFrameworkMode.GetModule<UIManager>().Push<LoadingUIView>();
+```
+3. 关闭ui,在看到`push`&`pop`的时候，就知道`UIManager`是基于堆栈管理`UI`的，`pop`自然关闭的是最新打开的界面
+```cshap
+GameFrameworkMode.GetModule<UIManager>().Pop();
+```

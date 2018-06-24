@@ -13,11 +13,11 @@ using System;
 namespace GameFramework.Taurus
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public sealed class UiViewAttribute : Attribute
+    public sealed class UIViewAttribute : Attribute
     {
         public string ViewPath { get; private set; }
 
-        public UiViewAttribute(string viewPath)
+        public UIViewAttribute(string viewPath)
         {
             ViewPath = viewPath;
         }
