@@ -52,7 +52,7 @@ GameFrameworkMode.GetModule<EventManager>()
 ```
 
 ---
-### 二、游戏状态模块 `GameStateManager`
+#### 二、游戏状态模块 `GameStateManager`
 游戏状态是整个项目的核心逻辑，建议将所有的逻辑都写再状态之中。增加状态管理几乎将各个类型的项目的开发都能尽量模式话，常用的状态:版本更新状态->配置加载状态->资源预加载->开始游戏->...
 1. 增加状态，所有的状态都需要继承GameState,并在类名上添加类标记[GameState]
 ```csharp
@@ -113,7 +113,7 @@ ChangeState<StartState>();
 ```
 
 ---
-### 三、资源管理模块 `ResourceManager`
+#### 三、资源管理模块 `ResourceManager`
 1. 资源加载
 ```csharp
 TextAsset textAsset= GameFrameworkMode.GetModule<ResourceManager>().LoadAsset<TextAsset>("Assets/TextAssets/test.txt");
@@ -140,7 +140,7 @@ AsyncOperation asyncOperation= GameFrameworkMode.GetModule<ResourceManager>().Lo
 4. 支持编辑器内资源的直接读取和AssetBundle资源读取两种方式的一键切换，避免测试的时候需要重复的打包AssetBundle资源
 
 ---
-### 四、UI管理模块 `UIManager`
+#### 四、UI管理模块 `UIManager`
 1. 新建ui预设，新建ui类，继承类`UIView`,绑定并在类名上标明预设的资源路径
 ```csharp
 [UIView("Assets/Prefab/UI/LoadingView.prefab")]
@@ -182,6 +182,26 @@ public class LoadingUIView : UIView
 GameFrameworkMode.GetModule<UIManager>().Push<LoadingUIView>();
 ```
 3. 关闭ui,在看到`push`&`pop`的时候，就知道`UIManager`是基于堆栈管理`UI`的，`pop`自然关闭的是最新打开的界面
-```cshap
+```csharp
 GameFrameworkMode.GetModule<UIManager>().Pop();
 ```
+
+---
+#### 五、数据节点模块 `NodeManager`
+数据节点只用来存储在运行中的数据,用法类似`PlayerPrefs`
+1. 存数据
+```csharp
+GameFrameworkMode.GetModule<NodeManager>().SetInt("Level", 10);
+```
+2. 取数据
+```csharp
+int level= GameFrameworkMode.GetModule<NodeManager>().GetInt("Level");
+```
+
+---
+### 内置工具
+---
+#### 一、AssetBundle打包工具
+* 打包工具兼容unity自身右下角的assetbundle的标签设计
+* 工具栏在Tools/VrCoreSystem/AssetBundle Editor,快捷键为ctrl+shift+o
+* 为适配框架的ResourceManager，建议将最后打包的PlatformMainfest的名称都设置为AssetBundles

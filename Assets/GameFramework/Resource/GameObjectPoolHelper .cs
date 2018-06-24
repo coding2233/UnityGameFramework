@@ -54,7 +54,7 @@ namespace GameFramework.Taurus
 			}
 			_prefabs[assetName] = prefabInfo;
 			_spawneds[assetName] = new List<GameObject>();
-
+			
 			Initialization(assetName, prefabInfo);
 		}
 
