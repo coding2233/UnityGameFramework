@@ -29,6 +29,12 @@ namespace GameFramework.Taurus
         T LoadAsset<T>(string assetName) where T : UnityEngine.Object;
 
         /// <summary>
+        /// 异步加载资源
+        /// </summary>
+        /// <param name="assetName"></param>
+        AssetBundleRequest LoadAssetAsync<T>(string assetName) where T : UnityEngine.Object;
+
+        /// <summary>
         /// 异步加载场景
         /// </summary>
         /// <param name="sceneName"></param>
@@ -38,7 +44,7 @@ namespace GameFramework.Taurus
         /// 卸载场景
         /// </summary>
         /// <param name="sceneName"></param>
-        void UnloadScene(string sceneName);
+        AsyncOperation UnloadSceneAsync(string sceneName);
 
         /// <summary>
         /// 清理资源

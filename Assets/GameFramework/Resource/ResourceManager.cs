@@ -7,6 +7,7 @@
 // <time> #2018年6月22日 17点11分# </time>
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
@@ -14,22 +15,39 @@ using LoadSceneMode = UnityEngine.SceneManagement.LoadSceneMode;
 
 namespace GameFramework.Taurus
 {
-    public sealed class ResourceManager:GameFrameworkModule
+    public sealed class ResourceManager:GameFrameworkModule,IUpdate
     {
-		#region 属性
+        #region 属性
+
+        //事件触发类
+        private EventManager _event;
 		//资源管理器 帮助类
 		private IResourceHelper _resourceHelper;
-
 		//GameObject对象池管理器
 		private IGameObjectPoolHelper _gameObjectPoolHelper;
+
+
+        //场景加载中事件
+        private SceneLoadingEventArgs _sceneLoadingEventArgs;
+        //场景加载完毕事件
+        private SceneLoadedEventArgs _sceneLoadedEventArgs;
+        //场景异步加载
+        private Dictionary<string, AsyncOperation> _sceneAsyncOperations;
 
 		#endregion
 
 		#region 构造函数
 		public ResourceManager()
 		{
-			//添加对象池管理器
-			_gameObjectPoolHelper = new GameObject("GameObject_Pool").AddComponent<GameObjectPoolHelper>();
+            //获取事件管理器
+		    _event = GameFrameworkMode.GetModule<EventManager>();
+            //添加对象池管理器
+            _gameObjectPoolHelper = new GameObject("GameObject_Pool").AddComponent<GameObjectPoolHelper>();
+
+            //场景事件
+		    _sceneLoadingEventArgs = new SceneLoadingEventArgs();
+		    _sceneLoadedEventArgs = new SceneLoadedEventArgs();
+		    _sceneAsyncOperations = new Dictionary<string, AsyncOperation>();
 		}
 		#endregion
 
@@ -70,6 +88,8 @@ namespace GameFramework.Taurus
 			return _resourceHelper.LoadAsset<T>(assetName);
 		}
 
+
+
 		/// <summary>
 		/// 异步加载场景
 		/// </summary>
@@ -78,17 +98,23 @@ namespace GameFramework.Taurus
 		{
 			if (_resourceHelper == null)
 				return null;
+		    AsyncOperation asyncOperation= _resourceHelper.LoadSceneAsync(sceneName, mode);
+		    _sceneAsyncOperations.Add(sceneName, asyncOperation);
+		    return asyncOperation;
 
-			return _resourceHelper.LoadSceneAsync(sceneName, mode);
 		}
 
 		/// <summary>
 		/// 卸载场景
 		/// </summary>
 		/// <param name="sceneName"></param>
-		public void UnloadScene(string sceneName)
+		public void UnloadSceneAsync(string sceneName)
 		{
-			UnitySceneManager.UnloadScene(sceneName);
+		    if (_resourceHelper == null)
+		        return;
+
+		     _resourceHelper.UnloadSceneAsync(sceneName);
+		    return;
 		}
 
 		/// <summary>
@@ -166,11 +192,36 @@ namespace GameFramework.Taurus
 		}
 
 		#endregion
-
-
+        
 
 		#region 重写函数
-		public override void OnClose()
+
+        public void OnUpdate()
+        {
+            if (_sceneAsyncOperations.Count > 0)
+            {
+                foreach (var item in _sceneAsyncOperations)
+                {
+                    //触发加载完毕事件
+                    if (item.Value.isDone)
+                    {
+                        _sceneLoadedEventArgs.SceneName = item.Key;
+                        _event.Trigger(this, _sceneLoadedEventArgs);
+                        _sceneAsyncOperations.Remove(item.Key);
+                        break;
+                    }
+                    //触发正在加载事件
+                    else
+                    {
+                        _sceneLoadingEventArgs.SceneName = item.Key;
+                        _sceneLoadingEventArgs.Progress = item.Value.progress;
+                        _event.Trigger(this, _sceneLoadingEventArgs);
+                    }
+                }
+            }
+        }
+
+        public override void OnClose()
 		{
 			if (_resourceHelper != null)
 				_resourceHelper.Clear();
