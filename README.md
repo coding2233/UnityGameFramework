@@ -1,9 +1,10 @@
-### UnityGameFramework  
-此框架参考、借鉴、抄袭、山寨`GameFramework`框架，原框架链接：[https://github.com/EllanJiang/GameFramework](https://github.com/EllanJiang/GameFramework)  
-因为现框架，也加入整理了我的不少想法，所以新建项目保存
+### UnityGameFramework
+基于ILRuntime实现热更新的Unity游戏框架
+参考:
+`GameFramework`框架:[https://github.com/EllanJiang/GameFramework](https://github.com/EllanJiang/GameFramework)
+`ILRuntime`Unity使用C#热更新解决方案:[https://github.com/Ourpalm/ILRuntime](https://github.com/Ourpalm/ILRuntime)
 
 ---
-
 ### 内置模块介绍
 
 ---
