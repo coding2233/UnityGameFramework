@@ -103,8 +103,7 @@ namespace ILRuntime.Runtime.Enviorment
             functions.Add(node);
             RegisterDelegateConvertor<Func<T1, T2, TResult>>(defaultConverter);
         }
-        
-        
+
         public void RegisterFunctionDelegate<T1, T2, T3, TResult>()
         {
             DelegateMapNode node = new Enviorment.DelegateManager.DelegateMapNode();

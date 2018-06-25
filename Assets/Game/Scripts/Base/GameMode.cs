@@ -21,6 +21,7 @@ namespace GameFramework.Taurus
         public static NodeManager Node;
         public static ResourceManager Resource;
         public static UIManager UI;
+        public static HotFixManager HotFix;
 
         /// <summary>
         /// 当前程序集
@@ -55,6 +56,7 @@ namespace GameFramework.Taurus
             Node = GameFrameworkMode.GetModule<NodeManager>();
             Resource = GameFrameworkMode.GetModule<ResourceManager>();
             UI = GameFrameworkMode.GetModule<UIManager>();
+            HotFix = GameFrameworkMode.GetModule<HotFixManager>();
             #endregion
 
             #region resource

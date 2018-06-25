@@ -24,7 +24,7 @@ public class ILRuntimeCLRBinding
         types.Add(typeof(UnityEngine.Object));
         types.Add(typeof(Transform));
         types.Add(typeof(RectTransform));
-     //   types.Add(typeof(CLRBindingTestClass));
+       // types.Add(typeof(CLRBindingTestClass));
         types.Add(typeof(Time));
         types.Add(typeof(Debug));
         //所有DLL内的类型的真实C#类型都是ILTypeInstance
@@ -39,7 +39,7 @@ public class ILRuntimeCLRBinding
     {
         //用新的分析热更dll调用引用来生成绑定代码
         ILRuntime.Runtime.Enviorment.AppDomain domain = new ILRuntime.Runtime.Enviorment.AppDomain();
-        using (System.IO.FileStream fs = new System.IO.FileStream("Assets/VrCoreEntity/HotFix/HotFix.dll.bytes", System.IO.FileMode.Open, System.IO.FileAccess.Read))
+        using (System.IO.FileStream fs = new System.IO.FileStream("Assets/StreamingAssets/HotFix_Project.dll", System.IO.FileMode.Open, System.IO.FileAccess.Read))
         {
             domain.LoadAssembly(fs);
         }
@@ -51,9 +51,9 @@ public class ILRuntimeCLRBinding
     static void InitILRuntime(ILRuntime.Runtime.Enviorment.AppDomain domain)
     {
         //这里需要注册所有热更DLL中用到的跨域继承Adapter，否则无法正确抓取引用
-        //domain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter());
-        //domain.RegisterCrossBindingAdaptor(new CoroutineAdapter());
-        //domain.RegisterCrossBindingAdaptor(new InheritanceAdapter());
+       // domain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter());
+      //  domain.RegisterCrossBindingAdaptor(new CoroutineAdapter());
+      //  domain.RegisterCrossBindingAdaptor(new InheritanceAdapter());
     }
 }
 #endif

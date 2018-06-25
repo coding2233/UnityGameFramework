@@ -301,6 +301,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Game\Scripts\Editor\GameModeEditor.cs" />
     <Compile Include="Assets\GameFramework\Editor\AssetBundleEditor\AssetBundleBuildInfo.cs" />
     <Compile Include="Assets\GameFramework\Editor\AssetBundleEditor\AssetBundleEditor.cs" />
     <Compile Include="Assets\GameFramework\Editor\AssetBundleEditor\AssetBundleInfo.cs" />

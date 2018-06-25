@@ -241,6 +241,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Game\Scripts\Base\GameMode.cs" />
+    <Compile Include="Assets\Game\Scripts\Resource\EditorResourceHelper.cs" />
     <Compile Include="Assets\GameFramework\Base\GameFrameworkMode.cs" />
     <Compile Include="Assets\GameFramework\Base\GameFrameworkModule.cs" />
     <Compile Include="Assets\GameFramework\Base\IFixedUpdate.cs" />
