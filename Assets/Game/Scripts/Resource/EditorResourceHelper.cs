@@ -35,6 +35,30 @@ namespace GameFramework.Taurus
             return AssetDatabase.LoadAssetAtPath<T>(assetName);
         }
 
+
+        /// <summary>
+        /// 异步加载资源
+        /// </summary>
+        /// <param name="assetName">资源名称</param>
+        public AssetBundleRequest LoadAssetAsync<T>(string assetName) where T : Object
+        {
+            //assetName = assetName.ToLower();
+            //AssetBundle assetBundle;
+            //if (_allAssets.TryGetValue(assetName, out assetBundle))
+            //{
+            //    //加载相关依赖
+            //    string[] dependencies = _mainfest.GetAllDependencies(assetName);
+            //    foreach (var item in dependencies)
+            //    {
+            //        AssetBundle.LoadFromFile(_readPath + "/" + item);
+            //    }
+            //    AssetBundleRequest requetAsset = assetBundle.LoadAssetAsync<T>(assetName);
+            //    //	_allObjects.Add(assetName, asset);
+            //    return requetAsset;
+            //}
+            return null;
+        }
+
         /// <summary>
         /// 异步加载场景
         /// </summary>
@@ -48,9 +72,9 @@ namespace GameFramework.Taurus
         /// 卸载场景
         /// </summary>
         /// <param name="sceneName"></param>
-        public void UnloadScene(string sceneName)
+        public AsyncOperation UnloadSceneAsync(string sceneName)
         {
-            UnitySceneManager.UnloadScene(sceneName);
+            return UnitySceneManager.UnloadSceneAsync(sceneName);
         }
 
         /// <summary>
