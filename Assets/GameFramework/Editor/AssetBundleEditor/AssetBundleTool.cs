@@ -17,7 +17,7 @@ namespace GameFramework.Taurus
 {
     public static class AssetBundleTool
     {
-        private static readonly string[] _invalidFileFormats = new string[] { ".cs", ".js", ".shader", ".dll", ".db", ".abs" };
+        private static readonly string[] _invalidFileFormats = new string[] { ".cs", ".js", ".shader", ".dll", ".db" };
 
         private static readonly string[] _invalidFolderName = new string[] { "Resources", "AssetBundleEditor", "Editor", "Gizmos", "StreamingAssets" };
         
@@ -44,7 +44,6 @@ namespace GameFramework.Taurus
 
                         ReadAssetsInChildren(ai, validAssetList);
                     }
-
                 }
                 else
                 {
@@ -164,6 +163,21 @@ namespace GameFramework.Taurus
         }
 
         /// <summary>
+        /// 展开或关闭文件夹及其子文件夹
+        /// </summary>
+        public static void ExpandFolder(AssetInfo asset, bool expand)
+        {
+            if (asset.AssetFileType == FileType.Folder)
+            {
+                asset.IsExpanding = expand;
+                for (int i = 0; i < asset.ChildAssetInfo.Count; i++)
+                {
+                    ExpandFolder(asset.ChildAssetInfo[i], expand);
+                }
+            }
+        }
+
+        /// <summary>
         /// 获取所有被选中的有效资源
         /// </summary>
         public static List<AssetInfo> GetCheckedAssets(this List<AssetInfo> validAssetList)
@@ -270,18 +284,83 @@ namespace GameFramework.Taurus
         [MenuItem("Tools/VrCoreSystem/Build AssetBundles %#T")]
         public static void BuildAssetBundles()
         {
-            string buildPath = EditorPrefs.GetString(Application.productName+"_BuildPath", "");
+            string buildPath = EditorPrefs.GetString(Application.productName + "_BuildPath", "");
             if (!Directory.Exists(buildPath))
             {
                 Debug.LogError("Please set build path！");
                 return;
             }
 
-            BuildTarget target = (BuildTarget)EditorPrefs.GetInt(Application.productName+"_BuildTarget", 5);
+            //打包资源
+            Debug.Log("开始打包！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
+            BuildAssetBundleOptions option = (BuildAssetBundleOptions)EditorPrefs.GetInt(Application.productName + "_ZipMode", 0);
+            BuildTarget target = (BuildTarget)EditorPrefs.GetInt(Application.productName + "_BuildTarget", 5);
+            BuildPipeline.BuildAssetBundles(buildPath, option, target);
+            Debug.Log("打包完成！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
+            
+            //资源加密
+            if ((EncryptMode)EditorPrefs.GetInt(Application.productName + "_EncryptMode", 0) == EncryptMode.AES)
+            {
+                string keyPath = Application.dataPath + "/Resources";
+                if (!Directory.Exists(keyPath))
+                {
+                    Directory.CreateDirectory(keyPath);
+                }
+                if (!File.Exists(keyPath + "/Key.asset"))
+                {
+                    EnciphererKey ek = ScriptableObject.CreateInstance<EnciphererKey>();
+                    ek.GeneraterKey();
+                    AssetDatabase.CreateAsset(ek, "Assets/Resources/Key.asset");
+                }
 
-            BuildPipeline.BuildAssetBundles(buildPath, BuildAssetBundleOptions.None, target);
-	        AssetDatabase.Refresh();
-	        Debug.Log("打包完成");
+                EnciphererKey keyAsset = Resources.Load("Key") as EnciphererKey;
+                DirectoryInfo dir = new DirectoryInfo(buildPath);
+                FileSystemInfo[] infos = dir.GetFileSystemInfos();
+                Debug.Log("开始加密！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
+                foreach (FileSystemInfo info in infos)
+                {
+                    if (info is FileInfo)
+                    {
+                        if (info.Extension == "")
+                        {
+                            byte[] bs = File.ReadAllBytes(info.FullName);
+                            byte[] cipbs = Encipherer.AESEncrypt(bs, keyAsset);
+                            File.WriteAllBytes(info.FullName, cipbs);
+                            Debug.Log("完成资源包 " + info.Name + " 的加密！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
+                        }
+                    }
+                }
+                Debug.Log("加密完成！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
+            }
+
+            //写入版本号信息
+            string assetVersionPath = buildPath + "/AssetVersion.txt";
+            AssetBundleVersionInfo version = new AssetBundleVersionInfo();
+            version.Version = EditorPrefs.GetInt(Application.productName + "_AssetVersion", 1);
+            version.IsEncrypt = (EncryptMode)EditorPrefs.GetInt(Application.productName + "_EncryptMode", 0) == EncryptMode.AES;
+            version.Resources = new List<ResourcesInfo>();
+            DirectoryInfo dir1 = new DirectoryInfo(buildPath);
+            FileSystemInfo[] infos1 = dir1.GetFileSystemInfos();
+            foreach (FileSystemInfo info in infos1)
+            {
+                if (info is FileInfo)
+                {
+                    if (info.Extension == "")
+                    {
+                        ResourcesInfo ri = new ResourcesInfo();
+                        ri.Name = info.Name;
+                        ri.Hash = info.GetHashCode().ToString();
+                        version.Resources.Add(ri);
+                    }
+                }
+            }
+            string content = JsonUtility.ToJson(version);
+            File.WriteAllText(assetVersionPath, content);
+
+            //版本号迭代
+            EditorPrefs.SetInt(Application.productName + "_AssetVersion", EditorPrefs.GetInt(Application.productName + "_AssetVersion", 1) + 1);
+
+            AssetDatabase.Refresh();
         }
 	}
 }

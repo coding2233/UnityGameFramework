@@ -51,6 +51,11 @@ namespace GameFramework.Taurus
 
         private string _buildPath = "";
         private BuildTarget _buildTarget = BuildTarget.StandaloneWindows;
+        private ZipMode _zipMode = ZipMode.LZMA;
+        private EncryptMode _encryptMode = EncryptMode.AES;
+        private int _assetVersion = 1;
+
+        private bool _showSetting = false;
 
         private GUIStyle _box = new GUIStyle("Box");
         private GUIStyle _preButton = new GUIStyle("PreButton");
@@ -60,6 +65,7 @@ namespace GameFramework.Taurus
         private GUIStyle _miniButtonLeft = new GUIStyle("MiniButtonLeft");
         private GUIStyle _miniButtonRight = new GUIStyle("MiniButtonRight");
         private GUIStyle _oLMinus = new GUIStyle("OL Minus");
+        private GUIStyle _flownode0on = new GUIStyle("flow node 0 on");
         #endregion
 
         private void Init()
@@ -71,8 +77,11 @@ namespace GameFramework.Taurus
             _assetBundle = new AssetBundleInfo();
             AssetBundleTool.ReadAssetBundleConfig(_assetBundle, _validAssets);
 
-            _buildPath = EditorPrefs.GetString(Application.productName+"_BuildPath", "");
-            _buildTarget = (BuildTarget)EditorPrefs.GetInt(Application.productName+"_BuildTarget", 5);
+            _buildPath = EditorPrefs.GetString(Application.productName + "_BuildPath", "");
+            _buildTarget = (BuildTarget)EditorPrefs.GetInt(Application.productName + "_BuildTarget", 5);
+            _zipMode = (ZipMode)EditorPrefs.GetInt(Application.productName + "_ZipMode", 0);
+            _encryptMode = (EncryptMode)EditorPrefs.GetInt(Application.productName + "_EncryptMode", 1);
+            _assetVersion = EditorPrefs.GetInt(Application.productName + "_AssetVersion", 1);
 
             Resources.UnloadUnusedAssets();
         }
@@ -91,6 +100,7 @@ namespace GameFramework.Taurus
             AssetBundlesGUI();
             CurrentAssetBundlesGUI();
             AssetsGUI();
+            SettingGUI();
         }
         private void TitleGUI()
         {
@@ -129,10 +139,7 @@ namespace GameFramework.Taurus
                 }
             }
             GUI.enabled = true;
-
-            _hideInvalidAsset = GUI.Toggle(new Rect(360, 5, 100, 15), _hideInvalidAsset, "Hide Invalid");
-            _hideBundleAsset = GUI.Toggle(new Rect(460, 5, 100, 15), _hideBundleAsset, "Hide Bundled");
-
+            
             if (GUI.Button(new Rect(250, 25, 60, 15), "Open", _preButton))
             {
                 AssetBundleTool.OpenFolder(_buildPath);
@@ -143,19 +150,26 @@ namespace GameFramework.Taurus
                 if (path.Length != 0)
                 {
                     _buildPath = path;
-                    EditorPrefs.SetString(Application.productName+"_BuildPath", _buildPath);
+                    EditorPrefs.SetString(Application.productName + "_BuildPath", _buildPath);
                 }
             }
 
             GUI.Label(new Rect(370, 25, 70, 15), "Build Path:");
             _buildPath = GUI.TextField(new Rect(440, 25, 300, 15), _buildPath);
 
-            BuildTarget buildTarget = (BuildTarget)EditorGUI.EnumPopup(new Rect((int)position.width - 205, 5, 150, 15), _buildTarget, _preDropDown);
-            if (buildTarget != _buildTarget)
+            if (GUI.Button(new Rect(250, 45, 100, 15), "Expand All", _preButton))
             {
-                _buildTarget = buildTarget;
-                EditorPrefs.SetInt(Application.productName+"_BuildTarget", (int)_buildTarget);
+                AssetBundleTool.ExpandFolder(_asset, true);
             }
+            if (GUI.Button(new Rect(350, 45, 100, 15), "Shrink All", _preButton))
+            {
+                AssetBundleTool.ExpandFolder(_asset, false);
+            }
+
+            _hideInvalidAsset = GUI.Toggle(new Rect(460, 45, 100, 15), _hideInvalidAsset, "Hide Invalid");
+            _hideBundleAsset = GUI.Toggle(new Rect(560, 45, 100, 15), _hideBundleAsset, "Hide Bundled");
+
+            _showSetting = GUI.Toggle(new Rect((int)position.width - 135, 5, 80, 15), _showSetting, "Setting", _preButton);
 
             if (GUI.Button(new Rect((int)position.width - 55, 5, 50, 15), "Build", _preButton))
             {
@@ -279,8 +293,8 @@ namespace GameFramework.Taurus
         }
         private void AssetsGUI()
         {
-            _assetViewRect = new Rect(250, 45, (int)position.width - 255, (int)position.height - 50);
-            _assetScrollRect = new Rect(250, 45, (int)position.width - 255, _assetViewHeight);
+            _assetViewRect = new Rect(250, 65, (int)position.width - 255, (int)position.height - 70);
+            _assetScrollRect = new Rect(250, 65, (int)position.width - 255, _assetViewHeight);
             _assetScroll = GUI.BeginScrollView(_assetViewRect, _assetScroll, _assetScrollRect);
             GUI.BeginGroup(_assetScrollRect, _box);
 
@@ -351,7 +365,52 @@ namespace GameFramework.Taurus
                     AssetGUI(asset.ChildAssetInfo[i], indentation + 1);
                 }
             }
-        }        
+        }
+        private void SettingGUI()
+        {
+            if (_showSetting)
+            {
+                GUI.BeginGroup(new Rect((int)position.width / 2 - 125, (int)position.height / 2 - 65, 250, 130), "", _flownode0on);
+
+                GUI.Label(new Rect(5, 5, 80, 20), "Build Target: ");
+                BuildTarget buildTarget = (BuildTarget)EditorGUI.EnumPopup(new Rect(90, 5, 155, 20), _buildTarget, _preDropDown);
+                if (buildTarget != _buildTarget)
+                {
+                    _buildTarget = buildTarget;
+                    EditorPrefs.SetInt(Application.productName + "_BuildTarget", (int)_buildTarget);
+                }
+
+                GUI.Label(new Rect(5, 30, 80, 20), "Zip Mode: ");
+                ZipMode zipMode = (ZipMode)EditorGUI.EnumPopup(new Rect(90, 30, 155, 20), _zipMode, _preDropDown);
+                if (zipMode != _zipMode)
+                {
+                    _zipMode = zipMode;
+                    EditorPrefs.SetInt(Application.productName + "_ZipMode", (int)_zipMode);
+                }
+
+                GUI.Label(new Rect(5, 55, 80, 20), "Encrypt: ");
+                EncryptMode encryptMode = (EncryptMode)EditorGUI.EnumPopup(new Rect(90, 55, 155, 20), _encryptMode, _preDropDown);
+                if (encryptMode != _encryptMode)
+                {
+                    _encryptMode = encryptMode;
+                    EditorPrefs.SetInt(Application.productName + "_EncryptMode", (int)_encryptMode);
+                }
+
+                GUI.Label(new Rect(5, 80, 150, 20), "Asset Version: " + _assetVersion);
+                if (GUI.Button(new Rect(150, 80, 95, 20), "Reset", _preButton))
+                {
+                    _assetVersion = 1;
+                    EditorPrefs.SetInt(Application.productName + "_AssetVersion", _assetVersion);
+                }
+
+                if (GUI.Button(new Rect(100, 105, 50, 20), "Sure", _preButton))
+                {
+                    _showSetting = false;
+                }
+
+                GUI.EndGroup();
+            }
+        }
     }
 
     /// <summary>
@@ -371,5 +430,39 @@ namespace GameFramework.Taurus
         /// 无效的文件资源
         /// </summary>
         InValidFile
+    }
+
+    /// <summary>
+    /// 压缩模式
+    /// </summary>
+    public enum ZipMode
+    {
+        /// <summary>
+        /// 不压缩
+        /// </summary>
+        Uncompressed = 1,
+        /// <summary>
+        /// LZMA压缩
+        /// </summary>
+        LZMA = 0,
+        /// <summary>
+        /// LZ4压缩
+        /// </summary>
+        LZ4 = 256
+    }
+
+    /// <summary>
+    /// 加密模式
+    /// </summary>
+    public enum EncryptMode
+    {
+        /// <summary>
+        /// 不加密
+        /// </summary>
+        None,
+        /// <summary>
+        /// AES加密
+        /// </summary>
+        AES
     }
 }
