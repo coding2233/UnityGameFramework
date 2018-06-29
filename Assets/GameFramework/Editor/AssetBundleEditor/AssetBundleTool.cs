@@ -281,7 +281,7 @@ namespace GameFramework.Taurus
         /// <summary>
         /// 打包资源
         /// </summary>
-        [MenuItem("Tools/VrCoreSystem/Build AssetBundles %#T")]
+        [MenuItem("Tools/Taurus/Build AssetBundles %#T")]
         public static void BuildAssetBundles()
         {
             string buildPath = EditorPrefs.GetString(Application.productName + "_BuildPath", "");

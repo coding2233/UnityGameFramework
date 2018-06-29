@@ -14,7 +14,7 @@ namespace GameFramework.Taurus
 {
     public class AssetBundleEditor : EditorWindow
     {
-        [MenuItem("Tools/VrCoreSystem/AssetBundle Editor %#O")]
+        [MenuItem("Tools/Taurus/AssetBundle Editor %#O")]
         private static void OpenAssetBundleWindow()
         {
             AssetBundleEditor ABEditor = GetWindow<AssetBundleEditor>("AssetBundles");
