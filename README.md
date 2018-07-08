@@ -1,5 +1,5 @@
 ### UnityGameFramework  
-此框架参考、借鉴、抄袭、山寨`GameFramework`框架，原框架链接：[https://github.com/EllanJiang/GameFramework](https://github.com/EllanJiang/GameFramework)  
+此框架参考`GameFramework`：[https://github.com/EllanJiang/GameFramework](https://github.com/EllanJiang/GameFramework)  
 因为现框架，也加入整理了我的不少想法，所以新建项目保存
 
 ---

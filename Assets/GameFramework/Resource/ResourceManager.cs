@@ -38,6 +38,22 @@ namespace GameFramework.Taurus
         //场景异步加载
         private Dictionary<string, AsyncOperation> _sceneAsyncOperations;
 
+		/// <summary>
+		/// 资源更新类型
+		/// </summary>
+	    public ResourceUpdateType ResUpdateType= ResourceUpdateType.Local;
+		/// <summary>
+		/// 资源本地路径
+		/// </summary>
+		public PathType LocalPath= PathType.ReadOnly;
+	    /// <summary>
+	    /// ab资源默认包名称
+	    /// </summary>
+		public string RootAssetBundle = "AssetBundles/AssetBundles";
+		/// 资源更新的路径
+		/// </summary>
+		public string ResUpdatePath="";
+		
 		#endregion
 
 		#region 构造函数
@@ -67,19 +83,12 @@ namespace GameFramework.Taurus
 		public void SetResourceHelper(IResourceHelper resourceHelper)
 		{
 			_resourceHelper = resourceHelper;
-		}
 
-		/// <summary>
-		/// 设置资源的路径,默认是为只读路径:Application.streamingAssetsPath;
-		/// </summary>
-		/// <param name="path"></param>
-		public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles")
-		{
-			if (_resourceHelper == null)
-				return;
-
-			_resourceHelper.SetResourcePath(pathType, rootAssetBundle);
+			//设置资源的路径,默认是为只读路径: Application.streamingAssetsPath;
+			if (resourceHelper is BundleResourceHelper)
+				_resourceHelper.SetResourcePath(LocalPath, RootAssetBundle);
 		}
+		
 
 		/// <summary>
 		/// 加载资源
@@ -293,6 +302,26 @@ namespace GameFramework.Taurus
 		/// </summary>
 		TemporaryCache,
 	}
+
+	/// <summary>
+	/// 资源类型
+	/// </summary>
+	public enum ResourceUpdateType
+	{
+		/// <summary>
+		/// 更新
+		/// </summary>
+		Update,
+		/// <summary>
+		/// 本地
+		/// </summary>
+		Local,
+		/// <summary>
+		/// 编辑器
+		/// </summary>
+		Editor
+	}
+
 	#endregion
 
 }

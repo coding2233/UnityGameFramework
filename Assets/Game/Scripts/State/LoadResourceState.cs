@@ -2,25 +2,26 @@
 // <copyright>
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
-// <describe> #检查资源状态# </describe>
+// <describe> #加载资源状态# </describe>
 // <email> yeozhang@qq.com </email>
-// <time> #2018年7月8日 13点20分# </time>
+// <time> #2018年7月8日 14点39分# </time>
+//-----------------------------------------------------------------------
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace GameFramework.Taurus
 {
 	[GameState]
-	public class CheckResourceState : GameState
+	public class LoadResourceState : GameState
 	{
+		#region 重写函数
 		public override void OnEnter(params object[] parameters)
 		{
 			base.OnEnter(parameters);
+			//设置ab包的加载方式
+			GameMode.Resource.SetResourceHelper(new BundleResourceHelper());
 		}
-		
 
 		public override void OnExit()
 		{
@@ -40,10 +41,7 @@ namespace GameFramework.Taurus
 		public override void OnUpdate()
 		{
 			base.OnUpdate();
-			//更新完资源
-			//...
-			//切换到加载界面
-			ChangeState<LoadResourceState>();
 		}
+		#endregion
 	}
 }

@@ -86,8 +86,7 @@ namespace GameFramework.Taurus
             }
 
             #endregion
-
-
+			
             #region 获取所有可操作的物体
 
             _operationAssets = new Dictionary<long, OperationAssetConfig>();
@@ -130,7 +129,7 @@ namespace GameFramework.Taurus
 
             #endregion
 
-            #region 资源加载模块
+            #region 可操作物体模块
 
             GUI.color = _operationColor;
             GUILayout.BeginVertical("Box");
@@ -220,31 +219,44 @@ namespace GameFramework.Taurus
         {
             GUILayout.BeginVertical("HelpBox");
 
-            _gameMode.IsEditorMode = EditorGUILayout.Toggle("Editor Mode", _gameMode.IsEditorMode);
-
-            if (!_gameMode.IsEditorMode)
+			//  _gameMode.IsEditorMode = EditorGUILayout.Toggle("Editor Mode", _gameMode.IsEditorMode);
+			_gameMode.ResUpdateType =
+				(ResourceUpdateType)EditorGUILayout.EnumPopup("Resource Update Type", _gameMode.ResUpdateType);
+			if (_gameMode.ResUpdateType!=ResourceUpdateType.Editor)
             {
-                _gameMode.DefaultPathType =
-                    (PathType) EditorGUILayout.EnumPopup("Path Type", _gameMode.DefaultPathType);
-                string path = "";
-                switch (_gameMode.DefaultPathType)
-                {
-                    case PathType.DataPath:
-                        path = Application.dataPath;
-                        break;
-                    case PathType.ReadOnly:
-                        path = Application.streamingAssetsPath;
-                        break;
-                    case PathType.ReadWrite:
-                        path = Application.persistentDataPath;
-                        break;
-                    case PathType.TemporaryCache:
-                        path = Application.temporaryCachePath;
-                        break;
-                }
+	    //        _gameMode.ResUpdateType =
+					//(ResourceUpdateType)EditorGUILayout.EnumPopup("Resource Update Type", _gameMode.ResUpdateType);
+	            if (_gameMode.ResUpdateType == ResourceUpdateType.Update)
+	            {
+		            _gameMode.ResUpdatePath =
+			            EditorGUILayout.TextField("Resource Update Path", _gameMode.ResUpdatePath);
+		            _gameMode.LocalPath =
+			            (PathType)EditorGUILayout.EnumPopup("Local Path Type", PathType.ReadWrite);
+				}
+	            else
+	            {
+		            _gameMode.LocalPath =
+			            (PathType)EditorGUILayout.EnumPopup("Local Path Type", _gameMode.LocalPath);
+				}
+				string path = "";
+				switch (_gameMode.LocalPath)
+				{
+					case PathType.DataPath:
+						path = Application.dataPath;
+						break;
+					case PathType.ReadOnly:
+						path = Application.streamingAssetsPath;
+						break;
+					case PathType.ReadWrite:
+						path = Application.persistentDataPath;
+						break;
+					case PathType.TemporaryCache:
+						path = Application.temporaryCachePath;
+						break;
+				}
 
-                EditorGUILayout.LabelField("Path", path);
-                _gameMode.AssetBundleName =
+				EditorGUILayout.LabelField("Path", path);
+				_gameMode.AssetBundleName =
                     EditorGUILayout.TextField("AssetBundle Name", _gameMode.AssetBundleName);
             }
 
