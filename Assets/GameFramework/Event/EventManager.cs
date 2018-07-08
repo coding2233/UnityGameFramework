@@ -79,9 +79,9 @@ namespace GameFramework.Taurus
         /// </summary>
         /// <param name="sender">触发事件的对象</param>
         /// <param name="value">事件参数</param>
-        public void Trigger(object sender, IEventArgs value)
+        public void Trigger(object sender, IEventArgs eventArgs)
         {
-            HanleEvent(sender, value);
+            HanleEvent(sender, eventArgs);
         }
 
         #endregion
@@ -89,16 +89,16 @@ namespace GameFramework.Taurus
 
         #region 内部函数
         //处理事件
-        private void HanleEvent(object sender, IEventArgs args)
+        private void HanleEvent(object sender, IEventArgs eventArgs)
         {
-            if (args == null)
+            if (eventArgs == null)
                 return;
             Action<object, IEventArgs> eventHandler = null;
-            int Id = args.Id;
+            int Id = eventArgs.Id;
             if (_allActions.TryGetValue(Id, out eventHandler))
             {
                 if (eventHandler != null)
-                    eventHandler(sender, args);
+                    eventHandler(sender, eventArgs);
             }
         }
         //处理事件  不带参数

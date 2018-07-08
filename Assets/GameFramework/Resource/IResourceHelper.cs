@@ -7,6 +7,7 @@
 // <time> #2018年6月22日 17点01分# </time>
 //-----------------------------------------------------------------------
 
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -28,11 +29,12 @@ namespace GameFramework.Taurus
         /// <returns></returns>
         T LoadAsset<T>(string assetName) where T : UnityEngine.Object;
 
-        /// <summary>
-        /// 异步加载资源
-        /// </summary>
-        /// <param name="assetName"></param>
-        AssetBundleRequest LoadAssetAsync<T>(string assetName) where T : UnityEngine.Object;
+	    /// <summary>
+	    /// 异步加载资源
+	    /// </summary>
+	    /// <param name="assetName"></param>
+	    /// <param name="asyncCallback"></param>
+	    void LoadAssetAsync<T>(string assetName,Action<string,UnityEngine.Object> asyncCallback) where T : UnityEngine.Object;
 
         /// <summary>
         /// 异步加载场景

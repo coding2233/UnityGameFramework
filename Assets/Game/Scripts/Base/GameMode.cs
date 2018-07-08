@@ -21,7 +21,6 @@ namespace GameFramework.Taurus
         public static NodeManager Node;
         public static ResourceManager Resource;
         public static UIManager UI;
-        public static HotFixManager HotFix;
 
         /// <summary>
         /// 当前程序集
@@ -32,23 +31,30 @@ namespace GameFramework.Taurus
         /// <summary>
         /// 资源加载方式 默认为编辑器加载
         /// </summary>
-        public bool IsEditorMode = true;
+       // public bool IsEditorMode = true;
+		
+	    /// <summary>
+	    /// 资源更新类型
+	    /// </summary>
+	    public ResourceUpdateType ResUpdateType = ResourceUpdateType.Editor;
+	    /// <summary>
+	    /// 资源本地路径
+	    /// </summary>
+	    public PathType LocalPath = PathType.ReadOnly;
+	    /// <summary>
+	    /// ab资源默认包名称
+	    /// </summary>
+	    public string AssetBundleName = "AssetBundles/AssetBundles";
+		/// <summary>
+		/// 资源更新的路径
+		/// </summary>
+		public string ResUpdatePath = "";
+		#endregion
 
-        /// <summary>
-        /// 资源加载路径 默认为只读路径
-        /// </summary>
-        public PathType DefaultPathType = PathType.ReadOnly;
-
-        /// <summary>
-        /// ab资源默认包名称
-        /// </summary>
-        public string AssetBundleName = "AssetBundles/AssetBundles";
-        #endregion
-
-        #endregion
+		#endregion
 
 
-        IEnumerator Start()
+		IEnumerator Start()
         {
             #region Module
             Event = GameFrameworkMode.GetModule<EventManager>();
@@ -56,25 +62,29 @@ namespace GameFramework.Taurus
             Node = GameFrameworkMode.GetModule<NodeManager>();
             Resource = GameFrameworkMode.GetModule<ResourceManager>();
             UI = GameFrameworkMode.GetModule<UIManager>();
-            HotFix = GameFrameworkMode.GetModule<HotFixManager>();
-            #endregion
+			#endregion
 
-            #region resource
-#if UNITY_EDITOR
-            //设置资源的模式
-            if (IsEditorMode)
-                Resource.SetResourceHelper(new EditorResourceHelper());
-            else
-            {
-                Resource.SetResourceHelper(new BundleResourceHelper());
-                Resource.SetResourcePath(DefaultPathType, AssetBundleName);
-            }
-#else
-//非编辑器模式下 -- 只支持AssetBundle资源加载
-       IsEditorMode = false;
-       Resource.SetResourceHelper(new BundleResourceHelper());
-	   Resource.SetResourcePath(DefaultPathType, AssetBundleName);
-#endif
+			#region resource
+			Resource.ResUpdateType = ResUpdateType;
+	        Resource.ResUpdatePath = ResUpdatePath;
+	        Resource.LocalPath = LocalPath;
+	        Resource.RootAssetBundle = AssetBundleName;
+//#if UNITY_EDITOR
+//			//设置资源的模式
+//			if (ResUpdateType==ResourceUpdateType.Editor)
+//                Resource.SetResourceHelper(new EditorResourceHelper());
+//            else
+//            {
+	          
+//				Resource.SetResourceHelper(new BundleResourceHelper());
+//                Resource.SetResourcePath(AssetBundleName);
+//            }
+//#else
+////非编辑器模式下 -- 只支持AssetBundle资源加载
+//       IsEditorMode = false;
+//       Resource.SetResourceHelper(new BundleResourceHelper());
+//	   Resource.SetResourcePath(DefaultPathType, AssetBundleName);
+//#endif
             #endregion
 
             #region state
