@@ -7,9 +7,11 @@
 // <time> #2018年6月24日 17点00分# </time>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace GameFramework.Taurus
 {
@@ -90,7 +92,7 @@ namespace GameFramework.Taurus
         /// 异步加载资源
         /// </summary>
         /// <param name="assetName">资源名称</param>
-	    public AssetBundleRequest LoadAssetAsync<T>(string assetName) where T : Object
+	    public void LoadAssetAsync<T>(string assetName, Action<string, UnityEngine.Object> asyncCallback) where T : Object
         {
 	        assetName = assetName.ToLower();
 	        AssetBundle assetBundle;
@@ -103,10 +105,11 @@ namespace GameFramework.Taurus
 	                AssetBundle.LoadFromFile(_readPath + "/" + item);
 	            }
 	            AssetBundleRequest requetAsset = assetBundle.LoadAssetAsync<T>(assetName);
-	            //	_allObjects.Add(assetName, asset);
-	            return requetAsset;
+		        requetAsset.completed += (asyncOperation) => { asyncCallback.Invoke(assetName, requetAsset.asset); };
+				return;
 	        }
-	        return null;
+	        asyncCallback.Invoke(assetName, null);
+			return;
         }
 
 

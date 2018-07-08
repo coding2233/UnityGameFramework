@@ -26,9 +26,13 @@ namespace GameFramework.Taurus
 		//GameObject对象池管理器
 		private IGameObjectPoolHelper _gameObjectPoolHelper;
 
+		//资源异步加载完毕
+	    private ResourceLoadAsyncSuccessEventArgs _resLoadAsyncSuccessEventArgs;
+		//资源异步加载失败
+	    private ResourceLoadAsyncFailureEventArgs _resLoadAsyncFailureEventArgs;
 
-        //场景加载中事件
-        private SceneLoadingEventArgs _sceneLoadingEventArgs;
+		//场景加载中事件
+		private SceneLoadingEventArgs _sceneLoadingEventArgs;
         //场景加载完毕事件
         private SceneLoadedEventArgs _sceneLoadedEventArgs;
         //场景异步加载
@@ -44,8 +48,11 @@ namespace GameFramework.Taurus
             //添加对象池管理器
             _gameObjectPoolHelper = new GameObject("GameObject_Pool").AddComponent<GameObjectPoolHelper>();
 
-            //场景事件
-		    _sceneLoadingEventArgs = new SceneLoadingEventArgs();
+			//资源异步加载的事件
+			_resLoadAsyncSuccessEventArgs = new ResourceLoadAsyncSuccessEventArgs();
+			_resLoadAsyncFailureEventArgs = new ResourceLoadAsyncFailureEventArgs();
+			//场景事件
+			_sceneLoadingEventArgs = new SceneLoadingEventArgs();
 		    _sceneLoadedEventArgs = new SceneLoadedEventArgs();
 		    _sceneAsyncOperations = new Dictionary<string, AsyncOperation>();
 		}
@@ -87,10 +94,17 @@ namespace GameFramework.Taurus
 
 			return _resourceHelper.LoadAsset<T>(assetName);
 		}
-
-
-
 		/// <summary>
+		/// 异步加载资源
+		/// </summary>
+		/// <typeparam name="T">资源的类型</typeparam>
+		/// <param name="assetName">资源的名称</param>
+	    public void LoadAssetAsync<T>(string assetName) where T : UnityEngine.Object
+	    {
+		    _resourceHelper.LoadAssetAsync<T>(assetName, LoadAssetAsyncCallback);
+	    }
+
+	    /// <summary>
 		/// 异步加载场景
 		/// </summary>
 		/// <param name="sceneName"></param>
@@ -193,7 +207,6 @@ namespace GameFramework.Taurus
 
 		#endregion
         
-
 		#region 重写函数
 
         public void OnUpdate()
@@ -230,6 +243,29 @@ namespace GameFramework.Taurus
 				_gameObjectPoolHelper.DestroyAll();
 		}
 		#endregion
+
+
+		#region 内部函数
+		//异步加载资源的回调
+	    private void LoadAssetAsyncCallback(string assetName,Object asset)
+	    {
+		    if (_event == null)
+			    return;
+
+		    if (asset)
+		    {
+			    _resLoadAsyncSuccessEventArgs.AssetName = assetName;
+			    _resLoadAsyncSuccessEventArgs.Asset = asset;
+			    _event.Trigger(this, _resLoadAsyncSuccessEventArgs);
+		    }
+		    else
+		    {
+			    _resLoadAsyncFailureEventArgs.AssetName = assetName;
+			    _event.Trigger(this, _resLoadAsyncFailureEventArgs);
+			}
+	    }
+
+	    #endregion
 
 	}
 

@@ -118,7 +118,31 @@ ChangeState<StartState>();
 ```csharp
 TextAsset textAsset= GameFrameworkMode.GetModule<ResourceManager>().LoadAsset<TextAsset>("Assets/TextAssets/test.txt");
 ```
-2. 资源异步加载（待添加）
+2. 资源异步加载
+* 添加资源异步加载的事件监听
+```csharp
+//资源异步加载成功
+GameFrameworkMode.GetModule<EventManager>().AddListener<ResourceLoadAsyncSuccessEventArgs>(OnResLoadSuccess);
+//资源异步加载失败
+GameFrameworkMode.GetModule<EventManager>().AddListener<ResourceLoadAsyncFailureEventArgs>(OnResLoadFailure);
+```
+* 添加事件监听的回调函数
+```csharp
+//资源异步加载失败回调
+private void OnResLoadFailure(object sender, IEventArgs e)
+{
+    ResourceLoadAsyncFailureEventArgs ne = (ResourceLoadAsyncFailureEventArgs) e;
+}
+//资源异步加载成功回调
+private void OnResLoadSuccess(object sender, IEventArgs e)
+{
+    ResourceLoadAsyncSuccessEventArgs ne = (ResourceLoadAsyncSuccessEventArgs)e;
+}
+```
+* 异步加载资源  
+```csharp
+GameFrameworkMode.GetModule<ResourceManager>().LoadAssetAsync<TextAsset>("Assets/TextAssets/test.txt");
+```  
 3. 内置对象池
 * 添加预设
 ```csharp

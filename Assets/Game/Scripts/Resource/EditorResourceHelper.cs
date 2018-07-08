@@ -9,11 +9,13 @@
 
 #if UNITY_EDITOR
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 
 namespace GameFramework.Taurus
@@ -40,23 +42,9 @@ namespace GameFramework.Taurus
         /// 异步加载资源
         /// </summary>
         /// <param name="assetName">资源名称</param>
-        public AssetBundleRequest LoadAssetAsync<T>(string assetName) where T : Object
+        public void LoadAssetAsync<T>(string assetName, Action<string, UnityEngine.Object> asyncCallback) where T : Object
         {
-            //assetName = assetName.ToLower();
-            //AssetBundle assetBundle;
-            //if (_allAssets.TryGetValue(assetName, out assetBundle))
-            //{
-            //    //加载相关依赖
-            //    string[] dependencies = _mainfest.GetAllDependencies(assetName);
-            //    foreach (var item in dependencies)
-            //    {
-            //        AssetBundle.LoadFromFile(_readPath + "/" + item);
-            //    }
-            //    AssetBundleRequest requetAsset = assetBundle.LoadAssetAsync<T>(assetName);
-            //    //	_allObjects.Add(assetName, asset);
-            //    return requetAsset;
-            //}
-            return null;
+	        asyncCallback.Invoke(assetName,AssetDatabase.LoadAssetAtPath<T>(assetName));
         }
 
         /// <summary>
