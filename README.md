@@ -223,6 +223,30 @@ int level= GameFrameworkMode.GetModule<NodeManager>().GetInt("Level");
 ```
 
 ---
+#### 六、Http网页请求模块 `WebRequestManager`
+网页请求目前主要包含读取http上的文本文件和下载http服务器上的资源到本地两大功能
+1. 请求文本
+```csharp
+//请求文本
+GameFrameworkMode.GetModule<WebRequestManager>().ReadHttpText("http://nothing.com/AssetVersion.txt");
+```
+2. 请求下载
+```csharp
+GameFrameworkMode.GetModule<WebRequestManager>().StartDownload("http://nothing.com/AssetVersion.txt", "C:/AssetVersion.txt");
+```
+3. 事件监听
+```csharp
+//监听文本请求成功
+GameFrameworkMode.GetModule<EventManager>().AddListener<HttpReadTextSuccessEventArgs>(OnHttpReadTextSuccess);
+//文本请求失败
+GameFrameworkMode.GetModule<EventManager>().AddListener<HttpReadTextFaileEventArgs>(OnHttpReadTextFaile);
+//文件下载成功
+GameFrameworkMode.GetModule<EventManager>().AddListener<DownloadSuccessEventArgs>(OnDownloadSuccess);
+//文件下载失败
+GameFrameworkMode.GetModule<EventManager>().AddListener<DownloadFaileEventArgs>(OnDownloadFaile);
+```
+
+---
 ### 内置工具
 ---
 #### 一、AssetBundle打包工具
