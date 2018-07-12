@@ -15,6 +15,6 @@ namespace GameFramework.Taurus
 {
     public interface IWebDownloadHelper
     {
-        void StartDownload(string remoteUrl, string localPath,Action<string,string,bool,string> result);
+        void StartDownload(string remoteUrl, string localPath,Action<string,string,bool,string> result,Action<string,string,ulong,float,float> progress);
     }
 }

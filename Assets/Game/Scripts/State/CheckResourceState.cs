@@ -25,9 +25,20 @@ namespace GameFramework.Taurus
         //远程版本信息
         private AssetBundleVersionInfo _remoteVersion;
 
+        //资源更新完成
+        private bool _resourceUpdateDone;
+        //需要更新的资源
+        private Dictionary<string, string> _downloadResouces;
         #endregion
 
         #region 重写函数
+
+        public override void OnInit()
+        {
+            base.OnInit();
+
+            _downloadResouces = new Dictionary<string, string>();
+        }
 
         public override void OnEnter(params object[] parameters)
         {
@@ -36,6 +47,7 @@ namespace GameFramework.Taurus
             GameMode.Event.AddListener<HttpReadTextFaileEventArgs>(OnHttpReadTextFaile);
             GameMode.Event.AddListener<DownloadSuccessEventArgs>(OnDownloadSuccess);
             GameMode.Event.AddListener<DownloadFaileEventArgs>(OnDownloadFaile);
+            GameMode.Event.AddListener<DownloadProgressEventArgs>(OnDownloadProgress);
 
             _localVersion=LoadLocalVersion();
             LoadRemoteVersion();
@@ -48,6 +60,8 @@ namespace GameFramework.Taurus
             GameMode.Event.RemoveListener<HttpReadTextFaileEventArgs>(OnHttpReadTextFaile);
             GameMode.Event.RemoveListener<DownloadSuccessEventArgs>(OnDownloadSuccess);
             GameMode.Event.RemoveListener<DownloadFaileEventArgs>(OnDownloadFaile);
+            GameMode.Event.RemoveListener<DownloadProgressEventArgs>(OnDownloadProgress);
+
             base.OnExit();
         }
 
@@ -55,19 +69,14 @@ namespace GameFramework.Taurus
         {
             base.OnFixedUpdate();
         }
-
-        public override void OnInit()
-        {
-            base.OnInit();
-        }
-
+        
         public override void OnUpdate()
         {
             base.OnUpdate();
-            //更新完资源
-            //...
-            //切换到加载界面
-           // ChangeState<LoadResourceState>();
+
+            //更新资源--切换到加载界面
+            if (_resourceUpdateDone&& _downloadResouces.Count==0)
+                ChangeState<LoadResourceState>();
         }
 
         #endregion
@@ -83,21 +92,44 @@ namespace GameFramework.Taurus
                 _remoteVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(ne.Content);
                 //如果资源版本不一样 则更新资源
                 if (!CompareVersion())
+                {
+                    //更新资源
                     UpdateResource();
+                    //下载资源
+                    DownloadResource();
+                }
+
+                //资源更新完成
+                _resourceUpdateDone = true;
             }
         }
         //http文件读取错误
         private void OnHttpReadTextFaile(object sender, IEventArgs e)
         {
+            HttpReadTextFaileEventArgs ne = (HttpReadTextFaileEventArgs) e;
+            if (ne != null)
+                Debug.LogError(ne.Error);
         }
         //加载文件成功
         private void OnDownloadSuccess(object sender, IEventArgs e)
         {
+            DownloadSuccessEventArgs ne = (DownloadSuccessEventArgs) e;
+            if (_downloadResouces.ContainsKey(ne.RemoteUrl))
+                _downloadResouces.Remove(ne.RemoteUrl);
         }
         //下载文件失败
         private void OnDownloadFaile(object sender, IEventArgs e)
         {
-
+            DownloadFaileEventArgs ne = (DownloadFaileEventArgs)e;
+            if (ne != null)
+                Debug.LogError(ne.Error);
+        }
+        //下载进度
+        private void OnDownloadProgress(object sender, IEventArgs e)
+        {
+            DownloadProgressEventArgs ne = (DownloadProgressEventArgs) e;
+            Debug.Log(
+                $"path:{ne.LocalPath} progress:{ne.DownloadProgress} bytes:{ne.DownloadBytes} speed:{ne.DownloadSpeed}");
         }
 
         #endregion
@@ -144,7 +176,19 @@ namespace GameFramework.Taurus
                 string localDir = localPath.Substring(0, index);
                 if (!Directory.Exists(localDir))
                     Directory.CreateDirectory(localDir);
-                GameMode.WebRequest.StartDownload(remoteUrl, localPath);
+
+                //添加需要下载的资源
+                _downloadResouces.Add(remoteUrl, localPath);
+            }
+          
+        }
+
+        //下载资源
+        private void DownloadResource()
+        {
+            foreach (var item in _downloadResouces)
+            {
+                GameMode.WebRequest.StartDownload(item.Key, item.Value);
             }
         }
 

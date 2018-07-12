@@ -244,6 +244,8 @@ GameFrameworkMode.GetModule<EventManager>().AddListener<HttpReadTextFaileEventAr
 GameFrameworkMode.GetModule<EventManager>().AddListener<DownloadSuccessEventArgs>(OnDownloadSuccess);
 //文件下载失败
 GameFrameworkMode.GetModule<EventManager>().AddListener<DownloadFaileEventArgs>(OnDownloadFaile);
+//文件下载进度
+ GameFrameworkMode.GetModule<EventManager>().AddListener<DownloadProgressEventArgs>(OnDownloadProgress);
 ```
 
 ---

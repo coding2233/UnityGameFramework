@@ -32,6 +32,7 @@ namespace GameFramework.Taurus
         private IWebDownloadHelper _webDownloadHelper;
         private DownloadSuccessEventArgs _downloadSuccess;
         private DownloadFaileEventArgs _downloadFaile;
+        private DownloadProgressEventArgs _downloadProgress;
         #endregion
 
         public WebRequestManager()
@@ -41,6 +42,7 @@ namespace GameFramework.Taurus
             _httpReadTextFaile = new HttpReadTextFaileEventArgs();
             _downloadSuccess = new DownloadSuccessEventArgs();
             _downloadFaile = new DownloadFaileEventArgs();
+            _downloadProgress = new DownloadProgressEventArgs();
         }
 
         #region 外部接口
@@ -78,7 +80,7 @@ namespace GameFramework.Taurus
         /// <param name="localPath"></param>
         public void StartDownload(string remoteUrl, string localPath)
         {
-            _webDownloadHelper?.StartDownload(remoteUrl, localPath, StartDownloadCallback);
+            _webDownloadHelper?.StartDownload(remoteUrl, localPath, StartDownloadCallback,StartDownloadProgress);
         }
 
         #endregion
@@ -134,6 +136,26 @@ namespace GameFramework.Taurus
                 _downloadFaile.Error = content;
                 _event.Trigger(this, _downloadFaile);
             }
+        }
+
+        /// <summary>
+        /// 下载的进度
+        /// </summary>
+        /// <param name="remoteUrl"></param>
+        /// <param name="localPath"></param>
+        /// <param name="dataLength"></param>
+        /// <param name="progess"></param>
+        /// <param name="seconds"></param>
+        private void StartDownloadProgress(string remoteUrl, string localPath, ulong dataLength, float progess,float seconds)
+        {
+            _downloadProgress.RemoteUrl = remoteUrl;
+            _downloadProgress.LocalPath = localPath;
+            _downloadProgress.DownloadBytes = dataLength;
+            _downloadProgress.DownloadProgress = progess;
+            _downloadProgress.DownloadSeconds = seconds;
+            _downloadProgress.DownloadSpeed =
+                dataLength == 0.0f ? dataLength : dataLength / 1024.0f  / seconds;
+            _event.Trigger(this, _downloadProgress);
         }
 
         #endregion
