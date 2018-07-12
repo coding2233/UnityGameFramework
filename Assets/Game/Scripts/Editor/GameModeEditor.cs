@@ -230,16 +230,16 @@ namespace GameFramework.Taurus
 	            {
 		            _gameMode.ResUpdatePath =
 			            EditorGUILayout.TextField("Resource Update Path", _gameMode.ResUpdatePath);
-		            _gameMode.LocalPath =
+		            _gameMode.LocalPathType =
 			            (PathType)EditorGUILayout.EnumPopup("Local Path Type", PathType.ReadWrite);
 				}
 	            else
 	            {
-		            _gameMode.LocalPath =
-			            (PathType)EditorGUILayout.EnumPopup("Local Path Type", _gameMode.LocalPath);
+		            _gameMode.LocalPathType =
+			            (PathType)EditorGUILayout.EnumPopup("Local Path Type", _gameMode.LocalPathType);
 				}
 				string path = "";
-				switch (_gameMode.LocalPath)
+				switch (_gameMode.LocalPathType)
 				{
 					case PathType.DataPath:
 						path = Application.dataPath;

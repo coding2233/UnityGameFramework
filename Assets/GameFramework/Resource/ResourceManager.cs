@@ -43,10 +43,32 @@ namespace GameFramework.Taurus
 		/// </summary>
 	    public ResourceUpdateType ResUpdateType= ResourceUpdateType.Local;
 		/// <summary>
-		/// 资源本地路径
+		/// 资源本地路径 类型
 		/// </summary>
-		public PathType LocalPath= PathType.ReadOnly;
-	    /// <summary>
+		public PathType LocalPathType= PathType.ReadOnly;
+        /// <summary>
+        /// 资源本地路径
+        /// </summary>
+        public string LocalPath
+        {
+            get
+            {
+                switch (LocalPathType)
+                {
+                    case PathType.DataPath:
+                        return Application.dataPath;
+                    case PathType.ReadOnly:
+                        return Application.streamingAssetsPath;
+                    case PathType.ReadWrite:
+                        return Application.persistentDataPath;
+                    case PathType.TemporaryCache:
+                        return Application.temporaryCachePath;
+                }
+                return "";
+            }
+        }
+
+        /// <summary>
 	    /// ab资源默认包名称
 	    /// </summary>
 		public string RootAssetBundle = "AssetBundles/AssetBundles";
@@ -86,7 +108,7 @@ namespace GameFramework.Taurus
 
 			//设置资源的路径,默认是为只读路径: Application.streamingAssetsPath;
 			if (resourceHelper is BundleResourceHelper)
-				_resourceHelper.SetResourcePath(LocalPath, RootAssetBundle);
+				_resourceHelper.SetResourcePath(LocalPathType, RootAssetBundle);
 		}
 		
 

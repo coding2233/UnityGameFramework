@@ -21,6 +21,7 @@ namespace GameFramework.Taurus
         public static NodeManager Node;
         public static ResourceManager Resource;
         public static UIManager UI;
+        public static WebRequestManager WebRequest;
 
         /// <summary>
         /// 当前程序集
@@ -40,7 +41,7 @@ namespace GameFramework.Taurus
 	    /// <summary>
 	    /// 资源本地路径
 	    /// </summary>
-	    public PathType LocalPath = PathType.ReadOnly;
+	    public PathType LocalPathType = PathType.ReadOnly;
 	    /// <summary>
 	    /// ab资源默认包名称
 	    /// </summary>
@@ -62,29 +63,24 @@ namespace GameFramework.Taurus
             Node = GameFrameworkMode.GetModule<NodeManager>();
             Resource = GameFrameworkMode.GetModule<ResourceManager>();
             UI = GameFrameworkMode.GetModule<UIManager>();
-			#endregion
+            WebRequest = GameFrameworkMode.GetModule<WebRequestManager>();
+            #endregion
 
-			#region resource
-			Resource.ResUpdateType = ResUpdateType;
+            #region resource
+            Resource.ResUpdateType = ResUpdateType;
 	        Resource.ResUpdatePath = ResUpdatePath;
-	        Resource.LocalPath = LocalPath;
+	        Resource.LocalPathType = LocalPathType;
 	        Resource.RootAssetBundle = AssetBundleName;
-//#if UNITY_EDITOR
-//			//设置资源的模式
-//			if (ResUpdateType==ResourceUpdateType.Editor)
-//                Resource.SetResourceHelper(new EditorResourceHelper());
-//            else
-//            {
-	          
-//				Resource.SetResourceHelper(new BundleResourceHelper());
-//                Resource.SetResourcePath(AssetBundleName);
-//            }
-//#else
-////非编辑器模式下 -- 只支持AssetBundle资源加载
-//       IsEditorMode = false;
-//       Resource.SetResourceHelper(new BundleResourceHelper());
-//	   Resource.SetResourcePath(DefaultPathType, AssetBundleName);
-//#endif
+            #endregion
+
+            #region WebRequest
+            //设置帮助类
+            IWebRequestHelper webRequestHelper =
+                new GameObject("IWebRequestHelper").AddComponent<WebRquestMonoHelper>();
+            IWebDownloadHelper webDownloadHelper =
+                new GameObject("IWebRequestHelper").AddComponent<WebDownloadMonoHelper>();
+            WebRequest.SetWebRequestHelper(webRequestHelper);
+            WebRequest.SetWebDownloadHelper(webDownloadHelper);
             #endregion
 
             #region state
