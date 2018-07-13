@@ -7,6 +7,7 @@
 // <time> #2018年6月22日 18点33分# </time>
 //-----------------------------------------------------------------------
 
+using System;
 using UnityEditor;
 using System.IO;
 using UnityEngine;
@@ -20,7 +21,48 @@ namespace GameFramework.Taurus
         private static readonly string[] _invalidFileFormats = new string[] { ".cs", ".js", ".shader", ".dll", ".db" };
 
         private static readonly string[] _invalidFolderName = new string[] { "Resources", "AssetBundleEditor", "Editor", "Gizmos", "StreamingAssets" };
-        
+
+        //编辑器配置文件信息
+        private static AssetBundleEditor.EditorConfigInfo _editorConfigInfo;
+        //编辑器配置文件的路径
+        private static string _editorConfigPath;
+
+        public static AssetBundleEditor.EditorConfigInfo EditorConfigInfo
+        {
+            get
+            {
+                if (_editorConfigInfo == null)
+                {
+                    #region 获取编辑器配置文件的信息
+                    _editorConfigPath = Path.Combine(Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/", StringComparison.Ordinal)), "ProjectSettings");
+                    if (!Directory.Exists(_editorConfigPath))
+                        Directory.CreateDirectory(_editorConfigPath);
+                    _editorConfigPath = Path.Combine(_editorConfigPath, "AssetBundleEditorConifg.json");
+                    if (!File.Exists(_editorConfigPath))
+                        _editorConfigInfo = new AssetBundleEditor.EditorConfigInfo();
+                    else
+                    {
+                        string content = File.ReadAllText(_editorConfigPath);
+                        _editorConfigInfo = string.IsNullOrEmpty(content) ? new AssetBundleEditor.EditorConfigInfo() : JsonUtility.FromJson<AssetBundleEditor.EditorConfigInfo>(content);
+                    }
+                    #endregion
+                }
+
+                return _editorConfigInfo;
+            }
+        }
+
+        //保存编辑器配置信息
+        public static void SaveEditorConfigInfo()
+        {
+            #region 设置编辑器配置文件的信息
+            //写入文本文件
+            if (EditorConfigInfo != null&& !string.IsNullOrEmpty(_editorConfigPath))
+                File.WriteAllText(_editorConfigPath, JsonUtility.ToJson(EditorConfigInfo));
+            #endregion
+        }
+
+
         /// <summary>
         /// 读取资源文件夹下的所有子资源
         /// </summary>
@@ -284,7 +326,7 @@ namespace GameFramework.Taurus
         [MenuItem("Tools/Taurus/Build AssetBundles %#T")]
         public static void BuildAssetBundles()
         {
-            string buildPath = EditorPrefs.GetString(Application.productName + "_BuildPath", "");
+            string buildPath = EditorConfigInfo.BuildPath;
             if (!Directory.Exists(buildPath))
             {
                 Debug.LogError("Please set build path！");
@@ -293,13 +335,13 @@ namespace GameFramework.Taurus
 
             //打包资源
             Debug.Log("开始打包！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
-            BuildAssetBundleOptions option = (BuildAssetBundleOptions)EditorPrefs.GetInt(Application.productName + "_ZipMode", 0);
-            BuildTarget target = (BuildTarget)EditorPrefs.GetInt(Application.productName + "_BuildTarget", 5);
+            BuildAssetBundleOptions option = (BuildAssetBundleOptions) EditorConfigInfo.ZipMode;
+            BuildTarget target = (BuildTarget)EditorConfigInfo.BuildTarget;
             BuildPipeline.BuildAssetBundles(buildPath, option, target);
             Debug.Log("打包完成！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
             
             //资源加密
-            if ((EncryptMode)EditorPrefs.GetInt(Application.productName + "_EncryptMode", 0) == EncryptMode.AES)
+            if ((EncryptMode)EditorConfigInfo.EncryptMode == EncryptMode.AES)
             {
                 string keyPath = Application.dataPath + "/Resources";
                 if (!Directory.Exists(keyPath))
@@ -336,9 +378,12 @@ namespace GameFramework.Taurus
             //写入版本号信息
             string assetVersionPath = buildPath + "/AssetVersion.txt";
             AssetBundleVersionInfo version = new AssetBundleVersionInfo();
-            version.Version = EditorPrefs.GetInt(Application.productName + "_AssetVersion", 1);
-            version.IsEncrypt = (EncryptMode)EditorPrefs.GetInt(Application.productName + "_EncryptMode", 0) == EncryptMode.AES;
+            version.Version = EditorConfigInfo.AssetVersion;
+            version.IsEncrypt = (EncryptMode)EditorConfigInfo.EncryptMode == EncryptMode.AES;
             version.Resources = new List<ResourcesInfo>();
+            int index = buildPath.LastIndexOf("/", StringComparison.Ordinal);
+            if(index>0)
+                version.ManifestAssetBundle = buildPath.Substring(index+1, buildPath.Length-index-1);
             DirectoryInfo dir1 = new DirectoryInfo(buildPath);
             FileSystemInfo[] infos1 = dir1.GetFileSystemInfos();
             foreach (FileSystemInfo info in infos1)
@@ -356,11 +401,15 @@ namespace GameFramework.Taurus
             }
             string content = JsonUtility.ToJson(version);
             File.WriteAllText(assetVersionPath, content);
-
+            
             //版本号迭代
-            EditorPrefs.SetInt(Application.productName + "_AssetVersion", EditorPrefs.GetInt(Application.productName + "_AssetVersion", 1) + 1);
+            EditorConfigInfo.AssetVersion += 1;
+            SaveEditorConfigInfo();
 
             AssetDatabase.Refresh();
+
+            //打开打包文件夹
+            EditorUtility.OpenWithDefaultApp(buildPath);
         }
 	}
 }

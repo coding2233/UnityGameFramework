@@ -15,6 +15,7 @@ public class AssetBundleVersionInfo
 {
     public int Version;
     public bool IsEncrypt;
+    public string ManifestAssetBundle;
     public List<ResourcesInfo> Resources;
 }
 
