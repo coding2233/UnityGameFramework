@@ -9,6 +9,8 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 namespace GameFramework.Taurus
 {
@@ -19,8 +21,15 @@ namespace GameFramework.Taurus
 		public override void OnEnter(params object[] parameters)
 		{
 			base.OnEnter(parameters);
-			//设置ab包的加载方式
-			GameMode.Resource.SetResourceHelper(new BundleResourceHelper());
+            
+		    string localPath = Path.Combine(GameMode.Resource.LocalPath, "AssetVersion.txt");
+		    AssetBundleVersionInfo versionInfo = JsonUtility.FromJson<AssetBundleVersionInfo>(File.ReadAllText(localPath));
+            
+            //设置ab包的加载方式
+            GameMode.Resource.SetResourceHelper(new BundleResourceHelper());
+            //加载ab包的mainfest文件
+		    GameMode.Resource.SetMainfestAssetBundle(versionInfo.ManifestAssetBundle, versionInfo.IsEncrypt);
+
 		}
 
 		public override void OnExit()

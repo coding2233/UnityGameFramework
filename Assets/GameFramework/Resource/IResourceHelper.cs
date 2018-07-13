@@ -19,7 +19,7 @@ namespace GameFramework.Taurus
         /// 设置资源的路径,默认是为只读路径:Application.streamingAssetsPath;
         /// </summary>
         /// <param name="path"></param>
-        void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles");
+        void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles", bool isEncrypt = false);
 
         /// <summary>
         /// 加载资源

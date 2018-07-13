@@ -22,7 +22,7 @@ namespace GameFramework.Taurus
 {
     public class EditorResourceHelper : IResourceHelper
     {
-        public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles")
+        public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles", bool isEncrypt=false)
         {
         }
 

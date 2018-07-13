@@ -256,8 +256,6 @@ namespace GameFramework.Taurus
 				}
 
 				EditorGUILayout.LabelField("Path", path);
-				_gameMode.AssetBundleName =
-                    EditorGUILayout.TextField("AssetBundle Name", _gameMode.AssetBundleName);
             }
 
             GUILayout.EndVertical();

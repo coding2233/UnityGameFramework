@@ -42,10 +42,6 @@ namespace GameFramework.Taurus
 	    /// 资源本地路径
 	    /// </summary>
 	    public PathType LocalPathType = PathType.ReadOnly;
-	    /// <summary>
-	    /// ab资源默认包名称
-	    /// </summary>
-	    public string AssetBundleName = "AssetBundles/AssetBundles";
 		/// <summary>
 		/// 资源更新的路径
 		/// </summary>
@@ -70,7 +66,6 @@ namespace GameFramework.Taurus
             Resource.ResUpdateType = ResUpdateType;
 	        Resource.ResUpdatePath = ResUpdatePath;
 	        Resource.LocalPathType = LocalPathType;
-	        Resource.RootAssetBundle = AssetBundleName;
             #endregion
 
             #region WebRequest

@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -28,7 +29,7 @@ namespace GameFramework.Taurus
 		/// 设置资源的路径,默认是为只读路径:Application.streamingAssetsPath;
 		/// </summary>
 		/// <param name="path"></param>
-		public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles")
+		public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles",bool isEncrypt=false)
 		{
 			switch (pathType)
 			{
@@ -56,8 +57,14 @@ namespace GameFramework.Taurus
 			int index = rootAssetBundle.LastIndexOf("/");
 			if (index > 0 && index < (rootAssetBundle.Length - 1))
 				directionPath += "/" + rootAssetBundle.Substring(0, index);
-			//加载mainfest文件
-			LoadPlatformMainfest(rootABPath, directionPath);
+            //加载mainfest文件
+            if (!isEncrypt)
+                LoadPlatformMainfest(rootABPath, directionPath);
+		    else
+		    {
+		        EnciphererKey keyAsset = Resources.Load("Key") as EnciphererKey;
+		        LoadPlatformMainfest(rootABPath, directionPath, keyAsset);
+            }
 		}
 
 		/// <summary>
@@ -162,10 +169,10 @@ namespace GameFramework.Taurus
 		/// <summary>
 		/// 加载mainfest
 		/// </summary>
-		private void LoadPlatformMainfest(string rootBundleaPath, string folderPath)
+		private void LoadPlatformMainfest(string rootBundlePath, string folderPath)
 		{
 			//string assetBundlePath = _readPath + "/AssetBundles";
-			AssetBundle mainfestAssetBundle = AssetBundle.LoadFromFile(rootBundleaPath);
+			AssetBundle mainfestAssetBundle = AssetBundle.LoadFromFile(rootBundlePath);
 			_mainfest = mainfestAssetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");//
 			string[] assetBundleNames = _mainfest.GetAllAssetBundles();
 			foreach (var item in assetBundleNames)
@@ -182,7 +189,30 @@ namespace GameFramework.Taurus
 			}
 			mainfestAssetBundle.Unload(false);
 		}
-		#endregion
 
-	}
+	    private void LoadPlatformMainfest(string rootBundlePath, string folerPath,EnciphererKey keyAsset)
+        {
+            //从内存中加载&解密
+            //
+            //DirectoryInfo dir = new DirectoryInfo(folerPath);
+            //FileSystemInfo[] infos = dir.GetFileSystemInfos();
+            //foreach (FileSystemInfo info in infos)
+            //{
+            //    if (info is FileInfo)
+            //    {
+            //        if (info.Extension == "")
+            //        {
+            //            byte[] bs = File.ReadAllBytes(info.FullName);
+            //            byte[] cipbs = Encipherer.AESDecrypt(bs, keyAsset);
+            //            AssetBundle.LoadFromMemory
+            //            File.WriteAllBytes(info.FullName, cipbs);
+            //            Debug.Log("完成资源包 " + info.Name + " 的加密！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
+            //        }
+            //    }
+            //}
+        }
+
+	    #endregion
+
+    }
 }
