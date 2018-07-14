@@ -36,6 +36,13 @@ namespace GameFramework.Taurus
 	    /// <param name="asyncCallback"></param>
 	    void LoadAssetAsync<T>(string assetName,Action<string,UnityEngine.Object> asyncCallback) where T : UnityEngine.Object;
 
+		/// <summary>
+		/// 卸载资源 主要为卸载AssetBundle
+		/// </summary>
+		/// <param name="assetName">资源名称</param>
+		/// <param name="allAssets">是否卸载调所有资源</param>
+	    void UnloadAsset(string assetName, bool allAssets);
+
         /// <summary>
         /// 异步加载场景
         /// </summary>
