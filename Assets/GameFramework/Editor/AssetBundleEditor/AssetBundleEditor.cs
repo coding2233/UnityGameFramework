@@ -6,9 +6,12 @@
 // <email> yeozhang@qq.com </email>
 // <time> #2018年6月22日 18点32分# </time>
 //-----------------------------------------------------------------------
+
+using System;
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.IO;
 
 namespace GameFramework.Taurus
 {
@@ -77,11 +80,11 @@ namespace GameFramework.Taurus
             _assetBundle = new AssetBundleInfo();
             AssetBundleTool.ReadAssetBundleConfig(_assetBundle, _validAssets);
 
-            _buildPath = EditorPrefs.GetString(Application.productName + "_BuildPath", "");
-            _buildTarget = (BuildTarget)EditorPrefs.GetInt(Application.productName + "_BuildTarget", 5);
-            _zipMode = (ZipMode)EditorPrefs.GetInt(Application.productName + "_ZipMode", 0);
-            _encryptMode = (EncryptMode)EditorPrefs.GetInt(Application.productName + "_EncryptMode", 1);
-            _assetVersion = EditorPrefs.GetInt(Application.productName + "_AssetVersion", 1);
+            _buildPath = AssetBundleTool.EditorConfigInfo.BuildPath;
+            _buildTarget = (BuildTarget) AssetBundleTool.EditorConfigInfo.BuildTarget;
+            _zipMode = (ZipMode) AssetBundleTool.EditorConfigInfo.ZipMode;
+            _encryptMode = (EncryptMode) AssetBundleTool.EditorConfigInfo.EncryptMode;
+            _assetVersion = AssetBundleTool.EditorConfigInfo.AssetVersion;
 
             Resources.UnloadUnusedAssets();
         }
@@ -150,7 +153,8 @@ namespace GameFramework.Taurus
                 if (path.Length != 0)
                 {
                     _buildPath = path;
-                    EditorPrefs.SetString(Application.productName + "_BuildPath", _buildPath);
+                    AssetBundleTool.EditorConfigInfo.BuildPath = _buildPath;
+                    AssetBundleTool.SaveEditorConfigInfo();
                 }
             }
 
@@ -377,7 +381,8 @@ namespace GameFramework.Taurus
                 if (buildTarget != _buildTarget)
                 {
                     _buildTarget = buildTarget;
-                    EditorPrefs.SetInt(Application.productName + "_BuildTarget", (int)_buildTarget);
+                    AssetBundleTool.EditorConfigInfo.BuildTarget = (int) _buildTarget;
+                    AssetBundleTool.SaveEditorConfigInfo();
                 }
 
                 GUI.Label(new Rect(5, 30, 80, 20), "Zip Mode: ");
@@ -385,7 +390,8 @@ namespace GameFramework.Taurus
                 if (zipMode != _zipMode)
                 {
                     _zipMode = zipMode;
-                    EditorPrefs.SetInt(Application.productName + "_ZipMode", (int)_zipMode);
+                    AssetBundleTool.EditorConfigInfo.ZipMode = (int) _zipMode;
+                    AssetBundleTool.SaveEditorConfigInfo();
                 }
 
                 GUI.Label(new Rect(5, 55, 80, 20), "Encrypt: ");
@@ -393,14 +399,16 @@ namespace GameFramework.Taurus
                 if (encryptMode != _encryptMode)
                 {
                     _encryptMode = encryptMode;
-                    EditorPrefs.SetInt(Application.productName + "_EncryptMode", (int)_encryptMode);
+                    AssetBundleTool.EditorConfigInfo.EncryptMode = (int)encryptMode;
+                    AssetBundleTool.SaveEditorConfigInfo();
                 }
 
                 GUI.Label(new Rect(5, 80, 150, 20), "Asset Version: " + _assetVersion);
                 if (GUI.Button(new Rect(150, 80, 95, 20), "Reset", _preButton))
                 {
                     _assetVersion = 1;
-                    EditorPrefs.SetInt(Application.productName + "_AssetVersion", _assetVersion);
+                    AssetBundleTool.EditorConfigInfo.AssetVersion = _assetVersion;
+                    AssetBundleTool.SaveEditorConfigInfo();
                 }
 
                 if (GUI.Button(new Rect(100, 105, 50, 20), "Sure", _preButton))
@@ -411,6 +419,34 @@ namespace GameFramework.Taurus
                 GUI.EndGroup();
             }
         }
+
+
+        //编辑器的配置信息
+        [System.Serializable]
+        public class EditorConfigInfo
+        {
+            /// <summary>
+            /// 打包路径
+            /// </summary>
+            public string BuildPath;
+            /// <summary>
+            /// 压缩方式
+            /// </summary>
+            public int ZipMode=0;
+            /// <summary>
+            /// 目标平台
+            /// </summary>
+            public int BuildTarget=5;
+            /// <summary>
+            /// 加密模式
+            /// </summary>
+            public int EncryptMode=1;
+            /// <summary>
+            /// 资源版本
+            /// </summary>
+            public int AssetVersion=1;
+        }
+
     }
 
     /// <summary>

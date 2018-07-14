@@ -22,7 +22,7 @@ namespace GameFramework.Taurus
 {
     public class EditorResourceHelper : IResourceHelper
     {
-        public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles")
+        public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles", bool isEncrypt=false)
         {
         }
 
@@ -47,11 +47,20 @@ namespace GameFramework.Taurus
 	        asyncCallback.Invoke(assetName,AssetDatabase.LoadAssetAtPath<T>(assetName));
         }
 
-        /// <summary>
-        /// 异步加载场景
-        /// </summary>
-        /// <param name="sceneName"></param>
-        public AsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
+	    /// <summary>
+	    /// 卸载资源 主要为卸载AssetBundle
+	    /// </summary>
+	    /// <param name="assetName">资源名称</param>
+	    /// <param name="allAssets">是否卸载调所有资源</param>
+	    public void UnloadAsset(string assetName, bool allAssets)
+	    {
+	    }
+
+	    /// <summary>
+		/// 异步加载场景
+		/// </summary>
+		/// <param name="sceneName"></param>
+		public AsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
         {
             return UnitySceneManager.LoadSceneAsync(sceneName, mode);
         }

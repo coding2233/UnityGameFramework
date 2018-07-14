@@ -19,7 +19,7 @@ namespace GameFramework.Taurus
         /// 设置资源的路径,默认是为只读路径:Application.streamingAssetsPath;
         /// </summary>
         /// <param name="path"></param>
-        void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles");
+        void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles", bool isEncrypt = false);
 
         /// <summary>
         /// 加载资源
@@ -35,6 +35,13 @@ namespace GameFramework.Taurus
 	    /// <param name="assetName"></param>
 	    /// <param name="asyncCallback"></param>
 	    void LoadAssetAsync<T>(string assetName,Action<string,UnityEngine.Object> asyncCallback) where T : UnityEngine.Object;
+
+		/// <summary>
+		/// 卸载资源 主要为卸载AssetBundle
+		/// </summary>
+		/// <param name="assetName">资源名称</param>
+		/// <param name="allAssets">是否卸载调所有资源</param>
+	    void UnloadAsset(string assetName, bool allAssets);
 
         /// <summary>
         /// 异步加载场景

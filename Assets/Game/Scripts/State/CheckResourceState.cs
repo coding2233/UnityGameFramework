@@ -19,6 +19,9 @@ namespace GameFramework.Taurus
     {
         #region 属性
 
+        //资源信息文本名称
+        private string _assetVersionTxt = "AssetVersion.txt";
+
         //本地版本信息
         private AssetBundleVersionInfo _localVersion;
 
@@ -74,9 +77,14 @@ namespace GameFramework.Taurus
         {
             base.OnUpdate();
 
-            //更新资源--切换到加载界面
-            if (_resourceUpdateDone&& _downloadResouces.Count==0)
+            //更新资源
+            if (_resourceUpdateDone && _downloadResouces.Count == 0)
+            {
+                //更新本地资源信息文本
+                UpdateAssetVersionTxt();
+                //  切换到加载界面
                 ChangeState<LoadResourceState>();
+            }
         }
 
         #endregion
@@ -90,6 +98,12 @@ namespace GameFramework.Taurus
             if (ne != null)
             {
                 _remoteVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(ne.Content);
+                if (_remoteVersion == null)
+                {
+                    Debug.LogError("Remote Version is null");
+                    return;
+                }
+
                 //如果资源版本不一样 则更新资源
                 if (!CompareVersion())
                 {
@@ -139,7 +153,7 @@ namespace GameFramework.Taurus
         //加载本地版本信息
         private AssetBundleVersionInfo LoadLocalVersion()
         {
-            string localPath = GameMode.Resource.LocalPath + "/AssetVersion.txt";
+            string localPath =Path.Combine(GameMode.Resource.LocalPath, _assetVersionTxt);
             if(!File.Exists(localPath))
                 return null;
             
@@ -150,14 +164,14 @@ namespace GameFramework.Taurus
         //加载远程版本信息
         private void LoadRemoteVersion()
         {
-            string remotePath = GameMode.Resource.ResUpdatePath + "/AssetVersion.txt";
+            string remotePath =Path.Combine(GameMode.Resource.ResUpdatePath, _assetVersionTxt);
             GameMode.WebRequest.ReadHttpText(remotePath);
         }
 
         //比较版本
         private bool CompareVersion()
         {
-            return _remoteVersion.Version == _localVersion.Version;
+            return _localVersion!=null && _remoteVersion.Version == _localVersion.Version;
         }
 
         //更新资源
@@ -189,6 +203,16 @@ namespace GameFramework.Taurus
             foreach (var item in _downloadResouces)
             {
                 GameMode.WebRequest.StartDownload(item.Key, item.Value);
+            }
+        }
+
+        //更新资源版本信息文本
+        private void UpdateAssetVersionTxt()
+        {
+            if (!CompareVersion())
+            {
+                string localPath = Path.Combine(GameMode.Resource.LocalPath, _assetVersionTxt);
+                File.WriteAllText(localPath, JsonUtility.ToJson(_remoteVersion));
             }
         }
 

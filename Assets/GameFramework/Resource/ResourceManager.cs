@@ -105,14 +105,18 @@ namespace GameFramework.Taurus
 		public void SetResourceHelper(IResourceHelper resourceHelper)
 		{
 			_resourceHelper = resourceHelper;
-
-			//设置资源的路径,默认是为只读路径: Application.streamingAssetsPath;
-			if (resourceHelper is BundleResourceHelper)
-				_resourceHelper.SetResourcePath(LocalPathType, RootAssetBundle);
 		}
-		
 
-		/// <summary>
+        /// <summary>
+        /// 在设置BundleResourceHelper 需要调用此函数加载AssetBundle的Mainfest文件
+        /// </summary>
+        /// <param name="mainfestName"></param>
+        public void SetMainfestAssetBundle(string mainfestName, bool isEncrypt = false)
+        {
+            _resourceHelper?.SetResourcePath(LocalPathType, RootAssetBundle, isEncrypt);
+        }
+
+        /// <summary>
 		/// 加载资源
 		/// </summary>
 		/// <typeparam name="T"></typeparam>

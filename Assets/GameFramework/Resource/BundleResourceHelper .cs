@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -28,7 +29,7 @@ namespace GameFramework.Taurus
 		/// 设置资源的路径,默认是为只读路径:Application.streamingAssetsPath;
 		/// </summary>
 		/// <param name="path"></param>
-		public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles")
+		public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles",bool isEncrypt=false)
 		{
 			switch (pathType)
 			{
@@ -56,8 +57,14 @@ namespace GameFramework.Taurus
 			int index = rootAssetBundle.LastIndexOf("/");
 			if (index > 0 && index < (rootAssetBundle.Length - 1))
 				directionPath += "/" + rootAssetBundle.Substring(0, index);
-			//加载mainfest文件
-			LoadPlatformMainfest(rootABPath, directionPath);
+            //加载mainfest文件
+            if (!isEncrypt)
+                LoadPlatformMainfest(rootABPath, directionPath);
+		    else
+		    {
+		        EnciphererKey keyAsset = Resources.Load("Key") as EnciphererKey;
+		        LoadPlatformMainfest(rootABPath, directionPath, keyAsset);
+            }
 		}
 
 		/// <summary>
@@ -69,20 +76,17 @@ namespace GameFramework.Taurus
 		public T LoadAsset<T>(string assetName) where T : Object
 		{
 			assetName = assetName.ToLower();
-			//if (_allObjects.ContainsKey(assetName))
-			//	return (T)_allObjects[assetName];
 
 			AssetBundle assetBundle;
 			if (_allAssets.TryGetValue(assetName, out assetBundle))
 			{
-				//加载相关依赖
-				string[] dependencies = _mainfest.GetAllDependencies(assetName);
-				foreach (var item in dependencies)
-				{
-					AssetBundle.LoadFromFile(_readPath + "/" + item);
-				}
+				////加载相关依赖
+				//string[] dependencies = _mainfest.GetAllDependencies(assetName);
+				//foreach (var item in dependencies)
+				//{
+				//	AssetBundle.LoadFromFile(_readPath + "/" + item);
+				//}
 				T asset = assetBundle.LoadAsset<T>(assetName);
-				//	_allObjects.Add(assetName, asset);
 				return asset;
 			}
 			return null;
@@ -98,12 +102,12 @@ namespace GameFramework.Taurus
 	        AssetBundle assetBundle;
 	        if (_allAssets.TryGetValue(assetName, out assetBundle))
 	        {
-	            //加载相关依赖
-	            string[] dependencies = _mainfest.GetAllDependencies(assetName);
-	            foreach (var item in dependencies)
-	            {
-	                AssetBundle.LoadFromFile(_readPath + "/" + item);
-	            }
+	            ////加载相关依赖
+	            //string[] dependencies = _mainfest.GetAllDependencies(assetName);
+	            //foreach (var item in dependencies)
+	            //{
+	            //    AssetBundle.LoadFromFile(_readPath + "/" + item);
+	            //}
 	            AssetBundleRequest requetAsset = assetBundle.LoadAssetAsync<T>(assetName);
 		        requetAsset.completed += (asyncOperation) => { asyncCallback.Invoke(assetName, requetAsset.asset); };
 				return;
@@ -112,6 +116,28 @@ namespace GameFramework.Taurus
 			return;
         }
 
+		/// <summary>
+		/// 卸载掉资源
+		/// </summary>
+		/// <param name="assetName"></param>
+		/// <param name="allAssets"></param>
+		public void UnloadAsset(string assetName, bool allAssets)
+		{
+			AssetBundle assetBundle;
+			if (_allAssets.TryGetValue(assetName, out assetBundle))
+			{
+				if (!allAssets)
+					_allAssets.Remove(assetName);
+				else
+				{
+					foreach (var item in assetBundle.GetAllAssetNames())
+						if(_allAssets.ContainsKey(item))
+							_allAssets.Remove(item);
+				}
+				//卸载资源
+				assetBundle.Unload(allAssets);
+			}
+		}
 
 		/// <summary>
 		/// 异步加载场景
@@ -122,12 +148,12 @@ namespace GameFramework.Taurus
 			AssetBundle assetBundle;
 			if (_allAssets.TryGetValue(sceneName, out assetBundle))
 			{
-				//加载相关依赖
-				string[] dependencies = _mainfest.GetAllDependencies(sceneName);
-				foreach (var item in dependencies)
-				{
-					AssetBundle.LoadFromFile(_readPath + "/" + item);
-				}
+				////加载相关依赖
+				//string[] dependencies = _mainfest.GetAllDependencies(sceneName);
+				//foreach (var item in dependencies)
+				//{
+				//	AssetBundle.LoadFromFile(_readPath + "/" + item);
+				//}
 				return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName, mode);
 			}
 			return null;
@@ -157,15 +183,15 @@ namespace GameFramework.Taurus
 		}
 
 		#endregion
-        
+
 		#region 内部函数
 		/// <summary>
-		/// 加载mainfest
+		/// 加载mainfest -- LoadFromFile
 		/// </summary>
-		private void LoadPlatformMainfest(string rootBundleaPath, string folderPath)
+		private void LoadPlatformMainfest(string rootBundlePath, string folderPath)
 		{
-			//string assetBundlePath = _readPath + "/AssetBundles";
-			AssetBundle mainfestAssetBundle = AssetBundle.LoadFromFile(rootBundleaPath);
+			   //string assetBundlePath = _readPath + "/AssetBundles";
+			AssetBundle mainfestAssetBundle = AssetBundle.LoadFromFile(rootBundlePath);
 			_mainfest = mainfestAssetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");//
 			string[] assetBundleNames = _mainfest.GetAllAssetBundles();
 			foreach (var item in assetBundleNames)
@@ -182,7 +208,31 @@ namespace GameFramework.Taurus
 			}
 			mainfestAssetBundle.Unload(false);
 		}
-		#endregion
 
-	}
+	    private void LoadPlatformMainfest(string rootBundlePath, string folerPath,EnciphererKey keyAsset)
+        {
+			//从内存中加载&解密
+	        byte[] datas = Encipherer.AESDecrypt( File.ReadAllBytes(rootBundlePath),keyAsset);
+			AssetBundle mainfestAssetBundle = AssetBundle.LoadFromMemory(datas);
+	        _mainfest = mainfestAssetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");//
+	        string[] assetBundleNames = _mainfest.GetAllAssetBundles();
+	        foreach (var item in assetBundleNames)
+	        {
+		        datas = Encipherer.AESDecrypt(File.ReadAllBytes(folerPath + "/" + item), keyAsset);
+				AssetBundle assetBundle = AssetBundle.LoadFromMemory(datas);
+		        string[] assetNames = assetBundle.GetAllAssetNames();
+		        if (assetBundle.isStreamedSceneAssetBundle)
+			        assetNames = assetBundle.GetAllScenePaths();
+		        foreach (var name in assetNames)
+		        {
+			        if (!_allAssets.ContainsKey(name))
+				        _allAssets.Add(name, assetBundle);
+		        }
+	        }
+	        mainfestAssetBundle.Unload(false);
+		}
+
+	    #endregion
+
+    }
 }
