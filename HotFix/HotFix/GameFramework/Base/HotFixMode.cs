@@ -10,6 +10,8 @@
 
         public HotFixMode()
         {
+	        UnityEngine.Debug.Log("-----HotFix.Taurus.HotFixMode Hello!!!-----");
+
             #region 获取热更新组件
             State = GameFrameworkMode.GetModule<GameStateManager>();
             Event = GameFrameworkMode.GetModule<EventManager>();
