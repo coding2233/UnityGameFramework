@@ -62,6 +62,7 @@
     <Compile Include="Assets\Game\Scripts\Resource\EditorResourceHelper.cs" />
     <Compile Include="Assets\Game\Scripts\State\CheckResourceState.cs" />
     <Compile Include="Assets\Game\Scripts\State\LaunchGameState.cs" />
+    <Compile Include="Assets\Game\Scripts\State\LoadHotfixState.cs" />
     <Compile Include="Assets\Game\Scripts\State\LoadResourceState.cs" />
     <Compile Include="Assets\Game\Scripts\State\PreloadState.cs" />
     <Compile Include="Assets\GameFramework\Base\GameFrameworkMode.cs" />
@@ -101,6 +102,12 @@
     <Compile Include="Assets\GameFramework\Utility\Encipherer.cs" />
     <Compile Include="Assets\GameFramework\Utility\IdGenerater.cs" />
     <Compile Include="Assets\GameFramework\Utility\UnityEventUtility.cs" />
+    <Compile Include="Assets\GameFramework\WebRequest\IWebDownloadHelper.cs" />
+    <Compile Include="Assets\GameFramework\WebRequest\IWebRequestHelper.cs" />
+    <Compile Include="Assets\GameFramework\WebRequest\WebDownloadMonoHelper.cs" />
+    <Compile Include="Assets\GameFramework\WebRequest\WebRequestEventArgs.cs" />
+    <Compile Include="Assets\GameFramework\WebRequest\WebRequestManager.cs" />
+    <Compile Include="Assets\GameFramework\WebRequest\WebRquestMonoHelper.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\CLR\Method\CLRMethod.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\CLR\Method\ExceptionHandler.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\CLR\Method\ILMethod.cs" />

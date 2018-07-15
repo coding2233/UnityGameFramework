@@ -22,6 +22,7 @@ namespace GameFramework.Taurus
         public static ResourceManager Resource;
         public static UIManager UI;
         public static WebRequestManager WebRequest;
+		public static HotFixManager HotFix;
 
         /// <summary>
         /// 当前程序集
@@ -63,10 +64,11 @@ namespace GameFramework.Taurus
             Resource = GameFrameworkMode.GetModule<ResourceManager>();
             UI = GameFrameworkMode.GetModule<UIManager>();
             WebRequest = GameFrameworkMode.GetModule<WebRequestManager>();
-            #endregion
+			HotFix = GameFrameworkMode.GetModule<HotFixManager>();
+			#endregion
 
-            #region resource
-            Resource.ResUpdateType = ResUpdateType;
+			#region resource
+			Resource.ResUpdateType = ResUpdateType;
 	        Resource.ResUpdatePath = ResUpdatePath;
 	        Resource.LocalPathType = LocalPathType;
 
