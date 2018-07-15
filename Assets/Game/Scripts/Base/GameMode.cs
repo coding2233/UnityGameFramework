@@ -52,7 +52,10 @@ namespace GameFramework.Taurus
 
 
 		IEnumerator Start()
-        {
+		{
+			//默认不销毁
+			DontDestroyOnLoad(gameObject);
+
             #region Module
             Event = GameFrameworkMode.GetModule<EventManager>();
             State = GameFrameworkMode.GetModule<GameStateManager>();
@@ -66,16 +69,21 @@ namespace GameFramework.Taurus
             Resource.ResUpdateType = ResUpdateType;
 	        Resource.ResUpdatePath = ResUpdatePath;
 	        Resource.LocalPathType = LocalPathType;
-            #endregion
 
-            #region WebRequest
-            //设置帮助类
-            IWebRequestHelper webRequestHelper =
-                new GameObject("IWebRequestHelper").AddComponent<WebRquestMonoHelper>();
-            IWebDownloadHelper webDownloadHelper =
-                new GameObject("IWebRequestHelper").AddComponent<WebDownloadMonoHelper>();
-            WebRequest.SetWebRequestHelper(webRequestHelper);
-            WebRequest.SetWebDownloadHelper(webDownloadHelper);
+			//添加对象池管理器
+	        GameObject gameObjectPoolHelper = new GameObject("IGameObjectPoolHelper");
+	        gameObjectPoolHelper.transform.SetParent(transform);
+	        Resource.SetGameObjectPoolHelper(gameObjectPoolHelper.AddComponent<GameObjectPoolHelper>());
+			#endregion
+
+			#region WebRequest
+			//设置帮助类
+			GameObject webRequestHelper =new GameObject("IWebRequestHelper");
+	        webRequestHelper.transform.SetParent(transform);
+	        GameObject webDownloadHelper =new GameObject("IWebDownloadMonoHelper");
+	        webDownloadHelper.transform.SetParent(transform);
+			WebRequest.SetWebRequestHelper(webRequestHelper.AddComponent<WebRquestMonoHelper>());
+            WebRequest.SetWebDownloadHelper(webDownloadHelper.AddComponent<WebDownloadMonoHelper>());
             #endregion
 
             #region state

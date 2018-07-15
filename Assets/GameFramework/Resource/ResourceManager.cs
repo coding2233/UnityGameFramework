@@ -79,9 +79,6 @@ namespace GameFramework.Taurus
 		{
             //获取事件管理器
 		    _event = GameFrameworkMode.GetModule<EventManager>();
-            //添加对象池管理器
-            _gameObjectPoolHelper = new GameObject("GameObject_Pool").AddComponent<GameObjectPoolHelper>();
-
 			//资源异步加载的事件
 			_resLoadAsyncSuccessEventArgs = new ResourceLoadAsyncSuccessEventArgs();
 			_resLoadAsyncFailureEventArgs = new ResourceLoadAsyncFailureEventArgs();
