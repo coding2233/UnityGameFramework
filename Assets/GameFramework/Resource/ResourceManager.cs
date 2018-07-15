@@ -67,11 +67,7 @@ namespace GameFramework.Taurus
                 return "";
             }
         }
-
-        /// <summary>
-	    /// ab资源默认包名称
-	    /// </summary>
-		public string RootAssetBundle = "AssetBundles/AssetBundles";
+		
 		/// 资源更新的路径
 		/// </summary>
 		public string ResUpdatePath="";
@@ -113,7 +109,7 @@ namespace GameFramework.Taurus
         /// <param name="mainfestName"></param>
         public void SetMainfestAssetBundle(string mainfestName, bool isEncrypt = false)
         {
-            _resourceHelper?.SetResourcePath(LocalPathType, RootAssetBundle, isEncrypt);
+            _resourceHelper?.SetResourcePath(LocalPathType, mainfestName, isEncrypt);
         }
 
         /// <summary>
