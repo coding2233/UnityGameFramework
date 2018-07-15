@@ -180,14 +180,14 @@ namespace GameFramework.Taurus
             foreach (var item in _remoteVersion.Resources)
             {
                 //本地有响应文件则跳过
-                if (_localVersion.Resources.Contains(item))
+                if (_localVersion!=null&& _localVersion.Resources!=null&&_localVersion.Resources.Contains(item))
                     continue;
                 string remoteUrl = Path.Combine(GameMode.Resource.ResUpdatePath, item.Name);
                 //获取本地文件的路径
                 string localPath = Path.Combine(GameMode.Resource.LocalPath, item.Name);
-                //创建文件夹
-                int index = localPath.LastIndexOf("/", StringComparison.Ordinal);
-                string localDir = localPath.Substring(0, index);
+	           
+				//创建文件夹
+                string localDir = Path.GetDirectoryName(localPath);
                 if (!Directory.Exists(localDir))
                     Directory.CreateDirectory(localDir);
 
