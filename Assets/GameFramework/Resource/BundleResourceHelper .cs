@@ -176,7 +176,8 @@ namespace GameFramework.Taurus
 		public void Clear()
 		{
 			foreach (var item in _allAssets.Values)
-				item.Unload(true);
+				if(item!=null)
+					item.Unload(true);
 			_allAssets.Clear();
 
 			_mainfest = null;
