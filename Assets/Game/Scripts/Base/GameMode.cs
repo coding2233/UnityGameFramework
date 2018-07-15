@@ -87,5 +87,21 @@ namespace GameFramework.Taurus
             #endregion
         }
 
-    }
+
+		private void Update()
+		{
+			GameFrameworkMode.Update();
+		}
+
+		private void FixedUpdate()
+		{
+			GameFrameworkMode.FixedUpdate();
+		}
+
+		private void OnDestroy()
+		{
+			GameFrameworkMode.ShutDown();
+		}
+
+	}
 }

@@ -211,6 +211,9 @@ namespace GameFramework.Taurus
             #endregion
 
             GUILayout.EndVertical();
+
+			//保存设置
+	        EditorUtility.SetDirty(_gameMode);
         }
 
 
