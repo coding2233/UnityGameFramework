@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace HotFix.Taurus
@@ -154,7 +155,13 @@ namespace HotFix.Taurus
                 if (uiViewSource == null)
                     return null;
                 GameObject uiViewClone = GameObject.Instantiate(uiViewSource);
-                uiView= (UIView)Activator.CreateInstance(typeof(T), new object[] { uiViewClone });
+                //ILRuntime不支持带参数构造函数的生成 
+                // uiView= (UIView)Activator.CreateInstance(typeof(T), new object[] { uiViewClone });
+                //用反射调用构造函数生成对象
+                //根据参数类型获取构造函数 
+                ConstructorInfo ci = typeof(T).GetConstructor(new Type[]{typeof(GameObject)});
+                object[] obj = new object[1] { uiViewClone };
+                if (ci != null) uiView = ci.Invoke(obj) as UIView;
                 if (uiView == null)
                     return null;
                 _allUiViews[uiAsset] = uiView;
