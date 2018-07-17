@@ -25,6 +25,7 @@ namespace ILRuntime.Runtime.Generated
             UnityEngine_Transform_Binding.Register(app);
             UnityEngine_RectTransform_Binding.Register(app);
             UnityEngine_Time_Binding.Register(app);
+            UnityEngine_Input_Binding.Register(app);
             UnityEngine_Debug_Binding.Register(app);
             System_Collections_Generic_List_1_ILTypeInstance_Binding.Register(app);
         }

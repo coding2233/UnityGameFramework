@@ -100,6 +100,9 @@ namespace GameFramework.Taurus
 
         void InitializeILRuntime()
         {
+            //注册CLR绑定
+            ILRuntime.Runtime.Generated.CLRBindings.Initialize(Appdomain);
+
             //这里做一些ILRuntime的注册，HelloWorld示例暂时没有需要注册的
             Appdomain.DelegateManager.RegisterMethodDelegate<System.Object, ILRuntime.Runtime.Intepreter.ILTypeInstance>();
             Appdomain.DelegateManager.RegisterDelegateConvertor<System.EventHandler<ILRuntime.Runtime.Intepreter.ILTypeInstance>>((act) =>

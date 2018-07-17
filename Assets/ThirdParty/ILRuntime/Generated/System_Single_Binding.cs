@@ -34,72 +34,75 @@ namespace ILRuntime.Runtime.Generated
             args = new Type[]{typeof(System.Single)};
             method = type.GetMethod("IsNaN", flag, null, args, null);
             app.RegisterCLRMethodRedirection(method, IsNaN_3);
-            args = new Type[]{typeof(System.Object)};
-            method = type.GetMethod("CompareTo", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, CompareTo_4);
             args = new Type[]{typeof(System.Single)};
+            method = type.GetMethod("IsFinite", flag, null, args, null);
+            app.RegisterCLRMethodRedirection(method, IsFinite_4);
+            args = new Type[]{typeof(System.Object)};
             method = type.GetMethod("CompareTo", flag, null, args, null);
             app.RegisterCLRMethodRedirection(method, CompareTo_5);
+            args = new Type[]{typeof(System.Single)};
+            method = type.GetMethod("CompareTo", flag, null, args, null);
+            app.RegisterCLRMethodRedirection(method, CompareTo_6);
             args = new Type[]{typeof(System.Single), typeof(System.Single)};
             method = type.GetMethod("op_Equality", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, op_Equality_6);
+            app.RegisterCLRMethodRedirection(method, op_Equality_7);
             args = new Type[]{typeof(System.Single), typeof(System.Single)};
             method = type.GetMethod("op_Inequality", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, op_Inequality_7);
+            app.RegisterCLRMethodRedirection(method, op_Inequality_8);
             args = new Type[]{typeof(System.Single), typeof(System.Single)};
             method = type.GetMethod("op_LessThan", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, op_LessThan_8);
+            app.RegisterCLRMethodRedirection(method, op_LessThan_9);
             args = new Type[]{typeof(System.Single), typeof(System.Single)};
             method = type.GetMethod("op_GreaterThan", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, op_GreaterThan_9);
+            app.RegisterCLRMethodRedirection(method, op_GreaterThan_10);
             args = new Type[]{typeof(System.Single), typeof(System.Single)};
             method = type.GetMethod("op_LessThanOrEqual", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, op_LessThanOrEqual_10);
+            app.RegisterCLRMethodRedirection(method, op_LessThanOrEqual_11);
             args = new Type[]{typeof(System.Single), typeof(System.Single)};
             method = type.GetMethod("op_GreaterThanOrEqual", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, op_GreaterThanOrEqual_11);
+            app.RegisterCLRMethodRedirection(method, op_GreaterThanOrEqual_12);
             args = new Type[]{typeof(System.Object)};
             method = type.GetMethod("Equals", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, Equals_12);
+            app.RegisterCLRMethodRedirection(method, Equals_13);
             args = new Type[]{typeof(System.Single)};
             method = type.GetMethod("Equals", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, Equals_13);
+            app.RegisterCLRMethodRedirection(method, Equals_14);
             args = new Type[]{};
             method = type.GetMethod("GetHashCode", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, GetHashCode_14);
+            app.RegisterCLRMethodRedirection(method, GetHashCode_15);
             args = new Type[]{};
-            method = type.GetMethod("ToString", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, ToString_15);
-            args = new Type[]{typeof(System.IFormatProvider)};
             method = type.GetMethod("ToString", flag, null, args, null);
             app.RegisterCLRMethodRedirection(method, ToString_16);
-            args = new Type[]{typeof(System.String)};
+            args = new Type[]{typeof(System.IFormatProvider)};
             method = type.GetMethod("ToString", flag, null, args, null);
             app.RegisterCLRMethodRedirection(method, ToString_17);
-            args = new Type[]{typeof(System.String), typeof(System.IFormatProvider)};
+            args = new Type[]{typeof(System.String)};
             method = type.GetMethod("ToString", flag, null, args, null);
             app.RegisterCLRMethodRedirection(method, ToString_18);
+            args = new Type[]{typeof(System.String), typeof(System.IFormatProvider)};
+            method = type.GetMethod("ToString", flag, null, args, null);
+            app.RegisterCLRMethodRedirection(method, ToString_19);
             args = new Type[]{typeof(System.String)};
             method = type.GetMethod("Parse", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, Parse_19);
+            app.RegisterCLRMethodRedirection(method, Parse_20);
             args = new Type[]{typeof(System.String), typeof(System.Globalization.NumberStyles)};
             method = type.GetMethod("Parse", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, Parse_20);
+            app.RegisterCLRMethodRedirection(method, Parse_21);
             args = new Type[]{typeof(System.String), typeof(System.IFormatProvider)};
             method = type.GetMethod("Parse", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, Parse_21);
+            app.RegisterCLRMethodRedirection(method, Parse_22);
             args = new Type[]{typeof(System.String), typeof(System.Globalization.NumberStyles), typeof(System.IFormatProvider)};
             method = type.GetMethod("Parse", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, Parse_22);
+            app.RegisterCLRMethodRedirection(method, Parse_23);
             args = new Type[]{typeof(System.String), typeof(System.Single).MakeByRefType()};
             method = type.GetMethod("TryParse", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, TryParse_23);
+            app.RegisterCLRMethodRedirection(method, TryParse_24);
             args = new Type[]{typeof(System.String), typeof(System.Globalization.NumberStyles), typeof(System.IFormatProvider), typeof(System.Single).MakeByRefType()};
             method = type.GetMethod("TryParse", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, TryParse_24);
+            app.RegisterCLRMethodRedirection(method, TryParse_25);
             args = new Type[]{};
             method = type.GetMethod("GetTypeCode", flag, null, args, null);
-            app.RegisterCLRMethodRedirection(method, GetTypeCode_25);
+            app.RegisterCLRMethodRedirection(method, GetTypeCode_26);
 
             field = type.GetField("MinValue", flag);
             app.RegisterCLRFieldGetter(field, get_MinValue_0);
@@ -234,7 +237,24 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* CompareTo_4(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* IsFinite_4(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        {
+            ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
+            StackObject* ptr_of_this_method;
+            StackObject* __ret = ILIntepreter.Minus(__esp, 1);
+
+            ptr_of_this_method = ILIntepreter.Minus(__esp, 1);
+            System.Single @f = *(float*)&ptr_of_this_method->Value;
+
+
+            var result_of_this_method = System.Single.IsInfinity(@f);
+
+            __ret->ObjectType = ObjectTypes.Integer;
+            __ret->Value = result_of_this_method ? 1 : 0;
+            return __ret + 1;
+        }
+
+        static StackObject* CompareTo_5(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -254,7 +274,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* CompareTo_5(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* CompareTo_6(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -273,7 +293,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* op_Equality_6(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* op_Equality_7(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -293,7 +313,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* op_Inequality_7(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* op_Inequality_8(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -313,7 +333,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* op_LessThan_8(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* op_LessThan_9(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -333,7 +353,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* op_GreaterThan_9(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* op_GreaterThan_10(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -353,7 +373,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* op_LessThanOrEqual_10(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* op_LessThanOrEqual_11(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -373,7 +393,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* op_GreaterThanOrEqual_11(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* op_GreaterThanOrEqual_12(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -393,7 +413,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* Equals_12(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* Equals_13(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -413,7 +433,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* Equals_13(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* Equals_14(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -432,7 +452,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* GetHashCode_14(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* GetHashCode_15(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -448,7 +468,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* ToString_15(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* ToString_16(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -462,7 +482,7 @@ namespace ILRuntime.Runtime.Generated
             return ILIntepreter.PushObject(__ret, __mStack, result_of_this_method);
         }
 
-        static StackObject* ToString_16(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* ToString_17(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -480,7 +500,7 @@ namespace ILRuntime.Runtime.Generated
             return ILIntepreter.PushObject(__ret, __mStack, result_of_this_method);
         }
 
-        static StackObject* ToString_17(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* ToString_18(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -498,7 +518,7 @@ namespace ILRuntime.Runtime.Generated
             return ILIntepreter.PushObject(__ret, __mStack, result_of_this_method);
         }
 
-        static StackObject* ToString_18(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* ToString_19(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -520,7 +540,7 @@ namespace ILRuntime.Runtime.Generated
             return ILIntepreter.PushObject(__ret, __mStack, result_of_this_method);
         }
 
-        static StackObject* Parse_19(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* Parse_20(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -538,7 +558,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* Parse_20(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* Parse_21(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -560,7 +580,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* Parse_21(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* Parse_22(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -582,7 +602,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* Parse_22(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* Parse_23(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -608,7 +628,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* TryParse_23(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* TryParse_24(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -675,7 +695,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* TryParse_24(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* TryParse_25(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;
@@ -750,7 +770,7 @@ namespace ILRuntime.Runtime.Generated
             return __ret + 1;
         }
 
-        static StackObject* GetTypeCode_25(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        static StackObject* GetTypeCode_26(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
         {
             ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
             StackObject* ptr_of_this_method;

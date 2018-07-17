@@ -84,6 +84,9 @@ namespace ILRuntime.Runtime.Generated
             args = new Type[]{typeof(UnityEngine.RectTransform.Axis), typeof(System.Single)};
             method = type.GetMethod("SetSizeWithCurrentAnchors", flag, null, args, null);
             app.RegisterCLRMethodRedirection(method, SetSizeWithCurrentAnchors_20);
+            args = new Type[]{};
+            method = type.GetMethod("ForceUpdateRectTransforms", flag, null, args, null);
+            app.RegisterCLRMethodRedirection(method, ForceUpdateRectTransforms_21);
 
 
 
@@ -465,6 +468,21 @@ namespace ILRuntime.Runtime.Generated
             __intp.Free(ptr_of_this_method);
 
             instance_of_this_method.SetSizeWithCurrentAnchors(@axis, @size);
+
+            return __ret;
+        }
+
+        static StackObject* ForceUpdateRectTransforms_21(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
+        {
+            ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
+            StackObject* ptr_of_this_method;
+            StackObject* __ret = ILIntepreter.Minus(__esp, 1);
+
+            ptr_of_this_method = ILIntepreter.Minus(__esp, 1);
+            UnityEngine.RectTransform instance_of_this_method = (UnityEngine.RectTransform)typeof(UnityEngine.RectTransform).CheckCLRTypes(StackObject.ToObject(ptr_of_this_method, __domain, __mStack));
+            __intp.Free(ptr_of_this_method);
+
+            instance_of_this_method.ForceUpdateRectTransforms();
 
             return __ret;
         }

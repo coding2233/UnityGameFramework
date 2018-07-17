@@ -89,12 +89,10 @@ namespace HotFix.Taurus
             GameFrameworkModule module = (GameFrameworkModule)Activator.CreateInstance(type);
             _allGameModules[hashCode] = module;
             //整理含IUpdate的模块
-            var update = module as IUpdate;
-            if (update != null)
+            if (module is IUpdate update)
                 _allUpdates.Add(update);
             //整理含IFixed的模块
-            var fixedUpdate = module as IFixedUpdate;
-            if (fixedUpdate != null)
+            if (module is IFixedUpdate fixedUpdate)
                 _allFixedUpdates.Add(fixedUpdate);
             return module;
         }

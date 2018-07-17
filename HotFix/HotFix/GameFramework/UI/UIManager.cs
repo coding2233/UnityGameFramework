@@ -15,7 +15,7 @@ using UnityEngine;
 
 namespace HotFix.Taurus
 {
-    public sealed class UIManager : GameFrameworkModule
+    public sealed class UIManager : GameFrameworkModule,IUpdate
     {
         //事件管理器
         //资源管理器
@@ -123,6 +123,16 @@ namespace HotFix.Taurus
 
 
         #region 内部函数
+        //更新函数
+        public void OnUpdate()
+        {
+            if (_allUiViews != null)
+            {
+                foreach (var item in _allUiViews.Values)
+                    item.OnUpdate();
+            }
+        }
+
         //检查路径
         private string CheckAssetPath(Type t)
         {
