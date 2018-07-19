@@ -18,6 +18,9 @@ namespace GameFramework.Taurus
 		public override void OnEnter(params object[] parameters)
 		{
 			base.OnEnter(parameters);
+
+            //测试 直接切换到热更新状态里面去
+		    ChangeState<LoadHotfixState>();
 		}
 
 		public override void OnExit()
