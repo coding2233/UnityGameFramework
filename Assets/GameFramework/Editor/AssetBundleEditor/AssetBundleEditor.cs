@@ -17,7 +17,7 @@ namespace GameFramework.Taurus
 {
     public class AssetBundleEditor : EditorWindow
     {
-        [MenuItem("Tools/Taurus/AssetBundle Editor %#O")]
+        [MenuItem("Tools/AssetBundle/AssetBundle Editor %#O")]
         private static void OpenAssetBundleWindow()
         {
             AssetBundleEditor ABEditor = GetWindow<AssetBundleEditor>("AssetBundles");
@@ -53,7 +53,9 @@ namespace GameFramework.Taurus
         private bool _hideBundleAsset = false;
 
         private string _buildPath = "";
-        private BuildTarget _buildTarget = BuildTarget.StandaloneWindows;
+        private Vector2 _buildTargetScrollView = Vector2.zero;
+       // private BuildTarget _buildTarget = BuildTarget.StandaloneWindows;
+        private Dictionary<string, bool> _buildTargets = new Dictionary<string, bool>();
         private ZipMode _zipMode = ZipMode.LZMA;
         private EncryptMode _encryptMode = EncryptMode.AES;
         private int _assetVersion = 1;
@@ -81,7 +83,14 @@ namespace GameFramework.Taurus
             AssetBundleTool.ReadAssetBundleConfig(_assetBundle, _validAssets);
 
             _buildPath = AssetBundleTool.EditorConfigInfo.BuildPath;
-            _buildTarget = (BuildTarget) AssetBundleTool.EditorConfigInfo.BuildTarget;
+            List<int> buildTargets= AssetBundleTool.EditorConfigInfo.BuildTargets;
+            string[] buildTargtNames = Enum.GetNames(typeof(BuildTarget));
+            for (int i = 0; i < buildTargtNames.Length; i++)
+            {
+                BuildTarget target = (BuildTarget)Enum.Parse(typeof(BuildTarget),(buildTargtNames[i]));
+                _buildTargets.Add(buildTargtNames[i], buildTargets.Contains((int)target));
+            }
+            //z = (BuildTarget) AssetBundleTool.EditorConfigInfo.BuildTarget;
             _zipMode = (ZipMode) AssetBundleTool.EditorConfigInfo.ZipMode;
             _encryptMode = (EncryptMode) AssetBundleTool.EditorConfigInfo.EncryptMode;
             _assetVersion = AssetBundleTool.EditorConfigInfo.AssetVersion;
@@ -370,52 +379,87 @@ namespace GameFramework.Taurus
                 }
             }
         }
+        
         private void SettingGUI()
         {
             if (_showSetting)
             {
-                GUI.BeginGroup(new Rect((int)position.width / 2 - 125, (int)position.height / 2 - 65, 250, 130), "", _flownode0on);
+                int width = 325, height = 290;
 
-                GUI.Label(new Rect(5, 5, 80, 20), "Build Target: ");
-                BuildTarget buildTarget = (BuildTarget)EditorGUI.EnumPopup(new Rect(90, 5, 155, 20), _buildTarget, _preDropDown);
-                if (buildTarget != _buildTarget)
+                GUI.BeginGroup(new Rect((int)position.width / 2 - width/2, (int)position.height / 2 - height/2, width, height), "", _flownode0on);
+                //-----------Build Target
+                GUI.Label(new Rect(5, 5, 100, 20), "Build Target:", "HeaderLabel");
+                GUI.BeginGroup(new Rect(5, 25, 315, 135), _box);
+               // string[] buildTargets = Enum.GetNames(typeof(BuildTarget));
+                _buildTargetScrollView = GUI.BeginScrollView(new Rect(0, 2, 313, 132), _buildTargetScrollView,
+                    new Rect(0, 0, 180, 20* _buildTargets.Count),false,true);
+                int index = 0;
+                foreach (var item in _buildTargets)
                 {
-                    _buildTarget = buildTarget;
-                    AssetBundleTool.EditorConfigInfo.BuildTarget = (int) _buildTarget;
-                    AssetBundleTool.SaveEditorConfigInfo();
+                    bool value = GUI.Toggle(new Rect(5, 20 * index, 180, 20), item.Value, item.Key);
+                    if (value != item.Value)
+                    {
+                        _buildTargets[item.Key] = value;
+                        break;
+                    }
+                    index++;
                 }
-
-                GUI.Label(new Rect(5, 30, 80, 20), "Zip Mode: ");
-                ZipMode zipMode = (ZipMode)EditorGUI.EnumPopup(new Rect(90, 30, 155, 20), _zipMode, _preDropDown);
+                GUI.EndScrollView();
+                GUI.EndGroup();
+                //--------Zip Mode
+                GUI.Label(new Rect(5, 165, 60, 20), "Zip Mode:", "HeaderLabel");
+                ZipMode zipMode = (ZipMode)EditorGUI.EnumPopup(new Rect(75, 165, 240, 20), _zipMode, _preDropDown);
                 if (zipMode != _zipMode)
                 {
                     _zipMode = zipMode;
-                    AssetBundleTool.EditorConfigInfo.ZipMode = (int) _zipMode;
+                    AssetBundleTool.EditorConfigInfo.ZipMode = (int)_zipMode;
                     AssetBundleTool.SaveEditorConfigInfo();
                 }
-
-                GUI.Label(new Rect(5, 55, 80, 20), "Encrypt: ");
-                EncryptMode encryptMode = (EncryptMode)EditorGUI.EnumPopup(new Rect(90, 55, 155, 20), _encryptMode, _preDropDown);
+                //----------Encrypt
+                GUI.Label(new Rect(5, 190, 60, 20), "Encrypt: ", "HeaderLabel");
+                EncryptMode encryptMode = (EncryptMode)EditorGUI.EnumPopup(new Rect(75, 190, 240, 20), _encryptMode, _preDropDown);
                 if (encryptMode != _encryptMode)
                 {
                     _encryptMode = encryptMode;
                     AssetBundleTool.EditorConfigInfo.EncryptMode = (int)encryptMode;
                     AssetBundleTool.SaveEditorConfigInfo();
                 }
-
-                GUI.Label(new Rect(5, 80, 150, 20), "Asset Version: " + _assetVersion);
-                if (GUI.Button(new Rect(150, 80, 95, 20), "Reset", _preButton))
+               // ----------Assets Version
+                GUI.Label(new Rect(5, 215, 150, 20), "Asset Version: " + _assetVersion, "HeaderLabel");
+                if (GUI.Button(new Rect(160, 215, 95, 20), "Reset", _preButton))
                 {
                     _assetVersion = 1;
                     AssetBundleTool.EditorConfigInfo.AssetVersion = _assetVersion;
                     AssetBundleTool.SaveEditorConfigInfo();
                 }
-
-                if (GUI.Button(new Rect(100, 105, 50, 20), "Sure", _preButton))
+                //sure cancel 
+                if (GUI.Button(new Rect(92.5f, 255, 140, 20), "Sure", _preButton))
                 {
+                    //更新目标平台
+                    foreach (var item in _buildTargets)
+                    {
+                        BuildTarget target = (BuildTarget)Enum.Parse(typeof(BuildTarget), (item.Key));
+                        int iTarget = (int)target;
+                        if (item.Value)
+                        {
+                            if (!AssetBundleTool.EditorConfigInfo.BuildTargets.Contains(iTarget))
+                                AssetBundleTool.EditorConfigInfo.BuildTargets.Add(iTarget);
+                        }
+                        else
+                        {
+                            if (AssetBundleTool.EditorConfigInfo.BuildTargets.Contains(iTarget))
+                                AssetBundleTool.EditorConfigInfo.BuildTargets.Remove(iTarget);
+                        }
+                    }
+                    //保存配置文件
+                    AssetBundleTool.SaveEditorConfigInfo();
+
                     _showSetting = false;
                 }
-
+                //if (GUI.Button(new Rect(175, 255, 140, 20), "Cancel", _preButton))
+                //{
+                //    _showSetting = false;
+                //}
                 GUI.EndGroup();
             }
         }
@@ -436,7 +480,7 @@ namespace GameFramework.Taurus
             /// <summary>
             /// 目标平台
             /// </summary>
-            public int BuildTarget=5;
+            public List<int> BuildTargets=new List<int>(){5};
             /// <summary>
             /// 加密模式
             /// </summary>

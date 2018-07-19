@@ -18,6 +18,8 @@ namespace GameFramework.Taurus
     public class CheckResourceState : GameState
     {
         #region 属性
+        //平台的资源名称
+        private string _assetPlatformVersionText = "AssetPlatformVersion.txt";
 
         //资源信息文本名称
         private string _assetVersionTxt = "AssetVersion.txt";
@@ -97,24 +99,41 @@ namespace GameFramework.Taurus
             HttpReadTextSuccessEventArgs ne = (HttpReadTextSuccessEventArgs)e;
             if (ne != null)
             {
-                _remoteVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(ne.Content);
-                if (_remoteVersion == null)
+                if (ne.Url == Path.Combine(GameMode.Resource.ResUpdatePath, _assetPlatformVersionText))
                 {
-                    Debug.LogError("Remote Version is null");
-                    return;
+                    AssetPlatformVersionInfo assetPlatform= JsonUtility.FromJson<AssetPlatformVersionInfo>(ne.Content);
+                    string platformName = GetPlatformName();
+                    if (assetPlatform.Platforms.Contains(platformName))
+                    {
+                        //更新远程资源的路径
+                        GameMode.Resource.ResUpdatePath =
+                            Path.Combine(GameMode.Resource.ResUpdatePath, platformName);
+                        //读取远程的文本
+                        string remotePath = Path.Combine(GameMode.Resource.ResUpdatePath, _assetVersionTxt);
+                        GameMode.WebRequest.ReadHttpText(remotePath);
+                    }
                 }
-
-                //如果资源版本不一样 则更新资源
-                if (!CompareVersion())
+                else
                 {
-                    //更新资源
-                    UpdateResource();
-                    //下载资源
-                    DownloadResource();
-                }
+                    _remoteVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(ne.Content);
+                    if (_remoteVersion == null)
+                    {
+                        Debug.LogError("Remote Version is null");
+                        return;
+                    }
 
-                //资源更新完成
-                _resourceUpdateDone = true;
+                    //如果资源版本不一样 则更新资源
+                    if (!CompareVersion())
+                    {
+                        //更新资源
+                        UpdateResource();
+                        //下载资源
+                        DownloadResource();
+                    }
+
+                    //资源更新完成
+                    _resourceUpdateDone = true;
+                }
             }
         }
         //http文件读取错误
@@ -164,7 +183,7 @@ namespace GameFramework.Taurus
         //加载远程版本信息
         private void LoadRemoteVersion()
         {
-            string remotePath =Path.Combine(GameMode.Resource.ResUpdatePath, _assetVersionTxt);
+            string remotePath =Path.Combine(GameMode.Resource.ResUpdatePath, _assetPlatformVersionText);
             GameMode.WebRequest.ReadHttpText(remotePath);
         }
 
@@ -216,7 +235,21 @@ namespace GameFramework.Taurus
             }
         }
 
-        #endregion
+        //获取平台名称
+        private string GetPlatformName()
+        {
+            string platformName = "StandaloneWindows";
+            #if UNITY_IOS
+                platformName = "IOS";
+            #elif UNITY_ANDROID
+                platformName = "Android";
+            #elif UNITY_STANDALONE_OSX 
+                platformName = "StandaloneOSX";
+            #endif
+            return platformName.ToLower();
+        }
+
+#endregion
 
     }
 }

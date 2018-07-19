@@ -323,7 +323,7 @@ namespace GameFramework.Taurus
         /// <summary>
         /// 打包资源
         /// </summary>
-        [MenuItem("Tools/Taurus/Build AssetBundles %#T")]
+        [MenuItem("Tools/AssetBundle/Build AssetBundles %#T")]
         public static void BuildAssetBundles()
         {
             string buildPath = EditorConfigInfo.BuildPath;
@@ -333,75 +333,99 @@ namespace GameFramework.Taurus
                 return;
             }
 
-            //打包资源
-            Debug.Log("开始打包！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
-            BuildAssetBundleOptions option = (BuildAssetBundleOptions) EditorConfigInfo.ZipMode;
-            BuildTarget target = (BuildTarget)EditorConfigInfo.BuildTarget;
-            BuildPipeline.BuildAssetBundles(buildPath, option, target);
-            Debug.Log("打包完成！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
-            
+            //平台资源的信息
+            string platformVersionPath = Path.Combine(buildPath, "AssetPlatformVersion.txt");
+            AssetPlatformVersionInfo assetPlatformVersionInfo = new AssetPlatformVersionInfo();
+            assetPlatformVersionInfo.Platforms = new List<string>();
             //资源加密
-            if ((EncryptMode)EditorConfigInfo.EncryptMode == EncryptMode.AES)
+            EnciphererKey keyAsset = null;
+            if ((EncryptMode) EditorConfigInfo.EncryptMode == EncryptMode.AES)
             {
                 string keyPath = Application.dataPath + "/Resources";
                 if (!Directory.Exists(keyPath))
                 {
                     Directory.CreateDirectory(keyPath);
                 }
+
                 if (!File.Exists(keyPath + "/Key.asset"))
                 {
                     EnciphererKey ek = ScriptableObject.CreateInstance<EnciphererKey>();
                     ek.GeneraterKey();
                     AssetDatabase.CreateAsset(ek, "Assets/Resources/Key.asset");
+                    AssetDatabase.Refresh();
                 }
 
-                EnciphererKey keyAsset = Resources.Load("Key") as EnciphererKey;
-                DirectoryInfo dir = new DirectoryInfo(buildPath);
-                FileSystemInfo[] infos = dir.GetFileSystemInfos();
-                Debug.Log("开始加密！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
-                foreach (FileSystemInfo info in infos)
-                {
-                    if (info is FileInfo)
-                    {
-                        if (info.Extension == "")
-                        {
-                            byte[] bs = File.ReadAllBytes(info.FullName);
-                            byte[] cipbs = Encipherer.AESEncrypt(bs, keyAsset);
-                            File.WriteAllBytes(info.FullName, cipbs);
-                            Debug.Log("完成资源包 " + info.Name + " 的加密！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
-                        }
-                    }
-                }
-                Debug.Log("加密完成！" + System.DateTime.Now.ToString("HH:mm:ss:fff"));
+                keyAsset = Resources.Load("Key") as EnciphererKey;
             }
-
-            //写入版本号信息
-            string assetVersionPath = buildPath + "/AssetVersion.txt";
-            AssetBundleVersionInfo version = new AssetBundleVersionInfo();
-            version.Version = EditorConfigInfo.AssetVersion;
-            version.IsEncrypt = (EncryptMode)EditorConfigInfo.EncryptMode == EncryptMode.AES;
-            version.Resources = new List<ResourcesInfo>();
-            int index = buildPath.LastIndexOf("/", StringComparison.Ordinal);
-            if(index>0)
-                version.ManifestAssetBundle = buildPath.Substring(index+1, buildPath.Length-index-1);
-            DirectoryInfo dir1 = new DirectoryInfo(buildPath);
-            FileSystemInfo[] infos1 = dir1.GetFileSystemInfos();
-            foreach (FileSystemInfo info in infos1)
+           
+            //根据各个平台打包
+            foreach (var item in EditorConfigInfo.BuildTargets)
             {
-                if (info is FileInfo)
+                //打包
+                BuildTarget target = (BuildTarget) item;
+                string targetName = target.ToString().ToLower();
+                //添加平台的信息
+                assetPlatformVersionInfo.Platforms.Add(targetName);
+                string targetBuildPath = Path.Combine(buildPath, targetName);
+                if (!Directory.Exists(targetBuildPath))
+                    Directory.CreateDirectory(targetBuildPath);
+
+                Debug.Log("开始打包--"+ targetName + System.DateTime.Now.ToString("  HH:mm:ss:fff"));
+                BuildAssetBundleOptions option = (BuildAssetBundleOptions)EditorConfigInfo.ZipMode;
+                BuildPipeline.BuildAssetBundles(targetBuildPath, option, target);
+                Debug.Log("打包完成--"+ targetName + System.DateTime.Now.ToString("  HH:mm:ss:fff"));
+
+                //写入版本号信息
+                string assetVersionPath = targetBuildPath + "/AssetVersion.txt";
+                AssetBundleVersionInfo version = new AssetBundleVersionInfo();
+                version.ManifestAssetBundle = targetName;
+                version.Version = EditorConfigInfo.AssetVersion;
+                version.IsEncrypt = (EncryptMode)EditorConfigInfo.EncryptMode == EncryptMode.AES;
+                version.Resources = new List<ResourcesInfo>();
+                
+                List<FileInfo> allFiles = GetAllFiles(targetBuildPath);
+                for (int i = 0; i < allFiles.Count; i++)
                 {
-                    if (info.Extension == "")
+                    FileInfo fileInfo = allFiles[i];
+                    if (fileInfo.Extension == ".manifest")
+                        File.Delete(fileInfo.FullName);
+                    else if (fileInfo.Name == "AssetVersion.txt")
+                        continue;
+                    //加密
+                    else
                     {
-                        ResourcesInfo ri = new ResourcesInfo();
-                        ri.Name = info.Name;
-                        ri.Hash = info.GetHashCode().ToString();
-                        version.Resources.Add(ri);
+                        byte[] bs = File.ReadAllBytes(fileInfo.FullName);
+                        if (keyAsset != null)
+                        {
+                            byte[] cipbs = Encipherer.AESEncrypt(bs, keyAsset);
+                            File.WriteAllBytes(fileInfo.FullName, cipbs);
+                            //加密后md5的值应该刷新
+                            bs = cipbs;
+                        }
+                        ResourcesInfo resourcesInfo = new ResourcesInfo();
+                        string fullPath = Path.GetFullPath(targetBuildPath);
+                        resourcesInfo.Name = fileInfo.FullName.Replace(fullPath+ "\\", "");
+                        System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                        //计算字节数组的哈希值  
+                        byte[] toData = md5.ComputeHash(bs);
+                        string fileMD5 = "";
+                        for (int j = 0; j < toData.Length; j++)
+                            fileMD5 += toData[j].ToString("x2");
+                        resourcesInfo.MD5 = fileMD5;
+                        version.Resources.Add(resourcesInfo);
                     }
                 }
+
+                //保存AssetVersion文件
+                string content = JsonUtility.ToJson(version);
+                File.WriteAllText(assetVersionPath, content);
+
             }
-            string content = JsonUtility.ToJson(version);
-            File.WriteAllText(assetVersionPath, content);
-            
+
+            //保存平台信息文件
+            string platformContent = JsonUtility.ToJson(assetPlatformVersionInfo);
+            File.WriteAllText(platformVersionPath, platformContent);
+
             //版本号迭代
             EditorConfigInfo.AssetVersion += 1;
             SaveEditorConfigInfo();
@@ -411,5 +435,24 @@ namespace GameFramework.Taurus
             //打开打包文件夹
             EditorUtility.OpenWithDefaultApp(buildPath);
         }
-	}
+
+        /// <summary>
+        /// 获取所有的文件
+        /// </summary>
+        /// <param name="dirtector"></param>
+        /// <returns></returns>
+        public static List<FileInfo> GetAllFiles(string folder)
+        {
+            List<FileInfo> allfiles = new List<FileInfo>();
+            DirectoryInfo theFolder = new DirectoryInfo(folder);
+            FileInfo[] fileInfos = theFolder.GetFiles();
+            foreach (var item in fileInfos)
+                allfiles.Add(item);
+            DirectoryInfo[] directoryInfos = theFolder.GetDirectories();
+            foreach (var item in directoryInfos)
+                allfiles.AddRange(GetAllFiles(item.FullName));
+            return allfiles;
+        }
+
+    }
 }
