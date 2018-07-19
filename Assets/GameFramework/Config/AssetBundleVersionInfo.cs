@@ -11,6 +11,13 @@ using System;
 using System.Collections.Generic;
 
 [Serializable]
+public class AssetPlatformVersionInfo
+{
+    public int Version;
+    public List<string> Platforms;
+}
+
+[Serializable]
 public class AssetBundleVersionInfo
 {
     public int Version;
@@ -23,5 +30,5 @@ public class AssetBundleVersionInfo
 public class ResourcesInfo
 {
     public string Name;
-    public string Hash;
+    public string MD5;
 }
