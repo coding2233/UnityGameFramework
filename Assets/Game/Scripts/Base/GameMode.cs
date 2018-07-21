@@ -22,6 +22,7 @@ namespace GameFramework.Taurus
         public static ResourceManager Resource;
         public static UIManager UI;
         public static WebRequestManager WebRequest;
+		public static AudioManager Audio;
 
         /// <summary>
         /// 当前程序集
@@ -63,10 +64,11 @@ namespace GameFramework.Taurus
             Resource = GameFrameworkMode.GetModule<ResourceManager>();
             UI = GameFrameworkMode.GetModule<UIManager>();
             WebRequest = GameFrameworkMode.GetModule<WebRequestManager>();
-            #endregion
+			Audio = GameFrameworkMode.GetModule<AudioManager>();
+			#endregion
 
-            #region resource
-            Resource.ResUpdateType = ResUpdateType;
+			#region resource
+			Resource.ResUpdateType = ResUpdateType;
 	        Resource.ResUpdatePath = ResUpdatePath;
 	        Resource.LocalPathType = LocalPathType;
 
@@ -74,6 +76,15 @@ namespace GameFramework.Taurus
 	        GameObject gameObjectPoolHelper = new GameObject("IGameObjectPoolHelper");
 	        gameObjectPoolHelper.transform.SetParent(transform);
 	        Resource.SetGameObjectPoolHelper(gameObjectPoolHelper.AddComponent<GameObjectPoolHelper>());
+			#endregion
+
+			#region auido
+			//设置音频播放
+			GameObject audioPlayer = new GameObject("AudioSourcePlayer");
+			audioPlayer.transform.SetParent(transform);
+			//添加AduioSource
+			Audio.SetDefaultAudioSource(audioPlayer.AddComponent<AudioSource>(), audioPlayer.AddComponent<AudioSource>(),
+				audioPlayer.AddComponent<AudioSource>());
 			#endregion
 
 			#region WebRequest

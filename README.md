@@ -248,6 +248,26 @@ GameFrameworkMode.GetModule<EventManager>().AddListener<DownloadFaileEventArgs>(
  GameFrameworkMode.GetModule<EventManager>().AddListener<DownloadProgressEventArgs>(OnDownloadProgress);
 ```
 
+---  
+#### 七、音频管理器模块 `AudioManager`  
+统一的声音播放管理，支持默认的背景音乐、ui音效、其他音效已经物体绑定的AudioSource多种模式，以下以播放ui音效为例
+1. 添加ui音效音频
+```csharp
+GameFrameworkMode.GetModule<AudioManager>().AddUISound("Assets/Audio/UI/default.wav");
+```  
+2. 播放ui音效
+```csharp
+GameFrameworkMode.GetModule<AudioManager>().PlayUISound("Assets/Audio/UI/default.wav");
+```
+3. 停止ui音效,默认停止当前正在播放的音频
+```csharp
+GameFrameworkMode.GetModule<AudioManager>().StopUISound();
+```  
+4. 移除ui音效音频
+```csharp
+GameFrameworkMode.GetModule<AudioManager>().RemoveUISound("Assets/Audio/UI/default.wav");
+```  
+
 ---
 ### 内置工具
 ---
