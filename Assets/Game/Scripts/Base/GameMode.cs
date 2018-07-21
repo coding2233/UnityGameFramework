@@ -15,19 +15,21 @@ namespace GameFramework.Taurus
 {
     public class GameMode : MonoBehaviour
     {
-        #region 属性
-        public static EventManager Event;
+		#region 属性
+		public static EventManager Event;
         public static GameStateManager State;
         public static NodeManager Node;
         public static ResourceManager Resource;
         public static UIManager UI;
         public static WebRequestManager WebRequest;
-		public static HotFixManager HotFix;
+		public static AudioManager Audio;
 
-        /// <summary>
-        /// 当前程序集
-        /// </summary>
-        public static System.Reflection.Assembly Assembly { get; private set; }
+	    public static HotFixManager HotFix;
+
+		/// <summary>
+		/// 当前程序集
+		/// </summary>
+		public static System.Reflection.Assembly Assembly { get; private set; }
 
         #region 资源
         /// <summary>
@@ -64,7 +66,10 @@ namespace GameFramework.Taurus
             Resource = GameFrameworkMode.GetModule<ResourceManager>();
             UI = GameFrameworkMode.GetModule<UIManager>();
             WebRequest = GameFrameworkMode.GetModule<WebRequestManager>();
+			Audio = GameFrameworkMode.GetModule<AudioManager>();
+
 			HotFix = GameFrameworkMode.GetModule<HotFixManager>();
+
 			#endregion
 
 			#region resource
@@ -76,6 +81,15 @@ namespace GameFramework.Taurus
 	        GameObject gameObjectPoolHelper = new GameObject("IGameObjectPoolHelper");
 	        gameObjectPoolHelper.transform.SetParent(transform);
 	        Resource.SetGameObjectPoolHelper(gameObjectPoolHelper.AddComponent<GameObjectPoolHelper>());
+			#endregion
+
+			#region auido
+			//设置音频播放
+			GameObject audioPlayer = new GameObject("AudioSourcePlayer");
+			audioPlayer.transform.SetParent(transform);
+			//添加AduioSource
+			Audio.SetDefaultAudioSource(audioPlayer.AddComponent<AudioSource>(), audioPlayer.AddComponent<AudioSource>(),
+				audioPlayer.AddComponent<AudioSource>());
 			#endregion
 
 			#region WebRequest
