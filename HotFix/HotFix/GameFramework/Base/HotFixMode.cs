@@ -6,6 +6,7 @@
         public static GameStateManager State;
         public static EventManager Event;
         public static UIManager UI;
+		public static DataTableManager DataTable;
         #endregion
 
         public HotFixMode()
@@ -16,10 +17,11 @@
             State = GameFrameworkMode.GetModule<GameStateManager>();
             Event = GameFrameworkMode.GetModule<EventManager>();
             UI = GameFrameworkMode.GetModule<UIManager>();
-            #endregion
+	        DataTable = GameFrameworkMode.GetModule<DataTableManager>();
+			#endregion
 
-            //从主框架中获取热更新模块
-            GameFramework.Taurus.HotFixManager hotFixManager =
+			//从主框架中获取热更新模块
+			GameFramework.Taurus.HotFixManager hotFixManager =
                 GameFramework.Taurus.GameFrameworkMode.GetModule<GameFramework.Taurus.HotFixManager>();
 
             #region 开启热更新流程
