@@ -96,6 +96,7 @@
     <Compile Include="Assets\GameFramework\Resource\ResourceEventArgs.cs" />
     <Compile Include="Assets\GameFramework\Resource\ResourceManager.cs" />
     <Compile Include="Assets\GameFramework\Resource\SceneEventArgs.cs" />
+    <Compile Include="Assets\GameFramework\Setting\SettingManager.cs" />
     <Compile Include="Assets\GameFramework\State\GameState.cs" />
     <Compile Include="Assets\GameFramework\State\GameStateAttribute.cs" />
     <Compile Include="Assets\GameFramework\State\GameStateContext.cs" />
