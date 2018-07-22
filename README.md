@@ -274,7 +274,12 @@ GameFrameworkMode.GetModule<AudioManager>().RemoveUISound("Assets/Audio/UI/defau
 同时支持动态设置
 ```csharp
 go.GetComponent<LocalizationText>().Text="GameName";
-```
+```  
+
+---
+#### 九、设置模块 `SettingMangaer`
+默认封装`PlayerPrefs`,使用方法类似。同时添加了`SetQuality`&`SetAllSoundVolume`&`SetBackgroundMusicVolume`&`SetUISoundVolume`&`SetSoundEffectVolume`等默认的设置  
+具体使用`GameFrameworkMode.GetModule<SettingMangaer>()`一目了然
 
 ---
 ### 内置工具
