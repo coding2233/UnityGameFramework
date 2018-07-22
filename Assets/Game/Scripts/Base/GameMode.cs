@@ -24,6 +24,7 @@ namespace GameFramework.Taurus
         public static WebRequestManager WebRequest;
 		public static AudioManager Audio;
 	    public static LocalizationManager Localization;
+		public static SettingManager Setting;
 
         /// <summary>
         /// 当前程序集
@@ -67,6 +68,7 @@ namespace GameFramework.Taurus
             WebRequest = GameFrameworkMode.GetModule<WebRequestManager>();
 			Audio = GameFrameworkMode.GetModule<AudioManager>();
 			Localization = GameFrameworkMode.GetModule<LocalizationManager>();
+			Setting = GameFrameworkMode.GetModule<SettingManager>();
 			#endregion
 
 			#region resource
