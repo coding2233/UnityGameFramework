@@ -59,6 +59,11 @@
     <Compile Include="GameFramework\Base\HotFixMode.cs" />
     <Compile Include="GameFramework\Base\IFixedUpdate.cs" />
     <Compile Include="GameFramework\Base\IUpdate.cs" />
+    <Compile Include="GameFramework\DataTable\DataTable.cs" />
+    <Compile Include="GameFramework\DataTable\DataTableBase.cs" />
+    <Compile Include="GameFramework\DataTable\DataTableManager.cs" />
+    <Compile Include="GameFramework\DataTable\IDataTable.cs" />
+    <Compile Include="GameFramework\DataTable\IDataTableRow.cs" />
     <Compile Include="GameFramework\Event\EventManager.cs" />
     <Compile Include="GameFramework\Event\GameEventArgs.cs" />
     <Compile Include="GameFramework\State\GameState.cs" />
