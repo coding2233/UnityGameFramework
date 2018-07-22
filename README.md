@@ -269,6 +269,14 @@ GameFrameworkMode.GetModule<AudioManager>().StopUISound();
 GameFrameworkMode.GetModule<AudioManager>().RemoveUISound("Assets/Audio/UI/default.wav");
 ```  
 
+---  
+#### 八、本地化管理模块 `LocalizationManager`
+将配置文件中的本地化文件，读取语言存为字典保存在`LocalizationManager`中，使用`LocalizationText`绑定在`UGUI`的`Text`组件上。
+同时支持动态设置
+```csharp
+go.GetComponent<LocalizationText>().Text="GameName";
+```
+
 ---
 ### 内置工具
 ---

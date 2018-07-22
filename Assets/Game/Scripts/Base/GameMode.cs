@@ -23,6 +23,7 @@ namespace GameFramework.Taurus
         public static UIManager UI;
         public static WebRequestManager WebRequest;
 		public static AudioManager Audio;
+	    public static LocalizationManager Localization;
 
 	    public static HotFixManager HotFix;
 
@@ -67,9 +68,9 @@ namespace GameFramework.Taurus
             UI = GameFrameworkMode.GetModule<UIManager>();
             WebRequest = GameFrameworkMode.GetModule<WebRequestManager>();
 			Audio = GameFrameworkMode.GetModule<AudioManager>();
-
 			HotFix = GameFrameworkMode.GetModule<HotFixManager>();
-
+			Localization = GameFrameworkMode.GetModule<LocalizationManager>();
+			
 			#endregion
 
 			#region resource
