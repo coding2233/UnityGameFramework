@@ -27,7 +27,7 @@ namespace GameFramework.Taurus
         private bool _dataTableModule = true;
         private bool _nodeDataModule = true;
         private bool _stepModule = true;
-        private bool _debugModule = true;
+        private bool _settingModule = true;
 
         ////Color.cyan;
         private Color _defaultColor;
@@ -221,12 +221,12 @@ namespace GameFramework.Taurus
             GUI.color = _defaultColor;
             GUILayout.BeginHorizontal();
             GUILayout.Space(12);
-            _debugModule = EditorGUILayout.Foldout(_debugModule, "Debug Module", true);
+            _settingModule = EditorGUILayout.Foldout(_settingModule, "Setting Module", true);
             if (EditorApplication.isPlaying)
-                _debugModule = !EditorApplication.isPlaying;
+                _settingModule = !EditorApplication.isPlaying;
             GUILayout.EndHorizontal();
-            if (_debugModule)
-                DrawDebugGUI();
+            if (_settingModule)
+                DrawSettingGUI();
             GUILayout.EndVertical();
 
             #endregion
@@ -457,13 +457,13 @@ namespace GameFramework.Taurus
             //GUILayout.EndVertical();
         }
 
-        //绘制调试界面
-        void DrawDebugGUI()
+        //绘制设置界面
+        void DrawSettingGUI()
         {
             GUILayout.BeginVertical("HelpBox");
 
             GUI.color = _gameMode.DebugEnable ? Color.white : Color.gray;
-            _gameMode.DebugEnable = GUILayout.Toggle(_gameMode.DebugEnable, "Enable");
+            _gameMode.DebugEnable = GUILayout.Toggle(_gameMode.DebugEnable, "Debug Enable");
             GUI.color = Color.white;
 
             GUILayout.EndVertical();
