@@ -25,6 +25,7 @@ namespace GameFramework.Taurus
 		public static AudioManager Audio;
 	    public static LocalizationManager Localization;
 		public static SettingManager Setting;
+        public static DebugManager Debug;
 
         /// <summary>
         /// 当前程序集
@@ -49,12 +50,15 @@ namespace GameFramework.Taurus
 		/// 资源更新的路径
 		/// </summary>
 		public string ResUpdatePath = "";
-		#endregion
+        /// <summary>
+        /// 是否开启调试器
+        /// </summary>
+        public bool DebugEnable = true;
+        #endregion
 
-		#endregion
+        #endregion
 
-
-		IEnumerator Start()
+        IEnumerator Start()
 		{
 			//默认不销毁
 			DontDestroyOnLoad(gameObject);
@@ -69,6 +73,7 @@ namespace GameFramework.Taurus
 			Audio = GameFrameworkMode.GetModule<AudioManager>();
 			Localization = GameFrameworkMode.GetModule<LocalizationManager>();
 			Setting = GameFrameworkMode.GetModule<SettingManager>();
+            Debug = GameFrameworkMode.GetModule<DebugManager>();
 			#endregion
 
 			#region resource
@@ -108,9 +113,15 @@ namespace GameFramework.Taurus
             yield return new WaitForEndOfFrame();
             State.SetStateStart();
             #endregion
+
+            #region Debug
+            GameObject debugHelper = new GameObject("DebugHelper");
+            debugHelper.transform.SetParent(transform);
+            Debug.SetDebugHelper(debugHelper.AddComponent<DebugHelper>());
+            Debug.Enable = DebugEnable;
+            #endregion
         }
-
-
+        
 		private void Update()
 		{
 			GameFrameworkMode.Update();
@@ -125,6 +136,5 @@ namespace GameFramework.Taurus
 		{
 			GameFrameworkMode.ShutDown();
 		}
-
 	}
 }

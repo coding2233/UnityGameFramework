@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 274626dace099bf4597fe6bc0ea258e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsEditorMode: 1
-  DefaultPathType: 0
-  AssetBundleName: AssetBundles/AssetBundles
+  ResUpdateType: 2
+  LocalPathType: 0
+  ResUpdatePath: 
+  DebugEnable: 1
