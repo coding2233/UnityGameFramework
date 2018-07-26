@@ -41,11 +41,16 @@ namespace GameFramework.Taurus
         private Vector2 _scrollDrawCallView = Vector2.zero;
         //System
         private Vector2 _scrollSystemView = Vector2.zero;
+        
         #endregion
-
-        private void Awake()
+        
+        private void OnEnable()
         {
             Application.logMessageReceived += LogCallback;
+        }
+        private void OnDisable()
+        {
+            Application.logMessageReceived -= LogCallback;
         }
         private void Update()
         {
@@ -62,11 +67,7 @@ namespace GameFramework.Taurus
                 _windowRect = GUI.Window(0, _windowRect, ShrinkGUIWindow, "DEBUG");
             }
         }
-        private void OnDestory()
-        {
-            Application.logMessageReceived -= LogCallback;
-        }
-
+        
         /// <summary>
         /// 刷新FPS
         /// </summary>
