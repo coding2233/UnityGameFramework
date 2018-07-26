@@ -15,10 +15,36 @@ namespace GameFramework.Taurus
 {
 	public sealed class SettingManager : GameFrameworkModule
 	{
-		#region 属性
-		#endregion
+        #region 属性
+        private bool _debugEnable = true;
+        private DebugHelper _debugHelper;
+        #endregion
+        
+        /// <summary>
+        /// 调试器可见性
+        /// </summary>
+        public bool DebugEnable
+        {
+            get
+            {
+                return _debugEnable;
+            }
+            set
+            {
+                _debugEnable = value;
+                _debugHelper.enabled = _debugEnable;
+            }
+        }
 
-		public int GetQuality()
+        /// <summary>
+        /// 设置调试器帮助类
+        /// </summary>
+        public void SetDebugHelper(DebugHelper helper)
+        {
+            _debugHelper = helper;
+        }
+
+        public int GetQuality()
 		{
 			return PlayerPrefs.GetInt("QualitySettings", (int)QualitySettings.GetQualityLevel());
 		}

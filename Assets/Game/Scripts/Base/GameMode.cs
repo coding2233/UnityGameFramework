@@ -51,12 +51,15 @@ namespace GameFramework.Taurus
 		/// 资源更新的路径
 		/// </summary>
 		public string ResUpdatePath = "";
-		#endregion
+        /// <summary>
+        /// 是否开启调试器
+        /// </summary>
+        public bool DebugEnable = true;
+        #endregion
 
-		#endregion
+        #endregion
 
-
-		IEnumerator Start()
+        IEnumerator Start()
 		{
 			//默认不销毁
 			DontDestroyOnLoad(gameObject);
@@ -113,9 +116,15 @@ namespace GameFramework.Taurus
             yield return new WaitForEndOfFrame();
             State.SetStateStart();
             #endregion
+
+            #region Setting
+            GameObject debugHelper = new GameObject("DebugHelper");
+            debugHelper.transform.SetParent(transform);
+            Setting.SetDebugHelper(debugHelper.AddComponent<DebugHelper>());
+            Setting.DebugEnable = DebugEnable;
+            #endregion
         }
-
-
+        
 		private void Update()
 		{
 			GameFrameworkMode.Update();
@@ -130,6 +139,5 @@ namespace GameFramework.Taurus
 		{
 			GameFrameworkMode.ShutDown();
 		}
-
 	}
 }
