@@ -45,14 +45,14 @@ namespace GameFramework.Taurus
 		#endregion
 
 
-		public KcpChannel(string ip,int port,Action<byte[]> reveiveHandler)
+		public KcpChannel(int port,Action<byte[]> reveiveHandler)
 		{
 			_allEndPoint = new IPEndPoint(IPAddress.Parse("255.255.255.255"), port);
 			_recEndPoint = new IPEndPoint(IPAddress.Any, 0);
 
 			_reveiveHandler = reveiveHandler;
 
-			_udpClient = new UdpClient(new IPEndPoint(IPAddress.Parse(ip), port));
+			_udpClient = new UdpClient(new IPEndPoint(IPAddress.Any, port));
 			_kcp = new KCP((UInt32) new Random((int) DateTime.Now.Ticks).Next(1, Int32.MaxValue),
 				UdpSendData);
 
@@ -62,13 +62,22 @@ namespace GameFramework.Taurus
 
 			_receiveMeesages = new Queue<byte[]>();
 
-			Thread revThread = new Thread(ReceiveMessage);
-			revThread.Start();
-			Thread updataThread = new Thread(Update);
+		    _udpClient.BeginReceive(ReceiveMessage, this);
+            
+            Thread updataThread = new Thread(Update);
 			updataThread.Start();
-		}
+		    updataThread.IsBackground = true;
+        }
 
-		public void Connect(string ip, int port)
+	    private void ReceiveMessage(IAsyncResult asyncCallback)
+	    {
+	        byte[] datas = _udpClient.EndReceive(asyncCallback,ref _recEndPoint);
+	        _receiveMeesages.Enqueue(datas);
+	        _udpClient?.BeginReceive(ReceiveMessage,this);
+	    }
+
+
+	    public void Connect(string ip, int port)
 		{
 			_targetEndPoinnt = new IPEndPoint(IPAddress.Parse(ip), port);
 			_currentEndPoint = _targetEndPoinnt;
@@ -86,42 +95,34 @@ namespace GameFramework.Taurus
 				_currentEndPoint = _allEndPoint;
 			else
 				_currentEndPoint = _targetEndPoinnt;
-			_kcp?.Send(datas);
+            _kcp?.Send(datas);
 		}
 
-		private void ReceiveMessage()
-		{
-			while (true)
-			{
-				byte[] datas = _udpClient.Receive(ref _recEndPoint);
-				if (datas != null)
-				{
-					_receiveMeesages.Enqueue(datas);
-				}
-			}
-		}
-
+	
 		private void Update()
 		{
-			while (_receiveMeesages.Count > 0)
-			{
-				var buf = _receiveMeesages.Dequeue();
+		    while (true)
+		    {
+		        if (_receiveMeesages.Count > 0)
+		        {
+		            var buf = _receiveMeesages.Dequeue();
 
-				_kcp.Input(buf);
-				// mNeedUpdateFlag = true;
+		            _kcp.Input(buf);
+		            // mNeedUpdateFlag = true;
 
-				for (var size = _kcp.PeekSize(); size > 0; size = _kcp.PeekSize())
-				{
-					var buffer = new byte[size];
-					if (_kcp.Recv(buffer) > 0)
-					{
-						_reveiveHandler(buffer);
-					}
-				}
-			}
+		            for (var size = _kcp.PeekSize(); size > 0; size = _kcp.PeekSize())
+		            {
+		                var buffer = new byte[size];
+		                if (_kcp.Recv(buffer) > 0)
+		                {
+		                    _reveiveHandler(buffer);
+		                }
+		            }
+		        }
 
-			_kcp.Update(iclock());
-			Thread.Sleep(10);
+		        _kcp.Update(iclock());
+		        Thread.Sleep(10);
+		    }
 		}
 
 
