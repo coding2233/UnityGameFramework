@@ -1,0 +1,9 @@
+syntax = "proto3";
+//package GameFramework.Taurus;
+
+message ProtoTest 
+{
+	int32 ID = 1;
+	string	Commit = 2;	//提交
+	string	Message = 3;	//信息
+}

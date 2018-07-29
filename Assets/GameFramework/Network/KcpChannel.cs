@@ -62,18 +62,18 @@ namespace GameFramework.Taurus
 
 			_receiveMeesages = new Queue<byte[]>();
 
-		    _udpClient.BeginReceive(ReceiveMessage, this);
+		    _udpClient.BeginReceive(UdpReceiveMessage, this);
             
             Thread updataThread = new Thread(Update);
 			updataThread.Start();
 		    updataThread.IsBackground = true;
         }
 
-	    private void ReceiveMessage(IAsyncResult asyncCallback)
+	    private void UdpReceiveMessage(IAsyncResult asyncCallback)
 	    {
 	        byte[] datas = _udpClient.EndReceive(asyncCallback,ref _recEndPoint);
 	        _receiveMeesages.Enqueue(datas);
-	        _udpClient?.BeginReceive(ReceiveMessage,this);
+	        _udpClient?.BeginReceive(UdpReceiveMessage, this);
 	    }
 
 
@@ -97,8 +97,7 @@ namespace GameFramework.Taurus
 				_currentEndPoint = _targetEndPoinnt;
             _kcp?.Send(datas);
 		}
-
-	
+		
 		private void Update()
 		{
 		    while (true)
@@ -113,9 +112,9 @@ namespace GameFramework.Taurus
 		            for (var size = _kcp.PeekSize(); size > 0; size = _kcp.PeekSize())
 		            {
 		                var buffer = new byte[size];
-		                if (_kcp.Recv(buffer) > 0)
-		                {
-		                    _reveiveHandler(buffer);
+						if (_kcp.Recv(buffer)>0)
+						{
+							_reveiveHandler(buffer);
 		                }
 		            }
 		        }
@@ -124,6 +123,10 @@ namespace GameFramework.Taurus
 		        Thread.Sleep(10);
 		    }
 		}
+
+		//private void ReceiveMessage(byt)
+
+
 
 
 	}

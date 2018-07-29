@@ -279,7 +279,11 @@ go.GetComponent<LocalizationText>().Text="GameName";
 ---
 #### 九、设置模块 `SettingMangaer`
 默认封装`PlayerPrefs`,使用方法类似。同时添加了`SetQuality`&`SetAllSoundVolume`&`SetBackgroundMusicVolume`&`SetUISoundVolume`&`SetSoundEffectVolume`等默认的设置  
-具体使用`GameFrameworkMode.GetModule<SettingMangaer>()`一目了然
+具体使用`GameFrameworkMode.GetModule<SettingMangaer>()`一目了然  
+
+---  
+#### 十、网络模块 `NetworkManager`
+正在增加中，首先会封装局域网内的连接通信，互联网后面增加。目前使用`kcp`将udp转为可靠传输，传输协议使用`Protobuf`
 
 ---
 ### 内置工具
