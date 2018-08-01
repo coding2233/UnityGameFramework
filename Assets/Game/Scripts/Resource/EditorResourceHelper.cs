@@ -32,7 +32,7 @@ namespace GameFramework.Taurus
         /// <typeparam name="T"></typeparam>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        public T LoadAsset<T>(string assetName) where T : Object
+        public T LoadAsset<T>(string assetBundleName,string assetName) where T : Object
         {
             return AssetDatabase.LoadAssetAtPath<T>(assetName);
         }
@@ -42,7 +42,7 @@ namespace GameFramework.Taurus
         /// 异步加载资源
         /// </summary>
         /// <param name="assetName">资源名称</param>
-        public void LoadAssetAsync<T>(string assetName, Action<string, UnityEngine.Object> asyncCallback) where T : Object
+        public void LoadAssetAsync<T>(string assetBundleName,string assetName, Action<string, UnityEngine.Object> asyncCallback) where T : Object
         {
 	        asyncCallback.Invoke(assetName,AssetDatabase.LoadAssetAtPath<T>(assetName));
         }
@@ -52,7 +52,7 @@ namespace GameFramework.Taurus
 	    /// </summary>
 	    /// <param name="assetName">资源名称</param>
 	    /// <param name="allAssets">是否卸载调所有资源</param>
-	    public void UnloadAsset(string assetName, bool allAssets)
+	    public void UnloadAsset(string assetBundleName, bool unload)
 	    {
 	    }
 
@@ -60,7 +60,7 @@ namespace GameFramework.Taurus
 		/// 异步加载场景
 		/// </summary>
 		/// <param name="sceneName"></param>
-		public AsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
+		public AsyncOperation LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
         {
             return UnitySceneManager.LoadSceneAsync(sceneName, mode);
         }

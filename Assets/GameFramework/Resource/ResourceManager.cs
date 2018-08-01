@@ -110,37 +110,40 @@ namespace GameFramework.Taurus
         }
 
         /// <summary>
-		/// 加载资源
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="assetName"></param>
-		/// <returns></returns>
-		public T LoadAsset<T>(string assetName) where T : UnityEngine.Object
+        /// 加载资源
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetBundleName"></param>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
+        public T LoadAsset<T>(string assetBundleName,string assetName) where T : UnityEngine.Object
 		{
-			if (_resourceHelper == null)
-				return null;
-
-			return _resourceHelper.LoadAsset<T>(assetName);
+			return _resourceHelper?.LoadAsset<T>(assetBundleName,assetName);
 		}
-		/// <summary>
-		/// 异步加载资源
-		/// </summary>
-		/// <typeparam name="T">资源的类型</typeparam>
-		/// <param name="assetName">资源的名称</param>
-	    public void LoadAssetAsync<T>(string assetName) where T : UnityEngine.Object
+
+        /// <summary>
+        /// 异步加载资源
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetBundleName"></param>
+        /// <param name="assetName"></param>
+        public void LoadAssetAsync<T>(string assetBundleName,string assetName) where T : UnityEngine.Object
 	    {
-		    _resourceHelper.LoadAssetAsync<T>(assetName, LoadAssetAsyncCallback);
+		    _resourceHelper?.LoadAssetAsync<T>(assetBundleName,assetName, LoadAssetAsyncCallback);
 	    }
 
-	    /// <summary>
-		/// 异步加载场景
-		/// </summary>
-		/// <param name="sceneName"></param>
-		public AsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
+        /// <summary>
+        /// 异步加载场景
+        /// </summary>
+        /// <param name="assetBundleName"></param>
+        /// <param name="sceneName"></param>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        public AsyncOperation LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
 		{
 			if (_resourceHelper == null)
 				return null;
-		    AsyncOperation asyncOperation= _resourceHelper.LoadSceneAsync(sceneName, mode);
+		    AsyncOperation asyncOperation= _resourceHelper.LoadSceneAsync(assetBundleName,sceneName, mode);
 		    _sceneAsyncOperations.Add(sceneName, asyncOperation);
 		    return asyncOperation;
 
@@ -168,14 +171,15 @@ namespace GameFramework.Taurus
 			_gameObjectPoolHelper = helper;
 		}
 
-		/// <summary>
-		/// 加载预设信息
-		/// </summary>
-		/// <param name="assetName"></param>
-		/// <param name="prefabInfo"></param>
-		public void AddPrefab(string assetName, PoolPrefabInfo prefabInfo)
+        /// <summary>
+        /// 加载预设信息
+        /// </summary>
+        /// <param name="assetBundleName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="prefabInfo"></param>
+        public void AddPrefab(string assetBundleName, string assetName, PoolPrefabInfo prefabInfo)
 		{
-			_gameObjectPoolHelper.AddPrefab(assetName, prefabInfo);
+			_gameObjectPoolHelper.AddPrefab(assetBundleName,assetName, prefabInfo);
 		}
 
 		/// <summary>
