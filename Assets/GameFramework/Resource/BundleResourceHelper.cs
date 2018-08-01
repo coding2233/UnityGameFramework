@@ -103,18 +103,10 @@ namespace GameFramework.Taurus
 			    _allAssetBundles[assetName] = new KeyValuePair<AssetBundle, string[]>(assetBundle, assetNames);
 			}
 
-	        //加载相关依赖
-	        string[] dependencies = _mainfest.GetAllDependencies(assetBundleName);
-		    List<AssetBundle> dependenciesAssetBundle = new List<AssetBundle>();
-            foreach (var item in dependencies)
-	        {
-	            string assetBundlePath = Path.Combine(_readPath, item);
-	            dependenciesAssetBundle.Add(LoadAssetBundle(assetBundlePath));
-	        }
-	        T asset = assetBundle.LoadAsset<T>(assetName);
-            //卸载引用的assetbundle
-		    foreach (var item in dependenciesAssetBundle)
-		        item.Unload(false);
+            //加载依赖项
+		    LoadDependenciesAssetBundel(assetBundleName);
+            //加载资源
+            T asset = assetBundle.LoadAsset<T>(assetName);
             
             return asset;
 		}
@@ -153,23 +145,14 @@ namespace GameFramework.Taurus
                         //存储assetbundle
                         _allAssetBundles[assetName] = new KeyValuePair<AssetBundle, string[]>(assetBundle, assetNames);
 
-                        //加载相关依赖 依赖暂时不异步加载了
-                        string[] dependencies = _mainfest.GetAllDependencies(assetBundleName);
-                        List<AssetBundle> dependenciesAssetBundle = new List<AssetBundle>();
-                        foreach (var item in dependencies)
-                        {
-                            string dependenciesBundlePath = Path.Combine(_readPath, item);
-                            dependenciesAssetBundle.Add(LoadAssetBundle(dependenciesBundlePath));
-                        }
+                        //加载依赖项
+                        LoadDependenciesAssetBundel(assetBundleName);
 
                         //assetbundle异步加载资源
                         AssetBundleRequest requetAsset = assetBundle.LoadAssetAsync<T>(assetName);
                         requetAsset.completed += (asyncOperation) =>
                         {
                             asyncCallback.Invoke(assetName, requetAsset.asset);
-                            //卸载引用的assetbundle
-                            foreach (var item in dependenciesAssetBundle)
-                                item.Unload(false);
                         };
 
                     };
@@ -182,23 +165,14 @@ namespace GameFramework.Taurus
             }
             else
             {
-                //加载相关依赖 依赖暂时不异步加载了
-                string[] dependencies = _mainfest.GetAllDependencies(assetBundleName);
-                List<AssetBundle> dependenciesAssetBundle = new List<AssetBundle>();
-                foreach (var item in dependencies)
-                {
-                    string dependenciesBundlePath = Path.Combine(_readPath, item);
-                    dependenciesAssetBundle.Add(LoadAssetBundle(dependenciesBundlePath));
-                }
+                //加载依赖项
+                LoadDependenciesAssetBundel(assetBundleName);
 
                 //assetbundle异步加载资源
                 AssetBundleRequest requetAsset = assetBundle.LoadAssetAsync<T>(assetName);
                 requetAsset.completed += (asyncOperation) =>
                 {
                     asyncCallback.Invoke(assetName, requetAsset.asset);
-                    //卸载引用的assetbundle
-                    foreach (var item in dependenciesAssetBundle)
-                        item.Unload(false);
                 };
             }
         }
@@ -242,21 +216,13 @@ namespace GameFramework.Taurus
 		        createRequest.completed += (operation) =>
 		        {
                     AssetBundle assetBundle = createRequest.assetBundle;
-		            //加载相关依赖 依赖暂时不异步加载了
-		            string[] dependencies = _mainfest.GetAllDependencies(assetBundleName);
-		            List<AssetBundle> dependenciesAssetBundle = new List<AssetBundle>();
-		            foreach (var item in dependencies)
-		            {
-		                string dependenciesBundlePath = Path.Combine(_readPath, item);
-		                dependenciesAssetBundle.Add(LoadAssetBundle(dependenciesBundlePath));
-		            }
+		            //加载依赖项
+		            LoadDependenciesAssetBundel(assetBundleName);
 
-		            asyncOperation= SceneManager.LoadSceneAsync(sceneName, mode);
+                    asyncOperation = SceneManager.LoadSceneAsync(sceneName, mode);
                     //场景加载完成卸载相关的引用
 		            asyncOperation.completed += (operation02) =>
 		            {
-		                foreach (var item in dependenciesAssetBundle)
-		                    item.Unload(false);
                         assetBundle.Unload(false);
 		            };
 		        };
@@ -350,6 +316,33 @@ namespace GameFramework.Taurus
 
 	        return assetBundleCreateRequest;
 	    }
+
+        //加载引用的assetbundle --引用的assetbundle不卸载
+	    private void LoadDependenciesAssetBundel(string assetBundleName)
+	    {
+	        //加载相关依赖 依赖暂时不异步加载了
+	        string[] dependencies = _mainfest.GetAllDependencies(assetBundleName);
+	        foreach (var item in dependencies)
+	        {
+	            if (_allAssetBundles.ContainsKey(item))
+	                continue;
+
+	            string dependenciesBundlePath = Path.Combine(_readPath, item);
+	            AssetBundle assetBundle= LoadAssetBundle(dependenciesBundlePath);
+
+	            //存储资源名称
+	            string[] assetNames = assetBundle.GetAllAssetNames();
+	            if (assetBundle.isStreamedSceneAssetBundle)
+	                assetNames = assetBundle.GetAllScenePaths();
+	            foreach (var name in assetNames)
+	            {
+	                if (!_allAssets.ContainsKey(name))
+	                    _allAssets.Add(name, assetBundle);
+	            }
+	            //存储assetbundle
+	            _allAssetBundles[item] = new KeyValuePair<AssetBundle, string[]>(assetBundle, assetNames);
+            }
+        }
 
 	    #endregion
 
