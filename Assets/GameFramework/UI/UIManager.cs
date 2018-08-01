@@ -112,12 +112,14 @@ namespace GameFramework.Taurus
 			if (_stackUiAsset.Count > 0)
 			{
 			    UIViewAttribute uiViewAttribute = _stackUiAsset.Peek();
-				UIView lastUiView = GetUiView(uiViewAttribute);
-				lastUiView.OnResume();
-
-				//触发恢复事件
-				_uiResumeArgs.UIView = lastUiView;
-				_event.Trigger(this, _uiResumeArgs);
+			    UIView lastUiView;
+			    if (_allUiViews.TryGetValue(uiViewAttribute, out lastUiView))
+			    {
+			        lastUiView.OnResume();
+			        //触发恢复事件
+			        _uiResumeArgs.UIView = lastUiView;
+			        _event.Trigger(this, _uiResumeArgs);
+                }
 			}
 		}
 
