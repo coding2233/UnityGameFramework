@@ -30,9 +30,9 @@ namespace GameFramework.Taurus
 	    /// <typeparam name="T"></typeparam>
 	    /// <param name="data">配置表的数据</param>
 	    /// <returns></returns>
-		public void LoadDataTable<T>(string dataTablePath) where T :class, IDataTableRow,new()
+		public void LoadDataTable<T>(string assetBundleName,string dataTablePath) where T :class, IDataTableRow,new()
 	    {
-		    string data= _resource.LoadAsset<TextAsset>(dataTablePath).text;
+		    string data= _resource.LoadAsset<TextAsset>(assetBundleName,dataTablePath).text;
 		    DataTable<T> dataTable = new DataTable<T>();
 		    string[] rows = data.Split('\n');
 		    foreach (var item in rows)

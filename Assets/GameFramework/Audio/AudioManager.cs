@@ -54,32 +54,32 @@ namespace GameFramework.Taurus
 		/// 添加背景音乐
 		/// </summary>
 		/// <param name="audioClipPath"></param>
-		public void AddBackroundMusic(string audioClipPath)
+		public void AddBackroundMusic(string assetBundleName,string audioClipPath)
 		{
-			AddAuioClip(audioClipPath, _backGroundMusicClips);
+			AddAuioClip(assetBundleName,audioClipPath, _backGroundMusicClips);
 		}
 		/// <summary>
 		/// 添加UI音效
 		/// </summary>
 		/// <param name="audioClipPath"></param>
-		public void AddUISound(string audioClipPath)
+		public void AddUISound(string assetBundleName,string audioClipPath)
 		{
-			AddAuioClip(audioClipPath, _uiSoundClips);
+			AddAuioClip(assetBundleName,audioClipPath, _uiSoundClips);
 		}
 		/// <summary>
 		/// 添加音效
 		/// </summary>
 		/// <param name="audioClipPath"></param>
-		public void AddSoundEffect(string audioClipPath)
+		public void AddSoundEffect(string assetBundleName,string audioClipPath)
 		{
-			AddAuioClip(audioClipPath, _soundEffectClips);
+			AddAuioClip(assetBundleName, audioClipPath, _soundEffectClips);
 		}
 		
 		/// <summary>
 		/// 播放在GameObject上的声音
 		/// </summary>
 		/// <param name="audioClipPath"></param>
-		public void PlayGameObjectSound(GameObject go,string audioClipPath)
+		public void PlayGameObjectSound(GameObject go,string assetBundleName,string audioClipPath)
 		{
 			AudioSource audioSource=go.GetComponent<AudioSource>();
 			if (audioSource==null)
@@ -87,7 +87,7 @@ namespace GameFramework.Taurus
 				audioSource = go.AddComponent<AudioSource>();
 			}
 
-			audioSource.clip = _resourceManager?.LoadAsset<AudioClip>(audioClipPath);
+			audioSource.clip = _resourceManager?.LoadAsset<AudioClip>(assetBundleName,audioClipPath);
 			if (audioSource.clip != null)
 				audioSource.Play();
 		}
@@ -109,9 +109,8 @@ namespace GameFramework.Taurus
 		/// <param name="audioClipPath">音频的资源路径</param>
 		public void PlayBackgroundMusic(string audioClipPath,bool addAudioClip=false)
 		{
-			if (addAudioClip)
-				AddBackroundMusic(audioClipPath);
-			PlayAudioClip(audioClipPath, _backGroundMusicClips, _backgroundMusic);
+            if(_backGroundMusicClips.ContainsKey(audioClipPath))
+			    PlayAudioClip(audioClipPath, _backGroundMusicClips, _backgroundMusic);
 		}
 
 		/// <summary>
@@ -137,9 +136,8 @@ namespace GameFramework.Taurus
 		/// <param name="audioClipPath"></param>
 		public void PlayUISound(string audioClipPath,bool addAudioClip=false)
 		{
-			if (addAudioClip)
-				AddUISound(audioClipPath);
-			PlayAudioClip(audioClipPath, _uiSoundClips, _uiSound);
+            if(_uiSoundClips.ContainsKey(audioClipPath))
+			    PlayAudioClip(audioClipPath, _uiSoundClips, _uiSound);
 		}
 
 		/// <summary>
@@ -166,9 +164,8 @@ namespace GameFramework.Taurus
 		/// <param name="addAudioClip"></param>
 		public void PlaySoundEffect(string audioClipPath,bool addAudioClip=false)
 		{
-			if (addAudioClip)
-				AddSoundEffect(audioClipPath);
-			PlayAudioClip(audioClipPath, _soundEffectClips, _soundEffect);
+			if (_soundEffectClips.ContainsKey(audioClipPath))
+			    PlayAudioClip(audioClipPath, _soundEffectClips, _soundEffect);
 		}
 
 		/// <summary>
@@ -193,11 +190,11 @@ namespace GameFramework.Taurus
 		#region 内部函数
 
 		//添加音频
-		private bool AddAuioClip(string audioClipPath, Dictionary<string, AudioClip> clips)
+		private bool AddAuioClip(string assetBundleName,string audioClipPath, Dictionary<string, AudioClip> clips)
 		{
 			if (!clips.ContainsKey(audioClipPath))
 			{
-				AudioClip audioClip = _resourceManager?.LoadAsset<AudioClip>(audioClipPath);
+				AudioClip audioClip = _resourceManager?.LoadAsset<AudioClip>(assetBundleName,audioClipPath);
 				if (audioClip != null)
 				{
 					clips.Add(audioClipPath, audioClip);

@@ -21,13 +21,13 @@ namespace HotFix.Taurus
         //资源管理器
         private GameFramework.Taurus.ResourceManager _resource;
         //ui堆栈
-        private Stack<UiAsset> _stackUiAsset = new Stack<UiAsset>();
+        private Stack<UIViewAttribute> _stackUiAsset = new Stack<UIViewAttribute>();
         //所有的uiview
-        private readonly Dictionary<UiAsset, UIView> _allUiViews = new Dictionary<UiAsset, UIView>();
+        private readonly Dictionary<UIViewAttribute, UIView> _allUiViews = new Dictionary<UIViewAttribute, UIView>();
         //默认的uipath路径
-        private readonly Dictionary<int, string> _uiAssetPath = new Dictionary<int, string>();
+        private readonly Dictionary<int, UIViewAttribute> _uiAssetPath = new Dictionary<int, UIViewAttribute>();
         //所有的uiAsset
-        private readonly Dictionary<int, UiAsset> _allUiAssets = new Dictionary<int, UiAsset>();
+        private readonly Dictionary<int, UIViewAttribute> _allUiAssets = new Dictionary<int, UIViewAttribute>();
         #region 构造函数
         public UIManager()
         {
@@ -39,19 +39,17 @@ namespace HotFix.Taurus
         #region 外部接口
         public void Push<T>(bool allowMulti = false, params object[] parameters) where T : UIView
         {
-            string assetPath = CheckAssetPath(typeof(T));
-            if (string.IsNullOrEmpty(assetPath))
+            UIViewAttribute uiViewAttribute = CheckAssetPath(typeof(T));
+            if (uiViewAttribute == null)
                 return;
-
-            int hashCode = typeof(T).GetHashCode();
-
+            
             if (_stackUiAsset.Count > 0)
             {
-                UiAsset uiAsset = _stackUiAsset.Peek();
+                UIViewAttribute lastUiViewAttribute = _stackUiAsset.Peek();
                 //如果界面已经打开 则不在执行
-                if (uiAsset.AssetPath == assetPath && !allowMulti)
+                if (Equals(lastUiViewAttribute, uiViewAttribute) && !allowMulti)
                     return;
-                IUIView uiView = GetUiView<T>(uiAsset);
+                IUIView uiView = GetUiView<T>(lastUiViewAttribute);
 
                 ////触发暂停事件
                 //_uiPauseArgs.UIView = uiView;
@@ -60,20 +58,13 @@ namespace HotFix.Taurus
                 uiView.OnPause();
             }
 
-            UiAsset newUiAsset = null;
-            if (!allowMulti)
-            {
-                if (!_allUiAssets.TryGetValue(hashCode, out newUiAsset))
-                {
-                    newUiAsset = new UiAsset(assetPath);
-                    _allUiAssets[hashCode] = newUiAsset;
-                }
-            }
-            else
-                newUiAsset = new UiAsset(assetPath);
+            UIViewAttribute newUIViewAttribute = uiViewAttribute;
+            if (allowMulti)
+                newUIViewAttribute = new UIViewAttribute(uiViewAttribute.AssetBundleName, uiViewAttribute.ViewPath);
 
-            _stackUiAsset.Push(newUiAsset);
-            UIView newUiView = GetUiView<T>(newUiAsset);
+
+            _stackUiAsset.Push(newUIViewAttribute);
+            UIView newUiView = GetUiView<T>(newUIViewAttribute);
             newUiView.OnEnter(parameters);
 
             ////触发打开事件
@@ -87,9 +78,9 @@ namespace HotFix.Taurus
             //移除当前UI
             if (_stackUiAsset.Count > 0)
             {
-                UiAsset lastUiAsset = _stackUiAsset.Pop();
+                UIViewAttribute lastUIViewAttribute = _stackUiAsset.Pop();
                 UIView lastUiView;
-                if (_allUiViews.TryGetValue(lastUiAsset, out lastUiView))
+                if (_allUiViews.TryGetValue(lastUIViewAttribute, out lastUiView))
                 {
                     ////触发关闭事件
                     //_uiExitArgs.UIView = lastUiView;
@@ -98,7 +89,7 @@ namespace HotFix.Taurus
                     lastUiView.OnExit();
                     if (isDestory)
                     {
-                        _allUiViews.Remove(lastUiAsset);
+                        _allUiViews.Remove(lastUIViewAttribute);
                         MonoBehaviour.Destroy(lastUiView.gameObject);
                     }
                     else
@@ -108,8 +99,8 @@ namespace HotFix.Taurus
 
             if (_stackUiAsset.Count > 0)
             {
-                UiAsset uiAsset = _stackUiAsset.Peek();
-                if (_allUiViews.TryGetValue(uiAsset, out var lastUiView))
+                UIViewAttribute uiViewAttribute = _stackUiAsset.Peek();
+                if (_allUiViews.TryGetValue(uiViewAttribute, out var lastUiView))
                     lastUiView.OnResume();
 
                 ////触发恢复事件
@@ -134,34 +125,32 @@ namespace HotFix.Taurus
         }
 
         //检查路径
-        private string CheckAssetPath(Type t)
+        private UIViewAttribute CheckAssetPath(Type t)
         {
             int hashCode = t.GetHashCode();
 
-            string assetPath;
-            if (!_uiAssetPath.TryGetValue(hashCode, out assetPath))
+            UIViewAttribute uiViewAttribute = null;
+            if (!_uiAssetPath.TryGetValue(hashCode, out uiViewAttribute))
             {
                 object[] attrs = t.GetCustomAttributes(typeof(UIViewAttribute), false);
-                if (attrs == null || attrs.Length == 0)
-                    return "";
-                UIViewAttribute uiViewAttribute = (UIViewAttribute)attrs[0];
-                if (string.IsNullOrEmpty(uiViewAttribute.ViewPath))
-                    return "";
-
-                assetPath = uiViewAttribute.ViewPath;
-                _uiAssetPath[hashCode] = uiViewAttribute.ViewPath;
+                if (attrs.Length == 0)
+                    return null;
+                uiViewAttribute = (UIViewAttribute)attrs[0];
+                if (string.IsNullOrEmpty(uiViewAttribute.ViewPath)
+                    || string.IsNullOrEmpty(uiViewAttribute.AssetBundleName))
+                    return null;
             }
-            return assetPath;
+            return uiViewAttribute;
         }
 
 
         //获取ui界面
-        private UIView GetUiView<T>(UiAsset uiAsset) where T:UIView
+        private UIView GetUiView<T>(UIViewAttribute uiViewAttribute) where T:UIView
         {
             UIView uiView;
-            if (!_allUiViews.TryGetValue(uiAsset, out uiView))
+            if (!_allUiViews.TryGetValue(uiViewAttribute, out uiView))
             {
-                GameObject uiViewSource = _resource.LoadAsset<GameObject>(uiAsset.AssetPath);
+                GameObject uiViewSource = _resource.LoadAsset<GameObject>(uiViewAttribute.AssetBundleName, uiViewAttribute.ViewPath);
                 if (uiViewSource == null)
                     return null;
                 GameObject uiViewClone = GameObject.Instantiate(uiViewSource);
@@ -174,8 +163,8 @@ namespace HotFix.Taurus
                 if (ci != null) uiView = ci.Invoke(obj) as UIView;
                 if (uiView == null)
                     return null;
-                _allUiViews[uiAsset] = uiView;
-                return _allUiViews[uiAsset];
+                _allUiViews[uiViewAttribute] = uiView;
+                return uiView;
             }
             uiView.gameObject.SetActive(true);
             return uiView;
@@ -198,19 +187,7 @@ namespace HotFix.Taurus
             _allUiViews.Clear();
         }
         #endregion
-
-        #region 数据结构
-        //ui的类型
-        private sealed class UiAsset
-        {
-            public string AssetPath { get; private set; }
-
-            public UiAsset(string path)
-            {
-                AssetPath = path;
-            }
-        }
-        #endregion
+        
 
 
     }

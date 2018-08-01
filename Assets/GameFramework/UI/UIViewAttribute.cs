@@ -15,10 +15,12 @@ namespace GameFramework.Taurus
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class UIViewAttribute : Attribute
     {
+        public string AssetBundleName { get; private set; }
         public string ViewPath { get; private set; }
 
-        public UIViewAttribute(string viewPath)
+        public UIViewAttribute(string assetBundleName,string viewPath)
         {
+            AssetBundleName = assetBundleName;
             ViewPath = viewPath;
         }
     }

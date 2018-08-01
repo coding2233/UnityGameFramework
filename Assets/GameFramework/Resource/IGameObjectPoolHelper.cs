@@ -24,7 +24,7 @@ namespace GameFramework.Taurus
 		/// </summary>
 		/// <param name="assetName"></param>
 		/// <param name="prefabInfo"></param>
-		void AddPrefab(string assetName, PoolPrefabInfo prefabInfo);
+		void AddPrefab(string assetBundleName, string assetName, PoolPrefabInfo prefabInfo);
 		/// <summary>
 		/// 是否包含预设
 		/// </summary>

@@ -117,8 +117,9 @@ ChangeState<StartState>();
 #### 三、资源管理模块 `ResourceManager`
 1. 资源加载
 ```csharp
-TextAsset textAsset= GameFrameworkMode.GetModule<ResourceManager>().LoadAsset<TextAsset>("Assets/TextAssets/test.txt");
-```  
+TextAsset textAsset= GameFrameworkMode.GetModule<ResourceManager>().LoadAsset<TextAsset>("datatable","Assets/TextAssets/test.txt");
+```
+>>>>>>> master
 2. 资源异步加载
 * 添加资源异步加载的事件监听
 ```csharp
@@ -142,12 +143,12 @@ private void OnResLoadSuccess(object sender, IEventArgs e)
 ```
 * 异步加载资源  
 ```csharp
-GameFrameworkMode.GetModule<ResourceManager>().LoadAssetAsync<TextAsset>("Assets/TextAssets/test.txt");
+GameFrameworkMode.GetModule<ResourceManager>().LoadAssetAsync<TextAsset>("datatable","Assets/TextAssets/test.txt");
 ```  
 3. 内置对象池
 * 添加预设
 ```csharp
-GameFrameworkMode.GetModule<ResourceManager>().AddPrefab("Assets/Prefab/Player.prefab",
+GameFrameworkMode.GetModule<ResourceManager>().AddPrefab("player","Assets/Prefab/Player.prefab",
 					new PoolPrefabInfo() {Prefab = playerPrefab,PreloadAmount=3, MaxAmount = 10});
 ```
 * 生成对象
@@ -160,7 +161,7 @@ GameFrameworkMode.GetModule<ResourceManager>().Despawn(player);
 ```
 3. 加载场景,场景只支持异步加载
 ```csharp
-AsyncOperation asyncOperation= GameFrameworkMode.GetModule<ResourceManager>().LoadSceneAsync("Assets/Scene/Main.unity");
+AsyncOperation asyncOperation= GameFrameworkMode.GetModule<ResourceManager>().LoadSceneAsync("mainscene","Assets/Scene/Main.unity");
 ```
 4. 支持编辑器内资源的直接读取和AssetBundle资源读取两种方式的一键切换，避免测试的时候需要重复的打包AssetBundle资源
 
@@ -168,7 +169,7 @@ AsyncOperation asyncOperation= GameFrameworkMode.GetModule<ResourceManager>().Lo
 #### 四、UI管理模块 `UIManager`
 1. 新建ui预设，新建ui类，继承类`UIView`,绑定并在类名上标明预设的资源路径
 ```csharp
-[UIView("Assets/Prefab/UI/LoadingView.prefab")]
+[UIView("ui","Assets/Prefab/UI/LoadingView.prefab")]
 public class LoadingUIView : UIView
 {
 	/// <summary>
@@ -254,11 +255,11 @@ GameFrameworkMode.GetModule<EventManager>().AddListener<DownloadFaileEventArgs>(
 统一的声音播放管理，支持默认的背景音乐、ui音效、其他音效已经物体绑定的AudioSource多种模式，以下以播放ui音效为例
 1. 添加ui音效音频
 ```csharp
-GameFrameworkMode.GetModule<AudioManager>().AddUISound("Assets/Audio/UI/default.wav");
+GameFrameworkMode.GetModule<AudioManager>().AddUISound("soundclip","Assets/Audio/UI/default.wav");
 ```  
 2. 播放ui音效
 ```csharp
-GameFrameworkMode.GetModule<AudioManager>().PlayUISound("Assets/Audio/UI/default.wav");
+GameFrameworkMode.GetModule<AudioManager>().PlayUISound("soundclip","Assets/Audio/UI/default.wav");
 ```
 3. 停止ui音效,默认停止当前正在播放的音频
 ```csharp
@@ -280,7 +281,11 @@ go.GetComponent<LocalizationText>().Text="GameName";
 ---
 #### 九、设置模块 `SettingMangaer`
 默认封装`PlayerPrefs`,使用方法类似。同时添加了`SetQuality`&`SetAllSoundVolume`&`SetBackgroundMusicVolume`&`SetUISoundVolume`&`SetSoundEffectVolume`等默认的设置  
-具体使用`GameFrameworkMode.GetModule<SettingMangaer>()`一目了然
+具体使用`GameFrameworkMode.GetModule<SettingMangaer>()`一目了然  
+
+---  
+#### 十、网络模块 `NetworkManager`
+正在增加中，首先会封装局域网内的连接通信，互联网后面增加。目前使用`kcp`将udp转为可靠传输，传输协议使用`Protobuf`
 
 ---
 ### 内置工具

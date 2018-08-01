@@ -25,29 +25,34 @@ namespace GameFramework.Taurus
         /// 加载资源
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="assetBundleName"></param>
         /// <param name="assetName"></param>
+        ///  <param name="unload"></param>
         /// <returns></returns>
-        T LoadAsset<T>(string assetName) where T : UnityEngine.Object;
+        T LoadAsset<T>(string assetBundleName,string assetName) where T : UnityEngine.Object;
 
-	    /// <summary>
-	    /// 异步加载资源
-	    /// </summary>
-	    /// <param name="assetName"></param>
-	    /// <param name="asyncCallback"></param>
-	    void LoadAssetAsync<T>(string assetName,Action<string,UnityEngine.Object> asyncCallback) where T : UnityEngine.Object;
+        /// <summary>
+        /// 异步加载资源
+        /// </summary>
+        ///  <param name="assetBundleName"></param>
+        /// <param name="assetName"></param>
+        /// <param name="asyncCallback"></param>
+        /// <param name="unload"></param>
+        void LoadAssetAsync<T>(string assetBundleName,string assetName,Action<string,UnityEngine.Object> asyncCallback) where T : UnityEngine.Object;
 
-		/// <summary>
-		/// 卸载资源 主要为卸载AssetBundle
-		/// </summary>
-		/// <param name="assetName">资源名称</param>
-		/// <param name="allAssets">是否卸载调所有资源</param>
-	    void UnloadAsset(string assetName, bool allAssets);
+        /// <summary>
+        /// 卸载资源 主要为卸载AssetBundle
+        /// </summary>
+        /// <param name="assetBundleName">资源名称</param>
+        /// <param name="unload">是否卸载调所有资源</param>
+        void UnloadAsset(string assetBundleName, bool unload=false);
 
         /// <summary>
         /// 异步加载场景
         /// </summary>
+        /// <param name="assetBundleName"></param>
         /// <param name="sceneName"></param>
-        AsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Additive);
+        AsyncOperation LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive);
 
         /// <summary>
         /// 卸载场景
