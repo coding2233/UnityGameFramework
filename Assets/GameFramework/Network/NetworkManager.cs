@@ -23,7 +23,7 @@ namespace GameFramework.Taurus
         private KcpService _kcpService;
         private int _port = 8359;
         private ProtobufPacker _protobufPacker;
-        private readonly Dictionary<Type, Type> _messageHandler = new Dictionary<Type, Type>();
+        private readonly Dictionary<Type, List<MessageHandlerBase>> _messageHandler = new Dictionary<Type, List<MessageHandlerBase>>();
 
         private readonly Dictionary<ushort, Type> _messageCodeType = new Dictionary<ushort, Type>();
         //留给hotfix的接口
@@ -93,7 +93,9 @@ namespace GameFramework.Taurus
                 if (attribute.Length > 0 && !item.IsAbstract && item.BaseType == typeof(MessageHandlerBase))
                 {
                     MessageHandlerAttribute msHanderAttibute = (MessageHandlerAttribute) attribute[0];
-                    _messageHandler[msHanderAttibute.TypeMessage] = item;
+                    if (!_messageHandler.ContainsKey(msHanderAttibute.TypeMessage))
+                        _messageHandler[msHanderAttibute.TypeMessage] = new List<MessageHandlerBase>();
+                    _messageHandler[msHanderAttibute.TypeMessage].Add((MessageHandlerBase)Activator.CreateInstance(item));
                 }
 
                 //get message
@@ -126,8 +128,8 @@ namespace GameFramework.Taurus
                 //消息处理类
                 else if (_messageHandler.ContainsKey(type))
                 {
-                    MessageHandlerBase handlerBase = (MessageHandlerBase)Activator.CreateInstance(_messageHandler[type]);
-                    handlerBase.Handle(message);
+                    foreach (var item in _messageHandler[type])
+                        item.Handle(message);
                 }
             }
 
