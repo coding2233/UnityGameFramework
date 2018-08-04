@@ -25,6 +25,8 @@ namespace GameFramework.Taurus
 		public static AudioManager Audio;
 	    public static LocalizationManager Localization;
 		public static SettingManager Setting;
+        public static SystemManager System;
+        public static NetworkManager Network;
 
         /// <summary>
         /// 当前程序集
@@ -72,10 +74,12 @@ namespace GameFramework.Taurus
 			Audio = GameFrameworkMode.GetModule<AudioManager>();
 			Localization = GameFrameworkMode.GetModule<LocalizationManager>();
 			Setting = GameFrameworkMode.GetModule<SettingManager>();
-			#endregion
+		    System= GameFrameworkMode.GetModule<SystemManager>();
+		    Network= GameFrameworkMode.GetModule<NetworkManager>();
+            #endregion
 
-			#region resource
-			Resource.ResUpdateType = ResUpdateType;
+            #region resource
+            Resource.ResUpdateType = ResUpdateType;
 	        Resource.ResUpdatePath = ResUpdatePath;
 	        Resource.LocalPathType = LocalPathType;
 

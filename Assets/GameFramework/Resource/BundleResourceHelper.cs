@@ -63,7 +63,7 @@ namespace GameFramework.Taurus
 		    {
 		        _enciphererkeyAsset = Resources.Load("Key") as EnciphererKey;
 		        if (_enciphererkeyAsset == null)
-		            throw new UnityGameFrameworkException("Resource EnciphererKey not Found");
+		            throw new GamekException("Resource EnciphererKey not Found");
 		    }
 
 		    LoadPlatformMainfest(rootAbPath);
@@ -87,7 +87,7 @@ namespace GameFramework.Taurus
 			{
 			    string assetBundlePath = Path.Combine(_readPath, assetBundleName);
 			    if (!File.Exists(assetBundlePath))
-			        throw new UnityGameFrameworkException("AssetBundle is Null");
+			        throw new GamekException("AssetBundle is Null");
                 //加载assetbundle
 			    assetBundle = LoadAssetBundle(assetBundlePath);
                 //存储资源名称
@@ -157,7 +157,7 @@ namespace GameFramework.Taurus
 
                     };
                 }
-                catch (UnityGameFrameworkException ex)
+                catch (GamekException ex)
                 {
                     asyncCallback.Invoke(assetName, null);
                     Debug.LogError(ex.ToString());
@@ -228,7 +228,7 @@ namespace GameFramework.Taurus
 		        };
                 
             }
-		    catch (UnityGameFrameworkException ex)
+		    catch (GamekException ex)
 		    {
 		        Debug.LogError(ex.ToString());
 		    }
@@ -274,7 +274,7 @@ namespace GameFramework.Taurus
 		        _mainfest = mainfestAssetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
 		        mainfestAssetBundle.Unload(false);
 		    }
-		    catch (UnityGameFrameworkException ex)
+		    catch (GamekException ex)
 		    {
 		        Debug.LogError(ex.ToString());
 		    }
