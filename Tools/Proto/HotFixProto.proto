@@ -1,0 +1,21 @@
+syntax = "proto3";
+//package GameFramework.Taurus;
+
+message HotFixProtoTest 
+{
+	int32 ID = 1;
+	string	Commit = 2;	//提交
+	string	Message = 3;	//信息
+}
+
+message C2S_TestInfo
+{
+	int32 RpcId=1;
+	string Message=2;
+}
+
+message S2C_TestInfo
+{
+	int32 RpcId=1;
+	string Message=2; 
+}

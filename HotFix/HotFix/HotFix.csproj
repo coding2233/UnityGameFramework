@@ -66,6 +66,12 @@
     <Compile Include="GameFramework\DataTable\IDataTableRow.cs" />
     <Compile Include="GameFramework\Event\EventManager.cs" />
     <Compile Include="GameFramework\Event\GameEventArgs.cs" />
+    <Compile Include="GameFramework\Network\IRequest.cs" />
+    <Compile Include="GameFramework\Network\IResponse.cs" />
+    <Compile Include="GameFramework\Network\MessageHandlerBase.cs" />
+    <Compile Include="GameFramework\Network\NetworkManager.cs" />
+    <Compile Include="GameFramework\Network\ProtobufPacker.cs" />
+    <Compile Include="GameFramework\Network\TestMessageHandle.cs" />
     <Compile Include="GameFramework\State\GameState.cs" />
     <Compile Include="GameFramework\State\GameStateAttribute.cs" />
     <Compile Include="GameFramework\State\GameStateContext.cs" />
@@ -74,6 +80,11 @@
     <Compile Include="GameFramework\UI\UIManager.cs" />
     <Compile Include="GameFramework\UI\UIView.cs" />
     <Compile Include="GameFramework\UI\UIViewAttribute.cs" />
+    <Compile Include="Game\Network\C2S_TestInfo_Handle.cs" />
+    <Compile Include="Game\Network\HotFixTestMessageHandle.cs" />
+    <Compile Include="Game\Network\Proto\HotFixProto.cs" />
+    <Compile Include="Game\Network\Proto\HotFixProtoMessage.cs" />
+    <Compile Include="Game\State\HotFixTestState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

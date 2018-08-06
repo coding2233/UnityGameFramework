@@ -103,6 +103,15 @@ namespace GameFramework.Taurus
             //注册CLR绑定
             ILRuntime.Runtime.Generated.CLRBindings.Initialize(Appdomain);
 
+            //跨域继承的基类
+            Appdomain.RegisterCrossBindingAdaptor(new Google.Protobuf.IMessageAdaptor());
+            Appdomain.RegisterCrossBindingAdaptor(new IAsyncStateMachineClassInheritanceAdaptor());
+            Appdomain.DelegateManager.RegisterFunctionDelegate<Google.Protobuf.IMessageAdaptor.Adaptor>();
+            Appdomain.DelegateManager.RegisterMethodDelegate<System.Object>();
+
+
+            Appdomain.DelegateManager.RegisterMethodDelegate<System.UInt16, System.Byte[]>();
+
             //这里做一些ILRuntime的注册，HelloWorld示例暂时没有需要注册的
             Appdomain.DelegateManager.RegisterMethodDelegate<System.Object, ILRuntime.Runtime.Intepreter.ILTypeInstance>();
             Appdomain.DelegateManager.RegisterDelegateConvertor<System.EventHandler<ILRuntime.Runtime.Intepreter.ILTypeInstance>>((act) =>
