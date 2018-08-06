@@ -16,10 +16,10 @@ using GT = GameFramework.Taurus;
 
 namespace HotFix.Taurus
 {
-    public class NetworkManager:GameFrameworkModule
+    public sealed class NetworkManager:GameFrameworkModule
     {
         #region 属性
-        private readonly Dictionary<string, List<MessageHandlerBase>> _messageHandler = new Dictionary<string, List<MessageHandlerBase>>();
+        private readonly Dictionary<Type, List<MessageHandlerBase>> _messageHandler = new Dictionary<Type, List<MessageHandlerBase>>();
         private readonly Dictionary<ushort, Type> _messageCodeType = new Dictionary<ushort, Type>();
         private readonly ProtobufPacker _protobufPacker;
         private int _rpcId = 0;
@@ -35,8 +35,9 @@ namespace HotFix.Taurus
             //加载所有的类型
             LoadMessageAttribute();
         }
+		
 
-        public void SetPort(int port)
+	    public void SetPort(int port)
         {
             GT.GameMode.Network.SetPort(port);
         }
@@ -45,12 +46,12 @@ namespace HotFix.Taurus
         {
             byte[] messageData = _protobufPacker.ToBytes(message);
 
-            object[] attribute = message.GetType().GetCustomAttributes(typeof(GT.MessageAttribute), false);
+            object[] attribute = message.GetType().GetCustomAttributes(typeof(MessageAttribute), false);
             if (attribute.Length <= 0)
                 throw new GT.GamekException("class not found MessageAttribute");
-            GT.MessageAttribute mgAttribute = (GT.MessageAttribute)attribute[0];
-
-            GT.GameMode.Network.SendMessage(mgAttribute.TypeCode, messageData, endPoint);
+            MessageAttribute mgAttribute = attribute[0] as MessageAttribute;
+			if(mgAttribute!=null)
+				GT.GameMode.Network.SendMessage(mgAttribute.TypeCode, messageData, endPoint);
         }
 
         public Task<T> Call<T>(IRequest message, IPEndPoint endPoint) where T : class, IResponse
@@ -72,21 +73,27 @@ namespace HotFix.Taurus
             foreach (var item in types)
             {
                 //get  messagehandler
-                object[] attribute = item.GetCustomAttributes(typeof(GT.MessageHandlerAttribute), false);
+                object[] attribute = item.GetCustomAttributes(typeof(MessageHandlerAttribute), false);
                 if (attribute.Length > 0 && !item.IsAbstract)
                 {
-                    GT.MessageHandlerAttribute msHanderAttibute = (GT.MessageHandlerAttribute)attribute[0];
-                    if (!_messageHandler.ContainsKey(msHanderAttibute.TypeMessage.FullName))
-                        _messageHandler[msHanderAttibute.TypeMessage.FullName] = new List<MessageHandlerBase>();
-                    _messageHandler[msHanderAttibute.TypeMessage.FullName].Add((MessageHandlerBase)Activator.CreateInstance(item));
+                    MessageHandlerAttribute msHanderAttibute = attribute[0] as MessageHandlerAttribute;
+					if(msHanderAttibute!=null)
+	                {
+		                Type handType = Type.GetType(msHanderAttibute.TypeMessage);
+		                if (!_messageHandler.ContainsKey(handType))
+			                _messageHandler[handType] = new List<MessageHandlerBase>();
+		                _messageHandler[handType]
+			                .Add((MessageHandlerBase) Activator.CreateInstance(item));
+	                }
                 }
 
                 //get message
-                attribute = item.GetCustomAttributes(typeof(GT.MessageAttribute), false);
+                attribute = item.GetCustomAttributes(typeof(MessageAttribute), false);
                 if (attribute.Length > 0 && !item.IsAbstract)
                 {
-                    GT.MessageAttribute msAttibute = (GT.MessageAttribute)attribute[0];
-                    _messageCodeType[msAttibute.TypeCode] = item;
+                    MessageAttribute msAttibute = attribute[0] as MessageAttribute;
+					if(msAttibute!=null)
+						_messageCodeType[msAttibute.TypeCode] = item;
                 }
 
             }
@@ -111,9 +118,9 @@ namespace HotFix.Taurus
                     }
                 }
                 //消息处理类
-                else if (_messageHandler.ContainsKey(type.FullName))
+                else if (_messageHandler.ContainsKey(type))
                 {
-                    foreach (var item in _messageHandler[type.FullName])
+                    foreach (var item in _messageHandler[type])
                         item.Handle(message);
                 }
             }

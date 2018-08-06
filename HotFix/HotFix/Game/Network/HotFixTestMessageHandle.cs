@@ -2,7 +2,7 @@
 
 namespace HotFix.Taurus
 {
-    [GT.MessageHandler(typeof(HotFixProtoTest))]
+    [MessageHandler(typeof(HotFixProtoTest))]
     public class HotFixTestMessageHandle: MessageHandlerBase
     {
         public override void Handle(object message)

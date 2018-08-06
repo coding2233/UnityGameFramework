@@ -68,10 +68,11 @@
     <Compile Include="GameFramework\Event\GameEventArgs.cs" />
     <Compile Include="GameFramework\Network\IRequest.cs" />
     <Compile Include="GameFramework\Network\IResponse.cs" />
+    <Compile Include="GameFramework\Network\MessageAttribute.cs" />
+    <Compile Include="GameFramework\Network\MessageHandlerAttribute.cs" />
     <Compile Include="GameFramework\Network\MessageHandlerBase.cs" />
     <Compile Include="GameFramework\Network\NetworkManager.cs" />
     <Compile Include="GameFramework\Network\ProtobufPacker.cs" />
-    <Compile Include="GameFramework\Network\TestMessageHandle.cs" />
     <Compile Include="GameFramework\State\GameState.cs" />
     <Compile Include="GameFramework\State\GameStateAttribute.cs" />
     <Compile Include="GameFramework\State\GameStateContext.cs" />
