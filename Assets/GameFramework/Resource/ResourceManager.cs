@@ -133,6 +133,16 @@ namespace GameFramework.Taurus
 	    }
 
         /// <summary>
+        /// 卸载资源 主要为卸载AssetBundle
+        /// </summary>
+        /// <param name="assetBundleName">资源名称</param>
+        /// <param name="unload">是否卸载所有资源</param>
+        public void UnloadAsset(string assetBundleName, bool unload = false)
+        {
+            _resourceHelper?.UnloadAsset(assetBundleName, unload);
+        }
+
+        /// <summary>
         /// 异步加载场景
         /// </summary>
         /// <param name="assetBundleName"></param>

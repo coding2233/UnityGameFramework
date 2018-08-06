@@ -48,13 +48,13 @@ namespace GameFramework.Taurus
             _kcpService = new KcpService(_port, ReceiveMessage);
         }
 
-        public Task<IResponse> Call(IRequest message, IPEndPoint endPoint)
+        public Task<T> Call<T>(IRequest message, IPEndPoint endPoint) where T : class,IResponse
         {
-            var task = new TaskCompletionSource<IResponse>();
+            var task = new TaskCompletionSource<T>();
             message.RpcId = ++_rpcId;
             _responseCallback[message.RpcId] = (msg) =>
             {
-                IResponse response = msg as IResponse;
+                T response = msg as T;
                 task.SetResult(response);
             };
             SendMessage(message, endPoint);
@@ -69,10 +69,15 @@ namespace GameFramework.Taurus
             if (attribute.Length <= 0)
                 throw new GamekException("class not found MessageAttribute");
             MessageAttribute mgAttribute = (MessageAttribute)attribute[0];
-
-            _kcpService?.SendMessage(mgAttribute.TypeCode, messageData, endPoint);
+            
+            SendMessage(mgAttribute.TypeCode, messageData, endPoint);
         }
-        
+
+        public void SendMessage(ushort typeCode, byte[] messageData, IPEndPoint endPoint)
+        {
+            _kcpService?.SendMessage(typeCode, messageData, endPoint);
+        }
+
         public void OnUpdate()
         {
             _kcpService?.Update();
@@ -100,7 +105,7 @@ namespace GameFramework.Taurus
 
                 //get message
                 attribute = item.GetCustomAttributes(typeof(MessageAttribute), false);
-                if (attribute.Length > 0 && !item.IsAbstract && item.BaseType == typeof(IMessage))
+                if (attribute.Length > 0 && !item.IsAbstract)
                 {
                     MessageAttribute msAttibute = (MessageAttribute)attribute[0];
                     _messageCodeType[msAttibute.TypeCode] = item;
