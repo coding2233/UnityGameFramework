@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using Google.Protobuf;
 
 namespace GameFramework.Taurus
@@ -23,27 +24,18 @@ namespace GameFramework.Taurus
 
 		private List<byte> _lastReceiveDatas;
 
-	//	private Action<ushort, byte[]> _receiveDataCallback;
-		private Action<ushort, object> _receiveMessageCallback;
+		private Action<ushort, byte[]> _receiveDataCallback;
 
-		private ProtobufPacker _protobufPacker;
 		#endregion
 
-		public KcpService(int port,Action<ushort, object> receiveMessageCallback)
+		public KcpService(int port,Action<ushort, byte[]> receiveDataCallback)
 		{
 			_lastReceiveDatas = new List<byte>();
 			_receiveDatas = new Queue<byte[]>();
 			_kcpChannel = new KcpChannel(port, ReceiveData);
-			_receiveMessageCallback = receiveMessageCallback;
-
-			_protobufPacker = new ProtobufPacker();
+		    _receiveDataCallback = receiveDataCallback;
 		}
-
-		public void SetTargetEndPoint(string ip, int port)
-		{
-			_kcpChannel?.Connect(ip, port);
-		}
-
+        
 
 		public void Update()
 		{
@@ -56,36 +48,26 @@ namespace GameFramework.Taurus
 					int length = System.BitConverter.ToInt32(datas,0);
 					if (_lastReceiveDatas.Count >=length+4)
 					{
-						ushort type =System.BitConverter.ToUInt16(datas, 2);
+						ushort type =System.BitConverter.ToUInt16(datas, 4);
 						byte[] messageData = _lastReceiveDatas.GetRange(6, length-2).ToArray();
-						//_receiveDataCallback?.Invoke(type, messageData);
-						_receiveMessageCallback?.Invoke(type, ReceiveMessage(type,messageData));
+						_receiveDataCallback?.Invoke(type, messageData);
 						_lastReceiveDatas.RemoveRange(0, length + 4);
 					}
 				}
 			}
 		}
 
-		public void SendMessage(object message)
+		public void SendMessage(ushort typeCode, byte[] messageData,IPEndPoint endPoint)
 		{
-			byte[] messageData = _protobufPacker.ToBytes(message);
-			MessageTypeCode typeCode = (MessageTypeCode)Enum.Parse(typeof(MessageTypeCode),message.GetType().ToString());
-			byte[] typeData = BitConverter.GetBytes((ushort) typeCode);
+			byte[] typeData = BitConverter.GetBytes(typeCode);
 			byte[] length = BitConverter.GetBytes(messageData.Length+2);
 			byte[] result = new byte[messageData.Length+ 2 + 4];
 			length.CopyTo(result, 0);
 			typeData.CopyTo(result, 4);
 			messageData.CopyTo(result, 6);
-			_kcpChannel?.Send(result);
+			_kcpChannel?.Send(result, endPoint);
 		}
-
-		private object ReceiveMessage(ushort typeCode,byte[] data)
-		{
-			MessageTypeCode code = (MessageTypeCode) typeCode;
-			
-			return _protobufPacker.ToMessage(Type.GetType(code.ToString()),data);
-		}
-
+        
 
 		private void ReceiveData(byte[] data)
 		{

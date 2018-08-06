@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GameFramework.Taurus
 {
@@ -31,23 +32,17 @@ namespace GameFramework.Taurus
 
 		private UdpClient _udpClient;
 
-		private IPEndPoint _targetEndPoinnt;
-
-		private IPEndPoint _allEndPoint;
-
-		private IPEndPoint _currentEndPoint;
-
 		private IPEndPoint _recEndPoint;
+
+        private IPEndPoint _currentEndPoint;
 
 		private Queue<byte[]> _receiveMeesages;
 
 		private Action<byte[]> _reveiveHandler;
 		#endregion
-
-
+        
 		public KcpChannel(int port,Action<byte[]> reveiveHandler)
 		{
-			_allEndPoint = new IPEndPoint(IPAddress.Parse("255.255.255.255"), port);
 			_recEndPoint = new IPEndPoint(IPAddress.Any, 0);
 
 			_reveiveHandler = reveiveHandler;
@@ -63,10 +58,8 @@ namespace GameFramework.Taurus
 			_receiveMeesages = new Queue<byte[]>();
 
 		    _udpClient.BeginReceive(UdpReceiveMessage, this);
-            
-            Thread updataThread = new Thread(Update);
-			updataThread.Start();
-		    updataThread.IsBackground = true;
+
+		    new Task(Update).Start();
         }
 
 	    private void UdpReceiveMessage(IAsyncResult asyncCallback)
@@ -75,13 +68,7 @@ namespace GameFramework.Taurus
 	        _receiveMeesages.Enqueue(datas);
 	        _udpClient?.BeginReceive(UdpReceiveMessage, this);
 	    }
-
-
-	    public void Connect(string ip, int port)
-		{
-			_targetEndPoinnt = new IPEndPoint(IPAddress.Parse(ip), port);
-			_currentEndPoint = _targetEndPoinnt;
-		}
+        
 
 		private void UdpSendData(byte[] datas, int length)
 		{
@@ -89,12 +76,12 @@ namespace GameFramework.Taurus
 				_udpClient?.Send(datas, length, _currentEndPoint);
 		}
 
-		public void Send(byte[] datas,bool toAll=false)
+		public void Send(byte[] datas,IPEndPoint endPoint)
 		{
-			if (toAll)
-				_currentEndPoint = _allEndPoint;
-			else
-				_currentEndPoint = _targetEndPoinnt;
+		    if (endPoint == null)
+		        return;
+			_currentEndPoint = endPoint;
+
             _kcp?.Send(datas);
 		}
 		
@@ -123,11 +110,7 @@ namespace GameFramework.Taurus
 		        Thread.Sleep(10);
 		    }
 		}
-
-		//private void ReceiveMessage(byt)
-
-
-
+        
 
 	}
 
