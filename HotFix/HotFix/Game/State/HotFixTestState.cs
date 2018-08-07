@@ -51,6 +51,8 @@ namespace HotFix.Taurus
             S2C_TestInfo s2C_TestInfo = await HotFixMode.Network.Call<S2C_TestInfo>(
                 new C2S_TestInfo() {Message = "HotFixTestState -- C2S" },
                 new System.Net.IPEndPoint(System.Net.IPAddress.Parse("255.255.255.255"), 35120));
+
+            Debug.Log("Hotfix call:"+ s2C_TestInfo.Message);
         }
     }
 }

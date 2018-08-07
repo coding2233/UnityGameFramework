@@ -49,8 +49,7 @@ namespace HotFix.Taurus
             object[] attribute = message.GetType().GetCustomAttributes(typeof(MessageAttribute), false);
             if (attribute.Length <= 0)
                 throw new GT.GamekException("class not found MessageAttribute");
-            MessageAttribute mgAttribute = attribute[0] as MessageAttribute;
-			if(mgAttribute!=null)
+            if(attribute[0] is MessageAttribute mgAttribute)
 				GT.GameMode.Network.SendMessage(mgAttribute.TypeCode, messageData, endPoint);
         }
 
@@ -76,14 +75,16 @@ namespace HotFix.Taurus
                 object[] attribute = item.GetCustomAttributes(typeof(MessageHandlerAttribute), false);
                 if (attribute.Length > 0 && !item.IsAbstract)
                 {
-                    MessageHandlerAttribute msHanderAttibute = attribute[0] as MessageHandlerAttribute;
-					if(msHanderAttibute!=null)
+                    if(attribute[0] is MessageHandlerAttribute msHanderAttibute)
 	                {
 		                Type handType = Type.GetType(msHanderAttibute.TypeMessage);
-		                if (!_messageHandler.ContainsKey(handType))
-			                _messageHandler[handType] = new List<MessageHandlerBase>();
-		                _messageHandler[handType]
-			                .Add((MessageHandlerBase) Activator.CreateInstance(item));
+	                    if (handType != null)
+	                    {
+	                        if (!_messageHandler.ContainsKey(handType))
+	                            _messageHandler[handType] = new List<MessageHandlerBase>();
+	                        _messageHandler[handType]
+	                            .Add((MessageHandlerBase) Activator.CreateInstance(item));
+	                    }
 	                }
                 }
 
@@ -91,8 +92,7 @@ namespace HotFix.Taurus
                 attribute = item.GetCustomAttributes(typeof(MessageAttribute), false);
                 if (attribute.Length > 0 && !item.IsAbstract)
                 {
-                    MessageAttribute msAttibute = attribute[0] as MessageAttribute;
-					if(msAttibute!=null)
+                    if(attribute[0] is MessageAttribute msAttibute)
 						_messageCodeType[msAttibute.TypeCode] = item;
                 }
 
