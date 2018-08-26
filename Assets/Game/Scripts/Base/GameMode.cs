@@ -27,6 +27,7 @@ namespace GameFramework.Taurus
 		public static SettingManager Setting;
         public static SystemManager System;
         public static NetworkManager Network;
+		public static PoolManager Pool;
 
 	    public static HotFixManager HotFix;
 
@@ -78,13 +79,12 @@ namespace GameFramework.Taurus
 			Setting = GameFrameworkMode.GetModule<SettingManager>();
 		    System= GameFrameworkMode.GetModule<SystemManager>();
 		    Network= GameFrameworkMode.GetModule<NetworkManager>();
-
 		    HotFix = GameFrameworkMode.GetModule<HotFixManager>();
-            
-            #endregion
+			Pool = GameFrameworkMode.GetModule<PoolManager>();
+			#endregion
 
-            #region resource
-            Resource.ResUpdateType = ResUpdateType;
+			#region resource
+			Resource.ResUpdateType = ResUpdateType;
 	        Resource.ResUpdatePath = ResUpdatePath;
 	        Resource.LocalPathType = LocalPathType;
 

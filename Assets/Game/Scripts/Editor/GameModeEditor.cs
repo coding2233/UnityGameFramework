@@ -380,52 +380,7 @@ namespace GameFramework.Taurus
                 return;
 
             GUILayout.BeginVertical("HelpBox");
-            //int
-            // if (VrCoreEntity.Node.IntNodes.Count > 0)
-            {
-                GUILayout.Label("Int Node", EditorStyles.boldLabel);
-                foreach (var item in GameMode.Node.IntNodes)
-                {
-                    GUILayout.Label(item.Key + ":" + item.Value);
-                }
-            }
-            //float
-            // if (VrCoreEntity.Node.FloatNodes.Count > 0)
-            {
-                GUILayout.Label("Float Node", EditorStyles.boldLabel);
-                foreach (var item in GameMode.Node.FloatNodes)
-                {
-                    GUILayout.Label(item.Key + ":" + item.Value);
-                }
-            }
-            //bool
-            // if (VrCoreEntity.Node.BoolNodes.Count > 0)
-            {
-                GUILayout.Label("Bool Node", EditorStyles.boldLabel);
-                foreach (var item in GameMode.Node.BoolNodes)
-                {
-                    GUILayout.Label(item.Key + ":" + item.Value);
-                }
-            }
-            //string
-            //  if (VrCoreEntity.Node.StringNodes.Count > 0)
-            {
-                GUILayout.Label("String Node", EditorStyles.boldLabel);
-                foreach (var item in GameMode.Node.StringNodes)
-                {
-                    GUILayout.Label(item.Key + ":" + item.Value);
-                }
-            }
-            //object
-            //if (VrCoreEntity.Node.ObjectNodes.Count > 0)
-            {
-                GUILayout.Label("Float Node", EditorStyles.boldLabel);
-                foreach (var item in GameMode.Node.ObjectNodes)
-                {
-                    GUILayout.Label(item.Key + ":" + item.Value);
-                }
-            }
-
+          
             GUILayout.EndVertical();
         }
 

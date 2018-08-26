@@ -8,6 +8,7 @@
         public static UIManager UI;
         public static DataTableManager DataTable;
         public static NetworkManager Network;
+		public static PoolManager Pool;
         #endregion
 
         public HotFixMode()
@@ -20,6 +21,7 @@
             UI = GameFrameworkMode.GetModule<UIManager>();
 	        DataTable = GameFrameworkMode.GetModule<DataTableManager>();
             Network = GameFrameworkMode.GetModule<NetworkManager>();
+			Pool = GameFrameworkMode.GetModule<PoolManager>();
             #endregion
 
             //从主框架中获取热更新模块

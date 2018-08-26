@@ -81,6 +81,9 @@
     <Compile Include="GameFramework\Network\MessageHandlerBase.cs" />
     <Compile Include="GameFramework\Network\NetworkManager.cs" />
     <Compile Include="GameFramework\Network\ProtobufPacker.cs" />
+    <Compile Include="GameFramework\ObjectPool\ObjectData.cs" />
+    <Compile Include="GameFramework\ObjectPool\ObjectDataBase.cs" />
+    <Compile Include="GameFramework\ObjectPool\PoolManager.cs" />
     <Compile Include="GameFramework\State\GameState.cs" />
     <Compile Include="GameFramework\State\GameStateAttribute.cs" />
     <Compile Include="GameFramework\State\GameStateContext.cs" />
