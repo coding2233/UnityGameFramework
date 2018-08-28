@@ -28,8 +28,11 @@ namespace GameFramework.Taurus
 		{
 			NodeDataBase nodeDataBase;
 			int hashCode = typeof(T).GetHashCode();
-			if (!_allNodeDatas.TryGetValue(hashCode, out nodeDataBase))
-				nodeDataBase = new NodeData<T>();
+            if (!_allNodeDatas.TryGetValue(hashCode, out nodeDataBase))
+            {
+                nodeDataBase = new NodeData<T>();
+                _allNodeDatas[hashCode] = nodeDataBase;
+            }
 			NodeData<T> nodeData = nodeDataBase as NodeData<T>;
 			nodeData.Set(key, value);
 		}
