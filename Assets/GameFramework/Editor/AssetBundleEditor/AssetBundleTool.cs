@@ -401,6 +401,8 @@ namespace GameFramework.Taurus
                             File.WriteAllBytes(fileInfo.FullName, cipbs);
                             //加密后md5的值应该刷新
                             bs = cipbs;
+							//保存keyAsset
+							EditorUtility.SetDirty(keyAsset);
                         }
                         ResourcesInfo resourcesInfo = new ResourcesInfo();
                         string fullPath = Path.GetFullPath(targetBuildPath);
