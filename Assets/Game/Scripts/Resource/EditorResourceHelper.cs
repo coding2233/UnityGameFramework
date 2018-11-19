@@ -62,7 +62,11 @@ namespace GameFramework.Taurus
 		/// <param name="sceneName"></param>
 		public AsyncOperation LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
         {
-            return UnitySceneManager.LoadSceneAsync(sceneName, mode);
+            if (mode == LoadSceneMode.Additive)
+                return EditorApplication.LoadLevelAdditiveAsyncInPlayMode(sceneName);
+            else
+                return EditorApplication.LoadLevelAsyncInPlayMode(sceneName);
+            //  return UnitySceneManager.LoadSceneAsync(sceneName, mode);
         }
 
         /// <summary>

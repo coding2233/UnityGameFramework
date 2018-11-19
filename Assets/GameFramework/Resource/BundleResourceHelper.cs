@@ -213,7 +213,7 @@ namespace GameFramework.Taurus
 		    {
 		        string assetBundlePath = Path.Combine(_readPath, assetBundleName);
 		        AssetBundleCreateRequest createRequest = LoadAssetBundleAsync(assetBundlePath);
-		        createRequest.completed += (operation) =>
+		        //createRequest.completed += (operation) =>
 		        {
                     AssetBundle assetBundle = createRequest.assetBundle;
 		            //加载依赖项

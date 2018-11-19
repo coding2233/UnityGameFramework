@@ -361,6 +361,9 @@ namespace GameFramework.Taurus
             //根据各个平台打包
             foreach (var item in EditorConfigInfo.BuildTargets)
             {
+                //清理缓存
+                Caching.ClearCache();
+
                 //打包
                 BuildTarget target = (BuildTarget) item;
                 string targetName = target.ToString().ToLower();
