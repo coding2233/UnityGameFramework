@@ -31,4 +31,19 @@ public class ResourcesInfo
 {
     public string Name;
     public string MD5;
+
+    public override bool Equals(object obj)
+    {
+        ResourcesInfo other = obj as ResourcesInfo;
+        if (other.Name.Equals(Name) && other.MD5.Equals(MD5))
+            return true;
+
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return (Name + MD5).GetHashCode();
+    }
+
 }
