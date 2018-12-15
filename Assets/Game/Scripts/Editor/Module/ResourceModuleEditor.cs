@@ -16,15 +16,31 @@ namespace GameFramework.Taurus
 {
 	public class ResourceModuleEditor : ModuleEditorBase
 	{
+		private BuildTargetGroup _lastBuildTargetGroup;
+		private string _lastScriptingDefineSymbols;
+
 		public ResourceModuleEditor(string name, Color mainColor, GameMode gameMode)
 			: base(name, mainColor, gameMode)
 		{
-
+			//获取当前的BuildTargetGroup
+			_lastBuildTargetGroup = ConvertBuildTarget(EditorUserBuildSettings.activeBuildTarget);
+			_lastScriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup);
 		}
 
 		public override void OnDrawGUI()
 		{
 			GUILayout.BeginVertical("HelpBox");
+
+			GUILayout.BeginHorizontal("HelpBox");
+			GUILayout.Label("Define",GUILayout.Width(50));
+			string scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup);
+			_lastScriptingDefineSymbols = GUILayout.TextArea(_lastScriptingDefineSymbols);
+			if (GUILayout.Button("OK",GUILayout.Width(40))&&!_lastScriptingDefineSymbols.Equals(scriptingDefineSymbols))
+			{
+				_lastBuildTargetGroup = ConvertBuildTarget(EditorUserBuildSettings.activeBuildTarget);
+				PlayerSettings.SetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup, _lastScriptingDefineSymbols);
+			}
+			GUILayout.EndHorizontal();
 
 			_gameMode.ResUpdateType =
 					(ResourceUpdateType)EditorGUILayout.EnumPopup("Resource Update Type", _gameMode.ResUpdateType);
@@ -63,13 +79,50 @@ namespace GameFramework.Taurus
 
 				EditorGUILayout.LabelField("Path", path);
 			}
-
+			
 			GUILayout.EndVertical();
 		}
 
 
 		public override void OnClose()
 		{
+		}
+
+		static BuildTargetGroup ConvertBuildTarget(BuildTarget buildTarget)
+		{
+			switch (buildTarget)
+			{
+				case BuildTarget.StandaloneOSX:
+				case BuildTarget.iOS:
+					return BuildTargetGroup.iOS;
+				case BuildTarget.StandaloneWindows:
+				case BuildTarget.StandaloneLinux:
+				case BuildTarget.StandaloneWindows64:
+				case BuildTarget.StandaloneLinux64:
+				case BuildTarget.StandaloneLinuxUniversal:
+					return BuildTargetGroup.Standalone;
+				case BuildTarget.Android:
+					return BuildTargetGroup.Android;
+				case BuildTarget.WebGL:
+					return BuildTargetGroup.WebGL;
+				case BuildTarget.WSAPlayer:
+					return BuildTargetGroup.WSA;
+				case BuildTarget.PSP2:
+					return BuildTargetGroup.PSP2;
+				case BuildTarget.PS4:
+					return BuildTargetGroup.PS4;
+				case BuildTarget.XboxOne:
+					return BuildTargetGroup.XboxOne;
+				case BuildTarget.N3DS:
+					return BuildTargetGroup.N3DS;
+				case BuildTarget.tvOS:
+					return BuildTargetGroup.tvOS;
+				case BuildTarget.Switch:
+					return BuildTargetGroup.Switch;
+				case BuildTarget.NoTarget:
+				default:
+					return BuildTargetGroup.Standalone;
+			}
 		}
 
 	}

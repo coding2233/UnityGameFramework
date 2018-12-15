@@ -9,9 +9,13 @@ namespace HotFix.Taurus
         {
             base.OnEnter(parameters);
 
+			string str = "asset hotfix xx test";
+
             Debug.Log("HotFixTestState--Start!!");
 
-            HotFixMode.Network.SetPort(35120);
+			Debug.Log(str);
+
+			//HotFixMode.Network.SetPort(35120);
         }
 
         public override void OnExit()

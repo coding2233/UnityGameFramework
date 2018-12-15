@@ -42,7 +42,7 @@ namespace HotFix.Taurus
         {
             if (_stateContext != null)
                 return;
-
+			UnityEngine.Debug.Log(types.Length);
             GameStateContext stateContext = new GameStateContext();
             List<GameState> listState = new List<GameState>();
             
@@ -51,8 +51,12 @@ namespace HotFix.Taurus
                 object[] attribute = item.GetCustomAttributes(typeof(GameStateAttribute), false);
                 if (attribute.Length <= 0 || item.IsAbstract)
                     continue;
-                GameStateAttribute stateAttribute = (GameStateAttribute)attribute[0];
-                if (stateAttribute.StateType == GameStateType.Ignore)
+				
+				GameStateAttribute stateAttribute = attribute[0] as GameStateAttribute;
+				if (stateAttribute == null)
+					continue;
+
+				if (stateAttribute.StateType == GameStateType.Ignore)
                     continue;
                 object obj = Activator.CreateInstance(item);
 				GameState gs = obj as GameState;

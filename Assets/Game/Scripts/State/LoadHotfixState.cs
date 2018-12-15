@@ -56,7 +56,7 @@ namespace GameFramework.Taurus
 			byte[] dllDatas = GameMode.Resource.LoadAsset<TextAsset>("hotfix",_dllPath).bytes;
 			byte[] pdbDatas = null;
 #if UNITY_EDITOR
-			pdbDatas = GameMode.Resource.LoadAsset<TextAsset>("hotfix", _pdbPath)?.bytes;
+			//pdbDatas = GameMode.Resource.LoadAsset<TextAsset>("hotfix", _pdbPath)?.bytes;
 			GameMode.HotFix.Appdomain.DebugService.StartDebugService(56000);
 #endif
 			GameMode.HotFix.LoadHotfixAssembly(dllDatas, pdbDatas);
