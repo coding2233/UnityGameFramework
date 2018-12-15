@@ -12,22 +12,30 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using AppDomain = ILRuntime.Runtime.Enviorment.AppDomain;
 
 namespace GameFramework.Taurus
 {
     public sealed class HotFixManager : GameFrameworkModule,IUpdate,IFixedUpdate
     {
-        #region 属性
-        /// <summary>
-        /// ILRuntime的入口
-        /// </summary>
-        public AppDomain Appdomain { get; private set; }
-        //热更新的开头函数
-        private object _hotFixVrCoreEntity;
+		#region 属性
+#if ILRuntime
+		/// <summary>
+		/// ILRuntime的入口
+		/// </summary>
+		private AppDomain _appdomain;
+#else
+		/// <summary>
+		/// 反射程序集
+		/// </summary>
+		private Assembly _assembly;
+#endif
+		//热更新的开头函数
+		private object _hotFixEntity;
 
         //热更新里面的反射类型
-        private List<Type> _hotFixReflectionTypes;
+        private List<Type> _hotFixTypes;
         /// <summary>
         /// 获取热更新的所有类型
         /// </summary>
@@ -36,38 +44,44 @@ namespace GameFramework.Taurus
         {
             get
             {
-                if (_hotFixReflectionTypes == null || _hotFixReflectionTypes.Count == 0)
+                if (_hotFixTypes == null || _hotFixTypes.Count == 0)
                 {
-                    _hotFixReflectionTypes = new List<Type>();
-                    if (this.Appdomain == null)
-                        return _hotFixReflectionTypes;
-
-                    foreach (var item in Appdomain.LoadedTypes.Values)
-                    {
-                        _hotFixReflectionTypes.Add(item.ReflectionType);
-                    }
-                }
-                return _hotFixReflectionTypes;
+                    _hotFixTypes = new List<Type>();
+#if ILRuntime
+					if (this._appdomain != null)
+					{
+						foreach (var item in _appdomain.LoadedTypes.Values)
+						{
+							_hotFixTypes.Add(item.ReflectionType);
+						}
+					}
+#else
+					if (_assembly != null)
+					{
+						_hotFixTypes = _assembly.GetTypes().ToList();
+					}
+#endif
+				}
+                return _hotFixTypes;
             }
         }
 
-        #region 函数
+#region 函数
         //渲染更新函数
         public Action Update;
         //固定帧更新函数
         public Action FixedUpdate;
        //结束函数
         public Action Close;
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
         public HotFixManager()
         {
-            Appdomain = new AppDomain();
+            
         }
-
-
+		
         /// <summary>
         ///  加载
         /// </summary>
@@ -75,56 +89,32 @@ namespace GameFramework.Taurus
         /// <param name="pdbDatas"></param>
         public void LoadHotfixAssembly(byte[] dllDatas,byte[] pdbDatas=null)
         {
-            if (pdbDatas != null)
+#if ILRuntime
+			_appdomain = new AppDomain();
+			if (pdbDatas != null)
             {
                 using (System.IO.MemoryStream fs = new MemoryStream(dllDatas))
                 {
                     using (System.IO.MemoryStream p = new MemoryStream(pdbDatas))
                     {
-                        Appdomain.LoadAssembly(fs, p, new Mono.Cecil.Pdb.PdbReaderProvider());
+                        _appdomain.LoadAssembly(fs, p, new Mono.Cecil.Pdb.PdbReaderProvider());
                     }
                 }
             }
             else
                 using (System.IO.MemoryStream fs = new MemoryStream(dllDatas))
                 {
-                        Appdomain.LoadAssembly(fs, null, new Mono.Cecil.Pdb.PdbReaderProvider());
+                        _appdomain.LoadAssembly(fs, null, new Mono.Cecil.Pdb.PdbReaderProvider());
                 }
-
-
+			
             InitializeILRuntime();
-
-            //运行热更新的入口
-            RunHotFixVrCoreEntity();
+#else
+			_assembly = Assembly.Load(dllDatas, pdbDatas);
+#endif
+			//运行热更新的入口
+			RunHotFixInstantiate();
         }
-
-        void InitializeILRuntime()
-        {
-            //注册CLR绑定
-            ILRuntime.Runtime.Generated.CLRBindings.Initialize(Appdomain);
-
-            //跨域继承的基类
-            Appdomain.RegisterCrossBindingAdaptor(new Google.Protobuf.IMessageAdaptor());
-            Appdomain.RegisterCrossBindingAdaptor(new IAsyncStateMachineClassInheritanceAdaptor());
-            Appdomain.DelegateManager.RegisterFunctionDelegate<Google.Protobuf.IMessageAdaptor.Adaptor>();
-            Appdomain.DelegateManager.RegisterMethodDelegate<System.Object>();
-
-
-            Appdomain.DelegateManager.RegisterMethodDelegate<System.UInt16, System.Byte[]>();
-
-            //这里做一些ILRuntime的注册，HelloWorld示例暂时没有需要注册的
-            Appdomain.DelegateManager.RegisterMethodDelegate<System.Object, ILRuntime.Runtime.Intepreter.ILTypeInstance>();
-            Appdomain.DelegateManager.RegisterDelegateConvertor<System.EventHandler<ILRuntime.Runtime.Intepreter.ILTypeInstance>>((act) =>
-            {
-                return new System.EventHandler<ILRuntime.Runtime.Intepreter.ILTypeInstance>((sender, e) =>
-                {
-                    ((Action<System.Object, ILRuntime.Runtime.Intepreter.ILTypeInstance>)act)(sender, e);
-                });
-            });
-           
-
-        }
-        
+		
         public void OnUpdate()
         {
             Update?.Invoke();
@@ -138,14 +128,61 @@ namespace GameFramework.Taurus
         public override void OnClose()
         {
             Close?.Invoke();
-            Appdomain = null;
-        }
 
-        //运行更新的实例
-        private void RunHotFixVrCoreEntity()
+			_hotFixEntity = null;
+
+#if ILRuntime
+			_appdomain = null;
+#else
+			_assembly = null;
+#endif
+
+		}
+
+		//运行更新的实例
+		private void RunHotFixInstantiate()
         {
-            _hotFixVrCoreEntity = Appdomain.Instantiate("HotFix.Taurus.HotFixMode");
-        }
+#if ILRuntime
+			_hotFixEntity = _appdomain?.Instantiate("HotFix.Taurus.HotFixMode");
+#else
+			_hotFixEntity = _assembly?.CreateInstance("HotFix.Taurus.HotFixMode");
+#endif
+			if (_hotFixEntity == null)
+				throw new GamekException("热更新实例化失败:HotFix.Taurus.HotFixMode");
+		}
 
-    }
+		#region 内部函数
+
+#if ILRuntime
+		void InitializeILRuntime()
+        {
+            //注册CLR绑定
+            ILRuntime.Runtime.Generated.CLRBindings.Initialize(_appdomain);
+
+            //跨域继承的基类
+            _appdomain.RegisterCrossBindingAdaptor(new Google.Protobuf.IMessageAdaptor());
+            _appdomain.RegisterCrossBindingAdaptor(new IAsyncStateMachineClassInheritanceAdaptor());
+            _appdomain.DelegateManager.RegisterFunctionDelegate<Google.Protobuf.IMessageAdaptor.Adaptor>();
+            _appdomain.DelegateManager.RegisterMethodDelegate<System.Object>();
+
+
+            _appdomain.DelegateManager.RegisterMethodDelegate<System.UInt16, System.Byte[]>();
+
+            //这里做一些ILRuntime的注册，HelloWorld示例暂时没有需要注册的
+            _appdomain.DelegateManager.RegisterMethodDelegate<System.Object, ILRuntime.Runtime.Intepreter.ILTypeInstance>();
+            _appdomain.DelegateManager.RegisterDelegateConvertor<System.EventHandler<ILRuntime.Runtime.Intepreter.ILTypeInstance>>((act) =>
+            {
+                return new System.EventHandler<ILRuntime.Runtime.Intepreter.ILTypeInstance>((sender, e) =>
+                {
+                    ((Action<System.Object, ILRuntime.Runtime.Intepreter.ILTypeInstance>)act)(sender, e);
+                });
+            });
+           
+
+        }
+#endif
+
+		#endregion
+
+	}
 }
