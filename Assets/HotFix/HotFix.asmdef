@@ -1,0 +1,14 @@
+{
+    "name": "HotFix",
+    "references": [
+        "GameFramework",
+        "Main",
+        "ThirdParty"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true
+}

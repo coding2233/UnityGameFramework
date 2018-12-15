@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace ILRuntime.Runtime.Generated
 {
-    class CLRBindings
+    public class CLRBindings
     {
         /// <summary>
         /// Initialize the CLR binding, please invoke this AFTER CLR Redirection registration
