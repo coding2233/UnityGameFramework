@@ -146,7 +146,9 @@ namespace GameFramework.Taurus
                 if (string.IsNullOrEmpty(uIViewAttribute?.ViewPath) || string.IsNullOrEmpty(uIViewAttribute.AssetBundleName))
 		            return null;
 		        assetCofig = new AssetConfig(uIViewAttribute.AssetBundleName, uIViewAttribute.ViewPath);
-		    }
+
+				_uiAssetPath[hashCode] = assetCofig;
+			}
 		    return assetCofig;
         }
 

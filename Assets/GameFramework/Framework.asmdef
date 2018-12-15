@@ -1,0 +1,10 @@
+{
+    "name": "GameFramework",
+    "references": [
+        "ThirdParty"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true
+}

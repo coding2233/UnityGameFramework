@@ -5,6 +5,8 @@
 // <describe> #检查资源状态# </describe>
 // <email> yeozhang@qq.com </email>
 // <time> #2018年7月8日 13点20分# </time>
+//-----------------------------------------------------------------------
+
 
 using System;
 using System.Collections;
@@ -34,16 +36,19 @@ namespace GameFramework.Taurus
         private bool _resourceUpdateDone;
         //需要更新的资源
         private Dictionary<string, string> _downloadResouces;
-        #endregion
+		//余下的资源
+		private List<string> _remainingResources;
+		#endregion
 
-        #region 重写函数
+		#region 重写函数
 
-        public override void OnInit()
+		public override void OnInit()
         {
             base.OnInit();
 
             _downloadResouces = new Dictionary<string, string>();
-        }
+			_remainingResources = new List<string>();
+		}
 
         public override void OnEnter(params object[] parameters)
         {
@@ -80,7 +85,7 @@ namespace GameFramework.Taurus
             base.OnUpdate();
 
             //更新资源
-            if (_resourceUpdateDone && _downloadResouces.Count == 0)
+            if (_resourceUpdateDone && _remainingResources.Count == 0)
             {
                 //更新本地资源信息文本
                 UpdateAssetVersionTxt();
@@ -147,9 +152,11 @@ namespace GameFramework.Taurus
         private void OnDownloadSuccess(object sender, IEventArgs e)
         {
             DownloadSuccessEventArgs ne = (DownloadSuccessEventArgs) e;
-            if (_downloadResouces.ContainsKey(ne.RemoteUrl))
-                _downloadResouces.Remove(ne.RemoteUrl);
-        }
+			if (_remainingResources.Contains(ne.RemoteUrl))
+				_remainingResources.Remove(ne.RemoteUrl);
+			//if (_downloadResouces.ContainsKey(ne.RemoteUrl))
+			//    _downloadResouces.Remove(ne.RemoteUrl);
+		}
         //下载文件失败
         private void OnDownloadFaile(object sender, IEventArgs e)
         {
@@ -164,11 +171,9 @@ namespace GameFramework.Taurus
             Debug.Log(
                 $"path:{ne.LocalPath} progress:{ne.DownloadProgress} bytes:{ne.DownloadBytes} speed:{ne.DownloadSpeed}");
         }
-
         #endregion
 
         #region 内部函数
-
         //加载本地版本信息
         private AssetBundleVersionInfo LoadLocalVersion()
         {
@@ -196,7 +201,8 @@ namespace GameFramework.Taurus
         //更新资源
         private void UpdateResource()
         {
-            foreach (var item in _remoteVersion.Resources)
+
+			foreach (var item in _remoteVersion.Resources)
             {
                 //本地有响应文件则跳过
                 if (_localVersion!=null&& _localVersion.Resources!=null&&_localVersion.Resources.Contains(item))
@@ -212,7 +218,9 @@ namespace GameFramework.Taurus
 
                 //添加需要下载的资源
                 _downloadResouces.Add(remoteUrl, localPath);
-            }
+		
+				_remainingResources.Add(remoteUrl);
+			}
           
         }
 
@@ -248,7 +256,6 @@ namespace GameFramework.Taurus
             #endif
             return platformName.ToLower();
         }
-
 #endregion
 
     }
