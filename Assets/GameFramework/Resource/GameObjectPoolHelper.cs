@@ -13,7 +13,7 @@ using System.Collections.Generic;
 
 namespace GameFramework.Taurus
 {
-	internal class GameObjectPoolHelper : MonoBehaviour, IGameObjectPoolHelper
+	public class GameObjectPoolHelper : MonoBehaviour, IGameObjectPoolHelper
 	{
 		/// <summary>
 		///		对象池名称
