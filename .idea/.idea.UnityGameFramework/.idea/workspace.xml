@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="ee980bf6-3724-4c68-adb2-47a00b1ac80a" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.UnityGameFramework/.idea/contentModel.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.UnityGameFramework/.idea/indexLayout.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.UnityGameFramework/.idea/modules.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.UnityGameFramework/.idea/vcs.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/.idea.UnityGameFramework/riderModule.iml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/Operation.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/Operation/OperationAssetConfigEditor.cs" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/Operation/OperationAssetConfigEditor.cs.meta" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/Operation/OperationAssetStatusEditor.cs" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/Operation/OperationAssetStatusEditor.cs.meta" afterPath="" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="AssetBundleTool.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleTool.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="5115">
+              <caret line="346" column="55" lean-forward="false" selection-start-line="346" selection-start-column="55" selection-end-line="346" selection-end-column="55" />
+              <folding>
+                <marker date="1544887715071" expanded="true" signature="0:353" ph="/* ----------------------------------------------------------------------- ... */" />
+                <marker date="1544887715071" expanded="false" signature="361:476" ph="..." />
+                <marker date="1544887715071" expanded="true" signature="508:16742" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="550:16740" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="1072:2220" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="1098:2210" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="1159:2153" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="1198:2135" ph="获取编辑器配置文件的信息" />
+                <marker date="1544887715071" expanded="true" signature="1796:2104" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="2291:2565" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="2314:2555" ph="设置编辑器配置文件的信息" />
+                <marker date="1544887715071" expanded="true" signature="2576:2639" ph="/// 读取资源文件夹下的所有子资源 ... " />
+                <marker date="1544887715071" expanded="true" signature="2736:3921" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="2802:2854" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="3043:3911" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="3098:3430" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="3164:3412" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="3451:3897" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="3518:3879" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="3753:3857" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="3931:3989" ph="/// 读取AB包配置信息 ... " />
+                <marker date="1544887715071" expanded="true" signature="4094:4811" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="4226:4801" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="4467:4739" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="4633:4721" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="4821:4882" ph="/// 是否存在指定的AB包名称 ... " />
+                <marker date="1544887715071" expanded="true" signature="4963:5227" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="5037:5191" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="5108:5177" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="5237:5303" ph="/// 通过资源GUID获取有效的资源数据 ... " />
+                <marker date="1544887715071" expanded="true" signature="5404:5670" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="5473:5635" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="5539:5621" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="5680:5744" ph="/// 通过资源后缀名获取资源文件类型 ... " />
+                <marker date="1544887715071" expanded="true" signature="5816:6088" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="5885:6039" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="5940:6025" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="6098:6156" ph="/// 是否是有效的文件夹 ... " />
+                <marker date="1544887715071" expanded="true" signature="6216:6455" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="6282:6420" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="6336:6406" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="6465:6528" ph="/// 改变资源及其子资源的选中状态 ... " />
+                <marker date="1544887715071" expanded="true" signature="6612:7101" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="6719:6933" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="6802:6919" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="7022:7091" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="7111:7174" ph="/// 展开或关闭文件夹及其子文件夹 ... " />
+                <marker date="1544887715071" expanded="true" signature="7244:7564" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="7310:7554" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="7437:7540" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="7574:7635" ph="/// 获取所有被选中的有效资源 ... " />
+                <marker date="1544887715071" expanded="true" signature="7727:8078" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="7863:8034" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="7926:8020" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="8088:8146" ph="/// 添加资源到AB包中 ... " />
+                <marker date="1544887715071" expanded="true" signature="8232:8493" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="8503:8561" ph="/// 从AB包中删除资源 ... " />
+                <marker date="1544887715071" expanded="true" signature="8650:8939" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="8738:8810" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="8949:9007" ph="/// 清空AB包中的资源 ... " />
+                <marker date="1544887715071" expanded="true" signature="9078:9400" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="9145:9356" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="9410:9465" ph="/// 重命名AB包 ... " />
+                <marker date="1544887715071" expanded="true" signature="9556:10121" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="9696:9795" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="9884:10111" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="10131:10185" ph="/// 删除AB包 ... " />
+                <marker date="1544887715071" expanded="true" signature="10270:10480" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="10490:10544" ph="/// 打开文件夹 ... " />
+                <marker date="1544887715071" expanded="true" signature="10595:10739" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="10645:10729" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="10749:10802" ph="/// 打包资源 ... " />
+                <marker date="1544887715071" expanded="true" signature="10912:16030" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="11027:11137" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="11560:12215" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="11692:11784" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="11843:12133" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="12314:15621" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="13821:15446" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="14157:15428" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="14299:14649" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="16040:16173" ph="/// 获取所有的文件 ... " />
+                <marker date="1544887715071" expanded="true" signature="16237:16733" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="EditorTest.cs" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/EditorTest.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="10" column="22" lean-forward="false" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
+              <folding>
+                <marker date="1544891087929" expanded="false" signature="6:116" ph="..." />
+                <marker date="1544891087929" expanded="true" signature="143:274" ph="{...}" />
+                <marker date="1544891087929" expanded="true" signature="168:272" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AssetBundleBuildInfo.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleBuildInfo.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <marker date="1544887715071" expanded="true" signature="0:355" ph="/* ----------------------------------------------------------------------- ... */" />
+                <marker date="1544887715071" expanded="true" signature="422:919" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="462:917" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="477:532" ph="/// AB包的名称 ... " />
+                <marker date="1544887715071" expanded="true" signature="559:613" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="622:680" ph="/// AB包中的所有资源 ... " />
+                <marker date="1544887715071" expanded="true" signature="718:772" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="822:911" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AssetBundleVersionInfo.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Config/AssetBundleVersionInfo.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="10" column="33" lean-forward="false" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="33" />
+              <folding>
+                <marker date="1544887715071" expanded="true" signature="0:341" ph="/* ----------------------------------------------------------------------- ... */" />
+                <marker date="1544887715071" expanded="false" signature="349:390" ph="..." />
+                <marker date="1544887715071" expanded="true" signature="444:507" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="559:695" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="738:1103" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="832:1006" ph="{...}" />
+                <marker date="1544887715071" expanded="true" signature="1045:1100" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleBuildInfo.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleTool.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/EditorTest.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/GameFramework/Config/AssetBundleVersionInfo.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/Assets/GameFramework/Editor/EditorTest.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="435" />
+    <option name="y" value="70" />
+    <option name="width" value="1380" />
+    <option name="height" value="1010" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="SolutionExplorer" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scratches" />
+      <pane id="SolutionExplorer">
+        <subPane>
+          <expand>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="UnityGameFramework (5 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <option name="show-file-system" value="false" />
+        <option name="show-all-items" value="false" />
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Unity Debug.Attach to Unity Editor">
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" />
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ee980bf6-3724-4c68-adb2-47a00b1ac80a" name="Default" comment="" />
+      <created>1544889514985</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1544889514985</updated>
+      <workItem from="1544889521557" duration="692000" />
+      <workItem from="1544890234157" duration="931000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="1623000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="435" y="70" width="1380" height="1010" extended-state="0" />
+    <layout>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Errors In Solution" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Unit Tests" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="NuGet" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3478261" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleTool.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5115">
+          <caret line="346" column="55" lean-forward="false" selection-start-line="346" selection-start-column="55" selection-end-line="346" selection-end-column="55" />
+          <folding>
+            <marker date="1544887715071" expanded="true" signature="0:353" ph="/* ----------------------------------------------------------------------- ... */" />
+            <marker date="1544887715071" expanded="false" signature="361:476" ph="..." />
+            <marker date="1544887715071" expanded="true" signature="508:16742" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="550:16740" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="1072:2220" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="1098:2210" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="1159:2153" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="1198:2135" ph="获取编辑器配置文件的信息" />
+            <marker date="1544887715071" expanded="true" signature="1796:2104" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="2291:2565" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="2314:2555" ph="设置编辑器配置文件的信息" />
+            <marker date="1544887715071" expanded="true" signature="2576:2639" ph="/// 读取资源文件夹下的所有子资源 ... " />
+            <marker date="1544887715071" expanded="true" signature="2736:3921" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="2802:2854" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3043:3911" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3098:3430" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3164:3412" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3451:3897" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3518:3879" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3753:3857" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3931:3989" ph="/// 读取AB包配置信息 ... " />
+            <marker date="1544887715071" expanded="true" signature="4094:4811" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="4226:4801" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="4467:4739" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="4633:4721" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="4821:4882" ph="/// 是否存在指定的AB包名称 ... " />
+            <marker date="1544887715071" expanded="true" signature="4963:5227" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5037:5191" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5108:5177" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5237:5303" ph="/// 通过资源GUID获取有效的资源数据 ... " />
+            <marker date="1544887715071" expanded="true" signature="5404:5670" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5473:5635" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5539:5621" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5680:5744" ph="/// 通过资源后缀名获取资源文件类型 ... " />
+            <marker date="1544887715071" expanded="true" signature="5816:6088" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5885:6039" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5940:6025" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="6098:6156" ph="/// 是否是有效的文件夹 ... " />
+            <marker date="1544887715071" expanded="true" signature="6216:6455" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="6282:6420" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="6336:6406" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="6465:6528" ph="/// 改变资源及其子资源的选中状态 ... " />
+            <marker date="1544887715071" expanded="true" signature="6612:7101" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="6719:6933" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="6802:6919" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7022:7091" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7111:7174" ph="/// 展开或关闭文件夹及其子文件夹 ... " />
+            <marker date="1544887715071" expanded="true" signature="7244:7564" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7310:7554" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7437:7540" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7574:7635" ph="/// 获取所有被选中的有效资源 ... " />
+            <marker date="1544887715071" expanded="true" signature="7727:8078" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7863:8034" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7926:8020" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="8088:8146" ph="/// 添加资源到AB包中 ... " />
+            <marker date="1544887715071" expanded="true" signature="8232:8493" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="8503:8561" ph="/// 从AB包中删除资源 ... " />
+            <marker date="1544887715071" expanded="true" signature="8650:8939" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="8738:8810" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="8949:9007" ph="/// 清空AB包中的资源 ... " />
+            <marker date="1544887715071" expanded="true" signature="9078:9400" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="9145:9356" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="9410:9465" ph="/// 重命名AB包 ... " />
+            <marker date="1544887715071" expanded="true" signature="9556:10121" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="9696:9795" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="9884:10111" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="10131:10185" ph="/// 删除AB包 ... " />
+            <marker date="1544887715071" expanded="true" signature="10270:10480" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="10490:10544" ph="/// 打开文件夹 ... " />
+            <marker date="1544887715071" expanded="true" signature="10595:10739" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="10645:10729" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="10749:10802" ph="/// 打包资源 ... " />
+            <marker date="1544887715071" expanded="true" signature="10912:16030" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="11027:11137" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="11560:12215" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="11692:11784" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="11843:12133" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="12314:15621" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="13821:15446" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="14157:15428" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="14299:14649" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="16040:16173" ph="/// 获取所有的文件 ... " />
+            <marker date="1544887715071" expanded="true" signature="16237:16733" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleBuildInfo.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1544887715071" expanded="true" signature="0:355" ph="/* ----------------------------------------------------------------------- ... */" />
+            <marker date="1544887715071" expanded="true" signature="422:919" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="462:917" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="477:532" ph="/// AB包的名称 ... " />
+            <marker date="1544887715071" expanded="true" signature="559:613" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="622:680" ph="/// AB包中的所有资源 ... " />
+            <marker date="1544887715071" expanded="true" signature="718:772" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="822:911" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/EditorTest.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="4" lean-forward="false" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
+          <folding>
+            <marker date="1544891087929" expanded="false" signature="6:116" ph="..." />
+            <marker date="1544891087929" expanded="true" signature="143:274" ph="{...}" />
+            <marker date="1544891087929" expanded="true" signature="168:272" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/Operation/OperationAssetConfigEditor.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleTool.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5115">
+          <caret line="346" column="55" lean-forward="false" selection-start-line="346" selection-start-column="55" selection-end-line="346" selection-end-column="55" />
+          <folding>
+            <marker date="1544887715071" expanded="true" signature="0:353" ph="/* ----------------------------------------------------------------------- ... */" />
+            <marker date="1544887715071" expanded="false" signature="361:476" ph="..." />
+            <marker date="1544887715071" expanded="true" signature="508:16742" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="550:16740" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="1072:2220" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="1098:2210" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="1159:2153" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="1198:2135" ph="获取编辑器配置文件的信息" />
+            <marker date="1544887715071" expanded="true" signature="1796:2104" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="2291:2565" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="2314:2555" ph="设置编辑器配置文件的信息" />
+            <marker date="1544887715071" expanded="true" signature="2576:2639" ph="/// 读取资源文件夹下的所有子资源 ... " />
+            <marker date="1544887715071" expanded="true" signature="2736:3921" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="2802:2854" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3043:3911" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3098:3430" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3164:3412" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3451:3897" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3518:3879" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3753:3857" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="3931:3989" ph="/// 读取AB包配置信息 ... " />
+            <marker date="1544887715071" expanded="true" signature="4094:4811" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="4226:4801" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="4467:4739" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="4633:4721" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="4821:4882" ph="/// 是否存在指定的AB包名称 ... " />
+            <marker date="1544887715071" expanded="true" signature="4963:5227" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5037:5191" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5108:5177" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5237:5303" ph="/// 通过资源GUID获取有效的资源数据 ... " />
+            <marker date="1544887715071" expanded="true" signature="5404:5670" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5473:5635" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5539:5621" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5680:5744" ph="/// 通过资源后缀名获取资源文件类型 ... " />
+            <marker date="1544887715071" expanded="true" signature="5816:6088" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5885:6039" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="5940:6025" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="6098:6156" ph="/// 是否是有效的文件夹 ... " />
+            <marker date="1544887715071" expanded="true" signature="6216:6455" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="6282:6420" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="6336:6406" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="6465:6528" ph="/// 改变资源及其子资源的选中状态 ... " />
+            <marker date="1544887715071" expanded="true" signature="6612:7101" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="6719:6933" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="6802:6919" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7022:7091" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7111:7174" ph="/// 展开或关闭文件夹及其子文件夹 ... " />
+            <marker date="1544887715071" expanded="true" signature="7244:7564" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7310:7554" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7437:7540" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7574:7635" ph="/// 获取所有被选中的有效资源 ... " />
+            <marker date="1544887715071" expanded="true" signature="7727:8078" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7863:8034" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="7926:8020" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="8088:8146" ph="/// 添加资源到AB包中 ... " />
+            <marker date="1544887715071" expanded="true" signature="8232:8493" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="8503:8561" ph="/// 从AB包中删除资源 ... " />
+            <marker date="1544887715071" expanded="true" signature="8650:8939" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="8738:8810" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="8949:9007" ph="/// 清空AB包中的资源 ... " />
+            <marker date="1544887715071" expanded="true" signature="9078:9400" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="9145:9356" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="9410:9465" ph="/// 重命名AB包 ... " />
+            <marker date="1544887715071" expanded="true" signature="9556:10121" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="9696:9795" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="9884:10111" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="10131:10185" ph="/// 删除AB包 ... " />
+            <marker date="1544887715071" expanded="true" signature="10270:10480" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="10490:10544" ph="/// 打开文件夹 ... " />
+            <marker date="1544887715071" expanded="true" signature="10595:10739" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="10645:10729" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="10749:10802" ph="/// 打包资源 ... " />
+            <marker date="1544887715071" expanded="true" signature="10912:16030" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="11027:11137" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="11560:12215" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="11692:11784" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="11843:12133" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="12314:15621" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="13821:15446" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="14157:15428" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="14299:14649" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="16040:16173" ph="/// 获取所有的文件 ... " />
+            <marker date="1544887715071" expanded="true" signature="16237:16733" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Config/AssetBundleVersionInfo.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="10" column="33" lean-forward="false" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="33" />
+          <folding>
+            <marker date="1544887715071" expanded="true" signature="0:341" ph="/* ----------------------------------------------------------------------- ... */" />
+            <marker date="1544887715071" expanded="false" signature="349:390" ph="..." />
+            <marker date="1544887715071" expanded="true" signature="444:507" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="559:695" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="738:1103" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="832:1006" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="1045:1100" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleBuildInfo.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1544887715071" expanded="true" signature="0:355" ph="/* ----------------------------------------------------------------------- ... */" />
+            <marker date="1544887715071" expanded="true" signature="422:919" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="462:917" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="477:532" ph="/// AB包的名称 ... " />
+            <marker date="1544887715071" expanded="true" signature="559:613" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="622:680" ph="/// AB包中的所有资源 ... " />
+            <marker date="1544887715071" expanded="true" signature="718:772" ph="{...}" />
+            <marker date="1544887715071" expanded="true" signature="822:911" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/EditorTest.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="10" column="22" lean-forward="false" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
+          <folding>
+            <marker date="1544891087929" expanded="false" signature="6:116" ph="..." />
+            <marker date="1544891087929" expanded="true" signature="143:274" ph="{...}" />
+            <marker date="1544891087929" expanded="true" signature="168:272" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

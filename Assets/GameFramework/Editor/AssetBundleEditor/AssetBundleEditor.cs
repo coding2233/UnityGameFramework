@@ -100,10 +100,12 @@ namespace GameFramework.Taurus
 
         private void Update()
         {
+            
             if (EditorApplication.isCompiling)
             {
                 Close();
             }
+
         }
 
         private void OnGUI()
