@@ -39,8 +39,8 @@ namespace GameFramework.Taurus
         /// </summary>
         public static void Update()
         {
-            foreach (var item in _allUpdates)
-                item.OnUpdate();
+			for (int i = 0; i < _allUpdates.Count; i++)
+				_allUpdates[i].OnUpdate();
         }
 
         /// <summary>
