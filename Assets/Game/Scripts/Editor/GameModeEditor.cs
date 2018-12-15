@@ -20,15 +20,7 @@ namespace GameFramework.Taurus
     public class GameModeEditor : Editor
     {
         private GameMode _gameMode;
-
-        private bool _resourceModule = true;
-        private bool _operationModule = true;
-        private bool _stateModule = true;
-        private bool _dataTableModule = true;
-        private bool _nodeDataModule = true;
-        private bool _stepModule = true;
-        private bool _settingModule = true;
-
+		
         ////Color.cyan;
         private Color _defaultColor;
 
@@ -53,375 +45,50 @@ namespace GameFramework.Taurus
         //调试模块的颜色
         private Color _debugColor = new Color(1f, 0.100f, 0.888f, 1.0f);
 
-        //所有状态
-        private List<string> _listState;
+		//所有的模块
+		private List<ModuleEditorBase> _listModuleEditors;
 
-        //所有可操作的物体
-        private Dictionary<long, OperationAssetConfig> _operationAssets;
-
-        //选中物体的ID
-        private long _selectOperationId;
-
-        //选中的物体
-        private GameObject _selectOperationObject;
-
-        private void OnEnable()
+		private void OnEnable()
         {
-            _gameMode = target as GameMode;
+			_listModuleEditors = new List<ModuleEditorBase>();
+
+			_gameMode = target as GameMode;
 
             _defaultColor = GUI.color;
 
-            #region 获取当前状态
+			_listModuleEditors.Add(new ResourceModuleEditor("Resource Module", _resourceColor, _gameMode));
+			_listModuleEditors.Add(new StateModuleEditor("State Module", _stateColor, _gameMode));
+			_listModuleEditors.Add(new SettingModuleEditor("Setting Module", _debugColor, _gameMode));
+		}
 
-            _listState = new List<string>();
-            Type[] types = typeof(GameMode).Assembly.GetTypes();
-            foreach (var item in types)
-            {
-                object[] attribute = item.GetCustomAttributes(typeof(GameStateAttribute), false);
-                if (attribute.Length <= 0 || item.IsAbstract)
-                    continue;
-                GameStateAttribute stateAttribute = (GameStateAttribute) attribute[0];
-                //if (stateAttribute.StateType == VirtualStateType.Ignore)
-                //    continue;
-                object obj = Activator.CreateInstance(item);
-                GameState gs = obj as GameState;
-                if (gs != null)
-                    _listState.Add("[" + stateAttribute.StateType.ToString() + "]\t" + item.FullName);
-            }
+		private void OnDisable()
+		{
+			if (_listModuleEditors == null)
+				return;
 
-            #endregion
-			
-            #region 获取所有可操作的物体
+			for (int i = 0; i < _listModuleEditors.Count; i++)
+			{
+				_listModuleEditors[i].OnClose();
+			}
+			_listModuleEditors.Clear();
+		}
 
-            _operationAssets = new Dictionary<long, OperationAssetConfig>();
-            OperationAssetConfig[] assetConfig = GameObject.FindObjectsOfType<OperationAssetConfig>();
-            foreach (var item in assetConfig)
-            {
-                if (!_operationAssets.ContainsKey(item.OperationId))
-                    _operationAssets.Add(item.OperationId, item);
-                else
-                {
-                    long oldId = item.OperationId;
-                    item.OperationId = IdGenerater.GenerateId();
-                    _operationAssets.Add(item.OperationId, item);
-                    Debug.Log("场景中存在两个Id一样的物体!!" + oldId + "  new Id:" + item.OperationId);
-                }
-            }
-
-            #endregion
-        }
-
-
-        public override void OnInspectorGUI()
+		public override void OnInspectorGUI()
         {
-            if (_gameMode == null)
-                return;
-            GUILayout.BeginVertical();
+			if (_gameMode == null || _listModuleEditors == null)
+				return;
 
-            #region 资源加载模块
+			GUILayout.BeginVertical();
 
-            GUI.color = _resourceColor;
-            GUILayout.BeginVertical("Box");
-            GUI.color = _defaultColor;
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(12);
-            _resourceModule = EditorGUILayout.Foldout(_resourceModule, "Resource Module", true);
-            GUILayout.EndHorizontal();
-            if (_resourceModule)
-                DrawEditorModeGUI();
-            GUILayout.EndVertical();
+			for (int i = 0; i < _listModuleEditors.Count; i++)
+			{
+				_listModuleEditors[i].OnInspectorGUI();
+			}
 
-            #endregion
+			GUILayout.EndVertical();
 
-            #region 可操作物体模块
+			EditorUtility.SetDirty(_gameMode);
+		}
 
-            GUI.color = _operationColor;
-            GUILayout.BeginVertical("Box");
-            GUI.color = _defaultColor;
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(12);
-            _operationModule = EditorGUILayout.Foldout(_operationModule, "Operation Module", true);
-            GUILayout.EndHorizontal();
-            if (_operationModule)
-                DrawOperationGUI();
-            GUILayout.EndVertical();
-
-            #endregion
-
-            #region 状态模块
-
-            GUI.color = _stateColor;
-            GUILayout.BeginVertical("Box");
-            GUI.color = _defaultColor;
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(12);
-            _stateModule = EditorGUILayout.Foldout(_stateModule, "State Module", true);
-            GUILayout.EndHorizontal();
-            if (_stateModule)
-                DrawStateGUI();
-            GUILayout.EndVertical();
-
-            #endregion
-
-            #region 配置表模块
-
-            GUI.color = _dataTableColor;
-            GUILayout.BeginVertical("Box");
-            GUI.color = _defaultColor;
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(12);
-            _dataTableModule = EditorGUILayout.Foldout(_dataTableModule, "DataTable Module", true);
-            if (!EditorApplication.isPlaying)
-                _dataTableModule = EditorApplication.isPlaying;
-            GUILayout.EndHorizontal();
-            if (_dataTableModule)
-                DrawDataTableGUI();
-            GUILayout.EndVertical();
-
-            #endregion
-
-            #region 数据节点模块
-
-            GUI.color = _nodeDataColor;
-            GUILayout.BeginVertical("Box");
-            GUI.color = _defaultColor;
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(12);
-            _nodeDataModule = EditorGUILayout.Foldout(_nodeDataModule, "NodeData Module", true);
-            if (!EditorApplication.isPlaying)
-                _nodeDataModule = EditorApplication.isPlaying;
-            GUILayout.EndHorizontal();
-            if (_nodeDataModule)
-                DrawNodeDataGUI();
-            GUILayout.EndVertical();
-
-            #endregion
-
-            #region 步骤模块
-
-            GUI.color = _stepColor;
-            GUILayout.BeginVertical("Box");
-            GUI.color = _defaultColor;
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(12);
-            _stepModule = EditorGUILayout.Foldout(_stepModule, "Step Module", true);
-            if (!EditorApplication.isPlaying)
-                _stepModule = EditorApplication.isPlaying;
-            GUILayout.EndHorizontal();
-            if (_stepModule)
-                DrawStepGUI();
-            GUILayout.EndVertical();
-
-            #endregion
-
-            #region 调试模块
-
-            GUI.color = _debugColor;
-            GUILayout.BeginVertical("Box");
-            GUI.color = _defaultColor;
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(12);
-            _settingModule = EditorGUILayout.Foldout(_settingModule, "Setting Module", true);
-            if (EditorApplication.isPlaying)
-                _settingModule = !EditorApplication.isPlaying;
-            GUILayout.EndHorizontal();
-            if (_settingModule)
-                DrawSettingGUI();
-            GUILayout.EndVertical();
-
-            #endregion
-
-            GUILayout.EndVertical();
-
-			//保存设置
-	        EditorUtility.SetDirty(_gameMode);
-        }
-
-
-        //绘制 当前 资源加载的界面
-        void DrawEditorModeGUI()
-        {
-            GUILayout.BeginVertical("HelpBox");
-
-			//  _gameMode.IsEditorMode = EditorGUILayout.Toggle("Editor Mode", _gameMode.IsEditorMode);
-			_gameMode.ResUpdateType =
-				(ResourceUpdateType)EditorGUILayout.EnumPopup("Resource Update Type", _gameMode.ResUpdateType);
-			if (_gameMode.ResUpdateType!=ResourceUpdateType.Editor)
-            {
-	    //        _gameMode.ResUpdateType =
-					//(ResourceUpdateType)EditorGUILayout.EnumPopup("Resource Update Type", _gameMode.ResUpdateType);
-	            if (_gameMode.ResUpdateType == ResourceUpdateType.Update)
-	            {
-		            _gameMode.ResUpdatePath =
-			            EditorGUILayout.TextField("Resource Update Path", _gameMode.ResUpdatePath);
-		            _gameMode.LocalPathType =
-			            (PathType)EditorGUILayout.EnumPopup("Local Path Type", PathType.ReadWrite);
-				}
-	            else
-	            {
-		            _gameMode.LocalPathType =
-			            (PathType)EditorGUILayout.EnumPopup("Local Path Type", _gameMode.LocalPathType);
-				}
-				string path = "";
-				switch (_gameMode.LocalPathType)
-				{
-					case PathType.DataPath:
-						path = Application.dataPath;
-						break;
-					case PathType.ReadOnly:
-						path = Application.streamingAssetsPath;
-						break;
-					case PathType.ReadWrite:
-						path = Application.persistentDataPath;
-						break;
-					case PathType.TemporaryCache:
-						path = Application.temporaryCachePath;
-						break;
-				}
-
-				EditorGUILayout.LabelField("Path", path);
-            }
-
-            GUILayout.EndVertical();
-        }
-
-        //绘制可操作界面
-        void DrawOperationGUI()
-        {
-            GUILayout.BeginVertical("HelpBox");
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Count");
-            GUILayout.Label(_operationAssets.Count.ToString());
-            GUILayout.EndHorizontal();
-            //Object
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Find");
-            long selectOperationId = EditorGUILayout.LongField(_selectOperationId);
-            if (_selectOperationId != selectOperationId)
-            {
-                OperationAssetConfig operationAsset;
-                if (_operationAssets.TryGetValue(selectOperationId, out operationAsset))
-                {
-                    // Selection.activeGameObject = operationAsset.gameObject;
-                    _selectOperationId = selectOperationId;
-                    _selectOperationObject = operationAsset.gameObject;
-                }
-            }
-
-            EditorGUILayout.ObjectField(_selectOperationObject, typeof(OperationAssetConfig), true);
-
-            GUILayout.EndHorizontal();
-
-            GUILayout.EndVertical();
-        }
-
-        //绘制状态界面
-        void DrawStateGUI()
-        {
-            GUILayout.BeginVertical("HelpBox");
-
-            foreach (var item in _listState)
-            {
-                //正在运行
-                if (EditorApplication.isPlaying)
-                {
-                    string runName = "";
-                    if (GameMode.State.CurrentState != null)
-                        runName = GameMode.State.CurrentState.GetType().Name;
-                    if (item.Contains(runName))
-                    {
-                        GUILayout.BeginHorizontal();
-                        GUI.color = Color.green;
-                        GUILayout.Label("", GUI.skin.GetStyle("Icon.ExtrapolationContinue"));
-                        GUI.color = _defaultColor;
-                        GUILayout.Label(item);
-                        GUILayout.FlexibleSpace();
-                        GUILayout.Label((Profiler.GetMonoUsedSizeLong() / 1000000.0f).ToString("f3"));
-                        GUILayout.EndHorizontal();
-
-                        continue;
-                    }
-                }
-
-                //默认状态
-                GUI.enabled = false;
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("", GUI.skin.GetStyle("Icon.ExtrapolationContinue"));
-                GUILayout.Label(item);
-                GUILayout.EndHorizontal();
-                GUI.enabled = true;
-            }
-
-            GUILayout.EndVertical();
-        }
-
-
-        //绘制配置表界面
-        void DrawDataTableGUI()
-        {
-            //GUILayout.BeginVertical("HelpBox");
-
-            //if (EditorApplication.isPlaying)
-            //{
-            //    foreach (var item in GameMode.DataTable.AllDataTables.Values)
-            //    {
-            //        GUILayout.Label(item.GetType().FullName);
-            //    }
-            //}
-
-            //GUILayout.EndVertical();
-        }
-
-        //绘制数据节点界面
-        void DrawNodeDataGUI()
-        {
-            if (!EditorApplication.isPlaying)
-                return;
-
-            GUILayout.BeginVertical("HelpBox");
-          
-            GUILayout.EndVertical();
-        }
-
-        //绘制步骤界面
-        void DrawStepGUI()
-        {
-            //if (GameMode.Step.AllStepControllers == null || GameMode.Step.AllStepControllers.Count == 0)
-            //    return;
-
-            //GUILayout.BeginVertical("HelpBox");
-
-            //foreach (var item in GameMode.Step.AllStepControllers)
-            //{
-            //    GUILayout.BeginHorizontal();
-            //    GUI.enabled = item.Value.IsPlaying;
-            //    GUI.color = item.Value.IsPlaying ? Color.green : _defaultColor;
-            //    GUILayout.Label("", GUI.skin.GetStyle("Icon.Keyframe"));
-            //    GUI.color = _defaultColor;
-            //    GUI.enabled = true;
-            //    GUILayout.Label(item.Key);
-
-            //    float width = Screen.width / 3.0f > 200.0f ? 200 : Screen.width / 3.0f;
-            //    Rect rect = GUILayoutUtility.GetRect(width, 18);
-            //    EditorGUI.ProgressBar(rect, (item.Value.CurrentStepIndex + 1.0f) / (float) item.Value.StepCount,
-            //        (item.Value.CurrentStepIndex + 1.0f) + "/" + item.Value.StepCount);
-            //    GUILayout.EndHorizontal();
-            //}
-
-            //GUILayout.EndVertical();
-        }
-
-        //绘制设置界面
-        void DrawSettingGUI()
-        {
-            GUILayout.BeginVertical("HelpBox");
-
-            GUI.color = _gameMode.DebugEnable ? Color.white : Color.gray;
-            _gameMode.DebugEnable = GUILayout.Toggle(_gameMode.DebugEnable, "Debug Enable");
-            GUI.color = Color.white;
-
-            GUILayout.EndVertical();
-        }
     }
 }
