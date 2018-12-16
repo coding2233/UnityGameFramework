@@ -3,7 +3,6 @@
   <component name="ContentModelStore">
     <e p="$USER_HOME$/.Rider2017.2/system/resharper-host/local/Transient/ReSharperHost/v10/SolutionCaches/_UnityGameFramework.-1507598302.00" t="ExcludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeRecursive">
-      <e p="Assembly-CSharp-Editor-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="Game" t="Include">
           <e p="Scripts" t="Include">
@@ -144,10 +143,64 @@
             <e p="WebRquestMonoHelper.cs" t="Include" />
           </e>
         </e>
-        <e p="Plugins" t="Include">
-          <e p="Editor" t="Include">
-            <e p="JetBrains" t="Include">
-              <e p="Unity3DRider.cs" t="Include" />
+        <e p="HotFix" t="Include">
+          <e p="Game" t="Include">
+            <e p="Network" t="Include">
+              <e p="C2S_TestInfo_Handle.cs" t="Include" />
+              <e p="HotFixTestMessageHandle.cs" t="Include" />
+              <e p="Proto" t="Include">
+                <e p="HotFixProto.cs" t="Include" />
+                <e p="HotFixProtoMessage.cs" t="Include" />
+              </e>
+            </e>
+            <e p="State" t="Include">
+              <e p="HotFixTestState.cs" t="Include" />
+            </e>
+          </e>
+          <e p="GameFramework" t="Include">
+            <e p="Base" t="Include">
+              <e p="GameFrameworkMode.cs" t="Include" />
+              <e p="GameFrameworkModule.cs" t="Include" />
+              <e p="HotFixMode.cs" t="Include" />
+              <e p="IFixedUpdate.cs" t="Include" />
+              <e p="IUpdate.cs" t="Include" />
+            </e>
+            <e p="DataTable" t="Include">
+              <e p="DataTable.cs" t="Include" />
+              <e p="DataTableBase.cs" t="Include" />
+              <e p="DataTableManager.cs" t="Include" />
+              <e p="IDataTable.cs" t="Include" />
+              <e p="IDataTableRow.cs" t="Include" />
+            </e>
+            <e p="Event" t="Include">
+              <e p="EventManager.cs" t="Include" />
+              <e p="GameEventArgs.cs" t="Include" />
+            </e>
+            <e p="Network" t="Include">
+              <e p="IRequest.cs" t="Include" />
+              <e p="IResponse.cs" t="Include" />
+              <e p="MessageAttribute.cs" t="Include" />
+              <e p="MessageHandlerAttribute.cs" t="Include" />
+              <e p="MessageHandlerBase.cs" t="Include" />
+              <e p="NetworkManager.cs" t="Include" />
+              <e p="ProtobufPacker.cs" t="Include" />
+            </e>
+            <e p="ObjectPool" t="Include">
+              <e p="ObjectData.cs" t="Include" />
+              <e p="ObjectDataBase.cs" t="Include" />
+              <e p="PoolManager.cs" t="Include" />
+            </e>
+            <e p="State" t="Include">
+              <e p="GameState.cs" t="Include" />
+              <e p="GameStateAttribute.cs" t="Include" />
+              <e p="GameStateContext.cs" t="Include" />
+              <e p="GameStateManager.cs" t="Include" />
+            </e>
+            <e p="UI" t="Include">
+              <e p="IUIView.cs" t="Include" />
+              <e p="UIManager.cs" t="Include" />
+              <e p="UIView.cs" t="Include" />
+              <e p="UIViewAttribute.cs" t="Include" />
             </e>
           </e>
         </e>
@@ -179,6 +232,8 @@
       </e>
       <e p="GT.Editor.csproj" t="IncludeRecursive" />
       <e p="GameFramework.csproj" t="IncludeRecursive" />
+      <e p="GameMode.Editor.csproj" t="IncludeRecursive" />
+      <e p="HotFix.csproj" t="IncludeRecursive" />
       <e p="Library" t="ExcludeRecursive" />
       <e p="Main.csproj" t="IncludeRecursive" />
       <e p="Temp" t="ExcludeRecursive">

@@ -36,9 +36,6 @@ namespace HotFix.Taurus
         /// 恢复界面
         /// </summary>
         public abstract void OnResume();
-        /// <summary>
-        /// 更新函数
-        /// </summary>
-        public abstract void OnUpdate();
+   
     }
 }

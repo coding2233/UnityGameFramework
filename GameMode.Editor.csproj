@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Game\Scripts\Editor\GameModeEditor.cs" />
+     <Compile Include="Assets\Game\Scripts\Editor\HotFixBuildEditor.cs" />
      <Compile Include="Assets\Game\Scripts\Editor\Module\ResourceModuleEditor.cs" />
      <Compile Include="Assets\Game\Scripts\Editor\Module\SettingModuleEditor.cs" />
      <Compile Include="Assets\Game\Scripts\Editor\Module\StateModuleEditor.cs" />

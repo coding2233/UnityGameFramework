@@ -2,21 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ee980bf6-3724-4c68-adb2-47a00b1ac80a" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleBuildInfo.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleBuildInfo.cs.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleEditor.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleEditor.cs.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleInfo.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleInfo.cs.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleTool.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleTool.cs.meta" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetInfo.cs" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetInfo.cs.meta" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.idea.UnityGameFramework/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/.idea.UnityGameFramework/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleBuildEditor.cs" afterPath="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleBuildEditor.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GT.Editor.csproj" afterPath="$PROJECT_DIR$/GT.Editor.csproj" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectSettings/AssetBundleEditorConifg.json" afterPath="$PROJECT_DIR$/ProjectSettings/AssetBundleEditorConifg.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Assets/Game/HotFix/HotFix.dll.bytes" afterPath="$PROJECT_DIR$/Assets/Game/HotFix/HotFix.dll.bytes" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.idea.UnityGameFramework/.idea/contentModel.xml" afterPath="$PROJECT_DIR$/.idea/.idea.UnityGameFramework/.idea/contentModel.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/UIManager.cs" afterPath="$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/UIManager.cs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/UIView.cs" afterPath="$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/UIView.cs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameFramework.csproj" afterPath="$PROJECT_DIR$/GameFramework.csproj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameMode.Editor.csproj" afterPath="$PROJECT_DIR$/GameMode.Editor.csproj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/HotFix.csproj" afterPath="$PROJECT_DIR$/HotFix.csproj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Main.csproj" afterPath="$PROJECT_DIR$/Main.csproj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ThirdParty.csproj" afterPath="$PROJECT_DIR$/ThirdParty.csproj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/UnityGameFramework.sln" afterPath="$PROJECT_DIR$/UnityGameFramework.sln" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,49 +25,158 @@
       <file leaf-file-name="AssetBundleVersionInfo.cs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Config/AssetBundleVersionInfo.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="24" column="32" lean-forward="false" selection-start-line="24" selection-start-column="32" selection-end-line="24" selection-end-column="32" />
+            <state relative-caret-position="390">
+              <caret line="27" column="32" lean-forward="false" selection-start-line="27" selection-start-column="32" selection-end-line="27" selection-end-column="32" />
               <folding>
-                <marker date="1544891351355" expanded="true" signature="0:341" ph="/* ----------------------------------------------------------------------- ... */" />
-                <marker date="1544891351355" expanded="false" signature="349:390" ph="..." />
-                <marker date="1544891351355" expanded="true" signature="444:507" ph="{...}" />
-                <marker date="1544891351355" expanded="true" signature="559:695" ph="{...}" />
-                <marker date="1544891351355" expanded="true" signature="738:1103" ph="{...}" />
-                <marker date="1544891351355" expanded="true" signature="832:1006" ph="{...}" />
-                <marker date="1544891351355" expanded="true" signature="1045:1100" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="0:341" ph="/* ----------------------------------------------------------------------- ... */" />
+                <marker date="1544947085714" expanded="false" signature="349:390" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AssetBundleBuildEditor.cs" pinned="false" current-in-tab="true">
+      <file leaf-file-name="AssetBundleBuildEditor.cs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleBuildEditor.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="38" column="42" lean-forward="false" selection-start-line="38" selection-start-column="42" selection-end-line="38" selection-end-column="42" />
+            <state relative-caret-position="495">
+              <caret line="50" column="5" lean-forward="false" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
               <folding>
-                <marker date="1544930946287" expanded="false" signature="6:128" ph="..." />
-                <marker date="1544930946287" expanded="true" signature="180:4099" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="623:1007" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="774:915" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="1092:1240" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="1343:1695" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="1466:1689" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="1698:1867" ph="/// OnGUI is called for rendering and handling GUI events. ... " />
-                <marker date="1544930946287" expanded="true" signature="1881:3177" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="1905:1924" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="2130:2160" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="2354:2632" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="2766:2917" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="2859:2913" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="3056:3115" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="3222:3616" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="3259:3350" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="3440:3613" ph="/* _config.Targets=new List&lt;BuildTarget&gt;(); ... */" />
-                <marker date="1544930946287" expanded="true" signature="3661:3906" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="3739:3821" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="3762:3817" ph="{...}" />
-                <marker date="1544930946287" expanded="true" signature="3983:4094" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="160:7783" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="215:7781" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="908:1350" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="1117:1258" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="1435:1628" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="1731:2016" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="1852:1969" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="2019:2188" ph="/// OnGUI is called for rendering and handling GUI events. ... " />
+                <marker date="1544947085714" expanded="true" signature="2202:4218" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="2226:2245" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="2453:2483" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="2940:3392" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="3167:3377" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="3205:3344" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="3279:3338" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="3691:3842" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="3784:3838" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="4097:4156" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="4263:4481" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="4300:4391" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="4526:4771" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="4604:4686" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="4627:4682" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="4833:5459" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="5547:6919" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="6257:6766" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="6721:6762" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="7000:7550" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="7232:7288" ph="{...}" />
+                <marker date="1544947085714" expanded="true" signature="7627:7775" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HotFixMode.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/HotFix/GameFramework/Base/HotFixMode.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="375">
+              <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+              <folding>
+                <marker date="1544947078293" expanded="true" signature="23:1792" ph="{...}" />
+                <marker date="1544947078293" expanded="true" signature="53:1790" ph="{...}" />
+                <marker date="1544947078293" expanded="true" signature="68:351" ph="属性" />
+                <marker date="1544947078293" expanded="true" signature="380:1493" ph="{...}" />
+                <marker date="1544947078293" expanded="true" signature="483:907" ph="获取热更新组件" />
+                <marker date="1544947078293" expanded="true" signature="1116:1288" ph="开启热更新流程" />
+                <marker date="1544947078293" expanded="true" signature="1302:1483" ph="添加回调" />
+                <marker date="1544947078293" expanded="true" signature="1526:1586" ph="{...}" />
+                <marker date="1544947078293" expanded="true" signature="1624:1689" ph="{...}" />
+                <marker date="1544947078293" expanded="true" signature="1721:1783" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UIManager.cs" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/UIManager.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="510">
+              <caret line="102" column="56" lean-forward="true" selection-start-line="102" selection-start-column="56" selection-end-line="102" selection-end-column="56" />
+              <folding>
+                <marker date="1544948701867" expanded="true" signature="0:345" ph="/* ----------------------------------------------------------------------- ... */" />
+                <marker date="1544948701867" expanded="false" signature="354:439" ph="..." />
+                <marker date="1544948701867" expanded="true" signature="464:7653" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="530:7651" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="545:568" ph="/* 事件管理器 ... */" />
+                <marker date="1544948701867" expanded="true" signature="1184:1442" ph="构造函数" />
+                <marker date="1544948701867" expanded="true" signature="1223:1423" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="1452:4452" ph="外部接口" />
+                <marker date="1544948701867" expanded="true" signature="1562:2908" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="1752:2208" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="2047:2159" ph="/* 触发暂停事件 ... */" />
+                <marker date="1544948701867" expanded="true" signature="2709:2778" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="2791:2898" ph="/* 触发打开事件 ... */" />
+                <marker date="1544948701867" expanded="true" signature="2958:4432" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="3030:4016" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="3224:4002" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="3404:3500" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="3521:3643" ph="/* 触发关闭事件 ... */" />
+                <marker date="1544948701867" expanded="true" signature="3720:3895" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="4058:4422" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="4290:4408" ph="/* 触发恢复事件 ... */" />
+                <marker date="1544948701867" expanded="true" signature="4464:6878" ph="内部函数" />
+                <marker date="1544948701867" expanded="true" signature="4522:4848" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="4569:4838" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="4643:4726" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="4727:4824" ph="/* foreach (var item in _allUiViews.Values) ... */" />
+                <marker date="1544948701867" expanded="true" signature="4915:5683" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="5056:5642" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="5778:6858" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="5882:6774" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="6194:6385" ph="/* ILRuntime不支持带参数构造函数的生成 ... */" />
+                <marker date="1544948701867" expanded="true" signature="6889:7253" ph="重写函数" />
+                <marker date="1544948701867" expanded="true" signature="6940:7234" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="7107:7191" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="7289:7643" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="7413:7441" ph="{...}" />
+                <marker date="1544948701867" expanded="true" signature="7515:7633" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UIView.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/UIView.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="570">
+              <caret line="38" column="3" lean-forward="false" selection-start-line="38" selection-start-column="3" selection-end-line="38" selection-end-column="3" />
+              <folding>
+                <marker date="1544948715487" expanded="true" signature="0:370" ph="/* ----------------------------------------------------------------------- ... */" />
+                <marker date="1544948715487" expanded="true" signature="414:1107" ph="{...}" />
+                <marker date="1544948715487" expanded="true" signature="459:1105" ph="{...}" />
+                <marker date="1544948715487" expanded="true" signature="556:609" ph="{...}" />
+                <marker date="1544948715487" expanded="true" signature="619:723" ph="/// 打开界面 ... " />
+                <marker date="1544948715487" expanded="true" signature="798:851" ph="/// 退出界面 ... " />
+                <marker date="1544948715487" expanded="true" signature="899:952" ph="/// 暂停界面 ... " />
+                <marker date="1544948715487" expanded="true" signature="1001:1054" ph="/// 恢复界面 ... " />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="IUIView.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/IUIView.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <marker date="1544947078297" expanded="true" signature="0:348" ph="/* ----------------------------------------------------------------------- ... */" />
+                <marker date="1544947078297" expanded="true" signature="374:841" ph="{...}" />
+                <marker date="1544947078297" expanded="true" signature="405:839" ph="{...}" />
+                <marker date="1544947078297" expanded="true" signature="420:524" ph="/// 打开界面 ... " />
+                <marker date="1544947078297" expanded="true" signature="583:636" ph="/// 退出界面 ... " />
+                <marker date="1544947078297" expanded="true" signature="668:721" ph="/// 暂停界面 ... " />
+                <marker date="1544947078297" expanded="true" signature="754:807" ph="/// 恢复界面 ... " />
               </folding>
             </state>
           </provider>
@@ -84,14 +188,20 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/HotFix/GameFramework/Base/HotFixMode.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/UIView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleBuildEditor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/GameFramework/Config/AssetBundleVersionInfo.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/UIManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/IUIView.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/Assets/GameFramework/Editor/EditorTest.cs" />
         <option value="$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleBuildEditor.cs" />
+        <option value="$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/UIManager.cs" />
+        <option value="$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/UIView.cs" />
       </list>
     </option>
   </component>
@@ -101,7 +211,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="194" />
     <option name="y" value="20" />
     <option name="width" value="1380" />
@@ -127,42 +237,86 @@
           <expand>
             <path>
               <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="UnityGameFramework (synchronizing...)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="UnityGameFramework (6 projects)" type="977d5f41:SolutionExplorerNodeRider" />
             </path>
             <path>
               <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="UnityGameFramework (synchronizing...)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="GT.Editor (synchronizing...)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="UnityGameFramework (6 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="GT.Editor" type="977d5f41:SolutionExplorerNodeRider" />
             </path>
             <path>
               <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="UnityGameFramework (synchronizing...)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="GT.Editor (synchronizing...)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="UnityGameFramework (6 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="GT.Editor" type="977d5f41:SolutionExplorerNodeRider" />
               <item name="Assets" type="977d5f41:SolutionExplorerNodeRider" />
             </path>
             <path>
               <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="UnityGameFramework (synchronizing...)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="GT.Editor (synchronizing...)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="UnityGameFramework (6 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="GT.Editor" type="977d5f41:SolutionExplorerNodeRider" />
               <item name="Assets" type="977d5f41:SolutionExplorerNodeRider" />
               <item name="GameFramework" type="977d5f41:SolutionExplorerNodeRider" />
             </path>
             <path>
               <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="UnityGameFramework (synchronizing...)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="GT.Editor (synchronizing...)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="UnityGameFramework (6 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="GT.Editor" type="977d5f41:SolutionExplorerNodeRider" />
               <item name="Assets" type="977d5f41:SolutionExplorerNodeRider" />
               <item name="GameFramework" type="977d5f41:SolutionExplorerNodeRider" />
               <item name="Editor" type="977d5f41:SolutionExplorerNodeRider" />
             </path>
             <path>
               <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="UnityGameFramework (synchronizing...)" type="977d5f41:SolutionExplorerNodeRider" />
-              <item name="GT.Editor (synchronizing...)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="UnityGameFramework (6 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="GT.Editor" type="977d5f41:SolutionExplorerNodeRider" />
               <item name="Assets" type="977d5f41:SolutionExplorerNodeRider" />
               <item name="GameFramework" type="977d5f41:SolutionExplorerNodeRider" />
               <item name="Editor" type="977d5f41:SolutionExplorerNodeRider" />
               <item name="AssetBundleEditor" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="UnityGameFramework (6 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="HotFix" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="UnityGameFramework (6 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="HotFix" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="Assets" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="UnityGameFramework (6 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="HotFix" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="Assets" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="HotFix" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="UnityGameFramework (6 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="HotFix" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="Assets" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="HotFix" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="GameFramework" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="UnityGameFramework (6 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="HotFix" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="Assets" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="HotFix" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="GameFramework" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="Base" type="977d5f41:SolutionExplorerNodeRider" />
+            </path>
+            <path>
+              <item name="" type="13324e5d:SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="UnityGameFramework (6 projects)" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="HotFix" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="Assets" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="HotFix" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="GameFramework" type="977d5f41:SolutionExplorerNodeRider" />
+              <item name="UI" type="977d5f41:SolutionExplorerNodeRider" />
             </path>
           </expand>
           <select />
@@ -203,12 +357,12 @@
       <updated>1544889514985</updated>
       <workItem from="1544889521557" duration="692000" />
       <workItem from="1544890234157" duration="931000" />
-      <workItem from="1544930694710" duration="385000" />
+      <workItem from="1544930694710" duration="1496000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2008000" />
+    <option name="totallyTimeSpent" value="3119000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -220,7 +374,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1920" height="1030" extended-state="7" />
+    <frame x="0" y="0" width="1920" height="1030" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -277,13 +431,8 @@
         <state relative-caret-position="135">
           <caret line="10" column="33" lean-forward="false" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="33" />
           <folding>
-            <marker date="1544891351355" expanded="true" signature="0:341" ph="/* ----------------------------------------------------------------------- ... */" />
-            <marker date="1544891351355" expanded="false" signature="349:390" ph="..." />
-            <marker date="1544891351355" expanded="true" signature="444:507" ph="{...}" />
-            <marker date="1544891351355" expanded="true" signature="559:695" ph="{...}" />
-            <marker date="1544891351355" expanded="true" signature="738:1103" ph="{...}" />
-            <marker date="1544891351355" expanded="true" signature="832:1006" ph="{...}" />
-            <marker date="1544891351355" expanded="true" signature="1045:1100" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="0:341" ph="/* ----------------------------------------------------------------------- ... */" />
+            <marker date="1544947085714" expanded="false" signature="349:390" ph="..." />
           </folding>
         </state>
       </provider>
@@ -319,47 +468,148 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Config/AssetBundleVersionInfo.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="24" column="32" lean-forward="false" selection-start-line="24" selection-start-column="32" selection-end-line="24" selection-end-column="32" />
+        <state relative-caret-position="390">
+          <caret line="27" column="32" lean-forward="false" selection-start-line="27" selection-start-column="32" selection-end-line="27" selection-end-column="32" />
           <folding>
-            <marker date="1544891351355" expanded="true" signature="0:341" ph="/* ----------------------------------------------------------------------- ... */" />
-            <marker date="1544891351355" expanded="false" signature="349:390" ph="..." />
-            <marker date="1544891351355" expanded="true" signature="444:507" ph="{...}" />
-            <marker date="1544891351355" expanded="true" signature="559:695" ph="{...}" />
-            <marker date="1544891351355" expanded="true" signature="738:1103" ph="{...}" />
-            <marker date="1544891351355" expanded="true" signature="832:1006" ph="{...}" />
-            <marker date="1544891351355" expanded="true" signature="1045:1100" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="0:341" ph="/* ----------------------------------------------------------------------- ... */" />
+            <marker date="1544947085714" expanded="false" signature="349:390" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/GameFramework/Editor/AssetBundleEditor/AssetBundleBuildEditor.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="38" column="42" lean-forward="false" selection-start-line="38" selection-start-column="42" selection-end-line="38" selection-end-column="42" />
+        <state relative-caret-position="495">
+          <caret line="50" column="5" lean-forward="false" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
           <folding>
-            <marker date="1544930946287" expanded="false" signature="6:128" ph="..." />
-            <marker date="1544930946287" expanded="true" signature="180:4099" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="623:1007" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="774:915" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="1092:1240" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="1343:1695" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="1466:1689" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="1698:1867" ph="/// OnGUI is called for rendering and handling GUI events. ... " />
-            <marker date="1544930946287" expanded="true" signature="1881:3177" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="1905:1924" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="2130:2160" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="2354:2632" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="2766:2917" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="2859:2913" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="3056:3115" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="3222:3616" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="3259:3350" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="3440:3613" ph="/* _config.Targets=new List&lt;BuildTarget&gt;(); ... */" />
-            <marker date="1544930946287" expanded="true" signature="3661:3906" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="3739:3821" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="3762:3817" ph="{...}" />
-            <marker date="1544930946287" expanded="true" signature="3983:4094" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="160:7783" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="215:7781" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="908:1350" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="1117:1258" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="1435:1628" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="1731:2016" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="1852:1969" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="2019:2188" ph="/// OnGUI is called for rendering and handling GUI events. ... " />
+            <marker date="1544947085714" expanded="true" signature="2202:4218" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="2226:2245" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="2453:2483" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="2940:3392" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="3167:3377" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="3205:3344" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="3279:3338" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="3691:3842" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="3784:3838" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="4097:4156" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="4263:4481" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="4300:4391" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="4526:4771" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="4604:4686" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="4627:4682" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="4833:5459" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="5547:6919" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="6257:6766" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="6721:6762" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="7000:7550" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="7232:7288" ph="{...}" />
+            <marker date="1544947085714" expanded="true" signature="7627:7775" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/HotFix/GameFramework/Base/HotFixMode.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding>
+            <marker date="1544947078293" expanded="true" signature="23:1792" ph="{...}" />
+            <marker date="1544947078293" expanded="true" signature="53:1790" ph="{...}" />
+            <marker date="1544947078293" expanded="true" signature="68:351" ph="属性" />
+            <marker date="1544947078293" expanded="true" signature="380:1493" ph="{...}" />
+            <marker date="1544947078293" expanded="true" signature="483:907" ph="获取热更新组件" />
+            <marker date="1544947078293" expanded="true" signature="1116:1288" ph="开启热更新流程" />
+            <marker date="1544947078293" expanded="true" signature="1302:1483" ph="添加回调" />
+            <marker date="1544947078293" expanded="true" signature="1526:1586" ph="{...}" />
+            <marker date="1544947078293" expanded="true" signature="1624:1689" ph="{...}" />
+            <marker date="1544947078293" expanded="true" signature="1721:1783" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/UIView.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="38" column="3" lean-forward="false" selection-start-line="38" selection-start-column="3" selection-end-line="38" selection-end-column="3" />
+          <folding>
+            <marker date="1544948715487" expanded="true" signature="0:370" ph="/* ----------------------------------------------------------------------- ... */" />
+            <marker date="1544948715487" expanded="true" signature="414:1107" ph="{...}" />
+            <marker date="1544948715487" expanded="true" signature="459:1105" ph="{...}" />
+            <marker date="1544948715487" expanded="true" signature="556:609" ph="{...}" />
+            <marker date="1544948715487" expanded="true" signature="619:723" ph="/// 打开界面 ... " />
+            <marker date="1544948715487" expanded="true" signature="798:851" ph="/// 退出界面 ... " />
+            <marker date="1544948715487" expanded="true" signature="899:952" ph="/// 暂停界面 ... " />
+            <marker date="1544948715487" expanded="true" signature="1001:1054" ph="/// 恢复界面 ... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/IUIView.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1544947078297" expanded="true" signature="0:348" ph="/* ----------------------------------------------------------------------- ... */" />
+            <marker date="1544947078297" expanded="true" signature="374:841" ph="{...}" />
+            <marker date="1544947078297" expanded="true" signature="405:839" ph="{...}" />
+            <marker date="1544947078297" expanded="true" signature="420:524" ph="/// 打开界面 ... " />
+            <marker date="1544947078297" expanded="true" signature="583:636" ph="/// 退出界面 ... " />
+            <marker date="1544947078297" expanded="true" signature="668:721" ph="/// 暂停界面 ... " />
+            <marker date="1544947078297" expanded="true" signature="754:807" ph="/// 恢复界面 ... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/HotFix/GameFramework/UI/UIManager.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="102" column="56" lean-forward="true" selection-start-line="102" selection-start-column="56" selection-end-line="102" selection-end-column="56" />
+          <folding>
+            <marker date="1544948701867" expanded="true" signature="0:345" ph="/* ----------------------------------------------------------------------- ... */" />
+            <marker date="1544948701867" expanded="false" signature="354:439" ph="..." />
+            <marker date="1544948701867" expanded="true" signature="464:7653" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="530:7651" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="545:568" ph="/* 事件管理器 ... */" />
+            <marker date="1544948701867" expanded="true" signature="1184:1442" ph="构造函数" />
+            <marker date="1544948701867" expanded="true" signature="1223:1423" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="1452:4452" ph="外部接口" />
+            <marker date="1544948701867" expanded="true" signature="1562:2908" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="1752:2208" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="2047:2159" ph="/* 触发暂停事件 ... */" />
+            <marker date="1544948701867" expanded="true" signature="2709:2778" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="2791:2898" ph="/* 触发打开事件 ... */" />
+            <marker date="1544948701867" expanded="true" signature="2958:4432" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="3030:4016" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="3224:4002" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="3404:3500" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="3521:3643" ph="/* 触发关闭事件 ... */" />
+            <marker date="1544948701867" expanded="true" signature="3720:3895" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="4058:4422" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="4290:4408" ph="/* 触发恢复事件 ... */" />
+            <marker date="1544948701867" expanded="true" signature="4464:6878" ph="内部函数" />
+            <marker date="1544948701867" expanded="true" signature="4522:4848" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="4569:4838" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="4643:4726" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="4727:4824" ph="/* foreach (var item in _allUiViews.Values) ... */" />
+            <marker date="1544948701867" expanded="true" signature="4915:5683" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="5056:5642" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="5778:6858" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="5882:6774" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="6194:6385" ph="/* ILRuntime不支持带参数构造函数的生成 ... */" />
+            <marker date="1544948701867" expanded="true" signature="6889:7253" ph="重写函数" />
+            <marker date="1544948701867" expanded="true" signature="6940:7234" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="7107:7191" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="7289:7643" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="7413:7441" ph="{...}" />
+            <marker date="1544948701867" expanded="true" signature="7515:7633" ph="{...}" />
           </folding>
         </state>
       </provider>

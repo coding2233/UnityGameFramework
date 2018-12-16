@@ -28,11 +28,14 @@ namespace HotFix.Taurus
         private readonly Dictionary<int, AssetConfig> _uiAssetPath = new Dictionary<int, AssetConfig>();
         //所有的uiAsset
         private readonly Dictionary<int, AssetConfig> _allUiAssets = new Dictionary<int, AssetConfig>();
+        //带Update的UIView
+        private List<IUpdate> _allUpdates;
         #region 构造函数
         public UIManager()
         {
             //获取资源模块
             _resource = GameFramework.Taurus.GameFrameworkMode.GetModule<GameFramework.Taurus.ResourceManager>();
+            _allUpdates=new List<IUpdate>();
         }
         #endregion
 
@@ -68,7 +71,12 @@ namespace HotFix.Taurus
             _stackUiAsset.Push(newAssetConfig);
             UIView newUiView = GetUiView<T>(newAssetConfig);
             newUiView.OnEnter(parameters);
-
+            //更新函数 -- 添加
+            IUpdate update = newUiView as IUpdate;
+            if (update!=null)
+            {
+                _allUpdates.Add(update);
+            }
             ////触发打开事件
             //_uiEnterArgs.UIView = newUiView;
             //_event.Trigger(this, _uiEnterArgs);
@@ -84,6 +92,12 @@ namespace HotFix.Taurus
                 UIView lastUiView;
                 if (_allUiViews.TryGetValue(lastAssetConfig, out lastUiView))
                 {
+                    //更新函数  -- 移除
+                    IUpdate update = lastUiView as IUpdate;
+                    if (update!=null&&_allUpdates.Contains(update))
+                    {
+                        _allUpdates.Remove(update);
+                    }
                     ////触发关闭事件
                     //_uiExitArgs.UIView = lastUiView;
                     //_event.Trigger(this, _uiExitArgs);
@@ -122,8 +136,12 @@ namespace HotFix.Taurus
         {
             if (_allUiViews != null)
             {
-                foreach (var item in _allUiViews.Values)
-                    item.OnUpdate();
+                for (int i = 0; i < _allUpdates.Count; i++)
+                {
+                    _allUpdates[i].OnUpdate();
+                }
+//                foreach (var item in _allUiViews.Values)
+//                    item.OnUpdate();
             }
         }
 
