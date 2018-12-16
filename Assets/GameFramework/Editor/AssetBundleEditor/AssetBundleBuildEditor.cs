@@ -22,6 +22,9 @@ public class AssetBundleBuildEditor :EditorWindow {
 
 	private static readonly Dictionary<BuildTarget,bool> _allTargets=new Dictionary<BuildTarget, bool>();
 
+	//压缩内容
+	string[] _compressionOptionsContent =new string[]{"No Compression","Standard Compression (LZMA)","Chunk Based Compression (LZ4)"};
+
 	[MenuItem("Tools/AssetBundles Options %#O")]
 	public static void AssetBundilesOptions()
 	{
@@ -95,6 +98,12 @@ public class AssetBundleBuildEditor :EditorWindow {
 		}
 		GUILayout.EndHorizontal();
 
+		//压缩格式
+		GUILayout.BeginHorizontal("Box");
+		GUILayout.Label("Compression:");
+		_config.CompressOptions = EditorGUILayout.Popup(_config.CompressOptions,_compressionOptionsContent);
+		GUILayout.EndHorizontal();
+
 		GUILayout.BeginHorizontal("Box");
 		GUILayout.Label("BuildPath:");
 		GUILayout.TextArea(string.IsNullOrEmpty(_config.BuildPath)?_rootPath:_config.BuildPath);
@@ -120,6 +129,9 @@ public class AssetBundleBuildEditor :EditorWindow {
 		}
 		GUILayout.EndHorizontal();
 		
+		//build targets----------------------------------------------------------------------------
+		GUILayout.BeginVertical("Box");
+		GUILayout.Label("Build Targets:");
 		_scrollViewPos=GUILayout.BeginScrollView(_scrollViewPos,"Box");
 		foreach (var item in _allTargets)
 		{
@@ -131,7 +143,9 @@ public class AssetBundleBuildEditor :EditorWindow {
 			}
 		}
 		GUILayout.EndScrollView();
+		GUILayout.EndVertical();
 
+		//确认更改--------------------------------------------------------------------------------
 		GUILayout.BeginHorizontal();
 		GUILayout.FlexibleSpace();
 		if(GUILayout.Button("OK",GUILayout.Width(60)))
@@ -174,11 +188,21 @@ public class AssetBundleBuildEditor :EditorWindow {
 	}
 
 	//资源打包
-	private static void BuildTarget(BuildTarget target,BuildAssetBundleOptions options=BuildAssetBundleOptions.None)
+	private static void BuildTarget(BuildTarget target)
 	{
+		//打包路径
 		string buildPath=Path.Combine(_config.BuildPath,target.ToString());
 		if(!Directory.Exists(buildPath))
 				Directory.CreateDirectory(buildPath);
+		//设置打包的相关选项
+		BuildAssetBundleOptions options=BuildAssetBundleOptions.None;	
+		//设置压缩 默认LZMA
+		if (_config.CompressOptions == 0)
+                    options |= BuildAssetBundleOptions.UncompressedAssetBundle;
+		//LZ4
+        else if (_config.CompressOptions == 2)
+                    options |= BuildAssetBundleOptions.ChunkBasedCompression;
+		//打包
 		BuildPipeline.BuildAssetBundles(buildPath,options,target);
 
 		//保存资源版本信息
@@ -245,15 +269,17 @@ public class AssetBundleBuildEditor :EditorWindow {
 		EditorUtility.OpenWithDefaultApp(_config.BuildPath);
 	}
 
-	//ab包的配置文件信息
-	[System.Serializable]
-	public class AssetBundleConifgInfo
-	{
-		public int Version=0;
-		public string BuildPath="";
-		public List<int> BuildTargets=new List<int>();
+		//ab包的配置文件信息
+		[System.Serializable]
+		public class AssetBundleConifgInfo
+		{
+			public int Version=0;
+			public string BuildPath="";
+			public int CompressOptions=1;
+			public List<int> BuildTargets=new List<int>();
 
-	}
+		}
 	
+
 	}
 }

@@ -2,6 +2,7 @@
   "dependencies": {
     "com.unity.ads": "2.0.8",
     "com.unity.analytics": "2.0.16",
+    "com.unity.assetbundlebrowser": "1.7.0",
     "com.unity.package-manager-ui": "1.9.11",
     "com.unity.purchasing": "2.0.3",
     "com.unity.textmeshpro": "1.2.4",
