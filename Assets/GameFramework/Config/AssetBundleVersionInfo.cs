@@ -9,41 +9,47 @@
 
 using System;
 using System.Collections.Generic;
-
-[Serializable]
-public class AssetPlatformVersionInfo
+namespace  GameFramework.Taurus
 {
-    public int Version;
-    public List<string> Platforms;
-}
+	
+	//平台资源信息
+	[System.Serializable]
+	public class PlatformVersionInfo
+	{
+		public int Version;
+		public List<string> Platforms=new List<string>();
+	}
 
-[Serializable]
-public class AssetBundleVersionInfo
-{
-    public int Version;
-    public bool IsEncrypt;
-    public string ManifestAssetBundle;
-    public List<ResourcesInfo> Resources;
-}
+	//资源版本信息
+	[System.Serializable]
+	public class AssetBundleVersionInfo
+	{
+		public int Version=0;
+		public bool IsEncrypt=false;
+        public string ManifestAssetBundle;
+		public List<AssetHashInfo> AssetHashInfos=new List<AssetHashInfo>();
+	}
+	
+	//资源hash值
+	[System.Serializable]
+	public class AssetHashInfo
+	{
+		public string Name;
+		public string Hash;
 
-[Serializable]
-public class ResourcesInfo
-{
-    public string Name;
-    public string MD5;
+         public override bool Equals(object obj)
+        {
+            AssetHashInfo other = obj as AssetHashInfo;
+            if (other.Name.Equals(Name) && other.Hash.Equals(Hash))
+                return true;
 
-    public override bool Equals(object obj)
-    {
-        ResourcesInfo other = obj as ResourcesInfo;
-        if (other.Name.Equals(Name) && other.MD5.Equals(MD5))
-            return true;
+            return false;
+        }
 
-        return false;
-    }
+        public override int GetHashCode()
+        {
+            return (Name + Hash).GetHashCode();
+        }
 
-    public override int GetHashCode()
-    {
-        return (Name + MD5).GetHashCode();
-    }
-
+	}
 }

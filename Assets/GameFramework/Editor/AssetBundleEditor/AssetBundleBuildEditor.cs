@@ -5,9 +5,14 @@ using UnityEditor;
 using System.IO;
 using System;
 
+namespace GameFramework.Taurus
+{
+	
 public class AssetBundleBuildEditor :EditorWindow {
 
-	private static string _configPath="ProjectSettings/AssetBundleEditorConifg.json";
+	//资源信息文本名称
+   	private const string _assetVersionTxt = "AssetVersion.txt";
+	private const string _configPath="ProjectSettings/AssetBundleEditorConifg.json";
 	private static AssetBundleConifgInfo _config;
 	private static List<string> _buildTargets;
 	private static string _outPutPath="";
@@ -183,29 +188,46 @@ public class AssetBundleBuildEditor :EditorWindow {
 	//保存资源版本信息
 	private static void SaveAssetVersion(string buildPath,BuildTarget target)
 	{
-		AssetVersionInfo assetVersionInfo=new  AssetVersionInfo();
+		string targetBundlePath=Path.Combine(buildPath,target.ToString());
+		if(!File.Exists(targetBundlePath))
+			return;
+
+		AssetBundleVersionInfo assetVersionInfo=new  AssetBundleVersionInfo();
 		assetVersionInfo.Version=_config.Version;
+		assetVersionInfo.ManifestAssetBundle=target.ToString();
 		assetVersionInfo.AssetHashInfos=new List<AssetHashInfo>();
 
-		AssetBundle targetBundle=AssetBundle.LoadFromFile(Path.Combine(buildPath,target.ToString()));
+		AssetBundle targetBundle=AssetBundle.LoadFromFile(targetBundlePath);
 		AssetBundleManifest manifest=targetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-		string[] assetNames=manifest.GetAllAssetBundles();
-		for (int i = 0; i < assetNames.Length; i++)
+		List<string> assetNames=new List<string>();
+		assetNames.Add(target.ToString());
+		assetNames.AddRange(manifest.GetAllAssetBundles());
+		for (int i = 0; i < assetNames.Count; i++)
 		{
 			AssetHashInfo assetHashInfo=new AssetHashInfo();
 			assetHashInfo.Name=assetNames[i];
-			assetHashInfo.Hash=manifest.GetAssetBundleHash(assetNames[i]).ToString();
+			//AssetBundleManifest的hashcode 获取一直为00000000000000000000000000000000 于是用版本号代替
+			assetHashInfo.Hash=i==0?_config.Version.ToString():manifest.GetAssetBundleHash(assetNames[i]).ToString();
 			assetVersionInfo.AssetHashInfos.Add(assetHashInfo);
+			//删除manifest文件
+			string manifestPath=Path.Combine(buildPath,assetNames[i],".manifeset");
+			if(File.Exists(manifestPath))
+			{
+				File.Delete(manifestPath);
+			}
 		}
 
 		string json=JsonUtility.ToJson(assetVersionInfo);
-		File.WriteAllText(Path.Combine(buildPath,"version.txt"),json);
+		File.WriteAllText(Path.Combine(buildPath,_assetVersionTxt),json);
 		targetBundle.Unload(true);
 	}
 
 	//保存平台版本信息
 	private static void SavePlatformVersion(List<BuildTarget> targets)
 	{
+		if(targets==null||targets.Count==0)
+			return;
+
 		PlatformVersionInfo platformInfo=new PlatformVersionInfo();
 		platformInfo.Version=_config.Version;
 		platformInfo.Platforms=new List<string>();
@@ -215,7 +237,7 @@ public class AssetBundleBuildEditor :EditorWindow {
 		}
 		string json=JsonUtility.ToJson(platformInfo);
 		//保存平台信息
-		File.WriteAllText(Path.Combine(_config.BuildPath,"version.txt"),json);
+		File.WriteAllText(Path.Combine(_config.BuildPath,_assetVersionTxt),json);
 		//更新资源版本号 -- 保存配置文件
 		_config.Version++;
 		SaveConfig();
@@ -232,30 +254,6 @@ public class AssetBundleBuildEditor :EditorWindow {
 		public List<int> BuildTargets=new List<int>();
 
 	}
-
-	//平台资源信息
-	[System.Serializable]
-	public class PlatformVersionInfo
-	{
-		public int Version;
-		public List<string> Platforms=new List<string>();
-	}
-
-	//资源版本信息
-	[System.Serializable]
-	public class AssetVersionInfo
-	{
-		public int Version=0;
-		public List<AssetHashInfo> AssetHashInfos=new List<AssetHashInfo>();
-	}
 	
-	//资源hash值
-	[System.Serializable]
-	public class AssetHashInfo
-	{
-		public string Name;
-		public string Hash;
 	}
-
-	
 }

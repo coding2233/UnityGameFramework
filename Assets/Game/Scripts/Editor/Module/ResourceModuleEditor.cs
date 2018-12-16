@@ -16,15 +16,32 @@ namespace GameFramework.Taurus
 {
 	public class ResourceModuleEditor : ModuleEditorBase
 	{
+		private BuildTargetGroup _lastBuildTargetGroup;
+		private string _lastScriptingDefineSymbols;
+
 		public ResourceModuleEditor(string name, Color mainColor, GameMode gameMode)
 			: base(name, mainColor, gameMode)
 		{
-
+			//获取当前的BuildTargetGroup
+			_lastBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
+			_lastScriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup);
 		}
 
 		public override void OnDrawGUI()
 		{
 			GUILayout.BeginVertical("HelpBox");
+
+			GUILayout.BeginHorizontal("HelpBox");
+			GUILayout.Label("Define",GUILayout.Width(50));
+			string scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup);
+			_lastScriptingDefineSymbols = GUILayout.TextArea(_lastScriptingDefineSymbols);
+			if (GUILayout.Button("OK",GUILayout.Width(40))&&!_lastScriptingDefineSymbols.Equals(scriptingDefineSymbols))
+			{
+				_lastBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
+				PlayerSettings.SetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup, _lastScriptingDefineSymbols);
+			}
+			GUILayout.EndHorizontal();
+
 
 			_gameMode.ResUpdateType =
 					(ResourceUpdateType)EditorGUILayout.EnumPopup("Resource Update Type", _gameMode.ResUpdateType);

@@ -106,7 +106,7 @@ namespace GameFramework.Taurus
             {
                 if (ne.Url == Path.Combine(GameMode.Resource.ResUpdatePath, _assetPlatformVersionText))
                 {
-                    AssetPlatformVersionInfo assetPlatform= JsonUtility.FromJson<AssetPlatformVersionInfo>(ne.Content);
+                    PlatformVersionInfo assetPlatform= JsonUtility.FromJson<PlatformVersionInfo>(ne.Content);
                     string platformName = GetPlatformName();
                     if (assetPlatform.Platforms.Contains(platformName))
                     {
@@ -202,10 +202,10 @@ namespace GameFramework.Taurus
         private void UpdateResource()
         {
 
-			foreach (var item in _remoteVersion.Resources)
+			foreach (var item in _remoteVersion.AssetHashInfos)
             {
                 //本地有响应文件则跳过
-                if (_localVersion!=null&& _localVersion.Resources!=null&&_localVersion.Resources.Contains(item))
+                if (_localVersion!=null&& _localVersion.AssetHashInfos!=null&&_localVersion.AssetHashInfos.Contains(item))
                     continue;
                 string remoteUrl = Path.Combine(GameMode.Resource.ResUpdatePath, item.Name);
                 //获取本地文件的路径
