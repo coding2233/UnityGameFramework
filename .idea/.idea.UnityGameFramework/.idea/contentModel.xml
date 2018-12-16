@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$USER_HOME$/.Rider2017.2/system/resharper-host/local/Transient/ReSharperHost/v10/SolutionCaches/_UnityGameFramework.-1507598302.00" t="ExcludeRecursive" />
+    <e p="$PROJECT_DIR$" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor-firstpass.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="Game" t="Include">
+          <e p="Scripts" t="Include">
+            <e p="Base" t="Include">
+              <e p="GameMode.cs" t="Include" />
+            </e>
+            <e p="Editor" t="Include">
+              <e p="GameModeEditor.cs" t="Include" />
+              <e p="Module" t="Include">
+                <e p="ResourceModuleEditor.cs" t="Include" />
+                <e p="SettingModuleEditor.cs" t="Include" />
+                <e p="StateModuleEditor.cs" t="Include" />
+              </e>
+              <e p="ModuleEditorBase.cs" t="Include" />
+            </e>
+            <e p="Resource" t="Include">
+              <e p="EditorResourceHelper.cs" t="Include" />
+            </e>
+            <e p="State" t="Include">
+              <e p="CheckResourceState.cs" t="Include" />
+              <e p="LaunchGameState.cs" t="Include" />
+              <e p="LoadResourceState.cs" t="Include" />
+              <e p="PreloadState.cs" t="Include" />
+              <e p="StateEventArgs.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="GameFramework" t="Include">
+          <e p="Audio" t="Include">
+            <e p="AudioManager.cs" t="Include" />
+          </e>
+          <e p="Base" t="Include">
+            <e p="GameFrameworkMode.cs" t="Include" />
+            <e p="GameFrameworkModule.cs" t="Include" />
+            <e p="GamekException.cs" t="Include" />
+            <e p="IFixedUpdate.cs" t="Include" />
+            <e p="IUpdate.cs" t="Include" />
+            <e p="SystemManager.cs" t="Include" />
+          </e>
+          <e p="Config" t="Include">
+            <e p="AssetBundleVersionInfo.cs" t="Include" />
+            <e p="EnciphererKey.cs" t="Include" />
+          </e>
+          <e p="DataTable" t="Include">
+            <e p="DataTable.cs" t="Include" />
+            <e p="DataTableBase.cs" t="Include" />
+            <e p="DataTableManager.cs" t="Include" />
+            <e p="IDataTable.cs" t="Include" />
+            <e p="IDataTableRow.cs" t="Include" />
+          </e>
+          <e p="Editor" t="Include">
+            <e p="AssetBundleEditor" t="Include">
+              <e p="AssetBundleBuildEditor.cs" t="Include" />
+            </e>
+            <e p="OpenFolder" t="Include">
+              <e p="OpenFolderEditor.cs" t="Include" />
+            </e>
+            <e p="Operation" t="Include">
+              <e p="OperationAssetConfigEditor.cs" t="Include" />
+              <e p="OperationAssetStatusEditor.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Event" t="Include">
+            <e p="EventManager.cs" t="Include" />
+            <e p="GameEventArgs.cs" t="Include" />
+          </e>
+          <e p="Localization" t="Include">
+            <e p="Language.cs" t="Include" />
+            <e p="LocalizationManager.cs" t="Include" />
+            <e p="LocalizationText.cs" t="Include" />
+          </e>
+          <e p="Network" t="Include">
+            <e p="IRequest.cs" t="Include" />
+            <e p="IResponse.cs" t="Include" />
+            <e p="KcpChannel.cs" t="Include" />
+            <e p="KcpService.cs" t="Include" />
+            <e p="MessageAttribute.cs" t="Include" />
+            <e p="MessageHandlerAttribute.cs" t="Include" />
+            <e p="MessageHandlerBase.cs" t="Include" />
+            <e p="MessageTypeCode.cs" t="Include" />
+            <e p="NetworkHelper.cs" t="Include" />
+            <e p="NetworkManager.cs" t="Include" />
+            <e p="ProtobufPacker.cs" t="Include" />
+            <e p="kcp.cs" t="Include" />
+          </e>
+          <e p="Node" t="Include">
+            <e p="NodeData.cs" t="Include" />
+            <e p="NodeDataBase.cs" t="Include" />
+            <e p="NodeManager.cs" t="Include" />
+          </e>
+          <e p="ObjectPool" t="Include">
+            <e p="ObjectData.cs" t="Include" />
+            <e p="ObjectDataBase.cs" t="Include" />
+            <e p="PoolManager.cs" t="Include" />
+          </e>
+          <e p="Operation" t="Include">
+            <e p="OperationAssetConfig.cs" t="Include" />
+            <e p="OperationAssetStatus.cs" t="Include" />
+            <e p="OperationManager.cs" t="Include" />
+          </e>
+          <e p="Resource" t="Include">
+            <e p="BundleResourceHelper.cs" t="Include" />
+            <e p="GameObjectPoolHelper.cs" t="Include" />
+            <e p="IGameObjectPoolHelper.cs" t="Include" />
+            <e p="IResourceHelper.cs" t="Include" />
+            <e p="ResourceEventArgs.cs" t="Include" />
+            <e p="ResourceManager.cs" t="Include" />
+            <e p="SceneEventArgs.cs" t="Include" />
+          </e>
+          <e p="Setting" t="Include">
+            <e p="DebugHelper.cs" t="Include" />
+            <e p="SettingManager.cs" t="Include" />
+          </e>
+          <e p="State" t="Include">
+            <e p="GameState.cs" t="Include" />
+            <e p="GameStateAttribute.cs" t="Include" />
+            <e p="GameStateContext.cs" t="Include" />
+            <e p="GameStateManager.cs" t="Include" />
+          </e>
+          <e p="UI" t="Include">
+            <e p="IUIView.cs" t="Include" />
+            <e p="UIManager.cs" t="Include" />
+            <e p="UIView.cs" t="Include" />
+            <e p="UIViewAttribute.cs" t="Include" />
+            <e p="UiEventArgs.cs" t="Include" />
+          </e>
+          <e p="Utility" t="Include">
+            <e p="Encipherer.cs" t="Include" />
+            <e p="IdGenerater.cs" t="Include" />
+            <e p="UnityEventUtility.cs" t="Include" />
+          </e>
+          <e p="WebRequest" t="Include">
+            <e p="IWebDownloadHelper.cs" t="Include" />
+            <e p="IWebRequestHelper.cs" t="Include" />
+            <e p="WebDownloadMonoHelper.cs" t="Include" />
+            <e p="WebRequestEventArgs.cs" t="Include" />
+            <e p="WebRequestManager.cs" t="Include" />
+            <e p="WebRquestMonoHelper.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Plugins" t="Include">
+          <e p="Editor" t="Include">
+            <e p="JetBrains" t="Include">
+              <e p="Unity3DRider.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="ThirdParty" t="Include">
+          <e p="Google.Protobuf" t="Include">
+            <e p="ByteArray.cs" t="Include" />
+            <e p="ByteString.cs" t="Include" />
+            <e p="CodedInputStream.cs" t="Include" />
+            <e p="CodedOutputStream.ComputeSize.cs" t="Include" />
+            <e p="CodedOutputStream.cs" t="Include" />
+            <e p="Collections" t="Include">
+              <e p="RepeatedField.cs" t="Include" />
+            </e>
+            <e p="Compatibility" t="Include">
+              <e p="PropertyInfoExtensions.cs" t="Include" />
+              <e p="StreamExtensions.cs" t="Include" />
+            </e>
+            <e p="FieldCodec.cs" t="Include" />
+            <e p="ICustomDiagnosticMessage.cs" t="Include" />
+            <e p="IMessage.cs" t="Include" />
+            <e p="InvalidProtocolBufferException.cs" t="Include" />
+            <e p="LimitedInputStream.cs" t="Include" />
+            <e p="MessageExtensions.cs" t="Include" />
+            <e p="MessageParser.cs" t="Include" />
+            <e p="ProtoPreconditions.cs" t="Include" />
+            <e p="WireFormat.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="GT.Editor.csproj" t="IncludeRecursive" />
+      <e p="GameFramework.csproj" t="IncludeRecursive" />
+      <e p="Library" t="ExcludeRecursive" />
+      <e p="Main.csproj" t="IncludeRecursive" />
+      <e p="Temp" t="ExcludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+      </e>
+      <e p="ThirdParty.csproj" t="IncludeRecursive" />
+      <e p="UnityGameFramework.sln" t="IncludeFlat" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>

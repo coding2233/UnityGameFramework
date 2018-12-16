@@ -1,0 +1,14 @@
+{
+    "name": "GameMode.Editor",
+    "references": [
+        "GameFramework",
+        "ThirdParty",
+        "Main"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
