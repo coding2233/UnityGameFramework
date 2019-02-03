@@ -212,21 +212,18 @@ namespace GameFramework.Taurus
 		    try
 		    {
 		        string assetBundlePath = Path.Combine(_readPath, assetBundleName);
-		        AssetBundleCreateRequest createRequest = LoadAssetBundleAsync(assetBundlePath);
-		        //createRequest.completed += (operation) =>
-		        {
-                    AssetBundle assetBundle = createRequest.assetBundle;
-		            //加载依赖项
-		            LoadDependenciesAssetBundel(assetBundleName);
 
-                    asyncOperation = SceneManager.LoadSceneAsync(sceneName, mode);
-                    //场景加载完成卸载相关的引用
-		            asyncOperation.completed += (operation02) =>
-		            {
-                        assetBundle.Unload(false);
-		            };
+				AssetBundle assetBundle = LoadAssetBundle(assetBundlePath);
+		        //加载依赖项
+		        LoadDependenciesAssetBundel(assetBundleName);
+
+                asyncOperation = SceneManager.LoadSceneAsync(sceneName, mode);
+                //场景加载完成卸载相关的引用
+		        asyncOperation.completed += (operation02) =>
+		        {
+                    assetBundle.Unload(false);
 		        };
-                
+		        
             }
 		    catch (GamekException ex)
 		    {

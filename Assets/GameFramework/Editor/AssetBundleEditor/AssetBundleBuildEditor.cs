@@ -163,7 +163,6 @@ public class AssetBundleBuildEditor :EditorWindow {
 	//加载配置信息
 	private static void LoadConfig()
 	{
-
 		if (!File.Exists(_configPath))
 		{
 			File.WriteAllText(_configPath,JsonUtility.ToJson(new AssetBundleConifgInfo()));
@@ -234,7 +233,7 @@ public class AssetBundleBuildEditor :EditorWindow {
 			assetHashInfo.Hash=i==0?_config.Version.ToString():manifest.GetAssetBundleHash(assetNames[i]).ToString();
 			assetVersionInfo.AssetHashInfos.Add(assetHashInfo);
 			//删除manifest文件
-			string manifestPath=Path.Combine(buildPath,assetNames[i],".manifeset");
+			string manifestPath=Path.Combine(buildPath,assetNames[i]+".manifeset");
 			if(File.Exists(manifestPath))
 			{
 				File.Delete(manifestPath);
