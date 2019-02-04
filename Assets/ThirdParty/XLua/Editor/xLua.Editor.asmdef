@@ -1,0 +1,10 @@
+{
+    "name": "xLua.Editor",
+    "references": [
+        "xLua"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
