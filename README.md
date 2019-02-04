@@ -1,6 +1,12 @@
-### UnityGameFramework  
-此框架参考`GameFramework`：[https://github.com/EllanJiang/GameFramework](https://github.com/EllanJiang/GameFramework)  
-因为现框架，也加入整理了我的不少想法，所以新建项目保存
+### UnityGameFramework
+
+**参考**
+
+`GameFramework`：[https://github.com/EllanJiang/GameFramework](https://github.com/EllanJiang/GameFramework) 
+
+`xLua`：[https://github.com/Tencent/xLua](https://github.com/Tencent/xLua)
+
+目前xLua版本分支，仅为测试版
 
 ---
 
