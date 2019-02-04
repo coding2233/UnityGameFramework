@@ -2,7 +2,8 @@
     "name": "Main",
     "references": [
         "GameFramework",
-        "ThirdParty"
+        "ThirdParty",
+        "xLua"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

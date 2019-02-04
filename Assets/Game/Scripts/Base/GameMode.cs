@@ -28,6 +28,7 @@ namespace GameFramework.Taurus
         public static SystemManager System;
         public static NetworkManager Network;
 		public static PoolManager Pool;
+		public static HotFixManager HotFix;
 
         /// <summary>
         /// 当前程序集
@@ -78,6 +79,7 @@ namespace GameFramework.Taurus
 		    System= GameFrameworkMode.GetModule<SystemManager>();
 		    Network= GameFrameworkMode.GetModule<NetworkManager>();
 			Pool = GameFrameworkMode.GetModule<PoolManager>();
+			HotFix = GameFrameworkMode.GetModule<HotFixManager>();
 			#endregion
 
 			#region resource

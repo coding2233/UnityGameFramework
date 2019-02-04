@@ -1,7 +1,8 @@
 {
     "name": "GameFramework",
     "references": [
-        "ThirdParty"
+        "ThirdParty",
+        "xLua"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
