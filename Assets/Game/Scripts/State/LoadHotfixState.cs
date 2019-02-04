@@ -16,19 +16,14 @@ namespace GameFramework.Taurus
 	[GameState]
 	public class LoadHotfixState:GameState
 	{
-		#region 属性
-		private string _luaScriptPath = "Assets/Game/HotFix/Main.lua.txt";
-		#endregion
-
-
+		
 		public override void OnInit()
 		{
 		}
 
 		public override void OnEnter(params object[] parameters)
 		{
-			string luaScript = GameMode.Resource.LoadAsset<TextAsset>("hotfix", _luaScriptPath).text;
-			GameMode.HotFix.LoadHotFix(luaScript);
+			GameMode.HotFix.LoadHotFix();
 		}
 
 		public override void OnExit()

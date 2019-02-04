@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using XLua;
 
 namespace GameFramework.Taurus
@@ -20,12 +21,34 @@ namespace GameFramework.Taurus
 		private LuaEnv _luaEnv = new LuaEnv();
 		private LuaTable _scriptEnv;
 
+		//资源管理器
+		private ResourceManager _resource;
+		//lua assetbundle 名称
+		private string _luaAssetBundle;
+		//lua脚本前缀
+		private string _luaPathPrefix;
+		//lua脚本扩展名
+		private string _luaPathExtension;
+
 		Action _start;
 		Action _update;
 		Action _close;
 
-		public void LoadHotFix(string luaScript)
+		/// <summary>
+		/// 加载热更新脚本
+		/// </summary>
+		/// <param name="assetBundle"></param>
+		/// <param name="luaScript"></param>
+		/// <param name="luaPathPrefix"></param>
+		/// <param name="luaPathExtension"></param>
+		public void LoadHotFix(string assetBundle="hotfix",string luaScript="main",
+			string luaPathPrefix="Assets/Game/HotFix",string luaPathExtension=".lua.txt")
 		{
+			_resource = GameFrameworkMode.GetModule<ResourceManager>();
+			_luaAssetBundle = assetBundle;
+			_luaPathPrefix = luaPathPrefix;
+			_luaPathExtension = luaPathExtension;
+
 			_scriptEnv = _luaEnv.NewTable();
 
 			// 为每个脚本设置一个独立的环境，可一定程度上防止脚本间全局变量、函数冲突
@@ -35,12 +58,20 @@ namespace GameFramework.Taurus
 			meta.Dispose();
 
 			_scriptEnv.Set("self", this);
-			_luaEnv.DoString(luaScript, "HotFixManager", _scriptEnv);
+			_luaEnv.AddLoader(CustomLoader);
+			_luaEnv.DoString($"require '{luaScript}'", "LuaHotFix", _scriptEnv);
 			_scriptEnv.Get("Start", out _start);
 			_scriptEnv.Get("Update", out _update);
 			_scriptEnv.Get("Close", out _close);
 
 			_start?.Invoke();
+		}
+
+		//自定义加载
+		private byte[] CustomLoader(ref string filePath)
+		{
+			string path = System.IO.Path.Combine(_luaPathPrefix, $"{filePath}.lua.txt");
+			return _resource.LoadAsset<TextAsset>(_luaAssetBundle,path).bytes;
 		}
 
 		public void OnUpdate()
@@ -51,6 +82,7 @@ namespace GameFramework.Taurus
 		public override void OnClose()
 		{
 			_close?.Invoke();
+			//_luaEnv?.Dispose();
 		}
 	}
 }
