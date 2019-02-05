@@ -34,6 +34,12 @@ namespace GameFramework.Taurus
 		Action _update;
 		Action _close;
 
+		//lua 计时
+		private static float _lastGCTime = 0.0f;
+		//lua tick的间隔时间
+		private const float _luaTickInterval = 1.0f;
+
+
 		/// <summary>
 		/// 加载热更新脚本
 		/// </summary>
@@ -77,6 +83,13 @@ namespace GameFramework.Taurus
 		public void OnUpdate()
 		{
 			_update?.Invoke();
+
+			//每隔一段时间对lua进行一次GC回收
+			if (Time.time - _lastGCTime > _luaTickInterval)
+			{
+				_luaEnv.Tick();
+				_lastGCTime = Time.time;
+			}
 		}
 		
 		public override void OnClose()

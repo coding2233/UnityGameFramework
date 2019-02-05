@@ -1,8 +1,7 @@
-local Test=require("Test")
+local M={}
 
-function Start()
-    print("lua start")
-	Test:Start()
+function M.Start()
+    print("Test lua start")
 end
 
 function Update()
@@ -12,3 +11,5 @@ end
 function Close()
     print("lua close")
 end
+
+return M
