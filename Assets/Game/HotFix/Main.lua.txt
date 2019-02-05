@@ -2,7 +2,7 @@ local Test=require("Test")
 
 function Start()
     print("lua start")
-	Test:Start()
+	CS.GameMode.Resource.Load("hotfix",)
 end
 
 function Update()
