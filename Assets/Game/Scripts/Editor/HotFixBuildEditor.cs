@@ -50,7 +50,6 @@ namespace GameFramework.Taurus
 		private static void UpdateLuaTxtFile(object sender, FileSystemEventArgs e)
 		{
 			string path = Path.Combine(_hotFixPath, Path.GetFileName(e.Name) + ".txt");
-			Debug.Log(path);
 			File.Copy(e.FullPath, path, true);
 			Debug.Log(".lua==>.lua.txt 转换完成");
 		}

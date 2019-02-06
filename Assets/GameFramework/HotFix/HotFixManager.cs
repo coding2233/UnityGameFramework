@@ -18,7 +18,7 @@ namespace GameFramework.Taurus
 	public sealed class HotFixManager:GameFrameworkModule,IUpdate
 	{
 		//lua的环境变量
-		private LuaEnv _luaEnv = new LuaEnv();
+		public LuaEnv LuaEnv = new LuaEnv();
 		private LuaTable _scriptEnv;
 
 		//资源管理器
@@ -55,17 +55,17 @@ namespace GameFramework.Taurus
 			_luaPathPrefix = luaPathPrefix;
 			_luaPathExtension = luaPathExtension;
 
-			_scriptEnv = _luaEnv.NewTable();
+			_scriptEnv = LuaEnv.NewTable();
 
 			// 为每个脚本设置一个独立的环境，可一定程度上防止脚本间全局变量、函数冲突
-			LuaTable meta = _luaEnv.NewTable();
-			meta.Set("__index", _luaEnv.Global);
+			LuaTable meta = LuaEnv.NewTable();
+			meta.Set("__index", LuaEnv.Global);
 			_scriptEnv.SetMetaTable(meta);
 			meta.Dispose();
 
 			_scriptEnv.Set("self", this);
-			_luaEnv.AddLoader(CustomLoader);
-			_luaEnv.DoString($"require '{luaScript}'", "LuaHotFix", _scriptEnv);
+			LuaEnv.AddLoader(CustomLoader);
+			LuaEnv.DoString($"require '{luaScript}'", "LuaHotFix", _scriptEnv);
 			_scriptEnv.Get("Start", out _start);
 			_scriptEnv.Get("Update", out _update);
 			_scriptEnv.Get("Close", out _close);
@@ -88,7 +88,7 @@ namespace GameFramework.Taurus
 			//每隔一段时间对lua进行一次GC回收
 			if (Time.time - _lastGCTime > _luaTickInterval)
 			{
-				_luaEnv.Tick();
+				LuaEnv.Tick();
 				_lastGCTime = Time.time;
 			}
 		}
