@@ -18,6 +18,7 @@ namespace GameFramework.Taurus
 	[InitializeOnLoad]
 	public static class HotFixBuildEditor
 	{
+		private static string _luaFilePath = "Game/Scripts/Lua";
 		private static string _hotFixPath = "Game/HotFix";
 
 		static HotFixBuildEditor()
@@ -25,23 +26,34 @@ namespace GameFramework.Taurus
 			//强制设置unity后台运行
 			PlayerSettings.runInBackground = true;
 
-			string folderPath = Path.Combine(Application.dataPath, _hotFixPath);
-			
-			FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(folderPath,"*.lua");
-			fileSystemWatcher.Changed += (sender, e) =>
-			{
-				//if (!EditorApplication.isPlayingOrWillChangePlaymode)
-				{
-					File.Copy(e.FullPath, e.FullPath + ".txt", true);
-					//AssetDatabase.Refresh();
-					Debug.Log(".lua==>.lua.txt 转换完成");
-				}
-			};
+			_luaFilePath = Path.Combine(Application.dataPath, _luaFilePath);
+			_hotFixPath = Path.Combine(Application.dataPath, _hotFixPath);
 
+			FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(_luaFilePath, "*.lua");
+			fileSystemWatcher.Changed += UpdateLuaTxtFile;
+			fileSystemWatcher.Created += UpdateLuaTxtFile;
+			fileSystemWatcher.Deleted += DelecteLuaTxtFile;
+
+			//启动事件
 			fileSystemWatcher.EnableRaisingEvents = true;
-			
 		}
-		
+
+		//删除lua文件
+		private static void DelecteLuaTxtFile(object sender, FileSystemEventArgs e)
+		{
+			string path =Path.Combine(_hotFixPath,Path.GetFileName(e.Name) + ".txt");
+			if (File.Exists(path))
+				File.Delete(path);
+		}
+
+		//更新lua文件
+		private static void UpdateLuaTxtFile(object sender, FileSystemEventArgs e)
+		{
+			string path = Path.Combine(_hotFixPath, Path.GetFileName(e.Name) + ".txt");
+			Debug.Log(path);
+			File.Copy(e.FullPath, path, true);
+			Debug.Log(".lua==>.lua.txt 转换完成");
+		}
 
 	}
 }

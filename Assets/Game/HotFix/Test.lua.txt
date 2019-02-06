@@ -1,7 +1,7 @@
 local M={}
 
 function M.Start()
-    print("Test lua start。！！  ")
+    print("Test lua start！ 0")
 end
 
 function Update()
