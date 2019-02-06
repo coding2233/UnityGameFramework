@@ -76,7 +76,8 @@ namespace GameFramework.Taurus
 		//自定义加载
 		private byte[] CustomLoader(ref string filePath)
 		{
-			string path = System.IO.Path.Combine(_luaPathPrefix, $"{filePath}.lua.txt");
+			filePath= System.IO.Path.Combine(_luaPathPrefix, $"{filePath}.lua");
+			string path = $"{filePath}.txt";// System.IO.Path.Combine(_luaPathPrefix, $"{filePath}.lua.txt");
 			return _resource.LoadAsset<TextAsset>(_luaAssetBundle,path).bytes;
 		}
 

@@ -6,9 +6,27 @@
 
 `xLua`：[https://github.com/Tencent/xLua](https://github.com/Tencent/xLua)
 
+`lua ide`：[https://studio.zerobrane.com/](https://studio.zerobrane.com/)
+
+`lua MobDebug`：[https://github.com/pkulchenko/MobDebug](https://github.com/pkulchenko/MobDebug)
+
 目前xLua版本分支，仅为测试版
 
 ---
+
+### lua调试
+
+1. 使用[zerobrane](https://studio.zerobrane.com/)进行lua的开发调试  
+
+2. 下载[MobDebug](https://github.com/pkulchenko/MobDebug)的`mobdebug.lua`在unity里面，在`main.lua`中调用`require('mobdebug').start('127.0.0.1')`进行调试  
+
+3. 将`main.lua`文件拖在`zerobrane`中，选择`Project/Project Directory/Set From Current File`,打开lua的文件夹
+
+4. 在`zerobrane`中选择`Project/Start Debugger Server`，开启服务调试
+
+5. 然后运行`unity`就可以在`zerobrane`进行断点调试  
+
+6. 停止调试的时候，要先停止`unity`，再停止`zerobrane`,不然`unity`也会被`zerobrane`一起关掉
 
 ### 内置模块介绍
 

@@ -33,7 +33,7 @@ namespace GameFramework.Taurus
 				//if (!EditorApplication.isPlayingOrWillChangePlaymode)
 				{
 					File.Copy(e.FullPath, e.FullPath + ".txt", true);
-					AssetDatabase.Refresh();
+					//AssetDatabase.Refresh();
 					Debug.Log(".lua==>.lua.txt 转换完成");
 				}
 			};
