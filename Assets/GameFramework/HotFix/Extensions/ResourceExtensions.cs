@@ -25,9 +25,8 @@ namespace GameFramework.Taurus
 		/// <param name="assetBundleName"></param>
 		/// <param name="assetName"></param>
 		/// <returns></returns>
-		public static T HotFixLoadAsset<T>(this ResourceManager resManager,T result, string assetBundleName, string assetName) where T : UnityEngine.Object
+		public static T LoadAsset<T>(this ResourceManager resManager,T result, string assetBundleName, string assetName) where T : UnityEngine.Object
 		{
-			Debug.Log($"HotFixLoadAsset--ResourceManager--{typeof(T)}");
 			result = resManager.LoadAsset<T>(assetBundleName, assetName);
 			return result;
 		}
