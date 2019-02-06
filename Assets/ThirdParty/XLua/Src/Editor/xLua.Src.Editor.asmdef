@@ -1,7 +1,8 @@
 {
-    "name": "xLua.Editor",
+    "name": "xLua.Src.Editor",
     "references": [
-        "xLua"
+        "xLua",
+        "xLua.Editor"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
