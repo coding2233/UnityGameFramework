@@ -118,7 +118,7 @@ namespace GameFramework.Taurus
 	    public void LoadAssetAsync<T>(string assetBundleName,string assetName, Action<string, UnityEngine.Object> asyncCallback) where T : Object
         {
 	        assetName = assetName.ToLower();
-
+			
             AssetBundle assetBundle;
 
             if (!_allAssets.TryGetValue(assetName, out assetBundle))

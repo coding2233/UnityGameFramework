@@ -1,12 +1,14 @@
 require('mobdebug').start()
 require('Resource')
+require('UI')
 
 function Start()
-    print("lua start")
-    local tx=CS.UnityEngine.TextAsset()
-    tx= Res:LoadAsset(tx,"hotfix","Assets/Game/HotFix/Test.lua.txt");
-    print(tx.text)
-    CS.UnityEngine.GameObject('lua test gameobject')
+    print("start")
+    UI:Open("Assets/Game/UI/Canvas.prefab")
+    UI:Close("Assets/Game/UI/Canvas.prefab",false)
+    UI:Open("Assets/Game/UI/Canvas.prefab")
+    UI:Close("Assets/Game/UI/Canvas.prefab",true)
+    UI:Open("Assets/Game/UI/Canvas.prefab")
 end
 
 function Update()

@@ -56,7 +56,7 @@ namespace GameFramework.Taurus
 			_luaPathExtension = luaPathExtension;
 
 			_scriptEnv = LuaEnv.NewTable();
-
+			
 			// 为每个脚本设置一个独立的环境，可一定程度上防止脚本间全局变量、函数冲突
 			LuaTable meta = LuaEnv.NewTable();
 			meta.Set("__index", LuaEnv.Global);
