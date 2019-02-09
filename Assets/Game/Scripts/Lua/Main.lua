@@ -4,11 +4,11 @@ require('UI')
 
 function Start()
     print("start")
-    UI:Open("Assets/Game/UI/Canvas.prefab")
-    UI:Close("Assets/Game/UI/Canvas.prefab",false)
-    UI:Open("Assets/Game/UI/Canvas.prefab")
-    UI:Close("Assets/Game/UI/Canvas.prefab",true)
-    UI:Open("Assets/Game/UI/Canvas.prefab")
+    UI:Open("Canvas")
+    UI:Close("Canvas",false)
+    UI:Open("Canvas")
+    UI:Close("Canvas",true)
+    UI:Open("Canvas")
 end
 
 function Update()

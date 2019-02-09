@@ -4,14 +4,22 @@ UI={}
 
 local View={}
 
+local uiPrefabPath="Assets/Game/UI/"
+
 -- 打开ui
 function UI:Open(name)
   view=View[name]
   if(view==nil) then
     viewPrefab=CS.UnityEngine.Object()
-    viewPrefab=Res:LoadAsset(viewPrefab,"ui",name)
+    path=uiPrefabPath..name..".prefab"
+    viewPrefab=Res:LoadAsset(viewPrefab,"ui",path)
     view=CS.UnityEngine.GameObject.Instantiate(viewPrefab)
-    view.gameObject:SetActive(true)
+    --如果有LuaBehaviour的脚本则执行相应的脚本
+    luaBehaviour=view:GetComponent("GameFramework.Taurus.LuaBehaviour")
+    if(luaBehaviour==nil) then
+      luaBehaviour:Run(name)
+    end
+    view:SetActive(true)
     View[name]=view
   else
     view:SetActive(true)
