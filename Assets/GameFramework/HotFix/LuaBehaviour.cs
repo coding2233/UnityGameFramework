@@ -14,6 +14,7 @@ using XLua;
 
 namespace GameFramework.Taurus
 {
+	[LuaCallCSharp]
 	public class LuaBehaviour : MonoBehaviour
 	{
 		/// <summary>
@@ -32,9 +33,9 @@ namespace GameFramework.Taurus
 		/// <summary>
 		/// 运行lua的脚本
 		/// </summary>
-		public void Run(string luaScript)
+		public void Run(string luaScriptName)
 		{
-			if (string.IsNullOrEmpty(_luaScript) && !string.IsNullOrEmpty(luaScript))
+			if (string.IsNullOrEmpty(_luaScript) && !string.IsNullOrEmpty(luaScriptName))
 			{
 				LuaTable scriptEnv = GameMode.HotFix.LuaEnv.NewTable();
 
@@ -50,7 +51,9 @@ namespace GameFramework.Taurus
 					scriptEnv.Set(injection.name, injection.value);
 				}
 
-				GameMode.HotFix.LuaEnv.DoString($"require '{luaScript}'", luaScript, scriptEnv);
+				string luaScript = GameMode.HotFix.LuaScriptLoader(luaScriptName);
+
+				GameMode.HotFix.LuaEnv.DoString(luaScript, luaScriptName, scriptEnv);
 				scriptEnv.Get("Start", out _start);
 				scriptEnv.Get("Update", out _update);
 				scriptEnv.Get("Close", out _close);
@@ -59,7 +62,7 @@ namespace GameFramework.Taurus
 
 				_start?.Invoke();
 
-				_luaScript = luaScript;
+				_luaScript = luaScriptName;
 			}
 
 		}

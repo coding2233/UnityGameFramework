@@ -15,8 +15,8 @@ function UI:Open(name)
     viewPrefab=Res:LoadAsset(viewPrefab,"ui",path)
     view=CS.UnityEngine.GameObject.Instantiate(viewPrefab)
     --如果有LuaBehaviour的脚本则执行相应的脚本
-    luaBehaviour=view:GetComponent("GameFramework.Taurus.LuaBehaviour")
-    if(luaBehaviour==nil) then
+     luaBehaviour=view:GetComponent("GameFramework.Taurus.LuaBehaviour")
+    if(luaBehaviour ~= nil) then
       luaBehaviour:Run(name)
     end
     view:SetActive(true)

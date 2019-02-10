@@ -15,6 +15,7 @@ using XLua;
 
 namespace GameFramework.Taurus
 {
+	[LuaCallCSharp]
 	public sealed class HotFixManager:GameFrameworkModule,IUpdate
 	{
 		//lua的环境变量
@@ -65,7 +66,7 @@ namespace GameFramework.Taurus
 
 			_scriptEnv.Set("self", this);
 			LuaEnv.AddLoader(CustomLoader);
-			LuaEnv.DoString($"require '{luaScript}'", "LuaHotFix", _scriptEnv);
+			LuaEnv.DoString($"require '{luaScript}'", luaScript, _scriptEnv);
 			_scriptEnv.Get("Start", out _start);
 			_scriptEnv.Get("Update", out _update);
 			_scriptEnv.Get("Close", out _close);
@@ -76,9 +77,19 @@ namespace GameFramework.Taurus
 		//自定义加载
 		private byte[] CustomLoader(ref string filePath)
 		{
-			filePath= System.IO.Path.Combine(_luaPathPrefix, $"{filePath}.lua");
-			string path = $"{filePath}.txt";// System.IO.Path.Combine(_luaPathPrefix, $"{filePath}.lua.txt");
+			string path = System.IO.Path.Combine(_luaPathPrefix, $"{filePath}{_luaPathExtension}");
 			return _resource.LoadAsset<TextAsset>(_luaAssetBundle,path).bytes;
+		}
+
+		/// <summary>
+		/// 加载lua的文本
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public string LuaScriptLoader(string name)
+		{
+			string path = System.IO.Path.Combine(_luaPathPrefix, $"{name}{_luaPathExtension}");
+			return _resource.LoadAsset<TextAsset>(_luaAssetBundle, path).text;
 		}
 
 		public void OnUpdate()

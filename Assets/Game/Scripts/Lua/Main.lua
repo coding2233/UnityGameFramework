@@ -5,10 +5,6 @@ require('UI')
 function Start()
     print("start")
     UI:Open("Canvas")
-    UI:Close("Canvas",false)
-    UI:Open("Canvas")
-    UI:Close("Canvas",true)
-    UI:Open("Canvas")
 end
 
 function Update()
