@@ -5,6 +5,7 @@ UI={}
 local View={}
 
 local uiPrefabPath="Assets/Game/UI/"
+local uiAssetBundle="ui"
 
 -- 打开ui
 function UI:Open(name)
@@ -12,7 +13,7 @@ function UI:Open(name)
   if(view==nil) then
     viewPrefab=CS.UnityEngine.Object()
     path=uiPrefabPath..name..".prefab"
-    viewPrefab=Res:LoadAsset(viewPrefab,"ui",path)
+    viewPrefab=Res:LoadAsset(viewPrefab,uiAssetBundle,path)
     view=CS.UnityEngine.GameObject.Instantiate(viewPrefab)
     --如果有LuaBehaviour的脚本则执行相应的脚本
      luaBehaviour=view:GetComponent("GameFramework.Taurus.LuaBehaviour")

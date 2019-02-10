@@ -1,4 +1,3 @@
-local _testBtn;
 
 function Enable()
     print("Test--UI--Enable")
@@ -10,7 +9,7 @@ end
 
 function Start()
     print(self)
-    --_testBtn=TestBtn:GetComponent("Button").onclick:AddListener(ButtonClick)
+    TestBtn:GetComponent("Button").onClick:AddListener(ButtonClick)
     print("Test--UI--Start")
 end
 
@@ -23,5 +22,5 @@ function Close()
 end
 
 function ButtonClick()
-  print("button---------------")
+  print("button----Click-----------")
 end

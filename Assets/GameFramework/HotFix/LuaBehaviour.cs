@@ -44,7 +44,7 @@ namespace GameFramework.Taurus
 				meta.Set("__index", GameMode.HotFix.LuaEnv.Global);
 				scriptEnv.SetMetaTable(meta);
 				meta.Dispose();
-
+				
 				scriptEnv.Set("self", this);
 				foreach (var injection in injections)
 				{
