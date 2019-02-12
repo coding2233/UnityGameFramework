@@ -28,13 +28,13 @@ public class AssetBundleBuildEditor :EditorWindow {
 	[MenuItem("Tools/AssetBundles Options %#O")]
 	public static void AssetBundilesOptions()
 	{
-		_rootPath=Path.GetDirectoryName(Application.dataPath);
+        _rootPath = Path.GetDirectoryName(Path.GetFullPath(Application.dataPath));
 
-		LoadConfig();
+        LoadConfig();
 
-		BuildTarget[] allTargets= (BuildTarget[])Enum.GetValues(typeof(BuildTarget));
-		//_allTargets
-		foreach (var item in allTargets)
+        BuildTarget[] allTargets = (BuildTarget[])Enum.GetValues(typeof(BuildTarget));
+        //_allTargets
+        foreach (var item in allTargets)
 		{
 			int index=(int)item;
 			if(_config.BuildTargets.Contains(index))
@@ -115,9 +115,10 @@ public class AssetBundleBuildEditor :EditorWindow {
 			path=EditorUtility.OpenFolderPanel("Build Path",path,"");
 			if(!string.IsNullOrEmpty(path))
 			{
-				if(path.Contains(_rootPath))
-				{
-					path=path.Replace(_rootPath,"");
+                path = Path.GetFullPath(path);
+                if (path.Contains(_rootPath))
+                {
+                    path = path.Replace(_rootPath, "").Replace("\\", "/");
 					if(path.IndexOf("/")==0)
 					{
 						path= path.Substring(1,path.Length-1);
