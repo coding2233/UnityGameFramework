@@ -60,6 +60,14 @@ namespace GameFramework.Taurus
             GameMode.Event.AddListener<DownloadProgressEventArgs>(OnDownloadProgress);
 
             _localVersion=LoadLocalVersion();
+
+            //从StreamingAsset复制到读写路径下
+            if (_localVersion == null)
+            {
+                MoveFiles(Application.streamingAssetsPath, Application.persistentDataPath);
+                _localVersion = LoadLocalVersion();
+            }
+
             LoadRemoteVersion();
         }
 
@@ -256,7 +264,34 @@ namespace GameFramework.Taurus
             #endif
             return platformName.ToLower();
         }
-#endregion
+
+        //获取文件
+        private string[] GetFiles(string path)
+        {
+            List<string> files = new List<string>();
+            files.AddRange(Directory.GetFiles(path));
+            foreach (var item in Directory.GetDirectories(path))
+            {
+                files.AddRange(GetFiles(item));
+            }
+            return files.ToArray();
+        }
+
+        //移动物体
+        private void MoveFiles(string srcPath, string dstPath)
+        {
+            string[] files = GetFiles(srcPath);
+            foreach (var item in files)
+            {
+                string targetPath = item.Replace(srcPath, dstPath);
+                string dirPath = Path.GetDirectoryName(targetPath);
+                if (!Directory.Exists(dirPath))
+                    Directory.CreateDirectory(dirPath);
+                File.Copy(item, targetPath, true);
+            }
+        }
+
+        #endregion
 
     }
 }
