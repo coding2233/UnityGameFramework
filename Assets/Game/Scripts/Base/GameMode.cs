@@ -110,6 +110,12 @@ namespace GameFramework.Taurus
             WebRequest.SetWebDownloadHelper(webDownloadHelper.AddComponent<WebDownloadMonoHelper>());
             #endregion
 
+            #region Setting
+            GameObject debugHelper = transform.Find("[Graphy]").gameObject;
+            Setting.SetDebuger(debugHelper);
+            Setting.DebugEnable = DebugEnable;
+            #endregion
+
             #region state
             //开启整个项目的流程
             Assembly = typeof(GameMode).Assembly;
@@ -117,13 +123,7 @@ namespace GameFramework.Taurus
             yield return new WaitForEndOfFrame();
             State.SetStateStart();
             #endregion
-
-            #region Setting
-            GameObject debugHelper = new GameObject("DebugHelper");
-            debugHelper.transform.SetParent(transform);
-            Setting.SetDebugHelper(debugHelper.AddComponent<DebugHelper>());
-            Setting.DebugEnable = DebugEnable;
-            #endregion
+            
         }
         
 		private void Update()

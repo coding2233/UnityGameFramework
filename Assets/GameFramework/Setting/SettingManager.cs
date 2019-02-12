@@ -17,7 +17,7 @@ namespace GameFramework.Taurus
 	{
         #region 属性
         private bool _debugEnable = true;
-        private DebugHelper _debugHelper;
+        private GameObject _debuger;
         #endregion
         
         /// <summary>
@@ -32,16 +32,14 @@ namespace GameFramework.Taurus
             set
             {
                 _debugEnable = value;
-                _debugHelper.enabled = _debugEnable;
+                if (_debuger != null)
+                    _debuger.SetActive(value);
             }
         }
 
-        /// <summary>
-        /// 设置调试器帮助类
-        /// </summary>
-        public void SetDebugHelper(DebugHelper helper)
+        public void SetDebuger(GameObject debuger)
         {
-            _debugHelper = helper;
+            _debuger = debuger;
         }
 
         public int GetQuality()
