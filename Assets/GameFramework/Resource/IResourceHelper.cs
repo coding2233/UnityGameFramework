@@ -22,15 +22,30 @@ namespace GameFramework.Taurus
         /// <param name="path"></param>
         void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles", bool isEncrypt = false);
 
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        ///  <param name="unload"></param>
-        /// <returns></returns>
-        Task<T> LoadAsset<T>(string assetBundleName,string assetName) where T : UnityEngine.Object;
+		/// <summary>
+		/// 加载assetbundle
+		/// </summary>
+		/// <param name="assetBundleName"></param>
+		/// <returns></returns>
+		Task<AssetBundle> LoadAssetBundle(string assetBundleName);
+
+		/// <summary>
+		/// 加载资源 -- 同步加载
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetName"></param>
+		/// <returns></returns>
+		T LoadAssetSync<T>(string assetBundleName, string assetName) where T : UnityEngine.Object;
+
+		/// <summary>
+		/// 加载资源
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetBundleName"></param>
+		/// <param name="assetName"></param>
+		///  <param name="unload"></param>
+		/// <returns></returns>
+		Task<T> LoadAsset<T>(string assetBundleName,string assetName) where T : UnityEngine.Object;
 		
         /// <summary>
         /// 卸载资源 主要为卸载AssetBundle

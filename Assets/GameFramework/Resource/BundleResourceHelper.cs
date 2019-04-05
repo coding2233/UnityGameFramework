@@ -70,27 +70,78 @@ namespace GameFramework.Taurus
 		    LoadPlatformMainfest(rootAbPath);
         }
 
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public async Task<T> LoadAsset<T>(string assetBundleName, string assetName) where T : Object
+		/// <summary>
+		/// 加载ab包
+		/// </summary>
+		/// <param name="assetBundleName"></param>
+		/// <returns></returns>
+		public async Task<AssetBundle> LoadAssetBundle(string assetBundleName)
+		{
+			//加载Assetbundle
+			AssetBundle assetBundle;
+			KeyValuePair<AssetBundle, string[]> assetBundles;
+			if (!_allAssetBundles.ContainsKey(assetBundleName))
+			{
+				string assetBundlePath = Path.Combine(_readPath, assetBundleName);
+				if (!File.Exists(assetBundlePath))
+					throw new GamekException("AssetBundle is Null");
+				//加载assetbundle
+				assetBundle = await LoadAssetBundleFromPath(assetBundlePath);
+				//存储资源名称
+				string[] assetNames = assetBundle.GetAllAssetNames();
+				if (assetBundle.isStreamedSceneAssetBundle)
+					assetNames = assetBundle.GetAllScenePaths();
+				foreach (var name in assetNames)
+				{
+					if (!_allAssets.ContainsKey(name))
+						_allAssets.Add(name, assetBundle);
+				}
+				//存储assetbundle
+				assetBundles = new KeyValuePair<AssetBundle, string[]>(assetBundle, assetNames);
+				_allAssetBundles[assetBundleName] = assetBundles;
+			}
+			return assetBundles.Key;
+		}
+
+		/// <summary>
+		/// 加载资源 同步加载
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetBundleName"></param>
+		/// <param name="assetName"></param>
+		/// <returns></returns>
+		public T LoadAssetSync<T>(string assetBundleName, string assetName) where T : Object
+		{
+			AssetBundle assetBundle;
+			if (_allAssets.TryGetValue(assetName, out assetBundle))
+			{
+				return assetBundle.LoadAsset<T>(assetName);
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// 加载资源
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetBundleName"></param>
+		/// <param name="assetName"></param>
+		/// <returns></returns>
+		public async Task<T> LoadAsset<T>(string assetBundleName, string assetName) where T : Object
 		{
             //转小写
 			assetName = assetName.ToLower();
 
             //加载Assetbundle
 			AssetBundle assetBundle;
+			
 			if (!_allAssets.TryGetValue(assetName, out assetBundle))
 			{
 			    string assetBundlePath = Path.Combine(_readPath, assetBundleName);
 			    if (!File.Exists(assetBundlePath))
 			        throw new GamekException("AssetBundle is Null");
                 //加载assetbundle
-			    assetBundle = await LoadAssetBundle(assetBundlePath);
+			    assetBundle = await LoadAssetBundleFromPath(assetBundlePath);
                 //存储资源名称
                 string[] assetNames = assetBundle.GetAllAssetNames();
                 if (assetBundle.isStreamedSceneAssetBundle)
@@ -105,7 +156,8 @@ namespace GameFramework.Taurus
 			}
 
             //加载依赖项
-		    LoadDependenciesAssetBundel(assetBundleName);
+		    await LoadDependenciesAssetBundel(assetBundleName);
+
             //加载资源
             var asset = await assetBundle.LoadAssetAsync(assetName);
 
@@ -148,9 +200,9 @@ namespace GameFramework.Taurus
 		    {
 		        string assetBundlePath = Path.Combine(_readPath, assetBundleName);
 
-				AssetBundle assetBundle = await LoadAssetBundle(assetBundlePath);
+				AssetBundle assetBundle = await LoadAssetBundleFromPath(assetBundlePath);
 		        //加载依赖项
-		        LoadDependenciesAssetBundel(assetBundleName);
+		        await LoadDependenciesAssetBundel(assetBundleName);
 
                 asyncOperation = SceneManager.LoadSceneAsync(sceneName, mode);
                 //场景加载完成卸载相关的引用
@@ -202,7 +254,7 @@ namespace GameFramework.Taurus
 		{
 		    try
 		    {
-		        AssetBundle mainfestAssetBundle = await LoadAssetBundle(rootBundlePath);
+		        AssetBundle mainfestAssetBundle = await LoadAssetBundleFromPath(rootBundlePath);
 		        _mainfest = mainfestAssetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
 		        mainfestAssetBundle.Unload(false);
 		    }
@@ -211,10 +263,9 @@ namespace GameFramework.Taurus
 		        Debug.LogError(ex.ToString());
 		    }
 		}
-
-
-        //同步加载AssetBundle
-	    private async Task<AssetBundle> LoadAssetBundle(string path)
+		
+		//同步加载AssetBundle
+		private async Task<AssetBundle> LoadAssetBundleFromPath(string path)
 	    {
 	        if (!File.Exists(path))
 	            throw new Exception("assetbundle not found :" + path);
@@ -236,28 +287,9 @@ namespace GameFramework.Taurus
 
 			return mainfestAssetBundle;
 	    }
-
-        //异步加载AssetBundle
-	    private AssetBundleCreateRequest LoadAssetBundleAsync(string path)
-	    {
-	        if (!File.Exists(path))
-	            throw new Exception("assetbundle not found :" + path);
-	        AssetBundleCreateRequest assetBundleCreateRequest;
-	        if (_enciphererkeyAsset != null)
-	        {
-	            byte[] datas = Encipherer.AESDecrypt(File.ReadAllBytes(path), _enciphererkeyAsset);
-	            assetBundleCreateRequest = AssetBundle.LoadFromMemoryAsync(datas);
-	        }
-	        else
-	            assetBundleCreateRequest = AssetBundle.LoadFromFileAsync(path);
-
-	        return assetBundleCreateRequest;
-	    }
-
-	
-
+		
         //加载引用的assetbundle --引用的assetbundle不卸载
-	    private async void LoadDependenciesAssetBundel(string assetBundleName)
+	    private async Task LoadDependenciesAssetBundel(string assetBundleName)
 	    {
 	        //加载相关依赖 依赖暂时不异步加载了
 	        string[] dependencies = _mainfest.GetAllDependencies(assetBundleName);
@@ -267,7 +299,7 @@ namespace GameFramework.Taurus
 	                continue;
 
 	            string dependenciesBundlePath = Path.Combine(_readPath, item);
-	            AssetBundle assetBundle= await LoadAssetBundle(dependenciesBundlePath);
+	            AssetBundle assetBundle= await LoadAssetBundleFromPath(dependenciesBundlePath);
 
 	            //存储资源名称
 	            string[] assetNames = assetBundle.GetAllAssetNames();

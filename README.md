@@ -145,7 +145,7 @@ ChangeState<StartState>();
 
 资源加载使用`async-await`来做异步加载资源
 
-1. 资源加载
+1. 资源加载(异步加载 )
 
 ```csharp
 //加载普通资源
@@ -155,7 +155,16 @@ GameObject obj = await GameFrameworkMode.GetModule<ResourceManager>().LoadAsset<
 GameObject player = Instantiate(obj);
 ```
 
-2. 内置对象池
+2. 资源加载(同步加载)
+
+```csharp
+//先加载assetbundle
+GameFrameworkMode.GetModule<ResourceManager>().LoadAssetBundle("hotfix");
+//再加载资源
+GameFrameworkMode.GetModule<ResourceManager>().LoadAssetSync("hotfix","main");
+```
+
+3. 内置对象池
 
 * 添加预设
 ```csharp
@@ -171,13 +180,13 @@ GameObject player= GameFrameworkMode.GetModule<ResourceManager>().Spawn("Assets/
 GameFrameworkMode.GetModule<ResourceManager>().Despawn(player);
 ```
 
-3. 加载场景,场景只支持异步加载
+4. 加载场景,场景只支持异步加载
 
 ```csharp
 AsyncOperation asyncOperation= await GameFrameworkMode.GetModule<ResourceManager>().LoadSceneAsync("mainscene","Assets/Scene/Main.unity");
 ```
 
-4. 支持编辑器内资源的直接读取和AssetBundle资源读取两种方式的一键切换，避免测试的时候需要重复的打包AssetBundle资源
+5. 支持编辑器内资源的直接读取和AssetBundle资源读取两种方式的一键切换，避免测试的时候需要重复的打包AssetBundle资源
 
 ---
 

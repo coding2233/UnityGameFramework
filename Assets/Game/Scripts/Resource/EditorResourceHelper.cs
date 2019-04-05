@@ -40,13 +40,14 @@ namespace GameFramework.Taurus
 			task.SetResult(AssetDatabase.LoadAssetAtPath<T>(assetName));
 			return task.Task;
         }
+
 		
-	    /// <summary>
-	    /// 卸载资源 主要为卸载AssetBundle
-	    /// </summary>
-	    /// <param name="assetName">资源名称</param>
-	    /// <param name="allAssets">是否卸载调所有资源</param>
-	    public void UnloadAsset(string assetBundleName, bool unload)
+		/// <summary>
+		/// 卸载资源 主要为卸载AssetBundle
+		/// </summary>
+		/// <param name="assetName">资源名称</param>
+		/// <param name="allAssets">是否卸载调所有资源</param>
+		public void UnloadAsset(string assetBundleName, bool unload)
 	    {
 	    }
 
@@ -77,7 +78,17 @@ namespace GameFramework.Taurus
         public void Clear()
         {
         }
-    }
+
+		public Task<AssetBundle> LoadAssetBundle(string assetBundleName)
+		{
+			return null;
+		}
+
+		public T LoadAssetSync<T>(string assetBundleName, string assetName) where T : Object
+		{
+			return AssetDatabase.LoadAssetAtPath<T>(assetName);
+		}
+	}
 }
 
 #endif
