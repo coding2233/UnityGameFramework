@@ -24,13 +24,16 @@ public class HotFixBuildEditor  {
 	[InitializeOnLoadMethod]
 	static void Main()
 	{
-		//复制dll
-		File.Copy(_srcDllPath, _destDllPath, true);
-		
-		//刷新资源
-		AssetDatabase.Refresh();
+		if (!EditorApplication.isPlayingOrWillChangePlaymode)
+		{
+			//复制dll
+			File.Copy(_srcDllPath, _destDllPath, true);
 
-		Debug.Log($"更新HotFix.dll!{_srcDllPath}-->{_destDllPath}");
+			//刷新资源
+			AssetDatabase.Refresh();
+
+			Debug.Log($"更新HotFix.dll!{_srcDllPath}-->{_destDllPath}");
+		}
 	}
 
 }
