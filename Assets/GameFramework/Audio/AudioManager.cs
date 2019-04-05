@@ -9,6 +9,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace GameFramework.Taurus
@@ -79,7 +80,7 @@ namespace GameFramework.Taurus
 		/// 播放在GameObject上的声音
 		/// </summary>
 		/// <param name="audioClipPath"></param>
-		public void PlayGameObjectSound(GameObject go,string assetBundleName,string audioClipPath)
+		public async void PlayGameObjectSound(GameObject go,string assetBundleName,string audioClipPath)
 		{
 			AudioSource audioSource=go.GetComponent<AudioSource>();
 			if (audioSource==null)
@@ -87,7 +88,7 @@ namespace GameFramework.Taurus
 				audioSource = go.AddComponent<AudioSource>();
 			}
 
-			audioSource.clip = _resourceManager?.LoadAsset<AudioClip>(assetBundleName,audioClipPath);
+			audioSource.clip = await _resourceManager?.LoadAsset<AudioClip>(assetBundleName,audioClipPath);
 			if (audioSource.clip != null)
 				audioSource.Play();
 		}
@@ -190,11 +191,11 @@ namespace GameFramework.Taurus
 		#region 内部函数
 
 		//添加音频
-		private bool AddAuioClip(string assetBundleName,string audioClipPath, Dictionary<string, AudioClip> clips)
+		private async Task<bool> AddAuioClip(string assetBundleName,string audioClipPath, Dictionary<string, AudioClip> clips)
 		{
 			if (!clips.ContainsKey(audioClipPath))
 			{
-				AudioClip audioClip = _resourceManager?.LoadAsset<AudioClip>(assetBundleName,audioClipPath);
+				AudioClip audioClip = await _resourceManager?.LoadAsset<AudioClip>(assetBundleName,audioClipPath);
 				if (audioClip != null)
 				{
 					clips.Add(audioClipPath, audioClip);

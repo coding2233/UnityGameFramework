@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 using LoadSceneMode = UnityEngine.SceneManagement.LoadSceneMode;
+using System.Threading.Tasks;
 
 namespace GameFramework.Taurus
 {
@@ -116,22 +117,11 @@ namespace GameFramework.Taurus
         /// <param name="assetBundleName"></param>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        public T LoadAsset<T>(string assetBundleName,string assetName) where T : UnityEngine.Object
+        public Task<T> LoadAsset<T>(string assetBundleName,string assetName) where T : UnityEngine.Object
 		{
 			return _resourceHelper?.LoadAsset<T>(assetBundleName,assetName);
 		}
-
-        /// <summary>
-        /// 异步加载资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        public void LoadAssetAsync<T>(string assetBundleName,string assetName) where T : UnityEngine.Object
-	    {
-		    _resourceHelper?.LoadAssetAsync<T>(assetBundleName,assetName, LoadAssetAsyncCallback);
-	    }
-
+		
         /// <summary>
         /// 卸载资源 主要为卸载AssetBundle
         /// </summary>
@@ -149,12 +139,12 @@ namespace GameFramework.Taurus
         /// <param name="sceneName"></param>
         /// <param name="mode"></param>
         /// <returns></returns>
-        public AsyncOperation LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
+        public Task<AsyncOperation> LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
 		{
 			if (_resourceHelper == null)
 				return null;
-		    AsyncOperation asyncOperation= _resourceHelper.LoadSceneAsync(assetBundleName,sceneName, mode);
-		    _sceneAsyncOperations.Add(sceneName, asyncOperation);
+		    Task<AsyncOperation> asyncOperation = _resourceHelper.LoadSceneAsync(assetBundleName,sceneName, mode);
+		    _sceneAsyncOperations.Add(sceneName, asyncOperation.Result);
 		    return asyncOperation;
 
 		}

@@ -8,6 +8,7 @@
 //-----------------------------------------------------------------------
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace GameFramework.Taurus
 {
@@ -18,6 +19,7 @@ namespace GameFramework.Taurus
 		public override void OnEnter(params object[] parameters)
 		{
 			base.OnEnter(parameters);
+
 		}
 
 		public override void OnExit()
