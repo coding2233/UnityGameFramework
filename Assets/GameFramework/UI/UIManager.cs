@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace GameFramework.Taurus
@@ -49,7 +50,7 @@ namespace GameFramework.Taurus
 		#endregion
 
 		#region 外部接口
-		public void Push<T>(bool allowMulti = false, params object[] parameters) where T : UIView
+		public async void Push<T>(bool allowMulti = false, params object[] parameters) where T : UIView
 		{
 		    AssetConfig assetConfig = CheckAssetPath(typeof(T));
 			if (assetConfig==null)
@@ -62,7 +63,7 @@ namespace GameFramework.Taurus
 				if (Equals(lastAssetConfig, assetConfig) && !allowMulti)
 					return;
 
-				IUIView uiView = GetUiView(lastAssetConfig);
+				IUIView uiView = await  GetUiView(lastAssetConfig);
 
 				//触发暂停事件
 				_uiPauseArgs.UIView = uiView;
@@ -78,7 +79,7 @@ namespace GameFramework.Taurus
 		        newAssetConfig = assetConfig;
 
             _stackUiAsset.Push(newAssetConfig);
-			UIView newUiView = GetUiView(newAssetConfig);
+			UIView newUiView = await GetUiView(newAssetConfig);
 			newUiView.OnEnter(parameters);
 
 			//触发打开事件
@@ -154,12 +155,12 @@ namespace GameFramework.Taurus
 
 
 		//获取ui界面
-		private UIView GetUiView(AssetConfig assetConfig)
+		private async Task<UIView> GetUiView(AssetConfig assetConfig)
 		{
 			UIView uiView;
 			if (!_allUiViews.TryGetValue(assetConfig, out uiView))
 			{
-				GameObject uiViewSource = _resource.LoadAsset<GameObject>(assetConfig.AssetBundleName, assetConfig.AssetPath);
+				GameObject uiViewSource = await _resource.LoadAsset<GameObject>(assetConfig.AssetBundleName, assetConfig.AssetPath);
 				if (uiViewSource == null)
 					throw new Exception("uiview path not found:"+ assetConfig.AssetBundleName+":"+ assetConfig.AssetPath);
 

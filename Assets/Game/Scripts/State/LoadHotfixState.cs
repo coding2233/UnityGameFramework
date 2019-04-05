@@ -51,9 +51,9 @@ namespace GameFramework.Taurus
 
 		#region 内部函数
 
-		private void LoadHotFix()
+		private async void LoadHotFix()
 		{
-			byte[] dllDatas = GameMode.Resource.LoadAsset<TextAsset>("hotfix",_dllPath).bytes;
+			byte[] dllDatas =(await GameMode.Resource.LoadAsset<TextAsset>("hotfix",_dllPath)).bytes;
 			byte[] pdbDatas = null;
 #if UNITY_EDITOR
 			//pdbDatas = GameMode.Resource.LoadAsset<TextAsset>("hotfix", _pdbPath)?.bytes;

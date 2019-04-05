@@ -31,9 +31,9 @@ namespace HotFix.Taurus
         /// <param name="assetBundleName">assetBundle的名称</param>
         /// <param name="dataTablePath">配置表的数据</param>
         /// <returns></returns>
-        public void LoadDataTable<T>(string assetBundleName,string dataTablePath) where T :class, IDataTableRow,new()
+        public async void LoadDataTable<T>(string assetBundleName,string dataTablePath) where T :class, IDataTableRow,new()
 	    {
-		    string data= _resource.LoadAsset<TextAsset>(assetBundleName,dataTablePath).text;
+		    string data= (await _resource.LoadAsset<TextAsset>(assetBundleName,dataTablePath)).text;
 		    DataTable<T> dataTable = new DataTable<T>();
 		    string[] rows = data.Split('\n');
 		    foreach (var item in rows)

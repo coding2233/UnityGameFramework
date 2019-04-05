@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace HotFix.Taurus
@@ -40,7 +41,7 @@ namespace HotFix.Taurus
         #endregion
 
         #region 外部接口
-        public void Push<T>(bool allowMulti = false, params object[] parameters) where T : UIView
+        public async void Push<T>(bool allowMulti = false, params object[] parameters) where T : UIView
         {
             AssetConfig assetConfig = CheckAssetPath(typeof(T));
             if (assetConfig == null)
@@ -52,7 +53,7 @@ namespace HotFix.Taurus
                 //如果界面已经打开 则不在执行
                 if (Equals(lastAssetCofig, assetConfig) && !allowMulti)
                     return;
-                IUIView uiView = GetUiView<T>(lastAssetCofig);
+                IUIView uiView = await GetUiView<T>(lastAssetCofig);
 
                 ////触发暂停事件
                 //_uiPauseArgs.UIView = uiView;
@@ -69,7 +70,7 @@ namespace HotFix.Taurus
 
 
             _stackUiAsset.Push(newAssetConfig);
-            UIView newUiView = GetUiView<T>(newAssetConfig);
+            UIView newUiView = await GetUiView<T>(newAssetConfig);
             newUiView.OnEnter(parameters);
             //更新函数 -- 添加
             IUpdate update = newUiView as IUpdate;
@@ -167,12 +168,12 @@ namespace HotFix.Taurus
 
 
         //获取ui界面
-        private UIView GetUiView<T>(AssetConfig assetConfig) where T:UIView
+        private async Task<UIView> GetUiView<T>(AssetConfig assetConfig) where T:UIView
         {
             UIView uiView;
             if (!_allUiViews.TryGetValue(assetConfig, out uiView))
             {
-                GameObject uiViewSource = _resource.LoadAsset<GameObject>(assetConfig.AssetBundleName, assetConfig.AssetPath);
+                GameObject uiViewSource = await _resource.LoadAsset<GameObject>(assetConfig.AssetBundleName, assetConfig.AssetPath);
                 if (uiViewSource == null)
                     return null;
                 GameObject uiViewClone = GameObject.Instantiate(uiViewSource);

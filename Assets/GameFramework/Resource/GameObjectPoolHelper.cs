@@ -35,7 +35,7 @@ namespace GameFramework.Taurus
 		/// </summary>
 		private readonly Dictionary<string, Queue<GameObject>> _despawneds = new Dictionary<string, Queue<GameObject>>();
 
-		public void AddPrefab(string assetBundleName,string assetName, PoolPrefabInfo prefabInfo)
+		public async void AddPrefab(string assetBundleName,string assetName, PoolPrefabInfo prefabInfo)
 		{
 			if (_prefabs.ContainsKey(assetName))
 			{
@@ -45,7 +45,7 @@ namespace GameFramework.Taurus
 			if (prefabInfo.Prefab == null)
 			{
 				//根据assetName,直接从ResourceManager里面加载
-				prefabInfo.Prefab = GameFrameworkMode.GetModule<ResourceManager>().LoadAsset<GameObject>(assetBundleName,assetName);
+				prefabInfo.Prefab = await GameFrameworkMode.GetModule<ResourceManager>().LoadAsset<GameObject>(assetBundleName,assetName);
 				if (prefabInfo.Prefab == null)
 				{
 					Debug.Log("预设资源为null:" + assetName);

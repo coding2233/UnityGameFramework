@@ -57,7 +57,12 @@ public class AssetBundleBuildEditor :EditorWindow {
 
 		//保存平台信息
 		SavePlatformVersion(new List<BuildTarget>(){target});
-	}
+
+            //复制资源
+            CopyResource(target);
+            AssetDatabase.Refresh();
+
+    }
 
 	[MenuItem("Tools/Build AssetBundles Targets %#Y")]
 	public static void BuildAssetBundlesAllTargets()
@@ -74,7 +79,13 @@ public class AssetBundleBuildEditor :EditorWindow {
 
 		//保存平台信息
 		SavePlatformVersion(targets);
-	}
+            if (targets.Contains(EditorUserBuildSettings.activeBuildTarget))
+            {
+                //复制资源
+                CopyResource(EditorUserBuildSettings.activeBuildTarget);
+                AssetDatabase.Refresh();
+            }
+        }
 
 	/// <summary>
 	/// OnGUI is called for rendering and handling GUI events.
@@ -103,7 +114,7 @@ public class AssetBundleBuildEditor :EditorWindow {
 		GUILayout.Label("Compression:");
 		_config.CompressOptions = EditorGUILayout.Popup(_config.CompressOptions,_compressionOptionsContent);
 		GUILayout.EndHorizontal();
-
+            
 		GUILayout.BeginHorizontal("Box");
 		GUILayout.Label("BuildPath:");
 		GUILayout.TextArea(string.IsNullOrEmpty(_config.BuildPath)?_rootPath:_config.BuildPath);
@@ -129,9 +140,15 @@ public class AssetBundleBuildEditor :EditorWindow {
 			return;
 		}
 		GUILayout.EndHorizontal();
-		
-		//build targets----------------------------------------------------------------------------
-		GUILayout.BeginVertical("Box");
+
+        //copy------------------------------------
+        GUILayout.BeginHorizontal("Box");
+        GUILayout.FlexibleSpace();
+        _config.Copy2StreamingAssets= GUILayout.Toggle(_config.Copy2StreamingAssets, "Copy to StreamingAssets");
+        GUILayout.EndHorizontal();
+
+        //build targets----------------------------------------------------------------------------
+        GUILayout.BeginVertical("Box");
 		GUILayout.Label("Build Targets:");
 		_scrollViewPos=GUILayout.BeginScrollView(_scrollViewPos,"Box");
 		foreach (var item in _allTargets)
@@ -269,6 +286,21 @@ public class AssetBundleBuildEditor :EditorWindow {
 		EditorUtility.OpenWithDefaultApp(_config.BuildPath);
 	}
 
+    //复制资源
+    private static void CopyResource(BuildTarget target)
+    {
+        //打包路径
+        string buildPath =Path.GetFullPath( Path.Combine(_config.BuildPath, target.ToString()));
+        //获取源文件夹下的所有文件  不考虑子文件夹
+        string[] files = Directory.GetFiles(buildPath);
+        string targetPath = Path.GetFullPath(Application.streamingAssetsPath);
+        for (int i = 0; i < files.Length; i++)
+        {
+            string path = files[i].Replace(buildPath, targetPath);
+            File.Copy(files[i], path, true);
+        }
+    }
+
 		//ab包的配置文件信息
 		[System.Serializable]
 		public class AssetBundleConifgInfo
@@ -276,8 +308,8 @@ public class AssetBundleBuildEditor :EditorWindow {
 			public int Version=0;
 			public string BuildPath="";
 			public int CompressOptions=1;
+            public bool Copy2StreamingAssets = false;
 			public List<int> BuildTargets=new List<int>();
-
 		}
 	
 
