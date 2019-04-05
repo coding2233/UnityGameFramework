@@ -10,6 +10,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GameFramework.Taurus
 {
@@ -25,9 +26,9 @@ namespace GameFramework.Taurus
 		/// <param name="assetBundleName"></param>
 		/// <param name="assetName"></param>
 		/// <returns></returns>
-		public static T LoadAsset<T>(this ResourceManager resManager,T result, string assetBundleName, string assetName) where T : UnityEngine.Object
+		public static async Task<T> LoadAsset<T>(this ResourceManager resManager,T result, string assetBundleName, string assetName) where T : UnityEngine.Object
 		{
-			result = resManager.LoadAsset<T>(assetBundleName, assetName);
+			result = await resManager.LoadAsset<T>(assetBundleName, assetName);
 			return result;
 		}
 

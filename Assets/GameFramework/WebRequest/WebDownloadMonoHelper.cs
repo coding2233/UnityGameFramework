@@ -10,18 +10,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace GameFramework.Taurus
 {
-    public sealed class WebDownloadMonoHelper : MonoBehaviour,IWebDownloadHelper
+
+	public sealed class WebDownloadMonoHelper : MonoBehaviour,IWebDownloadHelper
     {
         public void StartDownload(string remoteUrl, string localPath, Action<string, string, bool, string> result, Action<string, string, ulong, float,float> progress)
         {
             StartCoroutine(UnityWebStartDownload(remoteUrl,localPath,result,progress));
         }
-
+		
         IEnumerator UnityWebStartDownload(string remoteUrl, string localPath, Action<string, string, bool, string> result, Action<string, string, ulong, float,float> progress)
         {
             //断点续传写不写呢...

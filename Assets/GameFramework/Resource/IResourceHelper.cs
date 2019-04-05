@@ -8,6 +8,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -21,25 +22,31 @@ namespace GameFramework.Taurus
         /// <param name="path"></param>
         void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles", bool isEncrypt = false);
 
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        ///  <param name="unload"></param>
-        /// <returns></returns>
-        T LoadAsset<T>(string assetBundleName,string assetName) where T : UnityEngine.Object;
+		/// <summary>
+		/// 加载assetbundle
+		/// </summary>
+		/// <param name="assetBundleName"></param>
+		/// <returns></returns>
+		Task<AssetBundle> LoadAssetBundle(string assetBundleName);
 
-        /// <summary>
-        /// 异步加载资源
-        /// </summary>
-        ///  <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        /// <param name="asyncCallback"></param>
-        /// <param name="unload"></param>
-        void LoadAssetAsync<T>(string assetBundleName,string assetName,Action<string,UnityEngine.Object> asyncCallback) where T : UnityEngine.Object;
+		/// <summary>
+		/// 加载资源 -- 同步加载
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetName"></param>
+		/// <returns></returns>
+		T LoadAssetSync<T>(string assetBundleName, string assetName) where T : UnityEngine.Object;
 
+		/// <summary>
+		/// 加载资源
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetBundleName"></param>
+		/// <param name="assetName"></param>
+		///  <param name="unload"></param>
+		/// <returns></returns>
+		Task<T> LoadAsset<T>(string assetBundleName,string assetName) where T : UnityEngine.Object;
+		
         /// <summary>
         /// 卸载资源 主要为卸载AssetBundle
         /// </summary>
@@ -52,7 +59,7 @@ namespace GameFramework.Taurus
         /// </summary>
         /// <param name="assetBundleName"></param>
         /// <param name="sceneName"></param>
-        AsyncOperation LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive);
+        Task<AsyncOperation> LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive);
 
         /// <summary>
         /// 卸载场景

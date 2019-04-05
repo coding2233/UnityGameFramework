@@ -12,80 +12,81 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 using LoadSceneMode = UnityEngine.SceneManagement.LoadSceneMode;
+using System.Threading.Tasks;
 
 namespace GameFramework.Taurus
 {
-    public sealed class ResourceManager:GameFrameworkModule,IUpdate
-    {
-        #region 属性
+	public sealed class ResourceManager : GameFrameworkModule, IUpdate
+	{
+		#region 属性
 
-        //事件触发类
-        private EventManager _event;
+		//事件触发类
+		private EventManager _event;
 		//资源管理器 帮助类
 		private IResourceHelper _resourceHelper;
 		//GameObject对象池管理器
 		private IGameObjectPoolHelper _gameObjectPoolHelper;
 
 		//资源异步加载完毕
-	    private ResourceLoadAsyncSuccessEventArgs _resLoadAsyncSuccessEventArgs;
+		private ResourceLoadAsyncSuccessEventArgs _resLoadAsyncSuccessEventArgs;
 		//资源异步加载失败
-	    private ResourceLoadAsyncFailureEventArgs _resLoadAsyncFailureEventArgs;
+		private ResourceLoadAsyncFailureEventArgs _resLoadAsyncFailureEventArgs;
 
 		//场景加载中事件
 		private SceneLoadingEventArgs _sceneLoadingEventArgs;
-        //场景加载完毕事件
-        private SceneLoadedEventArgs _sceneLoadedEventArgs;
-        //场景异步加载
-        private Dictionary<string, AsyncOperation> _sceneAsyncOperations;
+		//场景加载完毕事件
+		private SceneLoadedEventArgs _sceneLoadedEventArgs;
+		//场景异步加载
+		private Dictionary<string, AsyncOperation> _sceneAsyncOperations;
 
 		/// <summary>
 		/// 资源更新类型
 		/// </summary>
-	    public ResourceUpdateType ResUpdateType= ResourceUpdateType.Local;
+		public ResourceUpdateType ResUpdateType = ResourceUpdateType.Local;
 		/// <summary>
 		/// 资源本地路径 类型
 		/// </summary>
-		public PathType LocalPathType= PathType.ReadOnly;
-        /// <summary>
-        /// 资源本地路径
-        /// </summary>
-        public string LocalPath
-        {
-            get
-            {
-                switch (LocalPathType)
-                {
-                    case PathType.DataPath:
-                        return Application.dataPath;
-                    case PathType.ReadOnly:
-                        return Application.streamingAssetsPath;
-                    case PathType.ReadWrite:
-                        return Application.persistentDataPath;
-                    case PathType.TemporaryCache:
-                        return Application.temporaryCachePath;
-                }
-                return "";
-            }
-        }
-		
+		public PathType LocalPathType = PathType.ReadOnly;
+		/// <summary>
+		/// 资源本地路径
+		/// </summary>
+		public string LocalPath
+		{
+			get
+			{
+				switch (LocalPathType)
+				{
+					case PathType.DataPath:
+						return Application.dataPath;
+					case PathType.ReadOnly:
+						return Application.streamingAssetsPath;
+					case PathType.ReadWrite:
+						return Application.persistentDataPath;
+					case PathType.TemporaryCache:
+						return Application.temporaryCachePath;
+				}
+				return "";
+			}
+		}
+
 		/// 资源更新的路径
 		/// </summary>
-		public string ResUpdatePath="";
-		
+		public string ResUpdatePath = "";
+
 		#endregion
 
 		#region 构造函数
 		public ResourceManager()
 		{
-            //获取事件管理器
-		    _event = GameFrameworkMode.GetModule<EventManager>();
+			//获取事件管理器
+			_event = GameFrameworkMode.GetModule<EventManager>();
 			//资源异步加载的事件
 			_resLoadAsyncSuccessEventArgs = new ResourceLoadAsyncSuccessEventArgs();
 			_resLoadAsyncFailureEventArgs = new ResourceLoadAsyncFailureEventArgs();
 			//场景事件
 			_sceneLoadingEventArgs = new SceneLoadingEventArgs();
-		    _sceneLoadedEventArgs = new SceneLoadedEventArgs();
-		    _sceneAsyncOperations = new Dictionary<string, AsyncOperation>();
+			_sceneLoadedEventArgs = new SceneLoadedEventArgs();
+			_sceneAsyncOperations = new Dictionary<string, AsyncOperation>();
 		}
 		#endregion
 
@@ -100,38 +101,48 @@ namespace GameFramework.Taurus
 			_resourceHelper = resourceHelper;
 		}
 
-        /// <summary>
-        /// 在设置BundleResourceHelper 需要调用此函数加载AssetBundle的Mainfest文件
-        /// </summary>
-        /// <param name="mainfestName"></param>
-        public void SetMainfestAssetBundle(string mainfestName, bool isEncrypt = false)
-        {
-            _resourceHelper?.SetResourcePath(LocalPathType, mainfestName, isEncrypt);
-        }
+		/// <summary>
+		/// 在设置BundleResourceHelper 需要调用此函数加载AssetBundle的Mainfest文件
+		/// </summary>
+		/// <param name="mainfestName"></param>
+		public void SetMainfestAssetBundle(string mainfestName, bool isEncrypt = false)
+		{
+			_resourceHelper?.SetResourcePath(LocalPathType, mainfestName, isEncrypt);
+		}
 
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public T LoadAsset<T>(string assetBundleName,string assetName) where T : UnityEngine.Object
+		/// <summary>
+		/// 加载assetbundle
+		/// </summary>
+		/// <param name="assetBundleName"></param>
+		/// <returns></returns>
+		public Task<AssetBundle> LoadAssetBundle(string assetBundleName)
+		{
+			return _resourceHelper.LoadAssetBundle(assetBundleName);
+		}
+
+		/// <summary>
+		/// 加载资源 -- 同步加载
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetName"></param>
+		/// <returns></returns>
+		public T LoadAssetSync<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
+		{
+			return _resourceHelper?.LoadAssetSync<T>(assetBundleName, assetName);
+		}
+
+		/// <summary>
+		/// 加载资源
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetBundleName"></param>
+		/// <param name="assetName"></param>
+		/// <returns></returns>
+		public Task<T> LoadAsset<T>(string assetBundleName,string assetName) where T : UnityEngine.Object
 		{
 			return _resourceHelper?.LoadAsset<T>(assetBundleName,assetName);
 		}
-
-        /// <summary>
-        /// 异步加载资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        public void LoadAssetAsync<T>(string assetBundleName,string assetName) where T : UnityEngine.Object
-	    {
-		    _resourceHelper?.LoadAssetAsync<T>(assetBundleName,assetName, LoadAssetAsyncCallback);
-	    }
-
+		
         /// <summary>
         /// 卸载资源 主要为卸载AssetBundle
         /// </summary>
@@ -149,12 +160,12 @@ namespace GameFramework.Taurus
         /// <param name="sceneName"></param>
         /// <param name="mode"></param>
         /// <returns></returns>
-        public AsyncOperation LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
+        public Task<AsyncOperation> LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
 		{
 			if (_resourceHelper == null)
 				return null;
-		    AsyncOperation asyncOperation= _resourceHelper.LoadSceneAsync(assetBundleName,sceneName, mode);
-		    _sceneAsyncOperations.Add(sceneName, asyncOperation);
+		    Task<AsyncOperation> asyncOperation = _resourceHelper.LoadSceneAsync(assetBundleName,sceneName, mode);
+		    _sceneAsyncOperations.Add(sceneName, asyncOperation.Result);
 		    return asyncOperation;
 
 		}

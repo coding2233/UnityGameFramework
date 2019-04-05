@@ -17,6 +17,8 @@ using UnityEditor;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
+using System.Threading.Tasks;
+using UnityEditor.SceneManagement;
 
 namespace GameFramework.Taurus
 {
@@ -32,27 +34,20 @@ namespace GameFramework.Taurus
         /// <typeparam name="T"></typeparam>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        public T LoadAsset<T>(string assetBundleName,string assetName) where T : Object
+        public Task<T> LoadAsset<T>(string assetBundleName,string assetName) where T : Object
         {
-            return AssetDatabase.LoadAssetAtPath<T>(assetName);
+			TaskCompletionSource<T> task = new TaskCompletionSource<T>();
+			task.SetResult(AssetDatabase.LoadAssetAtPath<T>(assetName));
+			return task.Task;
         }
 
-
-        /// <summary>
-        /// 异步加载资源
-        /// </summary>
-        /// <param name="assetName">资源名称</param>
-        public void LoadAssetAsync<T>(string assetBundleName,string assetName, Action<string, UnityEngine.Object> asyncCallback) where T : Object
-        {
-	        asyncCallback.Invoke(assetName,AssetDatabase.LoadAssetAtPath<T>(assetName));
-        }
-
-	    /// <summary>
-	    /// 卸载资源 主要为卸载AssetBundle
-	    /// </summary>
-	    /// <param name="assetName">资源名称</param>
-	    /// <param name="allAssets">是否卸载调所有资源</param>
-	    public void UnloadAsset(string assetBundleName, bool unload)
+		
+		/// <summary>
+		/// 卸载资源 主要为卸载AssetBundle
+		/// </summary>
+		/// <param name="assetName">资源名称</param>
+		/// <param name="allAssets">是否卸载调所有资源</param>
+		public void UnloadAsset(string assetBundleName, bool unload)
 	    {
 	    }
 
@@ -60,14 +55,13 @@ namespace GameFramework.Taurus
 		/// 异步加载场景
 		/// </summary>
 		/// <param name="sceneName"></param>
-		public AsyncOperation LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
+		public Task<AsyncOperation> LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
         {
-            if (mode == LoadSceneMode.Additive)
-                return EditorApplication.LoadLevelAdditiveAsyncInPlayMode(sceneName);
-            else
-                return EditorApplication.LoadLevelAsyncInPlayMode(sceneName);
-            //  return UnitySceneManager.LoadSceneAsync(sceneName, mode);
-        }
+			TaskCompletionSource<AsyncOperation> task = new TaskCompletionSource<AsyncOperation>();
+			task.SetResult(EditorSceneManager.LoadSceneAsyncInPlayMode(sceneName, new LoadSceneParameters(mode)));
+			return task.Task;
+			//  return UnitySceneManager.LoadSceneAsync(sceneName, mode);
+		}
 
         /// <summary>
         /// 卸载场景
@@ -84,7 +78,17 @@ namespace GameFramework.Taurus
         public void Clear()
         {
         }
-    }
+
+		public Task<AssetBundle> LoadAssetBundle(string assetBundleName)
+		{
+			return null;
+		}
+
+		public T LoadAssetSync<T>(string assetBundleName, string assetName) where T : Object
+		{
+			return AssetDatabase.LoadAssetAtPath<T>(assetName);
+		}
+	}
 }
 
 #endif

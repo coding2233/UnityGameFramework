@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using XLua;
 
@@ -48,13 +49,15 @@ namespace GameFramework.Taurus
 		/// <param name="luaScript"></param>
 		/// <param name="luaPathPrefix"></param>
 		/// <param name="luaPathExtension"></param>
-		public void LoadHotFix(string assetBundle="hotfix",string luaScript="main",
+		public async void LoadHotFix(string assetBundle="hotfix",string luaScript="main",
 			string luaPathPrefix="Assets/Game/HotFix",string luaPathExtension=".lua.txt")
 		{
 			_resource = GameFrameworkMode.GetModule<ResourceManager>();
 			_luaAssetBundle = assetBundle;
 			_luaPathPrefix = luaPathPrefix;
 			_luaPathExtension = luaPathExtension;
+
+			await _resource.LoadAssetBundle(_luaAssetBundle);
 
 			_scriptEnv = LuaEnv.NewTable();
 			
@@ -78,7 +81,8 @@ namespace GameFramework.Taurus
 		private byte[] CustomLoader(ref string filePath)
 		{
 			string path = System.IO.Path.Combine(_luaPathPrefix, $"{filePath}{_luaPathExtension}");
-			return _resource.LoadAsset<TextAsset>(_luaAssetBundle,path).bytes;
+			TextAsset textAsset = _resource.LoadAssetSync<TextAsset>(_luaAssetBundle, path);
+			return textAsset.bytes;
 		}
 
 		/// <summary>
@@ -89,7 +93,7 @@ namespace GameFramework.Taurus
 		public string LuaScriptLoader(string name)
 		{
 			string path = System.IO.Path.Combine(_luaPathPrefix, $"{name}{_luaPathExtension}");
-			return _resource.LoadAsset<TextAsset>(_luaAssetBundle, path).text;
+			return _resource.LoadAssetSync<TextAsset>(_luaAssetBundle, path).text;
 		}
 
 		public void OnUpdate()
