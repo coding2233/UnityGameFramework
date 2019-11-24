@@ -10,7 +10,7 @@
 
 using System.Collections;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public abstract class MessageHandlerBase
     {

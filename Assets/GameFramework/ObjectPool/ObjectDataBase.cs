@@ -7,7 +7,7 @@
 // <time> #2018年8月26日 17点23# </time>
 //-----------------------------------------------------------------------
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	public abstract class ObjectDataBase
 	{

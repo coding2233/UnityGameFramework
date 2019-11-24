@@ -7,10 +7,10 @@
 // <time> #2018年6月30日 21点56分# </time>
 //-----------------------------------------------------------------------
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
-	public abstract class DataTableBase
-	{
-		public abstract void AddDataRow(string dataRowText);
-	}
+    public abstract class DataTableBase
+    {
+        public abstract void AddDataRow(string dataRowText);
+    }
 }

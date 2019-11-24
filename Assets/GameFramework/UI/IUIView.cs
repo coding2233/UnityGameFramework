@@ -8,7 +8,7 @@
 //-----------------------------------------------------------------------
 
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public interface IUIView
     {

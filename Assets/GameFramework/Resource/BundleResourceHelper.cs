@@ -15,7 +15,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	public sealed class BundleResourceHelper : IResourceHelper
 	{

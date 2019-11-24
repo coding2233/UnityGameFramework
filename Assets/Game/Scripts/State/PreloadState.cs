@@ -10,7 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	[GameState]
 	public class PreloadState : GameState

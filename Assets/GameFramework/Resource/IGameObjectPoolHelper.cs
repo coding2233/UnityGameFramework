@@ -10,7 +10,7 @@
 
 using UnityEngine;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 
 	public interface IGameObjectPoolHelper

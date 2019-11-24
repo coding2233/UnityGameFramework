@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 
 	public sealed class WebDownloadMonoHelper : MonoBehaviour,IWebDownloadHelper

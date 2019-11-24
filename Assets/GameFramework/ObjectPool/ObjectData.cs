@@ -9,7 +9,7 @@
 
 using System.Collections.Generic;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	public class ObjectData<T> :ObjectDataBase where T:class,new()
 	{

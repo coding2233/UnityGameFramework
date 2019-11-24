@@ -10,7 +10,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	[GameState(GameStateType.Start)]
 	public class LaunchGameState : GameState

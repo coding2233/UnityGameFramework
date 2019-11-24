@@ -7,7 +7,7 @@
 // <time> #2018年6月22日 18点36分# </time>
 //-----------------------------------------------------------------------
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	public static class IdGenerater
 	{

@@ -10,7 +10,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	internal sealed class DataTable<T> : DataTableBase, IDataTable<T> where T : class,IDataTableRow, new()
 	{

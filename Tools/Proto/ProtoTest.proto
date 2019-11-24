@@ -1,5 +1,5 @@
 syntax = "proto3";
-//package GameFramework.Taurus;
+//package Wanderer.GameFramework;
 
 message ProtoTest 
 {

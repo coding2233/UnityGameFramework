@@ -14,7 +14,7 @@ using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 using LoadSceneMode = UnityEngine.SceneManagement.LoadSceneMode;
 using System.Threading.Tasks;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	public sealed class ResourceManager : GameFrameworkModule, IUpdate
 	{

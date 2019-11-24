@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	[System.Serializable]
 	public class UnityIntEvent : UnityEvent<int>

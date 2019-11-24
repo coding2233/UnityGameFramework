@@ -5,7 +5,7 @@ using UnityEditor;
 using System.IO;
 using System;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	
 public class AssetBundleBuildEditor :EditorWindow {

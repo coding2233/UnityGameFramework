@@ -7,7 +7,7 @@
 // <time> #2018年6月22日 14点59分# </time>
 //-----------------------------------------------------------------------
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public abstract class GameFrameworkModule
     {

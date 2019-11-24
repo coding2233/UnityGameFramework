@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	public class SettingModuleEditor : ModuleEditorBase
 	{

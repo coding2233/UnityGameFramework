@@ -13,7 +13,7 @@ using System.IO;
 using System.Net;
 using Google.Protobuf;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	public class KcpService
 	{

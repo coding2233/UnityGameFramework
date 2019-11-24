@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public class NetworkHelper
     {

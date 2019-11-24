@@ -12,7 +12,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public static class Encipherer
     {

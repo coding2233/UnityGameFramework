@@ -7,7 +7,7 @@
 // <time> #2018年6月22日 15点01分# </time>
 //-----------------------------------------------------------------------
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public interface IUpdate
     {

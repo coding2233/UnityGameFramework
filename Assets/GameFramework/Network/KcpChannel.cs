@@ -15,7 +15,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	public class KcpChannel 
 	{

@@ -14,7 +14,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	public class StateModuleEditor : ModuleEditorBase
 	{

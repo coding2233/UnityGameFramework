@@ -9,7 +9,7 @@
 
 using System;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public interface IEventArgs
     {

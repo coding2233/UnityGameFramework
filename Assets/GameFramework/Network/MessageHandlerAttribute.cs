@@ -11,7 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public class MessageHandlerAttribute:Attribute
     {

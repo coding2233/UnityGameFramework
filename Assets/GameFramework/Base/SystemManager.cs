@@ -12,7 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public sealed class SystemManager:GameFrameworkModule
     {

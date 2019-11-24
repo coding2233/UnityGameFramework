@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public sealed class UIManager :GameFrameworkModule
     {

@@ -14,7 +14,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.Profiling;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     [CustomEditor(typeof(GameMode))]
     public class GameModeEditor : Editor

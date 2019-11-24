@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	[RequireComponent(typeof(Text))]
 	public sealed class LocalizationText : MonoBehaviour

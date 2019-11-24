@@ -11,7 +11,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public interface IWebRequestHelper
     {

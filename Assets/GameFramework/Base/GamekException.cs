@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System;
 using System.Runtime.Serialization;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     [Serializable]
     public class GamekException : Exception

@@ -14,7 +14,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Google.Protobuf;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public sealed class NetworkManager:GameFrameworkModule,IUpdate
     {

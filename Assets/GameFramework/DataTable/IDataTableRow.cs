@@ -7,7 +7,7 @@
 // <time> #2018年6月28日 11点56分# </time>
 //-----------------------------------------------------------------------
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public interface IDataTableRow
     {

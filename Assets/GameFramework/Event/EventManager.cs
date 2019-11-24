@@ -10,10 +10,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 
-    public sealed class EventManager:GameFrameworkModule
+    public sealed class EventManager : GameFrameworkModule
     {
         #region 属性
         //所有的事件

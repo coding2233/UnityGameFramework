@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using Google.Protobuf;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	public class ProtobufPacker
 	{

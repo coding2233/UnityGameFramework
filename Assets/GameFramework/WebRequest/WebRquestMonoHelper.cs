@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public sealed class WebRquestMonoHelper : MonoBehaviour,IWebRequestHelper
     {

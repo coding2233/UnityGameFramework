@@ -9,7 +9,7 @@
 
 using System.Collections.Generic;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	public sealed class NodeManager:GameFrameworkModule
 	{

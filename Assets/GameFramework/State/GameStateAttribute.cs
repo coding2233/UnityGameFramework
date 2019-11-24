@@ -9,7 +9,7 @@
 
 using System;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class GameStateAttribute: Attribute

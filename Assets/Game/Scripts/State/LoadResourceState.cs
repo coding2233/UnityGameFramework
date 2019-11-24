@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	[GameState]
 	public class LoadResourceState : GameState

@@ -9,7 +9,7 @@
 
 using System;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	/// <summary>
 	/// 列举通信类型的类型

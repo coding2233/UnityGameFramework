@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public sealed class GameStateManager :GameFrameworkModule,IUpdate,IFixedUpdate
     {

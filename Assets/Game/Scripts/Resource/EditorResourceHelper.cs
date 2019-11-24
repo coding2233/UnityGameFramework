@@ -20,7 +20,7 @@ using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 using System.Threading.Tasks;
 using UnityEditor.SceneManagement;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
     public class EditorResourceHelper : IResourceHelper
     {

@@ -13,7 +13,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
 	[CustomEditor(typeof(OperationAssetConfig))]
 	public class OperationAssetConfigEditor : UnityEditor.Editor

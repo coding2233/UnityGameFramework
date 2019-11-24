@@ -7,10 +7,10 @@
 // <time> #2018年8月26日 17点34# </time>
 //-----------------------------------------------------------------------
 
-namespace GameFramework.Taurus
+namespace Wanderer.GameFramework
 {
-	public abstract class NodeDataBase
-	{
-		public abstract void Clear();
-	}
+    public abstract class NodeDataBase
+    {
+        public abstract void Clear();
+    }
 }
