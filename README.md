@@ -360,3 +360,12 @@ go.GetComponent<LocalizationText>().Text="GameName";
 * 工具栏在`Tools/AssetBundles Options`,快捷键为ctrl+shift+o
 * 打包当前平台`Tools/Build AssetBundles`,快捷键为ctrl+shift+T
 * 打包多个平台`Tools/Build AssetBundles Targets`,快捷键为ctrl+shift+Y
+
+---
+
+### 编辑器扩展
+
+#### Game Module编辑扩展
+* 继承`ModuleEditorBase`
+* 构造函数同`ModuleEditorBase`
+* 在类上添加标记`CustomModuleEditor`

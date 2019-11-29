@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Profiling;
+using System.Reflection;
+using System.Linq;
 
 namespace Wanderer.GameFramework
 {
@@ -20,7 +22,7 @@ namespace Wanderer.GameFramework
     public class GameModeEditor : Editor
     {
         private GameMode _gameMode;
-		
+
         ////Color.cyan;
         private Color _defaultColor;
 
@@ -45,50 +47,69 @@ namespace Wanderer.GameFramework
         //调试模块的颜色
         private Color _debugColor = new Color(1f, 0.100f, 0.888f, 1.0f);
 
-		//所有的模块
-		private List<ModuleEditorBase> _listModuleEditors;
+        //所有的模块
+        private List<ModuleEditorBase> _listModuleEditors;
 
-		private void OnEnable()
+        private void OnEnable()
         {
-			_listModuleEditors = new List<ModuleEditorBase>();
+            _listModuleEditors = new List<ModuleEditorBase>();
 
-			_gameMode = target as GameMode;
+            _gameMode = target as GameMode;
 
             _defaultColor = GUI.color;
 
-			_listModuleEditors.Add(new ResourceModuleEditor("Resource Module", _resourceColor, _gameMode));
-			_listModuleEditors.Add(new StateModuleEditor("State Module", _stateColor, _gameMode));
-			_listModuleEditors.Add(new SettingModuleEditor("Setting Module", _debugColor, _gameMode));
-		}
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            //从unity编译管线获取到当前所有的程序集的信息
+            UnityEditor.Compilation.Assembly[] unityAssemblys = UnityEditor.Compilation.CompilationPipeline.GetAssemblies();
+            for (int i = 0; i < unityAssemblys.Length; i++)
+            {
+                string assemblyName = unityAssemblys[i].name;
+                Assembly assembly = assemblies.Where(x => x.GetName().Name.Equals(assemblyName)).ElementAt(0);
+                foreach (var item in assembly.GetTypes())
+                {
+                    CustomModuleEditor attar = item.GetCustomAttribute<CustomModuleEditor>();
+                    if (attar != null && item.BaseType == typeof(ModuleEditorBase))
+                    {
+                        ModuleEditorBase module = Activator.CreateInstance(item, attar.Name, attar.Color, _gameMode) as ModuleEditorBase;
+                        _listModuleEditors.Add(module);
+                    }
+                }
+            }
 
-		private void OnDisable()
-		{
-			if (_listModuleEditors == null)
-				return;
+            // _listModuleEditors.Add(new ResourceModuleEditor("Resource Module", _resourceColor, _gameMode));
+            // _listModuleEditors.Add(new StateModuleEditor("State Module", _stateColor, _gameMode));
+            // _listModuleEditors.Add(new SettingModuleEditor("Setting Module", _debugColor, _gameMode));
+        }
 
-			for (int i = 0; i < _listModuleEditors.Count; i++)
-			{
-				_listModuleEditors[i].OnClose();
-			}
-			_listModuleEditors.Clear();
-		}
-
-		public override void OnInspectorGUI()
+        private void OnDisable()
         {
-			if (_gameMode == null || _listModuleEditors == null)
-				return;
+            if (_listModuleEditors == null)
+                return;
 
-			GUILayout.BeginVertical();
+            for (int i = 0; i < _listModuleEditors.Count; i++)
+            {
+                _listModuleEditors[i].OnClose();
+            }
+            _listModuleEditors.Clear();
+        }
 
-			for (int i = 0; i < _listModuleEditors.Count; i++)
-			{
-				_listModuleEditors[i].OnInspectorGUI();
-			}
+        public override void OnInspectorGUI()
+        {
+            if (_gameMode == null || _listModuleEditors == null)
+                return;
 
-			GUILayout.EndVertical();
+            GUILayout.BeginVertical();
 
-			EditorUtility.SetDirty(_gameMode);
-		}
+            for (int i = 0; i < _listModuleEditors.Count; i++)
+            {
+                _listModuleEditors[i].OnInspectorGUI();
+            }
+
+            GUILayout.EndVertical();
+
+            //EditorUtility.SetDirty(_gameMode);
+        }
+
 
     }
 }

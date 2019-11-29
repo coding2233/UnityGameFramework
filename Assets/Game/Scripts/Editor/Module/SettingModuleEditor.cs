@@ -14,25 +14,31 @@ using UnityEditor;
 
 namespace Wanderer.GameFramework
 {
-	public class SettingModuleEditor : ModuleEditorBase
-	{
-		public SettingModuleEditor(string name, Color mainColor, GameMode gameMode)
-	: base(name, mainColor, gameMode)
-		{ }
+    [CustomModuleEditor("Settings Module", 1f, 0.100f, 0.888f)]
+    public class SettingModuleEditor : ModuleEditorBase
+    {
+        public SettingModuleEditor(string name, Color mainColor, GameMode gameMode)
+    : base(name, mainColor, gameMode)
+        { }
 
-		public override void OnDrawGUI()
-		{
-			GUILayout.BeginVertical("HelpBox");
+        public override void OnDrawGUI()
+        {
+            GUILayout.BeginVertical("HelpBox");
 
-			GUI.color = _gameMode.DebugEnable ? Color.white : Color.gray;
-			_gameMode.DebugEnable = GUILayout.Toggle(_gameMode.DebugEnable, "Debug Enable");
-			GUI.color = Color.white;
+            GUI.color = _gameMode.DebugEnable ? Color.white : Color.gray;
+            bool debugEnable = GUILayout.Toggle(_gameMode.DebugEnable, "Debug Enable");
+            if (debugEnable != _gameMode.DebugEnable)
+            {
+                _gameMode.DebugEnable = debugEnable;
+                EditorUtility.SetDirty(_gameMode);
+            }
+            GUI.color = Color.white;
 
-			GUILayout.EndVertical();
-		}
+            GUILayout.EndVertical();
+        }
 
-		public override void OnClose()
-		{
-		}
-	}
+        public override void OnClose()
+        {
+        }
+    }
 }
