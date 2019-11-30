@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-    public class GameMode : MonoBehaviour
+    public partial class GameMode : MonoBehaviour
     {
         #region 属性
         public static EventManager Event;
@@ -22,12 +22,12 @@ namespace Wanderer.GameFramework
         public static ResourceManager Resource;
         public static UIManager UI;
         public static WebRequestManager WebRequest;
-		public static AudioManager Audio;
-	    public static LocalizationManager Localization;
-		public static SettingManager Setting;
+        public static AudioManager Audio;
+        public static LocalizationManager Localization;
+        public static SettingManager Setting;
         public static SystemManager System;
         public static NetworkManager Network;
-		public static PoolManager Pool;
+        public static PoolManager Pool;
 
         /// <summary>
         /// 当前程序集
@@ -36,22 +36,21 @@ namespace Wanderer.GameFramework
 
         #region 资源
         /// <summary>
-        /// 资源加载方式 默认为编辑器加载
+        /// 资源更新类型
         /// </summary>
-       // public bool IsEditorMode = true;
-		
-	    /// <summary>
-	    /// 资源更新类型
-	    /// </summary>
-	    public ResourceUpdateType ResUpdateType = ResourceUpdateType.Editor;
-	    /// <summary>
-	    /// 资源本地路径
-	    /// </summary>
-	    public PathType LocalPathType = PathType.ReadOnly;
-		/// <summary>
-		/// 资源更新的路径
-		/// </summary>
-		public string ResUpdatePath = "";
+        public ResourceUpdateType ResUpdateType = ResourceUpdateType.Editor;
+        /// <summary>
+        /// 资源本地路径
+        /// </summary>
+        public PathType LocalPathType = PathType.ReadOnly;
+        /// <summary>
+        /// 资源更新的路径
+        /// </summary>
+        public string ResUpdatePath = "";
+        /// <summary>
+        /// 默认是否需要从StreamingAsset里面拷贝到可读文件夹中
+        /// </summary>
+        public bool DefaultInStreamingAsset = true;
         /// <summary>
         /// 是否开启调试器
         /// </summary>
@@ -61,9 +60,9 @@ namespace Wanderer.GameFramework
         #endregion
 
         IEnumerator Start()
-		{
-			//默认不销毁
-			DontDestroyOnLoad(gameObject);
+        {
+            //默认不销毁
+            DontDestroyOnLoad(gameObject);
 
             #region Module
             Event = GameFrameworkMode.GetModule<EventManager>();
@@ -72,41 +71,42 @@ namespace Wanderer.GameFramework
             Resource = GameFrameworkMode.GetModule<ResourceManager>();
             UI = GameFrameworkMode.GetModule<UIManager>();
             WebRequest = GameFrameworkMode.GetModule<WebRequestManager>();
-			Audio = GameFrameworkMode.GetModule<AudioManager>();
-			Localization = GameFrameworkMode.GetModule<LocalizationManager>();
-			Setting = GameFrameworkMode.GetModule<SettingManager>();
-		    System= GameFrameworkMode.GetModule<SystemManager>();
-		    Network= GameFrameworkMode.GetModule<NetworkManager>();
-			Pool = GameFrameworkMode.GetModule<PoolManager>();
-			#endregion
+            Audio = GameFrameworkMode.GetModule<AudioManager>();
+            Localization = GameFrameworkMode.GetModule<LocalizationManager>();
+            Setting = GameFrameworkMode.GetModule<SettingManager>();
+            System = GameFrameworkMode.GetModule<SystemManager>();
+            Network = GameFrameworkMode.GetModule<NetworkManager>();
+            Pool = GameFrameworkMode.GetModule<PoolManager>();
+            #endregion
 
-			#region resource
-			Resource.ResUpdateType = ResUpdateType;
-	        Resource.ResUpdatePath = ResUpdatePath;
-	        Resource.LocalPathType = LocalPathType;
+            #region resource
+            Resource.ResUpdateType = ResUpdateType;
+            Resource.ResUpdatePath = ResUpdatePath;
+            Resource.LocalPathType = LocalPathType;
+            Resource.DefaultInStreamingAsset = DefaultInStreamingAsset;
 
-			//添加对象池管理器
-	        GameObject gameObjectPoolHelper = new GameObject("IGameObjectPoolHelper");
-	        gameObjectPoolHelper.transform.SetParent(transform);
-	        Resource.SetGameObjectPoolHelper(gameObjectPoolHelper.AddComponent<GameObjectPoolHelper>());
-			#endregion
+            //添加对象池管理器
+            GameObject gameObjectPoolHelper = new GameObject("IGameObjectPoolHelper");
+            gameObjectPoolHelper.transform.SetParent(transform);
+            Resource.SetGameObjectPoolHelper(gameObjectPoolHelper.AddComponent<GameObjectPoolHelper>());
+            #endregion
 
-			#region auido
-			//设置音频播放
-			GameObject audioPlayer = new GameObject("AudioSourcePlayer");
-			audioPlayer.transform.SetParent(transform);
-			//添加AduioSource
-			Audio.SetDefaultAudioSource(audioPlayer.AddComponent<AudioSource>(), audioPlayer.AddComponent<AudioSource>(),
-				audioPlayer.AddComponent<AudioSource>());
-			#endregion
+            #region auido
+            //设置音频播放
+            GameObject audioPlayer = new GameObject("AudioSourcePlayer");
+            audioPlayer.transform.SetParent(transform);
+            //添加AduioSource
+            Audio.SetDefaultAudioSource(audioPlayer.AddComponent<AudioSource>(), audioPlayer.AddComponent<AudioSource>(),
+                audioPlayer.AddComponent<AudioSource>());
+            #endregion
 
-			#region WebRequest
-			//设置帮助类
-			GameObject webRequestHelper =new GameObject("IWebRequestHelper");
-	        webRequestHelper.transform.SetParent(transform);
-	        GameObject webDownloadHelper =new GameObject("IWebDownloadMonoHelper");
-	        webDownloadHelper.transform.SetParent(transform);
-			WebRequest.SetWebRequestHelper(webRequestHelper.AddComponent<WebRquestMonoHelper>());
+            #region WebRequest
+            //设置帮助类
+            GameObject webRequestHelper = new GameObject("IWebRequestHelper");
+            webRequestHelper.transform.SetParent(transform);
+            GameObject webDownloadHelper = new GameObject("IWebDownloadMonoHelper");
+            webDownloadHelper.transform.SetParent(transform);
+            WebRequest.SetWebRequestHelper(webRequestHelper.AddComponent<WebRquestMonoHelper>());
             WebRequest.SetWebDownloadHelper(webDownloadHelper.AddComponent<WebDownloadMonoHelper>());
             #endregion
 
@@ -123,22 +123,22 @@ namespace Wanderer.GameFramework
             yield return new WaitForEndOfFrame();
             State.SetStateStart();
             #endregion
-            
+
         }
-        
-		private void Update()
-		{
-			GameFrameworkMode.Update();
-		}
 
-		private void FixedUpdate()
-		{
-			GameFrameworkMode.FixedUpdate();
-		}
+        private void Update()
+        {
+            GameFrameworkMode.Update();
+        }
 
-		private void OnDestroy()
-		{
-			GameFrameworkMode.ShutDown();
-		}
-	}
+        private void FixedUpdate()
+        {
+            GameFrameworkMode.FixedUpdate();
+        }
+
+        private void OnDestroy()
+        {
+            GameFrameworkMode.ShutDown();
+        }
+    }
 }

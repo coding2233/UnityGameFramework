@@ -65,6 +65,12 @@ namespace Wanderer.GameFramework
                     }
                     _gameMode.LocalPathType =
                         (PathType)EditorGUILayout.EnumPopup("Local Path Type", PathType.ReadWrite);
+                    bool value = GUILayout.Toggle(_gameMode.DefaultInStreamingAsset, "Default In StreamingAsset");
+                    if (value != _gameMode.DefaultInStreamingAsset)
+                    {
+                        _gameMode.DefaultInStreamingAsset = value;
+                        EditorUtility.SetDirty(_gameMode);
+                    }
                 }
                 else
                 {

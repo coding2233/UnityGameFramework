@@ -14,45 +14,47 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-	[GameState]
-	public class LoadResourceState : GameState
-	{
-		#region 重写函数
-		public override void OnEnter(params object[] parameters)
-		{
-			base.OnEnter(parameters);
-            
-		    string localPath = Path.Combine(GameMode.Resource.LocalPath, "AssetVersion.txt");
-		    AssetBundleVersionInfo versionInfo = JsonUtility.FromJson<AssetBundleVersionInfo>(File.ReadAllText(localPath));
-            
+    [GameState]
+    public class LoadResourceState : GameState
+    {
+        #region 重写函数
+        public override void OnEnter(params object[] parameters)
+        {
+            base.OnEnter(parameters);
+
+            string localPath = Path.Combine(GameMode.Resource.LocalPath, Utility.GetPlatformName(), "AssetVersion.txt");
+            if (!File.Exists(localPath))
+                throw new GameException($"can't find AssetVersion: {localPath}");
+            AssetBundleVersionInfo versionInfo = JsonUtility.FromJson<AssetBundleVersionInfo>(File.ReadAllText(localPath));
+
             //设置ab包的加载方式
             GameMode.Resource.SetResourceHelper(new BundleResourceHelper());
             //加载ab包的mainfest文件
-		    GameMode.Resource.SetMainfestAssetBundle(versionInfo.ManifestAssetBundle, versionInfo.IsEncrypt);
+            GameMode.Resource.SetMainfestAssetBundle(versionInfo.ManifestAssetBundle, versionInfo.IsEncrypt);
 
-			//切换到预加载的状态
-			ChangeState<PreloadState>();
-		}
+            //切换到预加载的状态
+            ChangeState<PreloadState>();
+        }
 
-		public override void OnExit()
-		{
-			base.OnExit();
-		}
+        public override void OnExit()
+        {
+            base.OnExit();
+        }
 
-		public override void OnFixedUpdate()
-		{
-			base.OnFixedUpdate();
-		}
+        public override void OnFixedUpdate()
+        {
+            base.OnFixedUpdate();
+        }
 
-		public override void OnInit()
-		{
-			base.OnInit();
-		}
+        public override void OnInit()
+        {
+            base.OnInit();
+        }
 
-		public override void OnUpdate()
-		{
-			base.OnUpdate();
-		}
-		#endregion
-	}
+        public override void OnUpdate()
+        {
+            base.OnUpdate();
+        }
+        #endregion
+    }
 }

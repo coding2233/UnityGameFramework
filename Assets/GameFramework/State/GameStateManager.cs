@@ -13,7 +13,7 @@ using System.Reflection;
 
 namespace Wanderer.GameFramework
 {
-    public sealed class GameStateManager :GameFrameworkModule,IUpdate,IFixedUpdate
+    public sealed class GameStateManager : GameFrameworkModule, IUpdate, IFixedUpdate
     {
         #region 属性
         private GameStateContext _stateContext;
@@ -48,7 +48,7 @@ namespace Wanderer.GameFramework
             Type[] types = assembly.GetTypes();
             foreach (var item in types)
             {
-                object[] attribute = item.GetCustomAttributes(typeof(GameStateAttribute), false);
+                object[] attribute = item.GetCustomAttributes(typeof(GameStateAttribute), true);
                 if (attribute.Length <= 0 || item.IsAbstract)
                     continue;
                 GameStateAttribute stateAttribute = (GameStateAttribute)attribute[0];

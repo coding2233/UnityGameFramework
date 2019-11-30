@@ -12,35 +12,9 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-	[GameState]
-	public class PreloadState : GameState
-	{
-		#region 重写函数
-		public override void OnEnter(params object[] parameters)
-		{
-			base.OnEnter(parameters);
+    [GameState]
+    public partial class PreloadState : GameState
+    {
 
-		}
-
-		public override void OnExit()
-		{
-			base.OnExit();
-		}
-
-		public override void OnFixedUpdate()
-		{
-			base.OnFixedUpdate();
-		}
-
-		public override void OnInit()
-		{
-			base.OnInit();
-		}
-
-		public override void OnUpdate()
-		{
-			base.OnUpdate();
-		}
-		#endregion
-	}
+    }
 }

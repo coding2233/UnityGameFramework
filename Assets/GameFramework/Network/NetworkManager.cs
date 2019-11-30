@@ -16,7 +16,7 @@ using Google.Protobuf;
 
 namespace Wanderer.GameFramework
 {
-    public sealed class NetworkManager:GameFrameworkModule,IUpdate
+    public sealed class NetworkManager : GameFrameworkModule, IUpdate
     {
         private SystemManager _systemManager;
 
@@ -27,7 +27,7 @@ namespace Wanderer.GameFramework
 
         private readonly Dictionary<ushort, Type> _messageCodeType = new Dictionary<ushort, Type>();
         //留给hotfix的接口
-        public Action<ushort,byte[]> ReceiveMsgCallback;
+        public Action<ushort, byte[]> ReceiveMsgCallback;
 
         private int _rpcId = 0;
         private Dictionary<int, Action<object>> _responseCallback;
@@ -41,14 +41,14 @@ namespace Wanderer.GameFramework
             //加载message标记类
             LoadMessageAttribute();
         }
-        
+
         public void SetPort(int port)
         {
-            _port=port;
+            _port = port;
             _kcpService = new KcpService(_port, ReceiveMessage);
         }
 
-        public Task<T> Call<T>(IRequest message, IPEndPoint endPoint) where T : class,IResponse
+        public Task<T> Call<T>(IRequest message, IPEndPoint endPoint) where T : class, IResponse
         {
             var task = new TaskCompletionSource<T>();
             message.RpcId = ++_rpcId;
@@ -61,15 +61,15 @@ namespace Wanderer.GameFramework
             return task.Task;
         }
 
-        public void SendMessage(object message,IPEndPoint endPoint)
+        public void SendMessage(object message, IPEndPoint endPoint)
         {
             byte[] messageData = _protobufPacker.ToBytes(message);
 
             object[] attribute = message.GetType().GetCustomAttributes(typeof(MessageAttribute), false);
             if (attribute.Length <= 0)
-                throw new GamekException("class not found MessageAttribute");
+                throw new GameException("class not found MessageAttribute");
             MessageAttribute mgAttribute = (MessageAttribute)attribute[0];
-            
+
             SendMessage(mgAttribute.TypeCode, messageData, endPoint);
         }
 
@@ -82,7 +82,7 @@ namespace Wanderer.GameFramework
         {
             _kcpService?.Update();
         }
-        
+
         public override void OnClose()
         {
 
@@ -97,7 +97,7 @@ namespace Wanderer.GameFramework
                 object[] attribute = item.GetCustomAttributes(typeof(MessageHandlerAttribute), false);
                 if (attribute.Length > 0 && !item.IsAbstract && item.BaseType == typeof(MessageHandlerBase))
                 {
-                    MessageHandlerAttribute msHanderAttibute = (MessageHandlerAttribute) attribute[0];
+                    MessageHandlerAttribute msHanderAttibute = (MessageHandlerAttribute)attribute[0];
                     if (!_messageHandler.ContainsKey(msHanderAttibute.TypeMessage))
                         _messageHandler[msHanderAttibute.TypeMessage] = new List<MessageHandlerBase>();
                     _messageHandler[msHanderAttibute.TypeMessage].Add((MessageHandlerBase)Activator.CreateInstance(item));
