@@ -14,7 +14,7 @@ using UnityEditor;
 
 namespace Wanderer.GameFramework
 {
-    [CustomModuleEditor("Settings Module", 1f, 0.100f, 0.888f)]
+    [CustomModuleEditor("Settings Module")]
     public class SettingModuleEditor : ModuleEditorBase
     {
         public SettingModuleEditor(string name, Color mainColor, GameMode gameMode)
