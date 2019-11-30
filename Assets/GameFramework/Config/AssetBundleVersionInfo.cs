@@ -34,8 +34,18 @@ namespace Wanderer.GameFramework
     [System.Serializable]
     public class AssetHashInfo
     {
+        /// <summary>
+        /// 名称
+        /// </summary>
         public string Name;
+        /// <summary>
+        /// md5值
+        /// </summary>
         public string Hash;
+        /// <summary>
+        /// KB
+        /// </summary>
+        public int Size;
 
         public override bool Equals(object obj)
         {
