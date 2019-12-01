@@ -35,4 +35,41 @@ namespace Wanderer.GameFramework
 
     }
 
+
+    /// <summary>
+    /// 先做个^的简单加密
+    /// </summary>
+    public class EncryptFileStream : FileStream
+    {
+        byte key = 121;
+
+        public EncryptFileStream(string path, FileMode mode) : base(path, mode)
+        {
+        }
+        public EncryptFileStream(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool useAsync) : base(path, mode, access, share, bufferSize, useAsync)
+        {
+        }
+
+        public override int Read(byte[] array, int offset, int count)
+        {
+            int index = base.Read(array, offset, count);
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] ^= key;
+            }
+            return index;
+        }
+
+
+
+        public override void Write(byte[] array, int offset, int count)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] ^= key;
+            }
+            base.Write(array, offset, count);
+        }
+    }
+
 }

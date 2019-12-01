@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -260,7 +261,7 @@ namespace Wanderer.GameFramework
             }
             catch (GameException ex)
             {
-                Debug.LogError(ex.ToString());
+                throw ex;
             }
         }
 
@@ -268,15 +269,18 @@ namespace Wanderer.GameFramework
         private async Task<AssetBundle> LoadAssetBundleFromPath(string path)
         {
             if (!File.Exists(path))
-                throw new Exception("assetbundle not found :" + path);
+                throw new GameException("assetbundle not found :" + path);
 
             AssetBundle mainfestAssetBundle;
             if (_enciphererkeyAsset != null)
             {
-                byte[] datas = (await new WWW(path)).bytes;
-                mainfestAssetBundle = AssetBundle.LoadFromMemory(datas);
-                //byte[] datas = Encipherer.AESDecrypt(File.ReadAllBytes(path), _enciphererkeyAsset);
-                //mainfestAssetBundle = AssetBundle.LoadFromMemory(datas);
+                using (var stream = new EncryptFileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false))
+                {
+                    //byte[] datas = (await new WWW(path)).bytes;
+                    mainfestAssetBundle = AssetBundle.LoadFromStream(stream);// AssetBundle.LoadFromMemory(datas);
+                                                                             //byte[] datas = Encipherer.AESDecrypt(File.ReadAllBytes(path), _enciphererkeyAsset);
+                                                                             //mainfestAssetBundle = AssetBundle.LoadFromMemory(datas);
+                }
             }
             else
             {

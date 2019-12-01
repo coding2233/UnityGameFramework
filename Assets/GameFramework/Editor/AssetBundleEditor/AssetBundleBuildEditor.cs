@@ -117,6 +117,13 @@ namespace Wanderer.GameFramework
             _config.CompressOptions = EditorGUILayout.Popup(_config.CompressOptions, _compressionOptionsContent);
             GUILayout.EndHorizontal();
 
+            //copy------------------------------------
+            GUILayout.BeginHorizontal("Box");
+            GUILayout.FlexibleSpace();
+            _config.IsEncrypt = GUILayout.Toggle(_config.IsEncrypt, "Encrypt");
+            GUILayout.EndHorizontal();
+
+            //BUILD PATH
             GUILayout.BeginHorizontal("Box");
             GUILayout.Label("BuildPath:");
             GUILayout.TextArea(string.IsNullOrEmpty(_config.BuildPath) ? _rootPath : _config.BuildPath);
@@ -263,6 +270,14 @@ namespace Wanderer.GameFramework
                 byte[] data = FileUtility.GetBytes(filePath);
                 assetHashInfo.Size = data.Length > 1024 ? (int)(data.Length / 1024.0f) : 1;
                 assetHashInfo.Hash = FileUtility.GetFileMD5(data);
+                //加密
+                if (_config.IsEncrypt)
+                {
+                    using (var stream = new EncryptFileStream(filePath, FileMode.Create))
+                    {
+                        stream.Write(data, 0, data.Length);
+                    }
+                }
                 assetVersionInfo.AssetHashInfos.Add(assetHashInfo);
                 //删除manifest文件
                 string manifestPath = Path.Combine(buildPath, assetNames[i] + ".manifeset");
@@ -368,6 +383,7 @@ namespace Wanderer.GameFramework
             public bool Copy2StreamingAssets = false;
             public List<int> BuildTargets = new List<int>();
             public string OtherResources = "";
+            public bool IsEncrypt = false;
         }
 
 
