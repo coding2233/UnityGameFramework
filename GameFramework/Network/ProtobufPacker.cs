@@ -20,15 +20,17 @@ namespace Wanderer.GameFramework
 
 		public byte[] ToBytes(object message)
 		{
-			IMessage msg = message as IMessage;
-			return msg.ToByteArray();
+			// IMessage msg = message as IMessage;
+			// return msg.ToByteArray();
+			return null;
 		}
 
 		public object ToMessage(Type type, byte[] datas)
 		{
-			IMessage result = (IMessage) Activator.CreateInstance(type);
-			result.MergeFrom(datas, 0, datas.Length);
-			return result;
+			// IMessage result = (IMessage) Activator.CreateInstance(type);
+			// result.MergeFrom(datas, 0, datas.Length);
+			// return result;
+			return null;
 		}
 
 	}
