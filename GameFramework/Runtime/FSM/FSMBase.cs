@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-    public abstract class FSMBase
+    public abstract class FSMBase:IUpdate
     {
         public abstract void OnBegin();
 

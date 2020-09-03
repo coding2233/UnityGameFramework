@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Wanderer.GameFramework
 {
@@ -12,12 +13,21 @@ namespace Wanderer.GameFramework
         protected FSMState<T> _curState;
         protected readonly Dictionary<Type, FSMState<T>> _allState = new Dictionary<Type, FSMState<T>>();
         protected FSMState<T> _startState;
+        //是否有覆盖当前的开始状态
+        protected bool _hasOverStartState=false;
         public T Context { get; private set; }
 
         public FSM()
         {
-            Type[] types = typeof(T).Assembly.GetTypes();
-            for (int i = 0; i < types.Length; i++)
+            List<Type> types=new List<Type>();
+            //获取所有程序的类型
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            for (int i = 0; i < assemblies.Length; i++)
+            {
+                types.AddRange(assemblies[i].GetTypes());
+            }  
+            //整理类型是否满足状态
+            for (int i = 0; i < types.Count; i++)
             {
                 Type t = types[i];
                 if (t.BaseType != typeof(FSMState<T>) || t.IsAbstract)
@@ -35,7 +45,15 @@ namespace Wanderer.GameFramework
                             _allState[t] = instance;
                             instance.OnInit(this);
                             if (attr.StateType == FSMStateType.Start)
+                            {
+                                if(!_hasOverStartState)
+                                    _startState = instance;
+                            }
+                            else if(attr.StateType == FSMStateType.OverStart)
+                            {
                                 _startState = instance;
+                            }
+                                
                         }
                     }
                 }
@@ -50,6 +68,10 @@ namespace Wanderer.GameFramework
 
         public override void OnBegin()
         {
+            if(_startState==null)
+            {
+                throw new GameException($"[{typeof(T).FullName}] FSM can't find [StartState] !!");
+            }
             _curState?.OnExit(this);
             _curState = _startState;
             _curState?.OnEnter(this);

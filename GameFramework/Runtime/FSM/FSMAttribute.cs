@@ -19,11 +19,21 @@ namespace Wanderer.GameFramework
 
     public enum FSMStateType
     {
+        /// <summary>
         //开始状态
+        /// <summary>
         Start,
+        /// <summary>
         //普通状态
+        /// <summary>
         Normal,
+        /// <summary>
         //忽略状态
-        Ignore
+        /// <summary>
+        Ignore,
+        /// <summary>
+        /// 覆盖开始
+        /// </summary>
+        OverStart,
     }
 }
