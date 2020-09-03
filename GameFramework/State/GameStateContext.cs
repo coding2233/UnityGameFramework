@@ -50,6 +50,24 @@ namespace Wanderer.GameFramework
         }
 
         /// <summary>
+        /// 添加状态范围
+        /// </summary>
+        /// <param name="states"></param>
+        public void AddStateRange(List<GameState> states)
+        {
+            foreach (var item in states)
+            {
+                int hashCode = item.GetType().GetHashCode();
+                if (!_allStates.ContainsKey(hashCode))
+                {
+                    item.SetStateContext(this);
+                    item.OnInit();
+                    _allStates[hashCode] = item;
+                }
+            }
+        }
+
+        /// <summary>
         /// 设置开始状态
         /// </summary>
         /// <typeparam name="T"></typeparam>

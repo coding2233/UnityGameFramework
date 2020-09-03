@@ -18,6 +18,7 @@ namespace Wanderer.GameFramework
         #region 属性
         private GameStateContext _stateContext;
         private GameState _startState;
+        bool _hasOverStart = false;
         /// <summary>
         /// 当前的游戏状态
         /// </summary>
@@ -33,19 +34,34 @@ namespace Wanderer.GameFramework
         #endregion
 
         #region 外部接口
+         /// <summary>
+        /// 创建游戏状态的环境
+        /// </summary>
+        public void CreateContext()
+        {
+            if (_stateContext == null)
+            {
+                _stateContext=new GameStateContext();
+            }
+
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            for (int i = 0; i < assemblies.Length; i++)
+            {
+                AddAssemblyStates(assemblies[i]);
+            }
+        }
+
         /// <summary>
         /// 创建游戏状态的环境
         /// </summary>
         /// <param name="assembly">重写游戏状态所在的程序集</param>
-        public void CreateContext(Assembly assembly)
+        public void AddAssemblyStates(Assembly assembly)
         {
-            if (_stateContext != null)
-                return;
-
-            GameStateContext stateContext = new GameStateContext();
+           // GameStateContext stateContext = new GameStateContext();
             List<GameState> listState = new List<GameState>();
 
             Type[] types = assembly.GetTypes();
+          
             foreach (var item in types)
             {
                 object[] attribute = item.GetCustomAttributes(typeof(GameStateAttribute), true);
@@ -60,12 +76,24 @@ namespace Wanderer.GameFramework
                 {
                     listState.Add(gs);
                     if (stateAttribute.StateType == GameStateType.Start)
+                    {
+                        if(!_hasOverStart)
+                            _startState = gs;
+                    }
+                    //如果有overstar 则以OverStart为准
+                    else if(stateAttribute.StateType == GameStateType.OverStart)
+                    {
                         _startState = gs;
+                        _hasOverStart=true;
+                    }
                 }
             }
-            stateContext.SetAllState(listState.ToArray());
-            _stateContext = stateContext;
+            _stateContext.AddStateRange(listState);
+           // _stateContext = stateContext;
         }
+
+       
+
         /// <summary>
         /// 设置状态开始
         /// </summary>
@@ -73,6 +101,10 @@ namespace Wanderer.GameFramework
         {
             if (_stateContext != null && _startState != null)
                 _stateContext.SetStartState(_startState);
+            else
+            {
+                throw new GameException("Can't find StateContext or StartState!!");
+            }
         }
         #endregion
 

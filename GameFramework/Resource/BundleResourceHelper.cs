@@ -185,6 +185,7 @@ namespace Wanderer.GameFramework
                             _allAssets.Remove(item);
                     }
                     assetBundles.Key.Unload(true);
+                    _allAssetBundles.Remove(assetBundleName);
                 }
 
             }

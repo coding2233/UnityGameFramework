@@ -46,5 +46,9 @@ namespace Wanderer.GameFramework
         /// 开始
         /// </summary>
         Start,
+        /// <summary>
+        /// 覆盖开始
+        /// </summary>
+        OverStart,
     }
 }
