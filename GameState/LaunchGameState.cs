@@ -54,7 +54,7 @@ namespace Wanderer.GameFramework
 			#else
 					//如果在非编辑器模式下选择了Editor，则默认使用本地文件
 					GameMode.Resource.ResUpdateType = ResourceUpdateType.Local;
-					ChangeState<LoadResourceState>();
+					ChangeState<LoadResourceState>(fsm);
 			#endif
 					break;
 			}

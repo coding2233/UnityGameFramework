@@ -8,6 +8,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -16,32 +17,42 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
+
 namespace Wanderer.GameFramework
 {
     public sealed class BundleResourceHelper : IResourceHelper
     {
+        //路径类型
+        private PathType _pathType;
         //路径
         private string _readPath;
         //资源引用
         private AssetBundleManifest _mainfest;
+
+        private bool _isEncrypt;
         //解密密钥
-        private EnciphererKey _enciphererkeyAsset;
+      //  private EnciphererKey _enciphererkeyAsset;
         //所有资源AssetBundle引用
         private readonly Dictionary<string, AssetBundle> _allAssets = new Dictionary<string, AssetBundle>();
         //所有AssetBundle包含的资源
         private readonly Dictionary<string, KeyValuePair<AssetBundle, string[]>> _allAssetBundles =
             new Dictionary<string, KeyValuePair<AssetBundle, string[]>>();
+        //资源路径映射ab包的名称
+        private readonly Dictionary<string,string> _assetsPathMapAssetbundleName=new Dictionary<string, string>();
 
         /// <summary>
         /// 设置资源的路径,默认是为只读路径:Application.streamingAssetsPath;
         /// </summary>
         /// <param name="path"></param>
-        public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles", bool isEncrypt = false)
+        public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles", bool isEncrypt = true)
         {
             switch (pathType)
             {
                 case PathType.ReadOnly:
                     _readPath = Application.streamingAssetsPath;
+                    #if UNITY_IOS && !UNITY_EDITOR
+                    _readPath = $"file:///{_readPath}";
+                    #endif
                     break;
                 case PathType.ReadWrite:
                     _readPath = Application.persistentDataPath;
@@ -53,22 +64,22 @@ namespace Wanderer.GameFramework
                     _readPath = Application.temporaryCachePath;
                     break;
                 default:
-                    _readPath = Application.streamingAssetsPath;
+                    _readPath = Application.persistentDataPath;
                     break;
             }
+
+            _pathType=pathType;
 
 
             string rootAbPath = Path.Combine(_readPath, rootAssetBundle);
             _readPath = Path.GetDirectoryName(rootAbPath);
-            //加载mainfest文件
-            if (isEncrypt)
-            {
-                _enciphererkeyAsset = Resources.Load("Key") as EnciphererKey;
-                if (_enciphererkeyAsset == null)
-                    throw new GameException("Resource EnciphererKey not Found");
-            }
 
+            _isEncrypt=isEncrypt;
+
+            //加载主包
             LoadPlatformMainfest(rootAbPath);
+            //加载所有的资源路径与ab包名称的映射
+            LoadAllAssetPathForAssetbundle(Path.Combine(_readPath,"assets"));
         }
 
         /// <summary>
@@ -84,8 +95,8 @@ namespace Wanderer.GameFramework
             if (!_allAssetBundles.ContainsKey(assetBundleName))
             {
                 string assetBundlePath = Path.Combine(_readPath, assetBundleName);
-                if (!File.Exists(assetBundlePath))
-                    throw new GameException("AssetBundle is Null");
+                // if (!File.Exists(assetBundlePath))
+                //     throw new GameException("AssetBundle is Null");
                 //加载assetbundle
                 assetBundle = await LoadAssetBundleFromPath(assetBundlePath);
                 //存储资源名称
@@ -164,6 +175,40 @@ namespace Wanderer.GameFramework
 
             return (T)asset;
         }
+
+         /// <summary>
+		/// 加载资源 -- 同步加载
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetName"></param>
+		/// <returns></returns>
+		public T LoadAssetSync<T>(string assetName) where T : UnityEngine.Object
+        {
+            if(_assetsPathMapAssetbundleName.TryGetValue(assetName,out string abName))
+            {
+                return LoadAssetSync<T>(abName,assetName);
+            }
+            return null;
+        }
+
+		/// <summary>
+		/// 加载资源
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetBundleName"></param>
+		/// <param name="assetName"></param>
+		///  <param name="unload"></param>
+		/// <returns></returns>
+		public Task<T> LoadAsset<T>(string assetName) where T : UnityEngine.Object
+        {
+            if(_assetsPathMapAssetbundleName.TryGetValue(assetName,out string abName))
+            {
+                return LoadAsset<T>(abName,assetName);
+            }
+            return null;
+        }
+
+     
 
         /// <summary>
         /// 卸载掉资源
@@ -266,31 +311,73 @@ namespace Wanderer.GameFramework
             }
         }
 
-        //同步加载AssetBundle
-        private async Task<AssetBundle> LoadAssetBundleFromPath(string path)
+        /// <summary>
+        /// 加载资源路径映射的ab包的名称
+        /// </summary>
+        /// <param name="assetsPath"></param>
+        /// <returns></returns>
+        private async void LoadAllAssetPathForAssetbundle(string assetsPath)
         {
-            if (!File.Exists(path))
-                throw new GameException("assetbundle not found :" + path);
-
-            AssetBundle mainfestAssetBundle;
-            if (_enciphererkeyAsset != null)
+            using(UnityWebRequest request = new UnityWebRequest(assetsPath))
             {
-                using (var stream = new EncryptFileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false))
+                await request.SendWebRequest();
+                if(request.isNetworkError)
                 {
-                    //byte[] datas = (await new WWW(path)).bytes;
-                    mainfestAssetBundle = AssetBundle.LoadFromStream(stream);// AssetBundle.LoadFromMemory(datas);
-                                                                             //byte[] datas = Encipherer.AESDecrypt(File.ReadAllBytes(path), _enciphererkeyAsset);
-                                                                             //mainfestAssetBundle = AssetBundle.LoadFromMemory(datas);
+                    throw new GameException($"Can't read assets path file from streamingasset: {assetsPath} error: {request.error}");
                 }
+                byte[] buffer = request.downloadHandler.data;
+                using(MemoryStream stream =new EncryptMemoryStream(request.downloadHandler.data))
+                {
+                    stream.Read(buffer,0,buffer.Length);
+                    string content = System.Text.Encoding.UTF8.GetString(buffer);
+                    _assetsPathMapAssetbundleName.Clear();
+                    string[] lines=content.Split('\n');
+                    foreach (var item in lines)
+                    {
+                        if(!string.IsNullOrEmpty(item))
+                        {
+                            string[] args = item.Split('\t');
+                            if(args!=null&&args.Length>=2)
+                            {
+                                _assetsPathMapAssetbundleName[args[0]]=args[1];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //同步加载AssetBundle
+        private Task<AssetBundle> LoadAssetBundleFromPath(string path)
+        {
+            var taskResult = new TaskCompletionSource<AssetBundle>();
+
+            if(_pathType==PathType.ReadOnly)
+            {
+               LoadAssetBundleFromStreamingAssets(path,(ab)=>{
+                   taskResult.SetResult(ab);
+               });
             }
             else
             {
-                mainfestAssetBundle = (await new WWW(path)).assetBundle;
-                //mainfestAssetBundle = AssetBundle.LoadFromFile(path);
-            }
-
-
-            return mainfestAssetBundle;
+                if (!File.Exists(path))
+                    throw new GameException("Assetbundle not found :" + path);
+                AssetBundle assetbundle;
+                if(_isEncrypt)
+                {
+                    using (var stream = new EncryptFileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false))
+                    {
+                        assetbundle = AssetBundle.LoadFromStream(stream);
+                    }
+                }
+                else
+                {
+                    assetbundle = AssetBundle.LoadFromFile(path);
+                }
+                taskResult.SetResult(assetbundle);
+            }   
+           
+            return taskResult.Task;
         }
 
         //加载引用的assetbundle --引用的assetbundle不卸载
@@ -319,6 +406,43 @@ namespace Wanderer.GameFramework
                 _allAssetBundles[item] = new KeyValuePair<AssetBundle, string[]>(assetBundle, assetNames);
             }
         }
+
+
+        /// <summary>
+        /// 从StreamingAsset下面读取文件
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        private async void LoadAssetBundleFromStreamingAssets(string path,Action<AssetBundle> callback)
+        {   
+            using(UnityWebRequest request = new UnityWebRequest(path))
+            {
+                await request.SendWebRequest();
+                if(request.isNetworkError)
+                {
+                    throw new GameException($"Can't read assetbundle file from streamingasset: {path} error: {request.error}");
+                }
+                AssetBundle ab;
+                if(_isEncrypt)
+                {
+                    using(MemoryStream stream =new EncryptMemoryStream(request.downloadHandler.data))
+                    {
+                       ab = AssetBundle.LoadFromStream(stream);
+                    }
+                }
+                else
+                {
+                    ab = DownloadHandlerAssetBundle.GetContent(request);
+                }
+                callback?.Invoke(ab);
+            }
+        }
+
+     
+
+   
+
 
         #endregion
 

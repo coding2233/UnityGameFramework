@@ -2,11 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Wanderer.GameFramework
 {
     public class FileUtility
-    {
+    {  
+        //加密密钥
+        public const byte ENCRYPYKEY = 121;
+
         /// <summary>
         /// 获取文件字节数组
         /// </summary>
@@ -41,7 +46,6 @@ namespace Wanderer.GameFramework
     /// </summary>
     public class EncryptFileStream : FileStream
     {
-        byte key = 121;
 
         public EncryptFileStream(string path, FileMode mode) : base(path, mode)
         {
@@ -55,7 +59,7 @@ namespace Wanderer.GameFramework
             int index = base.Read(array, offset, count);
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] ^= key;
+                array[i] ^= FileUtility.ENCRYPYKEY;
             }
             return index;
         }
@@ -66,10 +70,44 @@ namespace Wanderer.GameFramework
         {
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] ^= key;
+                array[i] ^= FileUtility.ENCRYPYKEY;
             }
             base.Write(array, offset, count);
         }
+
+
     }
+
+    public class EncryptMemoryStream : MemoryStream
+    {
+        public EncryptMemoryStream(byte[] buffer):base(buffer)
+        {
+
+        }
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            int index = base.Read(buffer, offset, count);
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                buffer[i] ^= FileUtility.ENCRYPYKEY;
+            }
+            return index;
+           // return base.Read(buffer, offset, count);
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                buffer[i] ^= FileUtility.ENCRYPYKEY;
+            }
+            base.Write(buffer, offset, count);
+        }
+
+    }
+
+
+
+
 
 }

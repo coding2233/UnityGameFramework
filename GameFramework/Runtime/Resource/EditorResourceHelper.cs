@@ -88,7 +88,17 @@ namespace Wanderer.GameFramework
 		{
 			return AssetDatabase.LoadAssetAtPath<T>(assetName);
 		}
-	}
+
+        public T LoadAssetSync<T>(string assetName) where T : Object
+        {
+			return LoadAssetSync<T>(null,assetName);
+        }
+
+        public Task<T> LoadAsset<T>(string assetName) where T : Object
+        {
+			return LoadAsset<T>(null,assetName);
+        }
+    }
 }
 
 #endif

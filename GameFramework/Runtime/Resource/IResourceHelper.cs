@@ -48,6 +48,24 @@ namespace Wanderer.GameFramework
 		Task<T> LoadAsset<T>(string assetBundleName,string assetName) where T : UnityEngine.Object;
 		
         /// <summary>
+		/// 加载资源 -- 同步加载
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetName"></param>
+		/// <returns></returns>
+		T LoadAssetSync<T>(string assetName) where T : UnityEngine.Object;
+
+		/// <summary>
+		/// 加载资源
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetBundleName"></param>
+		/// <param name="assetName"></param>
+		///  <param name="unload"></param>
+		/// <returns></returns>
+		Task<T> LoadAsset<T>(string assetName) where T : UnityEngine.Object;
+
+        /// <summary>
         /// 卸载资源 主要为卸载AssetBundle
         /// </summary>
         /// <param name="assetBundleName">资源名称</param>

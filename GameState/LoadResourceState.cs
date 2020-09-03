@@ -31,7 +31,7 @@ namespace Wanderer.GameFramework
             //设置ab包的加载方式
             GameMode.Resource.SetResourceHelper(new BundleResourceHelper());
             //加载ab包的mainfest文件
-            GameMode.Resource.SetMainfestAssetBundle(versionInfo.ManifestAssetBundle, versionInfo.IsEncrypt);
+            GameMode.Resource.SetMainfestAssetBundle(versionInfo.ManifestAssetBundle);//versionInfo.IsEncrypt
 
             //切换到预加载的状态
             ChangeState<PreloadState>(fsm);

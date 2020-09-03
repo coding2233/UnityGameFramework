@@ -4,15 +4,17 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System;
+using System.Text;
 
 namespace Wanderer.GameFramework
 {
 
     public class AssetBundleBuildEditor : EditorWindow
     {
-
         //资源信息文本名称
         private const string _assetVersionTxt = "AssetVersion.txt";
+        //所有的文件对应的文件名称
+        private const string _assetsTxt="assets";
         private const string _configPath = "ProjectSettings/AssetBundleEditorConifg.json";
         private static AssetBundleConifgInfo _config;
         private static List<string> _buildTargets;
@@ -45,7 +47,7 @@ namespace Wanderer.GameFramework
                     _allTargets[item] = false;
             }
 
-            GetWindowWithRect<AssetBundleBuildEditor>(new Rect(200, 300, 400, 600), true, "Options");
+            GetWindowWithRect<AssetBundleBuildEditor>(new Rect(200, 300, 500, 600), true, "Options");
         }
 
         [MenuItem("Tools/Build AssetBundles %#T")]
@@ -59,10 +61,13 @@ namespace Wanderer.GameFramework
 
             //保存平台信息
             SavePlatformVersion(new List<BuildTarget>() { target });
-
-            //复制资源
-            CopyResource(target);
-            AssetDatabase.Refresh();
+            
+            if(_config.Copy2StreamingAssets)
+            {
+                //复制资源
+                CopyResource(target);
+                AssetDatabase.Refresh();
+            }
 
         }
 
@@ -81,7 +86,7 @@ namespace Wanderer.GameFramework
 
             //保存平台信息
             SavePlatformVersion(targets);
-            if (targets.Contains(EditorUserBuildSettings.activeBuildTarget))
+            if (_config.Copy2StreamingAssets&&targets.Contains(EditorUserBuildSettings.activeBuildTarget))
             {
                 //复制资源
                 CopyResource(EditorUserBuildSettings.activeBuildTarget);
@@ -117,11 +122,11 @@ namespace Wanderer.GameFramework
             _config.CompressOptions = EditorGUILayout.Popup(_config.CompressOptions, _compressionOptionsContent);
             GUILayout.EndHorizontal();
 
-            //copy------------------------------------
-            GUILayout.BeginHorizontal("Box");
-            GUILayout.FlexibleSpace();
-            _config.IsEncrypt = GUILayout.Toggle(_config.IsEncrypt, "Encrypt");
-            GUILayout.EndHorizontal();
+            ////Encrypt------------------------------------
+            // GUILayout.BeginHorizontal("Box");
+            // GUILayout.FlexibleSpace();
+            // _config.IsEncrypt = GUILayout.Toggle(_config.IsEncrypt, "Encrypt");
+            // GUILayout.EndHorizontal();
 
             //BUILD PATH
             GUILayout.BeginHorizontal("Box");
@@ -259,9 +264,21 @@ namespace Wanderer.GameFramework
 
             AssetBundle targetBundle = AssetBundle.LoadFromFile(targetBundlePath);
             AssetBundleManifest manifest = targetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+            //整理全部的资源并生成配置文件
+            string assetContent = GetAssetsFromAssetBundle(buildPath,manifest);
+            string assetsTxtPath=Path.Combine(buildPath,_assetsTxt);
+            byte[] buffer= System.Text.Encoding.UTF8.GetBytes(assetContent);
+            using (var stream = new EncryptFileStream(assetsTxtPath, FileMode.Create))
+            {
+                stream.Write(buffer, 0, buffer.Length);
+            }
+           // File.WriteAllBytes(Path.Combine(buildPath,"assets"),System.Text.Encoding.UTF8.GetBytes(assetContent));
+            //assetbundle
             List<string> assetNames = new List<string>();
+            assetNames.Add(_assetsTxt);
             assetNames.Add(targetName);
             assetNames.AddRange(manifest.GetAllAssetBundles());
+            
             for (int i = 0; i < assetNames.Count; i++)
             {
                 AssetHashInfo assetHashInfo = new AssetHashInfo();
@@ -280,7 +297,8 @@ namespace Wanderer.GameFramework
                 }
                 assetVersionInfo.AssetHashInfos.Add(assetHashInfo);
                 //删除manifest文件
-                string manifestPath = Path.Combine(buildPath, assetNames[i] + ".manifeset");
+                string manifestPath = Path.Combine(buildPath, assetNames[i] + ".manifest");
+              //  manifestPath=Path.GetFullPath(manifestPath);
                 if (File.Exists(manifestPath))
                 {
                     File.Delete(manifestPath);
@@ -316,7 +334,7 @@ namespace Wanderer.GameFramework
             _config.Version++;
             SaveConfig();
             //打开文件夹
-            EditorUtility.OpenWithDefaultApp(_config.BuildPath);
+            // EditorUtility.OpenWithDefaultApp(_config.BuildPath);
         }
 
         //添加本地资源
@@ -357,6 +375,32 @@ namespace Wanderer.GameFramework
             return assetHashInfos;
         }
 
+        //获取所有的资源
+        private static string GetAssetsFromAssetBundle(string buildPath,AssetBundleManifest manifest)
+        {
+            HashSet<string> assets=new HashSet<string>();
+            StringBuilder stringBuilder=new StringBuilder();
+            string[] assetBundles = manifest.GetAllAssetBundles();
+            for (int i = 0; i < assetBundles.Length; i++)
+            {
+                 string filePath = Path.Combine(buildPath, assetBundles[i]);
+                AssetBundle assetBundle = AssetBundle.LoadFromFile(filePath);
+                 //存储资源名称
+                string[] assetNames = assetBundle.GetAllAssetNames();
+                if (assetBundle.isStreamedSceneAssetBundle)
+                    assetNames = assetBundle.GetAllScenePaths();
+                foreach (var item in assetNames)
+                {
+                     if(!assets.Contains(item))
+                     {
+                         stringBuilder.AppendLine($"{item}\t{assetBundles[i]}");
+                         assets.Add(item);
+                     }
+                }
+                assetBundle.Unload(true);
+            }
+            return stringBuilder.ToString();
+        }
 
         //复制资源
         private static void CopyResource(BuildTarget target)

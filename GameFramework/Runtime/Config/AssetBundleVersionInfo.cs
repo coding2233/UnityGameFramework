@@ -25,7 +25,7 @@ namespace Wanderer.GameFramework
     public class AssetBundleVersionInfo
     {
         public int Version = 0;
-        public bool IsEncrypt = false;
+      //  public bool IsEncrypt = false;
         public string ManifestAssetBundle;
         public List<AssetHashInfo> AssetHashInfos = new List<AssetHashInfo>();
     }

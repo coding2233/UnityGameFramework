@@ -109,7 +109,7 @@ namespace Wanderer.GameFramework
         /// 在设置BundleResourceHelper 需要调用此函数加载AssetBundle的Mainfest文件
         /// </summary>
         /// <param name="mainfestName"></param>
-        public void SetMainfestAssetBundle(string mainfestName, bool isEncrypt = false)
+        public void SetMainfestAssetBundle(string mainfestName, bool isEncrypt = true)
         {
             _resourceHelper?.SetResourcePath(LocalPathType, mainfestName, isEncrypt);
         }
