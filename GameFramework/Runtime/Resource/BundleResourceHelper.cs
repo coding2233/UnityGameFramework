@@ -75,7 +75,7 @@ namespace Wanderer.GameFramework
             _readPath = Path.GetDirectoryName(rootAbPath);
 
             _isEncrypt=isEncrypt;
-
+            
             //加载主包
             LoadPlatformMainfest(rootAbPath);
             //加载所有的资源路径与ab包名称的映射
@@ -320,6 +320,7 @@ namespace Wanderer.GameFramework
         {
             using(UnityWebRequest request = new UnityWebRequest(assetsPath))
             {
+                request.downloadHandler=new DownloadHandlerBuffer();
                 await request.SendWebRequest();
                 if(request.isNetworkError)
                 {
@@ -339,7 +340,7 @@ namespace Wanderer.GameFramework
                             string[] args = item.Split('\t');
                             if(args!=null&&args.Length>=2)
                             {
-                                _assetsPathMapAssetbundleName[args[0]]=args[1];
+                                _assetsPathMapAssetbundleName[args[0].Trim()]=args[1].Trim();
                             }
                         }
                     }
@@ -416,27 +417,40 @@ namespace Wanderer.GameFramework
         /// <returns></returns>
         private async void LoadAssetBundleFromStreamingAssets(string path,Action<AssetBundle> callback)
         {   
-            using(UnityWebRequest request = new UnityWebRequest(path))
+            if(_isEncrypt)
             {
-                await request.SendWebRequest();
-                if(request.isNetworkError)
+                using(UnityWebRequest request = new UnityWebRequest(path))
                 {
-                    throw new GameException($"Can't read assetbundle file from streamingasset: {path} error: {request.error}");
-                }
-                AssetBundle ab;
-                if(_isEncrypt)
-                {
-                    using(MemoryStream stream =new EncryptMemoryStream(request.downloadHandler.data))
+                    request.downloadHandler=new DownloadHandlerBuffer();
+                    await request.SendWebRequest();
+                    if(request.isNetworkError)
                     {
-                       ab = AssetBundle.LoadFromStream(stream);
+                        throw new GameException($"Can't read assetbundle file from streamingasset: {path} error: {request.error}");
+                    }
+                    AssetBundle ab;
+                    byte[] buffer=request.downloadHandler.data;
+                    using(MemoryStream stream =new EncryptMemoryStream(buffer))
+                    {
+                        ab = AssetBundle.LoadFromStream(stream);
+                        callback?.Invoke(ab);
                     }
                 }
-                else
-                {
-                    ab = DownloadHandlerAssetBundle.GetContent(request);
-                }
-                callback?.Invoke(ab);
             }
+            else
+            {
+                using(UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(path))
+                {
+                  //  request.downloadHandler=new DownloadHandlerAssetBundle();
+                    await request.SendWebRequest();
+                    if(request.isNetworkError)
+                    {
+                        throw new GameException($"Can't read assetbundle file from streamingasset: {path} error: {request.error}");
+                    }
+                    AssetBundle ab = DownloadHandlerAssetBundle.GetContent(request);
+                    callback?.Invoke(ab);
+                }
+            }
+            
         }
 
      

@@ -23,7 +23,7 @@ namespace Wanderer.GameFramework
         {
             base.OnEnter(fsm);
 
-            string localPath = Path.Combine(GameMode.Resource.LocalPath, Utility.GetPlatformName(), "AssetVersion.txt");
+            string localPath = Path.Combine(GameMode.Resource.LocalPath,  "AssetVersion.txt");//Utility.GetPlatformName(),
             if (!File.Exists(localPath))
                 throw new GameException($"can't find AssetVersion: {localPath}");
             AssetBundleVersionInfo versionInfo = JsonUtility.FromJson<AssetBundleVersionInfo>(File.ReadAllText(localPath));

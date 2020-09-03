@@ -410,6 +410,10 @@ namespace Wanderer.GameFramework
             //获取源文件夹下的所有文件  不考虑子文件夹
             string[] files = Directory.GetFiles(buildPath);
             string targetPath = Path.GetFullPath(Application.streamingAssetsPath);
+            if(!Directory.Exists(targetPath))
+            {
+                Directory.CreateDirectory(targetPath);
+            }
             for (int i = 0; i < files.Length; i++)
             {
                 string path = files[i].Replace(buildPath, targetPath);
@@ -427,7 +431,7 @@ namespace Wanderer.GameFramework
             public bool Copy2StreamingAssets = false;
             public List<int> BuildTargets = new List<int>();
             public string OtherResources = "";
-            public bool IsEncrypt = false;
+            public bool IsEncrypt = true;
         }
 
 

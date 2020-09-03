@@ -74,8 +74,13 @@ namespace Wanderer.GameFramework
                 }
                 else
                 {
-                    _gameMode.LocalPathType =
+                    PathType localPathType = 
                         (PathType)EditorGUILayout.EnumPopup("Local Path Type", _gameMode.LocalPathType);
+                    if( _gameMode.LocalPathType != localPathType)
+                    {
+                        _gameMode.LocalPathType=localPathType;
+                        EditorUtility.SetDirty(_gameMode);
+                    }
                 }
                 string path = "";
                 switch (_gameMode.LocalPathType)
