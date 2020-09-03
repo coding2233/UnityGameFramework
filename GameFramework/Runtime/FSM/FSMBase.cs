@@ -8,17 +8,12 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-    public abstract class FsmBase
+    public abstract class FSMBase
     {
-        /// <summary>
-        /// 开始
-        /// </summary>
         public abstract void OnBegin();
 
         public abstract void OnUpdate();
-        /// <summary>
-        /// 结束
-        /// </summary>
+
         public abstract void OnStop();
     }
 }

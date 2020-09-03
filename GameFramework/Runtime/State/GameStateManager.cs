@@ -125,6 +125,7 @@ namespace Wanderer.GameFramework
             if (_stateContext != null)
                 _stateContext.FixedUpdate();
         }
+
         /// <summary>
         /// 关闭
         /// </summary>
@@ -133,6 +134,7 @@ namespace Wanderer.GameFramework
             _stateContext.Close();
             _stateContext = null;
         }
+        
         #endregion
     }
 }

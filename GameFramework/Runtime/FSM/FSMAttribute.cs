@@ -6,17 +6,18 @@ using System;
 
 namespace Wanderer.GameFramework
 {
-    public class FsmAttribute : Attribute
+    [System.AttributeUsage(AttributeTargets.Class)]
+    public class FSMAttribute : Attribute
     {
-        public FsmStateType StateType { get; protected set; }
+        public FSMStateType StateType { get; protected set; }
 
-        public FsmAttribute(FsmStateType stateType = FsmStateType.Normal)
+        public FSMAttribute(FSMStateType stateType = FSMStateType.Normal)
         {
             StateType = stateType;
         }
     }
 
-    public enum FsmStateType
+    public enum FSMStateType
     {
         //开始状态
         Start,

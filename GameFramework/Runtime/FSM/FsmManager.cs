@@ -7,12 +7,13 @@ using System.Collections.Generic;
 
 namespace Wanderer.GameFramework
 {
-    public sealed class FsmManager : GameFrameworkModule
+    public sealed class FSMannager : GameFrameworkModule, IUpdate
     {
-        private readonly Dictionary<Type, FsmBase> _fsms = new Dictionary<Type, FsmBase>();
-        public T GetFSM<T>() where T : FsmBase, new()
+        private readonly Dictionary<Type, FSMBase> _fsms = new Dictionary<Type, FSMBase>();
+
+        public T GetFSM<T>() where T : FSMBase, new()
         {
-            FsmBase fsm;
+            FSMBase fsm;
             T t;
             if (_fsms.TryGetValue(typeof(T), out fsm))
             {
@@ -26,12 +27,12 @@ namespace Wanderer.GameFramework
             return t;
         }
 
-        public void RemoveFSM<T>() where T : Fsm<T>, new()
+        public void RemoveFSM<T>() where T : FSM<T>, new()
         {
-            FsmBase fsmBase;
+            FSMBase fsmBase;
             if (_fsms.TryGetValue(typeof(T), out fsmBase))
             {
-                Fsm<T> fsm = fsmBase as Fsm<T>;
+                FSM<T> fsm = fsmBase as FSM<T>;
                 fsm.OnStop();
                 fsmBase = null;
                 _fsms.Remove(typeof(T));
