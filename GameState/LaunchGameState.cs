@@ -38,6 +38,9 @@ namespace Wanderer.GameFramework
 			//选择更新 | 读取本地 | 编辑器
 			switch (GameMode.Resource.ResUpdateType)
 			{
+                case ResourceUpdateType.None:
+                    ChangeState<PreloadState>(fsm);
+                    break;
 				case ResourceUpdateType.Update:
 					ChangeState<CheckResourceState>(fsm);
 					break;

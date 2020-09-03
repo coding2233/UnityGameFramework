@@ -43,7 +43,6 @@ namespace Wanderer.GameFramework
             }
             GUILayout.EndHorizontal();
 
-
             ResourceUpdateType resUpdateType = (ResourceUpdateType)EditorGUILayout.EnumPopup("Resource Update Type", _gameMode.ResUpdateType);
             if (resUpdateType != _gameMode.ResUpdateType)
             {
@@ -51,7 +50,8 @@ namespace Wanderer.GameFramework
                 //保存数据
                 EditorUtility.SetDirty(_gameMode);
             }
-            if (_gameMode.ResUpdateType != ResourceUpdateType.Editor)
+            if (_gameMode.ResUpdateType != ResourceUpdateType.Editor
+            &&_gameMode.ResUpdateType != ResourceUpdateType.None)
             {
                 //        _gameMode.ResUpdateType =
                 //(ResourceUpdateType)EditorGUILayout.EnumPopup("Resource Update Type", _gameMode.ResUpdateType);

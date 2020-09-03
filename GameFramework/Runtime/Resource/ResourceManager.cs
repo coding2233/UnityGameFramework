@@ -367,7 +367,11 @@ namespace Wanderer.GameFramework
         /// <summary>
         /// 编辑器
         /// </summary>
-        Editor
+        Editor,
+        /// <summary>
+        /// 没有资源加载模式
+        /// </summary>
+        None,
     }
 
     #endregion
