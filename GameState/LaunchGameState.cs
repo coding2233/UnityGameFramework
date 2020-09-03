@@ -45,7 +45,7 @@ namespace Wanderer.GameFramework
 			base.OnUpdate();
 
 			//选择更新 | 读取本地 | 编辑器
-			switch (GameMode.Resource.ResUpdateType)
+			switch (GameFrameworkMode.GetModule<ResourceManager>().ResUpdateType)
 			{
 				case ResourceUpdateType.Update:
 					ChangeState<CheckResourceState>();
@@ -55,7 +55,7 @@ namespace Wanderer.GameFramework
 					break;
 				case ResourceUpdateType.Editor:
 #if UNITY_EDITOR
-					GameMode.Resource.SetResourceHelper(new EditorResourceHelper());
+					GameFrameworkMode.GetModule<ResourceManager>().SetResourceHelper(new EditorResourceHelper());
 					ChangeState<PreloadState>();
 #else
 					//如果在非编辑器模式下选择了Editor，则默认使用本地文件

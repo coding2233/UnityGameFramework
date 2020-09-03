@@ -21,16 +21,17 @@ namespace Wanderer.GameFramework
         public override void OnEnter(params object[] parameters)
         {
             base.OnEnter(parameters);
+            ResourceManager _resourceMgr = GameFrameworkMode.GetModule<ResourceManager>();
 
-            string localPath = Path.Combine(GameMode.Resource.LocalPath, Utility.GetPlatformName(), "AssetVersion.txt");
+            string localPath = Path.Combine(_resourceMgr.LocalPath, Utility.GetPlatformName(), "AssetVersion.txt");
             if (!File.Exists(localPath))
                 throw new GameException($"can't find AssetVersion: {localPath}");
             AssetBundleVersionInfo versionInfo = JsonUtility.FromJson<AssetBundleVersionInfo>(File.ReadAllText(localPath));
 
             //设置ab包的加载方式
-            GameMode.Resource.SetResourceHelper(new BundleResourceHelper());
+           _resourceMgr.SetResourceHelper(new BundleResourceHelper());
             //加载ab包的mainfest文件
-            GameMode.Resource.SetMainfestAssetBundle(versionInfo.ManifestAssetBundle, versionInfo.IsEncrypt);
+            _resourceMgr.SetMainfestAssetBundle(versionInfo.ManifestAssetBundle, versionInfo.IsEncrypt);
 
             //切换到预加载的状态
             ChangeState<PreloadState>();
