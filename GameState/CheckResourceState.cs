@@ -16,8 +16,8 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-    [GameState]
-    public class CheckResourceState : GameState
+    [FSM()]
+    public class CheckResourceState : FSMState<GameStateContext>
     {
         #region 属性
         //平台的资源名称
@@ -38,37 +38,35 @@ namespace Wanderer.GameFramework
         private Dictionary<string, string> _downloadResouces;
         //余下的资源
         private List<string> _remainingResources;
-
-        private EventManager _eventManager;
-
-        private ResourceManager _resourceManager;
         #endregion
 
         #region 重写函数
 
-        public override void OnInit()
+
+        
+
+        public override void OnInit(FSM<GameStateContext> fsm)
         {
-            base.OnInit();
+            base.OnInit(fsm);
 
-            _eventManager= GameFrameworkMode.GetModule<EventManager>();
-
-            _downloadResouces = new Dictionary<string, string>();
+             _downloadResouces = new Dictionary<string, string>();
             _remainingResources = new List<string>();
         }
 
-        public override void OnEnter(params object[] parameters)
+        public override void OnEnter(FSM<GameStateContext> fsm)
         {
-            base.OnEnter(parameters);
-            _eventManager.AddListener<HttpReadTextSuccessEventArgs>(OnHttpReadTextSuccess);
-            _eventManager.AddListener<HttpReadTextFaileEventArgs>(OnHttpReadTextFaile);
-            _eventManager.AddListener<DownloadSuccessEventArgs>(OnDownloadSuccess);
-            _eventManager.AddListener<DownloadFaileEventArgs>(OnDownloadFaile);
-           _eventManager.AddListener<DownloadProgressEventArgs>(OnDownloadProgress);
+            base.OnEnter(fsm);
+
+             GameMode.Event.AddListener<HttpReadTextSuccessEventArgs>(OnHttpReadTextSuccess);
+            GameMode.Event.AddListener<HttpReadTextFaileEventArgs>(OnHttpReadTextFaile);
+            GameMode.Event.AddListener<DownloadSuccessEventArgs>(OnDownloadSuccess);
+            GameMode.Event.AddListener<DownloadFaileEventArgs>(OnDownloadFaile);
+            GameMode.Event.AddListener<DownloadProgressEventArgs>(OnDownloadProgress);
 
             _localVersion = LoadLocalVersion();
 
             //从StreamingAsset复制到读写路径下
-            if (GameFrameworkMode.GetModule<ResourceManager>().DefaultInStreamingAsset && _localVersion == null)
+            if (GameMode.Resource.DefaultInStreamingAsset && _localVersion == null)
             {
                 MoveFiles(Application.streamingAssetsPath, Application.persistentDataPath);
                 _localVersion = LoadLocalVersion();
@@ -77,28 +75,23 @@ namespace Wanderer.GameFramework
             LoadRemoteVersion();
         }
 
-
-        public override void OnExit()
+        public override void OnExit(FSM<GameStateContext> fsm)
         {
-            _eventManager.RemoveListener<HttpReadTextSuccessEventArgs>(OnHttpReadTextSuccess);
-           _eventManager.RemoveListener<HttpReadTextFaileEventArgs>(OnHttpReadTextFaile);
-            _eventManager.RemoveListener<DownloadSuccessEventArgs>(OnDownloadSuccess);
-            _eventManager.RemoveListener<DownloadFaileEventArgs>(OnDownloadFaile);
-            _eventManager.RemoveListener<DownloadProgressEventArgs>(OnDownloadProgress);
+  GameMode.Event.RemoveListener<HttpReadTextSuccessEventArgs>(OnHttpReadTextSuccess);
+            GameMode.Event.RemoveListener<HttpReadTextFaileEventArgs>(OnHttpReadTextFaile);
+            GameMode.Event.RemoveListener<DownloadSuccessEventArgs>(OnDownloadSuccess);
+            GameMode.Event.RemoveListener<DownloadFaileEventArgs>(OnDownloadFaile);
+            GameMode.Event.RemoveListener<DownloadProgressEventArgs>(OnDownloadProgress);
 
-            base.OnExit();
+
+            base.OnExit(fsm);
         }
 
-        public override void OnFixedUpdate()
+        public override void OnUpdate(FSM<GameStateContext> fsm)
         {
-            base.OnFixedUpdate();
-        }
+            base.OnUpdate(fsm);
 
-        public override void OnUpdate()
-        {
-            base.OnUpdate();
-
-            //更新资源
+               //更新资源
             if (_resourceUpdateDone && _remainingResources.Count == 0)
             {
                 //移动所有的下载完的文件
@@ -106,9 +99,13 @@ namespace Wanderer.GameFramework
                 //更新本地资源信息文本
                 UpdateAssetVersionTxt();
                 //  切换到加载界面
-                ChangeState<LoadResourceState>();
+                ChangeState<LoadResourceState>(fsm);
             }
         }
+
+   
+
+
 
         #endregion
 
@@ -120,18 +117,18 @@ namespace Wanderer.GameFramework
             HttpReadTextSuccessEventArgs ne = (HttpReadTextSuccessEventArgs)e;
             if (ne != null)
             {
-                if (ne.Url == Path.Combine(_resourceManager.ResUpdatePath, _assetPlatformVersionText))
+                if (ne.Url == Path.Combine(GameMode.Resource.ResUpdatePath, _assetPlatformVersionText))
                 {
                     PlatformVersionInfo assetPlatform = JsonUtility.FromJson<PlatformVersionInfo>(ne.Content);
                     string platformName = Utility.GetPlatformName();
                     if (assetPlatform.Platforms.Contains(platformName))
                     {
                         //更新远程资源的路径
-                        _resourceManager.ResUpdatePath =
-                            Path.Combine(_resourceManager.ResUpdatePath, platformName);
+                        GameMode.Resource.ResUpdatePath =
+                            Path.Combine(GameMode.Resource.ResUpdatePath, platformName);
                         //读取远程的文本
-                        string remotePath = Path.Combine(_resourceManager.ResUpdatePath, _assetVersionTxt);
-                        GameFrameworkMode.GetModule<WebRequestManager>().ReadHttpText(remotePath);
+                        string remotePath = Path.Combine(GameMode.Resource.ResUpdatePath, _assetVersionTxt);
+                        GameMode.WebRequest.ReadHttpText(remotePath);
                     }
                 }
                 else
@@ -193,7 +190,7 @@ namespace Wanderer.GameFramework
         //加载本地版本信息
         private AssetBundleVersionInfo LoadLocalVersion()
         {
-            string localPath = Path.Combine(_resourceManager.LocalPath, _assetVersionTxt);
+            string localPath = Path.Combine(GameMode.Resource.LocalPath, _assetVersionTxt);
             if (!File.Exists(localPath))
                 return null;
 
@@ -204,8 +201,8 @@ namespace Wanderer.GameFramework
         //加载远程版本信息
         private void LoadRemoteVersion()
         {
-            string remotePath = Path.Combine(_resourceManager.ResUpdatePath, _assetPlatformVersionText);
-            GameFrameworkMode.GetModule<WebRequestManager>().ReadHttpText(remotePath);
+            string remotePath = Path.Combine(GameMode.Resource.ResUpdatePath, _assetPlatformVersionText);
+            GameMode.WebRequest.ReadHttpText(remotePath);
         }
 
         //比较版本
@@ -223,9 +220,9 @@ namespace Wanderer.GameFramework
                 //本地有响应文件则跳过
                 if (_localVersion != null && _localVersion.AssetHashInfos != null && _localVersion.AssetHashInfos.Contains(item))
                     continue;
-                string remoteUrl = Path.Combine(_resourceManager.ResUpdatePath, item.Name);
+                string remoteUrl = Path.Combine(GameMode.Resource.ResUpdatePath, item.Name);
                 //获取本地文件的路径
-                string localPath = Path.Combine(_resourceManager.LocalPath, item.Name, ".temp");
+                string localPath = Path.Combine(GameMode.Resource.LocalPath, item.Name, ".temp");
 
                 //创建文件夹
                 string localDir = Path.GetDirectoryName(localPath);
@@ -245,7 +242,7 @@ namespace Wanderer.GameFramework
         {
             foreach (var item in _downloadResouces)
             {
-                GameFrameworkMode.GetModule<WebRequestManager>().StartDownload(item.Key, item.Value);
+                GameMode.WebRequest.StartDownload(item.Key, item.Value);
             }
         }
 
@@ -267,7 +264,7 @@ namespace Wanderer.GameFramework
         {
             if (!CompareVersion())
             {
-                string localPath = Path.Combine(_resourceManager.LocalPath, _assetVersionTxt);
+                string localPath = Path.Combine(GameMode.Resource.LocalPath, _assetVersionTxt);
                 File.WriteAllText(localPath, JsonUtility.ToJson(_remoteVersion));
             }
         }
@@ -298,6 +295,7 @@ namespace Wanderer.GameFramework
                 File.Copy(item, targetPath, true);
             }
         }
+
 
         #endregion
 

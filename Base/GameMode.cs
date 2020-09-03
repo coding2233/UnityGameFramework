@@ -17,7 +17,7 @@ namespace Wanderer.GameFramework
     {
         #region 属性
         public static EventManager Event;
-        public static GameStateManager GameState;
+      //  public static GameStateManager GameState;
        public static FSManager FSM;
         public static NodeManager Node;
         public static ResourceManager Resource;
@@ -67,7 +67,7 @@ namespace Wanderer.GameFramework
 
             #region Module
             Event = GameFrameworkMode.GetModule<EventManager>();
-            GameState = GameFrameworkMode.GetModule<GameStateManager>();
+           // GameState = GameFrameworkMode.GetModule<GameStateManager>();
             FSM= GameFrameworkMode.GetModule<FSManager>();
             Node = GameFrameworkMode.GetModule<NodeManager>();
             Resource = GameFrameworkMode.GetModule<ResourceManager>();
@@ -121,9 +121,11 @@ namespace Wanderer.GameFramework
             #region state
             //开启整个项目的流程
             Assembly = typeof(GameMode).Assembly;
-            GameState.CreateContext();
+            FSM.AddFSM<GameStateContext>();
+           // GameState.CreateContext();
             yield return new WaitForEndOfFrame();
-            GameState.SetStateStart();
+         //   GameState.SetStateStart();
+         FSM.GetFSM<GameStateContext>().OnBegin();
             #endregion
 
         }

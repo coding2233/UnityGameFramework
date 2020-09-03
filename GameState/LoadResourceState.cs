@@ -14,48 +14,50 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-    [GameState]
-    public class LoadResourceState : GameState
+    [FSM()]
+    public class LoadResourceState : FSMState<GameStateContext>
     {
+      
         #region 重写函数
-        public override void OnEnter(params object[] parameters)
+        public override void OnEnter(FSM<GameStateContext> fsm)
         {
-            base.OnEnter(parameters);
-            ResourceManager _resourceMgr = GameFrameworkMode.GetModule<ResourceManager>();
+            base.OnEnter(fsm);
 
-            string localPath = Path.Combine(_resourceMgr.LocalPath, Utility.GetPlatformName(), "AssetVersion.txt");
+            string localPath = Path.Combine(GameMode.Resource.LocalPath, Utility.GetPlatformName(), "AssetVersion.txt");
             if (!File.Exists(localPath))
                 throw new GameException($"can't find AssetVersion: {localPath}");
             AssetBundleVersionInfo versionInfo = JsonUtility.FromJson<AssetBundleVersionInfo>(File.ReadAllText(localPath));
 
             //设置ab包的加载方式
-           _resourceMgr.SetResourceHelper(new BundleResourceHelper());
+            GameMode.Resource.SetResourceHelper(new BundleResourceHelper());
             //加载ab包的mainfest文件
-            _resourceMgr.SetMainfestAssetBundle(versionInfo.ManifestAssetBundle, versionInfo.IsEncrypt);
+            GameMode.Resource.SetMainfestAssetBundle(versionInfo.ManifestAssetBundle, versionInfo.IsEncrypt);
 
             //切换到预加载的状态
-            ChangeState<PreloadState>();
+            ChangeState<PreloadState>(fsm);
         }
 
-        public override void OnExit()
+        public override void OnExit(FSM<GameStateContext> fsm)
         {
-            base.OnExit();
+            base.OnExit(fsm);
         }
 
-        public override void OnFixedUpdate()
+        public override void OnInit(FSM<GameStateContext> fsm)
         {
-            base.OnFixedUpdate();
+            base.OnInit(fsm);
         }
 
-        public override void OnInit()
+        public override void OnUpdate(FSM<GameStateContext> fsm)
         {
-            base.OnInit();
+            base.OnUpdate(fsm);
         }
 
-        public override void OnUpdate()
+        public override string ToString()
         {
-            base.OnUpdate();
+            return base.ToString();
         }
+
+
         #endregion
     }
 }

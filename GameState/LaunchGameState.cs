@@ -12,60 +12,54 @@ using System.Collections.Generic;
 
 namespace Wanderer.GameFramework
 {
-	[GameState(GameStateType.Start)]
-	public class LaunchGameState : GameState
-	{
-		#region 重写函数
-		public override void OnEnter(params object[] parameters)
-		{
-			base.OnEnter(parameters);
+    [FSM(FSMStateType.Start)]
+    public class LaunchGameState : FSMState<GameStateContext>
+    {
+        #region 重写函数
+        public override void OnEnter(FSM<GameStateContext> fsm)
+        {
+            base.OnEnter(fsm);
+        }
 
-			//加载更新或加载界面
-			//...
+        public override void OnExit(FSM<GameStateContext> fsm)
+        {
+            base.OnExit(fsm);
+        }
 
-		}
+        public override void OnInit(FSM<GameStateContext> fsm)
+        {
+            base.OnInit(fsm);
+        }
 
-		public override void OnExit()
-		{
-			base.OnExit();
-		}
-
-		public override void OnFixedUpdate()
-		{
-			base.OnFixedUpdate();
-		}
-
-		public override void OnInit()
-		{
-			base.OnInit();
-		}
-
-		public override void OnUpdate()
-		{
-			base.OnUpdate();
+        public override void OnUpdate(FSM<GameStateContext> fsm)
+        {
+            base.OnUpdate(fsm);
 
 			//选择更新 | 读取本地 | 编辑器
-			switch (GameFrameworkMode.GetModule<ResourceManager>().ResUpdateType)
+			switch (GameMode.Resource.ResUpdateType)
 			{
 				case ResourceUpdateType.Update:
-					ChangeState<CheckResourceState>();
+					ChangeState<CheckResourceState>(fsm);
 					break;
 				case ResourceUpdateType.Local:
-					ChangeState<LoadResourceState>();
+					ChangeState<LoadResourceState>(fsm);
 					break;
 				case ResourceUpdateType.Editor:
-#if UNITY_EDITOR
-					GameFrameworkMode.GetModule<ResourceManager>().SetResourceHelper(new EditorResourceHelper());
-					ChangeState<PreloadState>();
-#else
+			#if UNITY_EDITOR
+					GameMode.Resource.SetResourceHelper(new EditorResourceHelper());
+					ChangeState<PreloadState>(fsm);
+			#else
 					//如果在非编辑器模式下选择了Editor，则默认使用本地文件
 					GameMode.Resource.ResUpdateType = ResourceUpdateType.Local;
 					ChangeState<LoadResourceState>();
-#endif
+			#endif
 					break;
 			}
-		}
-		#endregion
+        }
 
-	}
+     
+
+        #endregion
+
+    }
 }
