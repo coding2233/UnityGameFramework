@@ -10,6 +10,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Wanderer.GameFramework
@@ -17,11 +18,23 @@ namespace Wanderer.GameFramework
     [FSM()]
     public class LoadResourceState : FSMState<GameStateContext>
     {
-      
+       //  private FSM<GameStateContext> _fsmGameStateContext;
+        private bool _flag =false;
+
         #region 重写函数
+        public override void OnInit(FSM<GameStateContext> fsm)
+        {
+            base.OnInit(fsm);
+          //  _fsmGameStateContext=fsm;
+        }
+
         public override void OnEnter(FSM<GameStateContext> fsm)
         {
             base.OnEnter(fsm);
+
+            _flag=false;
+
+            GameMode.Event.AddListener<ResourceAssetPathsMapReadyEventArgs>(OnResourceAssetPathsMapReady);
 
             string localPath = Path.Combine(GameMode.Resource.LocalPath,  "AssetVersion.txt");//Utility.GetPlatformName(),
             if (!File.Exists(localPath))
@@ -32,24 +45,26 @@ namespace Wanderer.GameFramework
             GameMode.Resource.SetResourceHelper(new BundleResourceHelper());
             //加载ab包的mainfest文件
             GameMode.Resource.SetMainfestAssetBundle(versionInfo.ManifestAssetBundle);//versionInfo.IsEncrypt
-
-            //切换到预加载的状态
-            ChangeState<PreloadState>(fsm);
         }
 
         public override void OnExit(FSM<GameStateContext> fsm)
         {
+            GameMode.Event.RemoveListener<ResourceAssetPathsMapReadyEventArgs>(OnResourceAssetPathsMapReady);
+
             base.OnExit(fsm);
         }
 
-        public override void OnInit(FSM<GameStateContext> fsm)
-        {
-            base.OnInit(fsm);
-        }
+ 
 
         public override void OnUpdate(FSM<GameStateContext> fsm)
         {
             base.OnUpdate(fsm);
+
+              //切换到预加载的状态
+            if(_flag)
+            {
+                ChangeState<PreloadState>(fsm);
+            }
         }
 
         public override string ToString()
@@ -59,5 +74,14 @@ namespace Wanderer.GameFramework
 
 
         #endregion
+
+#region  事件回调
+        //资源准备完毕
+        private void OnResourceAssetPathsMapReady(object sender,IEventArgs e)
+        {
+           _flag=true;
+        }
+#endregion
+
     }
 }

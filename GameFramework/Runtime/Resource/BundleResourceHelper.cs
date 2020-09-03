@@ -75,7 +75,7 @@ namespace Wanderer.GameFramework
             _readPath = Path.GetDirectoryName(rootAbPath);
 
             _isEncrypt=isEncrypt;
-            
+
             //加载主包
             LoadPlatformMainfest(rootAbPath);
             //加载所有的资源路径与ab包名称的映射
@@ -122,12 +122,12 @@ namespace Wanderer.GameFramework
         /// <param name="assetBundleName"></param>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        public T LoadAssetSync<T>(string assetBundleName, string assetName) where T : Object
+        public  T LoadAssetSync<T>(string assetBundleName, string assetName) where T : Object
         {
             AssetBundle assetBundle;
             if (_allAssets.TryGetValue(assetName, out assetBundle))
             {
-                return assetBundle.LoadAsset<T>(assetName);
+                 return assetBundle.LoadAsset<T>(assetName);
             }
             return null;
         }
@@ -182,11 +182,17 @@ namespace Wanderer.GameFramework
 		/// <typeparam name="T"></typeparam>
 		/// <param name="assetName"></param>
 		/// <returns></returns>
-		public T LoadAssetSync<T>(string assetName) where T : UnityEngine.Object
+		public async Task<T> LoadAssetSync<T>(string assetName) where T : UnityEngine.Object
         {
+             assetName=assetName.ToLower();
             if(_assetsPathMapAssetbundleName.TryGetValue(assetName,out string abName))
             {
-                return LoadAssetSync<T>(abName,assetName);
+                if (!_allAssets.TryGetValue(assetName, out AssetBundle assetBundle))
+                {
+                     await LoadAssetBundle(abName);
+                }
+               return LoadAssetSync<T>(abName,assetName);
+                
             }
             return null;
         }
@@ -201,6 +207,7 @@ namespace Wanderer.GameFramework
 		/// <returns></returns>
 		public Task<T> LoadAsset<T>(string assetName) where T : UnityEngine.Object
         {
+            assetName=assetName.ToLower();
             if(_assetsPathMapAssetbundleName.TryGetValue(assetName,out string abName))
             {
                 return LoadAsset<T>(abName,assetName);
@@ -322,12 +329,13 @@ namespace Wanderer.GameFramework
             {
                 request.downloadHandler=new DownloadHandlerBuffer();
                 await request.SendWebRequest();
+             
                 if(request.isNetworkError)
                 {
                     throw new GameException($"Can't read assets path file from streamingasset: {assetsPath} error: {request.error}");
                 }
                 byte[] buffer = request.downloadHandler.data;
-                using(MemoryStream stream =new EncryptMemoryStream(request.downloadHandler.data))
+                using(MemoryStream stream =new EncryptMemoryStream(buffer))
                 {
                     stream.Read(buffer,0,buffer.Length);
                     string content = System.Text.Encoding.UTF8.GetString(buffer);
@@ -345,6 +353,9 @@ namespace Wanderer.GameFramework
                         }
                     }
                 }
+
+                //路径准备好了
+                GameFrameworkMode.GetModule<EventManager>().Trigger<ResourceAssetPathsMapReadyEventArgs>(this);
             }
         }
 

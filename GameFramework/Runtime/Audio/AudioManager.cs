@@ -38,153 +38,153 @@ namespace Wanderer.GameFramework
 		}
 
 		#region 外部接口
-		/// <summary>
-		/// 设置默认声音播放器
-		/// </summary>
-		/// <param name="backgroundMusic"></param>
-		/// <param name="uiSound"></param>
-		/// <param name="soundEffect"></param>
-		public void SetDefaultAudioSource(AudioSource backgroundMusic = null, AudioSource uiSound=null, AudioSource soundEffect=null)
-		{
-			_backgroundMusic = backgroundMusic;
-			_uiSound = uiSound;
-			_soundEffect = soundEffect;
-		}
+		// /// <summary>
+		// /// 设置默认声音播放器
+		// /// </summary>
+		// /// <param name="backgroundMusic"></param>
+		// /// <param name="uiSound"></param>
+		// /// <param name="soundEffect"></param>
+		// public void SetDefaultAudioSource(AudioSource backgroundMusic = null, AudioSource uiSound=null, AudioSource soundEffect=null)
+		// {
+		// 	_backgroundMusic = backgroundMusic;
+		// 	_uiSound = uiSound;
+		// 	_soundEffect = soundEffect;
+		// }
 
-		/// <summary>
-		/// 添加背景音乐
-		/// </summary>
-		/// <param name="audioClipPath"></param>
-		public void AddBackroundMusic(string assetBundleName,string audioClipPath)
-		{
-			AddAuioClip(assetBundleName,audioClipPath, _backGroundMusicClips);
-		}
-		/// <summary>
-		/// 添加UI音效
-		/// </summary>
-		/// <param name="audioClipPath"></param>
-		public void AddUISound(string assetBundleName,string audioClipPath)
-		{
-			AddAuioClip(assetBundleName,audioClipPath, _uiSoundClips);
-		}
-		/// <summary>
-		/// 添加音效
-		/// </summary>
-		/// <param name="audioClipPath"></param>
-		public void AddSoundEffect(string assetBundleName,string audioClipPath)
-		{
-			AddAuioClip(assetBundleName, audioClipPath, _soundEffectClips);
-		}
+		// /// <summary>
+		// /// 添加背景音乐
+		// /// </summary>
+		// /// <param name="audioClipPath"></param>
+		// public void AddBackroundMusic(string assetBundleName,string audioClipPath)
+		// {
+		// 	AddAuioClip(assetBundleName,audioClipPath, _backGroundMusicClips);
+		// }
+		// /// <summary>
+		// /// 添加UI音效
+		// /// </summary>
+		// /// <param name="audioClipPath"></param>
+		// public void AddUISound(string assetBundleName,string audioClipPath)
+		// {
+		// 	AddAuioClip(assetBundleName,audioClipPath, _uiSoundClips);
+		// }
+		// /// <summary>
+		// /// 添加音效
+		// /// </summary>
+		// /// <param name="audioClipPath"></param>
+		// public void AddSoundEffect(string assetBundleName,string audioClipPath)
+		// {
+		// 	AddAuioClip(assetBundleName, audioClipPath, _soundEffectClips);
+		// }
 		
-		/// <summary>
-		/// 播放在GameObject上的声音
-		/// </summary>
-		/// <param name="audioClipPath"></param>
-		public async void PlayGameObjectSound(GameObject go,string assetBundleName,string audioClipPath)
-		{
-			AudioSource audioSource=go.GetComponent<AudioSource>();
-			if (audioSource==null)
-			{
-				audioSource = go.AddComponent<AudioSource>();
-			}
+		// /// <summary>
+		// /// 播放在GameObject上的声音
+		// /// </summary>
+		// /// <param name="audioClipPath"></param>
+		// public async void PlayGameObjectSound(GameObject go,string assetBundleName,string audioClipPath)
+		// {
+		// 	AudioSource audioSource=go.GetComponent<AudioSource>();
+		// 	if (audioSource==null)
+		// 	{
+		// 		audioSource = go.AddComponent<AudioSource>();
+		// 	}
 
-			audioSource.clip = await _resourceManager?.LoadAsset<AudioClip>(assetBundleName,audioClipPath);
-			if (audioSource.clip != null)
-				audioSource.Play();
-		}
-		/// <summary>
-		/// 移除音乐
-		/// </summary>
-		/// <param name="audioClipPath"></param>
-		public void RemoveGameObjectSound(GameObject go)
-		{
-			AudioSource audioSource= go.GetComponent<AudioSource>();
-			if (audioSource!=null)
-				MonoBehaviour.Destroy(audioSource);
-		}
+		// 	audioSource.clip = await _resourceManager?.LoadAsset<AudioClip>(assetBundleName,audioClipPath);
+		// 	if (audioSource.clip != null)
+		// 		audioSource.Play();
+		// }
+		// /// <summary>
+		// /// 移除音乐
+		// /// </summary>
+		// /// <param name="audioClipPath"></param>
+		// public void RemoveGameObjectSound(GameObject go)
+		// {
+		// 	AudioSource audioSource= go.GetComponent<AudioSource>();
+		// 	if (audioSource!=null)
+		// 		MonoBehaviour.Destroy(audioSource);
+		// }
 
 
-		/// <summary>
-		/// 播放背景音乐
-		/// </summary>
-		/// <param name="audioClipPath">音频的资源路径</param>
-		public void PlayBackgroundMusic(string audioClipPath,bool addAudioClip=false)
-		{
-            if(_backGroundMusicClips.ContainsKey(audioClipPath))
-			    PlayAudioClip(audioClipPath, _backGroundMusicClips, _backgroundMusic);
-		}
+		// /// <summary>
+		// /// 播放背景音乐
+		// /// </summary>
+		// /// <param name="audioClipPath">音频的资源路径</param>
+		// public void PlayBackgroundMusic(string audioClipPath,bool addAudioClip=false)
+		// {
+        //     if(_backGroundMusicClips.ContainsKey(audioClipPath))
+		// 	    PlayAudioClip(audioClipPath, _backGroundMusicClips, _backgroundMusic);
+		// }
 
-		/// <summary>
-		/// 停止背景音乐
-		/// </summary>
-		public void StopBakgroundMusic()
-		{
-			StopAudioClip(_backgroundMusic);
-		}
+		// /// <summary>
+		// /// 停止背景音乐
+		// /// </summary>
+		// public void StopBakgroundMusic()
+		// {
+		// 	StopAudioClip(_backgroundMusic);
+		// }
 
-		/// <summary>
-		/// 移除背景音乐
-		/// </summary>
-		/// <param name="audioClipPath"></param>
-		public void RemoveBackgroundMusic(string audioClipPath)
-		{
-			RemoveAudioClip(audioClipPath, _backGroundMusicClips);
-		}
+		// /// <summary>
+		// /// 移除背景音乐
+		// /// </summary>
+		// /// <param name="audioClipPath"></param>
+		// public void RemoveBackgroundMusic(string audioClipPath)
+		// {
+		// 	RemoveAudioClip(audioClipPath, _backGroundMusicClips);
+		// }
 
-		/// <summary>
-		/// 播放ui音效
-		/// </summary>
-		/// <param name="audioClipPath"></param>
-		public void PlayUISound(string audioClipPath,bool addAudioClip=false)
-		{
-            if(_uiSoundClips.ContainsKey(audioClipPath))
-			    PlayAudioClip(audioClipPath, _uiSoundClips, _uiSound);
-		}
+		// /// <summary>
+		// /// 播放ui音效
+		// /// </summary>
+		// /// <param name="audioClipPath"></param>
+		// public void PlayUISound(string audioClipPath,bool addAudioClip=false)
+		// {
+        //     if(_uiSoundClips.ContainsKey(audioClipPath))
+		// 	    PlayAudioClip(audioClipPath, _uiSoundClips, _uiSound);
+		// }
 
-		/// <summary>
-		/// 停止
-		/// </summary>
-		public void StopUISoud()
-		{
-			StopAudioClip(_uiSound);
-		}
+		// /// <summary>
+		// /// 停止
+		// /// </summary>
+		// public void StopUISoud()
+		// {
+		// 	StopAudioClip(_uiSound);
+		// }
 
-		/// <summary>
-		/// 移除ui音效
-		/// </summary>
-		/// <param name="audioClipPath"></param>
-		public void RemoveUISound(string audioClipPath)
-		{
-			RemoveAudioClip(audioClipPath, _uiSoundClips);
-		}
+		// /// <summary>
+		// /// 移除ui音效
+		// /// </summary>
+		// /// <param name="audioClipPath"></param>
+		// public void RemoveUISound(string audioClipPath)
+		// {
+		// 	RemoveAudioClip(audioClipPath, _uiSoundClips);
+		// }
 
-		/// <summary>
-		/// 播放音效
-		/// </summary>
-		/// <param name="audioClipPath"></param>
-		/// <param name="addAudioClip"></param>
-		public void PlaySoundEffect(string audioClipPath,bool addAudioClip=false)
-		{
-			if (_soundEffectClips.ContainsKey(audioClipPath))
-			    PlayAudioClip(audioClipPath, _soundEffectClips, _soundEffect);
-		}
+		// /// <summary>
+		// /// 播放音效
+		// /// </summary>
+		// /// <param name="audioClipPath"></param>
+		// /// <param name="addAudioClip"></param>
+		// public void PlaySoundEffect(string audioClipPath,bool addAudioClip=false)
+		// {
+		// 	if (_soundEffectClips.ContainsKey(audioClipPath))
+		// 	    PlayAudioClip(audioClipPath, _soundEffectClips, _soundEffect);
+		// }
 
-		/// <summary>
-		/// 停止
-		/// </summary>
-		public void StopSoundEffect()
-		{
-			StopAudioClip(_soundEffect);
-		}
+		// /// <summary>
+		// /// 停止
+		// /// </summary>
+		// public void StopSoundEffect()
+		// {
+		// 	StopAudioClip(_soundEffect);
+		// }
 
-		/// <summary>
-		/// 移除音效
-		/// </summary>
-		/// <param name="audioClipPath"></param>
-		public void RemoveSoundEffect(string audioClipPath)
-		{
-			RemoveAudioClip(audioClipPath,_soundEffectClips);
-		}
+		// /// <summary>
+		// /// 移除音效
+		// /// </summary>
+		// /// <param name="audioClipPath"></param>
+		// public void RemoveSoundEffect(string audioClipPath)
+		// {
+		// 	RemoveAudioClip(audioClipPath,_soundEffectClips);
+		// }
 
 		#endregion
 

@@ -98,8 +98,8 @@ namespace Wanderer.GameFramework
             GameObject audioPlayer = new GameObject("AudioSourcePlayer");
             audioPlayer.transform.SetParent(transform);
             //添加AduioSource
-            Audio.SetDefaultAudioSource(audioPlayer.AddComponent<AudioSource>(), audioPlayer.AddComponent<AudioSource>(),
-                audioPlayer.AddComponent<AudioSource>());
+            // Audio.SetDefaultAudioSource(audioPlayer.AddComponent<AudioSource>(), audioPlayer.AddComponent<AudioSource>(),
+            //     audioPlayer.AddComponent<AudioSource>());
             #endregion
 
             #region WebRequest

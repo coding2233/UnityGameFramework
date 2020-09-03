@@ -53,7 +53,7 @@ namespace Wanderer.GameFramework
 		/// <typeparam name="T"></typeparam>
 		/// <param name="assetName"></param>
 		/// <returns></returns>
-		T LoadAssetSync<T>(string assetName) where T : UnityEngine.Object;
+		Task<T> LoadAssetSync<T>(string assetName) where T : UnityEngine.Object;
 
 		/// <summary>
 		/// 加载资源

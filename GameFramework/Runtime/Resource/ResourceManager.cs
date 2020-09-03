@@ -147,6 +147,29 @@ namespace Wanderer.GameFramework
             return _resourceHelper?.LoadAsset<T>(assetBundleName, assetName);
         }
 
+         /// <summary>
+        /// 加载资源 -- 同步加载
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
+        public Task<T> LoadAssetSync<T>(string assetName) where T : UnityEngine.Object
+        {
+            return _resourceHelper?.LoadAssetSync<T>(assetName);
+        }
+
+        /// <summary>
+        /// 加载资源
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetBundleName"></param>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
+        public Task<T> LoadAsset<T>(string assetName) where T : UnityEngine.Object
+        {
+            return _resourceHelper?.LoadAsset<T>(assetName);
+        }
+
         /// <summary>
         /// 卸载资源 主要为卸载AssetBundle
         /// </summary>

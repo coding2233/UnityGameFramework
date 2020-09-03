@@ -267,12 +267,7 @@ namespace Wanderer.GameFramework
             //整理全部的资源并生成配置文件
             string assetContent = GetAssetsFromAssetBundle(buildPath,manifest);
             string assetsTxtPath=Path.Combine(buildPath,_assetsTxt);
-            byte[] buffer= System.Text.Encoding.UTF8.GetBytes(assetContent);
-            using (var stream = new EncryptFileStream(assetsTxtPath, FileMode.Create))
-            {
-                stream.Write(buffer, 0, buffer.Length);
-            }
-           // File.WriteAllBytes(Path.Combine(buildPath,"assets"),System.Text.Encoding.UTF8.GetBytes(assetContent));
+            File.WriteAllText(Path.Combine(buildPath,"assets"),assetContent);
             //assetbundle
             List<string> assetNames = new List<string>();
             assetNames.Add(_assetsTxt);
@@ -285,9 +280,7 @@ namespace Wanderer.GameFramework
                 assetHashInfo.Name = assetNames[i];
                 string filePath = Path.Combine(buildPath, assetNames[i]);
                 byte[] data = FileUtility.GetBytes(filePath);
-                assetHashInfo.Size = data.Length > 1024 ? (int)(data.Length / 1024.0f) : 1;
-                assetHashInfo.Hash = FileUtility.GetFileMD5(data);
-                //加密
+                 //加密
                 if (_config.IsEncrypt)
                 {
                     using (var stream = new EncryptFileStream(filePath, FileMode.Create))
@@ -295,6 +288,8 @@ namespace Wanderer.GameFramework
                         stream.Write(data, 0, data.Length);
                     }
                 }
+                assetHashInfo.Size = data.Length > 1024 ? (int)(data.Length / 1024.0f) : 1;
+                assetHashInfo.Hash = FileUtility.GetFileMD5(data);
                 assetVersionInfo.AssetHashInfos.Add(assetHashInfo);
                 //删除manifest文件
                 string manifestPath = Path.Combine(buildPath, assetNames[i] + ".manifest");

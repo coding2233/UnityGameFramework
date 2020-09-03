@@ -42,4 +42,11 @@ namespace Wanderer.GameFramework
 		public string AssetName;
 	}
 
+	/// <summary>
+	/// 资源路径对应Assetbundle对应的事件
+	/// </summary>
+	public class ResourceAssetPathsMapReadyEventArgs:GameEventArgs<ResourceAssetPathsMapReadyEventArgs>
+	{
+
+	}
 }
