@@ -15,5 +15,7 @@ namespace Wanderer.GameFramework
         public abstract void OnUpdate();
 
         public abstract void OnStop();
+
+        public abstract void OnClose();
     }
 }

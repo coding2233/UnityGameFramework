@@ -11,6 +11,13 @@ namespace Wanderer.GameFramework
     public abstract class FSM<T> : FSMBase where T : FSM<T>
     {
         protected FSMState<T> _curState;
+        public FSMState<T> CurrentState
+        {
+            get
+            {
+                return _curState;
+            }
+        }
         protected readonly Dictionary<Type, FSMState<T>> _allState = new Dictionary<Type, FSMState<T>>();
         protected FSMState<T> _startState;
         //是否有覆盖当前的开始状态
@@ -52,6 +59,7 @@ namespace Wanderer.GameFramework
                             else if(attr.StateType == FSMStateType.OverStart)
                             {
                                 _startState = instance;
+                                _hasOverStartState=true;
                             }
                                 
                         }
@@ -86,6 +94,15 @@ namespace Wanderer.GameFramework
         {
             _curState?.OnExit(this);
             _curState = null;
+        }
+
+        public override void OnClose()
+        {
+            _allState.Clear();
+            _hasOverStartState=false;
+            Context=null;
+            _startState=null;
+            _curState=null;
         }
 
         public virtual void ChangeState<TState>() where TState : FSMState<T>

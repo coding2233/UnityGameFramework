@@ -6,7 +6,7 @@ using System;
 
 namespace Wanderer.GameFramework
 {
-    [System.AttributeUsage(AttributeTargets.Class)]
+    [System.AttributeUsage(AttributeTargets.Class,Inherited=true)]
     public class FSMAttribute : Attribute
     {
         public FSMStateType StateType { get; protected set; }

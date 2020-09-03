@@ -15,6 +15,6 @@ namespace Wanderer.GameFramework
     [GameState]
     public partial class PreloadState : GameState
     {
-
+     
     }
 }

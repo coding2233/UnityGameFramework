@@ -22,11 +22,21 @@ namespace Wanderer.GameFramework
             }
             else
             {
-                t = new T();
-                _fsms.Add(typeof(T), t);
-                _updates.Add(t);
+               t= null;
             }
             return t;
+        }
+        
+        public bool HasFSM<T>()where T : FSM<T>, new()
+        {
+            return _fsms.ContainsKey(typeof(T));
+        }
+
+        public void AddFSM<T>()where T : FSM<T>, new()
+        {
+            T t = new T();
+            _fsms.Add(typeof(T), t);
+            _updates.Add(t);
         }
 
         public void RemoveFSM<T>() where T : FSM<T>, new()

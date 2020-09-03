@@ -4,7 +4,7 @@
 
 namespace Wanderer.GameFramework
 {
-   [FSM()]
+    [FSM()]
     public abstract class FSMState<T> where T : FSM<T>
     {
         public virtual void OnInit(FSM<T> fsm)
