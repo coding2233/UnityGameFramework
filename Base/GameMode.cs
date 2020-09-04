@@ -47,7 +47,11 @@ namespace Wanderer.GameFramework
         /// <summary>
         /// 资源更新的路径
         /// </summary>
-        public string ResUpdatePath = "";
+        public string ResOfficialUpdatePath="";
+        /// <summary>
+        /// 测试更新的路径
+        /// </summary>
+        public string ResTestUpdatePath="";
         /// <summary>
         /// 默认是否需要从StreamingAsset里面拷贝到可读文件夹中
         /// </summary>
@@ -83,7 +87,8 @@ namespace Wanderer.GameFramework
 
             #region resource
             Resource.ResUpdateType = ResUpdateType;
-            Resource.ResUpdatePath = ResUpdatePath;
+            Resource.ResOfficialUpdatePath = ResOfficialUpdatePath;
+            Resource.ResTestUpdatePath = ResTestUpdatePath;
             Resource.LocalPathType = LocalPathType;
             Resource.DefaultInStreamingAsset = DefaultInStreamingAsset;
 

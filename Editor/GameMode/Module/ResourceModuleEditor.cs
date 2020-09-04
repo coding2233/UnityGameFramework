@@ -57,10 +57,16 @@ namespace Wanderer.GameFramework
                 //(ResourceUpdateType)EditorGUILayout.EnumPopup("Resource Update Type", _gameMode.ResUpdateType);
                 if (_gameMode.ResUpdateType == ResourceUpdateType.Update)
                 {
-                    string resUpdatePath = EditorGUILayout.TextField("Resource Update Path", _gameMode.ResUpdatePath);
-                    if (!resUpdatePath.Equals(_gameMode.ResUpdatePath))
+                    string officialUpdatePath = EditorGUILayout.TextField("Official Update Path", _gameMode.ResOfficialUpdatePath);
+                    if (!officialUpdatePath.Equals(_gameMode.ResOfficialUpdatePath))
                     {
-                        _gameMode.ResUpdatePath = resUpdatePath;
+                        _gameMode.ResOfficialUpdatePath = officialUpdatePath;
+                        EditorUtility.SetDirty(_gameMode);
+                    }
+                    string testUpdatePath = EditorGUILayout.TextField("Test Update Path", _gameMode.ResTestUpdatePath);
+                    if (!testUpdatePath.Equals(_gameMode.ResTestUpdatePath))
+                    {
+                        _gameMode.ResTestUpdatePath = testUpdatePath;
                         EditorUtility.SetDirty(_gameMode);
                     }
                     _gameMode.LocalPathType =

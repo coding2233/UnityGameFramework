@@ -38,6 +38,9 @@ namespace Wanderer.GameFramework
         private Dictionary<string, string> _downloadResouces;
         //余下的资源
         private List<string> _remainingResources;
+
+        //远程更新的路径
+        private string _remoteUpdatePath= null;
         #endregion
 
         #region 重写函数
@@ -51,6 +54,13 @@ namespace Wanderer.GameFramework
 
              _downloadResouces = new Dictionary<string, string>();
             _remainingResources = new List<string>();
+
+            #if TEST
+             _remoteUpdatePath=GameMode.Resource.ResTestUpdatePath;
+            #else
+            _remoteUpdatePath=GameMode.Resource.ResOfficialUpdatePath;
+            #endif
+
         }
 
         public override void OnEnter(FSM<GameStateContext> fsm)
@@ -117,17 +127,16 @@ namespace Wanderer.GameFramework
             HttpReadTextSuccessEventArgs ne = (HttpReadTextSuccessEventArgs)e;
             if (ne != null)
             {
-                if (ne.Url == Path.Combine(GameMode.Resource.ResUpdatePath, _assetPlatformVersionText))
+                if (ne.Url == Path.Combine(_remoteUpdatePath, _assetPlatformVersionText))
                 {
                     PlatformVersionInfo assetPlatform = JsonUtility.FromJson<PlatformVersionInfo>(ne.Content);
                     string platformName = Utility.GetPlatformName();
                     if (assetPlatform.Platforms.Contains(platformName))
                     {
                         //更新远程资源的路径
-                        GameMode.Resource.ResUpdatePath =
-                            Path.Combine(GameMode.Resource.ResUpdatePath, platformName);
+                        _remoteUpdatePath =Path.Combine(_remoteUpdatePath, platformName);
                         //读取远程的文本
-                        string remotePath = Path.Combine(GameMode.Resource.ResUpdatePath, _assetVersionTxt);
+                        string remotePath = Path.Combine(_remoteUpdatePath, _assetVersionTxt);
                         GameMode.WebRequest.ReadHttpText(remotePath);
                     }
                 }
@@ -201,7 +210,7 @@ namespace Wanderer.GameFramework
         //加载远程版本信息
         private void LoadRemoteVersion()
         {
-            string remotePath = Path.Combine(GameMode.Resource.ResUpdatePath, _assetPlatformVersionText);
+            string remotePath = Path.Combine(_remoteUpdatePath, _assetPlatformVersionText);
             GameMode.WebRequest.ReadHttpText(remotePath);
         }
 
@@ -220,7 +229,7 @@ namespace Wanderer.GameFramework
                 //本地有响应文件则跳过
                 if (_localVersion != null && _localVersion.AssetHashInfos != null && _localVersion.AssetHashInfos.Contains(item))
                     continue;
-                string remoteUrl = Path.Combine(GameMode.Resource.ResUpdatePath, item.Name);
+                string remoteUrl = Path.Combine(_remoteUpdatePath, item.Name);
                 //获取本地文件的路径
                 string localPath = Path.Combine(GameMode.Resource.LocalPath, item.Name, ".temp");
 

@@ -74,9 +74,16 @@ namespace Wanderer.GameFramework
             }
         }
 
-        /// 资源更新的路径
+        /// <summary>
+        /// 正式服的更新路径
         /// </summary>
-        public string ResUpdatePath = "";
+        public string ResOfficialUpdatePath = "";
+        
+        /// <summary>
+        /// 测试服的更新路径
+        /// </summary>
+        public string ResTestUpdatePath = "";
+
 
         #endregion
 
