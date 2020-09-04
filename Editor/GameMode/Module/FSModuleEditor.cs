@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Profiling;
-using System.Reflection;
+
 
 namespace Wanderer.GameFramework
 {
@@ -17,7 +17,8 @@ namespace Wanderer.GameFramework
         Dictionary<Type,FSMStateType> _fsmStateType=new Dictionary<Type, FSMStateType>();
         //图标
         private Texture2D[] _fsmIcons;
-
+        //当前正在运行的状态的
+        List<string> _currentStateFullNames = new List<string>();
         public FSModuleEditor(string name, Color mainColor, GameMode gameMode) : base(name, mainColor, gameMode)
         {
             List<Type> types=new List<Type>();
@@ -74,13 +75,18 @@ namespace Wanderer.GameFramework
             GUILayout.BeginVertical("HelpBox",GUILayout.Height(150));
             _scrollPos= GUILayout.BeginScrollView(_scrollPos);
             //正在运行
-            //List<string> currentStateFullNames = new List<string>();
+            _currentStateFullNames.Clear();
             if (EditorApplication.isPlaying)
             {
-                // PropertyInfo propertyInfo = typeof(FSManager).GetProperty("_fsms",BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public);
-                // object fsms = propertyInfo.GetValue(GameMode.FSM);
-                // PropertyInfo currentStatePropertyInfo = item.Key.GetProperty("CurrentState");
-                // currentState = currentStatePropertyInfo.GetValue(GameMode.FSM.GetFSM(item.Key));
+                BindingFlags flag = BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public;
+                FieldInfo prfieldInfo = typeof(FSManager).GetField("_fsms",flag);
+                Dictionary<Type, FSMBase> fsms = (Dictionary<Type, FSMBase>)prfieldInfo.GetValue(GameMode.FSM);
+                foreach (var item in fsms.Values)
+                {
+                    prfieldInfo = item.GetType().GetField("_curState",flag);
+                    string fullName = prfieldInfo.GetValue(item).GetType().FullName;
+                    _currentStateFullNames.Add(fullName);
+                }
             }
 
             foreach (var item in _fsmTypes)
@@ -92,10 +98,17 @@ namespace Wanderer.GameFramework
                     Type stateType = item.Value[i];
                     GUILayout.BeginHorizontal();
                     Texture2D ico= _fsmIcons[(int)_fsmStateType[stateType]];
-                    // if(currentState!=null && currentState.GetType()==stateType)
-                    // {
-                    //     ico = _fsmIcons[4];
-                    // }
+                    if(_currentStateFullNames.Count>0)
+                    {
+                        for (int m = 0; m < _currentStateFullNames.Count; m++)
+                        {
+                            if(_currentStateFullNames[m].Equals(stateType.FullName))
+                            {
+                                ico = _fsmIcons[4];
+                                break;
+                            }
+                        }
+                    }
                     GUILayout.Label(ico,GUILayout.Width(20),GUILayout.Height(20));
                     GUILayout.Label( stateType.FullName);
                     GUILayout.EndHorizontal();
