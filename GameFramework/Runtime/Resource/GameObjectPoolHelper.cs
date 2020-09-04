@@ -45,7 +45,7 @@ namespace Wanderer.GameFramework
 			if (prefabInfo.Prefab == null)
 			{
 				//根据assetName,直接从ResourceManager里面加载
-				prefabInfo.Prefab = await GameFrameworkMode.GetModule<ResourceManager>().LoadAsset<GameObject>(assetBundleName,assetName);
+				prefabInfo.Prefab = await GameFrameworkMode.GetModule<ResourceManager>().LoadAsset<GameObject>(assetName);
 				if (prefabInfo.Prefab == null)
 				{
 					Debug.Log("预设资源为null:" + assetName);

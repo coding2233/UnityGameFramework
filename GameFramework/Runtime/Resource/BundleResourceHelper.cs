@@ -28,25 +28,21 @@ namespace Wanderer.GameFramework
         private string _readPath;
         //资源引用
         private AssetBundleManifest _mainfest;
+        //默认加密
+        private bool _isEncrypt=true;
 
-        private bool _isEncrypt;
-        //解密密钥
-      //  private EnciphererKey _enciphererkeyAsset;
-        //所有资源AssetBundle引用
-        private readonly Dictionary<string, AssetBundle> _allAssets = new Dictionary<string, AssetBundle>();
-        //所有AssetBundle包含的资源
-        private readonly Dictionary<string, KeyValuePair<AssetBundle, string[]>> _allAssetBundles =
-            new Dictionary<string, KeyValuePair<AssetBundle, string[]>>();
+        //当前激活的Assetbundle
+        private readonly Dictionary<string, AssetBundle> _liveAssetBundle = new Dictionary<string, AssetBundle>();
+        //assetbundle的引用计数
+       private readonly Dictionary<AssetBundle,int> _assetBundleReferenceCount=new Dictionary<AssetBundle, int>();
         //资源路径映射ab包的名称
         private readonly Dictionary<string,string> _assetsPathMapAssetbundleName=new Dictionary<string, string>();
 
-        /// <summary>
-        /// 设置资源的路径,默认是为只读路径:Application.streamingAssetsPath;
-        /// </summary>
-        /// <param name="path"></param>
-        public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles", bool isEncrypt = true)
+        #region  IResourceHelper
+
+        public void SetResource(PathType pathType,Action callback)
         {
-            switch (pathType)
+             switch (pathType)
             {
                 case PathType.ReadOnly:
                     _readPath = Application.streamingAssetsPath;
@@ -70,200 +66,91 @@ namespace Wanderer.GameFramework
 
             _pathType=pathType;
 
-
-            string rootAbPath = Path.Combine(_readPath, rootAssetBundle);
-            _readPath = Path.GetDirectoryName(rootAbPath);
-
-            _isEncrypt=isEncrypt;
-
             //加载主包
-            LoadPlatformMainfest(rootAbPath);
-            //加载所有的资源路径与ab包名称的映射
-            LoadAllAssetPathForAssetbundle(Path.Combine(_readPath,"assets"));
+            LoadPlatformMainfest(_readPath,callback);
         }
 
-        /// <summary>
-        /// 加载ab包
-        /// </summary>
-        /// <param name="assetBundleName"></param>
-        /// <returns></returns>
-        public async Task<AssetBundle> LoadAssetBundle(string assetBundleName)
+        public void LoadAsset<T>(string assetName, Action<T> callback) where T : Object
         {
-            //加载Assetbundle
-            AssetBundle assetBundle;
-            KeyValuePair<AssetBundle, string[]> assetBundles;
-            if (!_allAssetBundles.ContainsKey(assetBundleName))
-            {
-                string assetBundlePath = Path.Combine(_readPath, assetBundleName);
-                // if (!File.Exists(assetBundlePath))
-                //     throw new GameException("AssetBundle is Null");
-                //加载assetbundle
-                assetBundle = await LoadAssetBundleFromPath(assetBundlePath);
-                //存储资源名称
-                string[] assetNames = assetBundle.GetAllAssetNames();
-                if (assetBundle.isStreamedSceneAssetBundle)
-                    assetNames = assetBundle.GetAllScenePaths();
-                foreach (var name in assetNames)
-                {
-                    if (!_allAssets.ContainsKey(name))
-                        _allAssets.Add(name, assetBundle);
-                }
-                //存储assetbundle
-                assetBundles = new KeyValuePair<AssetBundle, string[]>(assetBundle, assetNames);
-                _allAssetBundles[assetBundleName] = assetBundles;
-            }
-            return assetBundles.Key;
-        }
-
-        /// <summary>
-        /// 加载资源 同步加载
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public  T LoadAssetSync<T>(string assetBundleName, string assetName) where T : Object
-        {
-            AssetBundle assetBundle;
-            if (_allAssets.TryGetValue(assetName, out assetBundle))
-            {
-                 return assetBundle.LoadAsset<T>(assetName);
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public async Task<T> LoadAsset<T>(string assetBundleName, string assetName) where T : Object
-        {
-            //转小写
-            assetName = assetName.ToLower();
-
-            //加载Assetbundle
-            AssetBundle assetBundle;
-
-            if (!_allAssets.TryGetValue(assetName, out assetBundle))
-            {
-                string assetBundlePath = Path.Combine(_readPath, assetBundleName);
-                if (!File.Exists(assetBundlePath))
-                    throw new GameException("AssetBundle is Null");
-                //加载assetbundle
-                assetBundle = await LoadAssetBundleFromPath(assetBundlePath);
-                //存储资源名称
-                string[] assetNames = assetBundle.GetAllAssetNames();
-                if (assetBundle.isStreamedSceneAssetBundle)
-                    assetNames = assetBundle.GetAllScenePaths();
-                foreach (var name in assetNames)
-                {
-                    if (!_allAssets.ContainsKey(name))
-                        _allAssets.Add(name, assetBundle);
-                }
-                //存储assetbundle
-                _allAssetBundles[assetName] = new KeyValuePair<AssetBundle, string[]>(assetBundle, assetNames);
-            }
-
-            //加载依赖项
-            await LoadDependenciesAssetBundel(assetBundleName);
-
-            //加载资源
-            var asset = await assetBundle.LoadAssetAsync(assetName);
-
-            return (T)asset;
-        }
-
-         /// <summary>
-		/// 加载资源 -- 同步加载
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="assetName"></param>
-		/// <returns></returns>
-		public async Task<T> LoadAssetSync<T>(string assetName) where T : UnityEngine.Object
-        {
-             assetName=assetName.ToLower();
             if(_assetsPathMapAssetbundleName.TryGetValue(assetName,out string abName))
             {
-                if (!_allAssets.TryGetValue(assetName, out AssetBundle assetBundle))
+                if(_liveAssetBundle.TryGetValue(abName,out AssetBundle assetBundle))
                 {
-                     await LoadAssetBundle(abName);
+                     T t = assetBundle.LoadAsset<T>(assetName);
+                    callback.Invoke(t);
+                    SetAssetBundleReferenceCount(assetBundle,+1);
+                 
                 }
-               return LoadAssetSync<T>(abName,assetName);
-                
-            }
-            return null;
-        }
-
-		/// <summary>
-		/// 加载资源
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="assetBundleName"></param>
-		/// <param name="assetName"></param>
-		///  <param name="unload"></param>
-		/// <returns></returns>
-		public Task<T> LoadAsset<T>(string assetName) where T : UnityEngine.Object
-        {
-            assetName=assetName.ToLower();
-            if(_assetsPathMapAssetbundleName.TryGetValue(assetName,out string abName))
-            {
-                return LoadAsset<T>(abName,assetName);
-            }
-            return null;
-        }
-
-     
-
-        /// <summary>
-        /// 卸载掉资源
-        /// </summary>
-        /// <param name="assetBundleName"></param>
-        /// <param name="unload"></param>
-        public void UnloadAsset(string assetBundleName, bool unload = false)
-        {
-            KeyValuePair<AssetBundle, string[]> assetBundles;
-            if (_allAssetBundles.TryGetValue(assetBundleName, out assetBundles))
-            {
-                if (!unload)
-                    assetBundles.Key.Unload(false);
                 else
                 {
-                    foreach (var item in assetBundles.Value)
-                    {
-                        if (_allAssets.ContainsKey(item))
-                            _allAssets.Remove(item);
-                    }
-                    assetBundles.Key.Unload(true);
-                    _allAssetBundles.Remove(assetBundleName);
+                    LoadAssetBundle(abName,(ab)=>{
+                        T t = ab.LoadAsset<T>(assetName);
+                        callback.Invoke(t);
+                        SetAssetBundleReferenceCount(ab,+1);
+                    });
                 }
-
+            }
+            else
+            {
+                callback?.Invoke(null);
             }
         }
 
-        /// <summary>
+        public void UnloadAsset(string assetName)
+        {
+            if(_assetsPathMapAssetbundleName.TryGetValue(assetName,out string abName))
+            {
+                if(_liveAssetBundle.TryGetValue(abName,out AssetBundle assetBundle))
+                {
+                    SetAssetBundleReferenceCount(assetBundle,-1);
+                }
+            }
+        }
+
+        public void UnloadAssetBunlde(string assetBundleName, bool unload = false)
+        {
+            if(_liveAssetBundle.TryGetValue(assetBundleName,out AssetBundle assetBundle))
+            {
+                if(_assetBundleReferenceCount.ContainsKey(assetBundle))
+                {
+                    _assetBundleReferenceCount.Remove(assetBundle);
+                }
+                assetBundle.Unload(unload);
+            }
+        }
+
+          /// <summary>
         /// 异步加载场景
         /// </summary>
         /// <param name="sceneName"></param>
-        public async Task<AsyncOperation> LoadSceneAsync(string assetBundleName, string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
+        public async void LoadSceneAsync(string sceneName, LoadSceneMode mode,Action<AsyncOperation> callback)
         {
             AsyncOperation asyncOperation = null;
             try
             {
-                string assetBundlePath = Path.Combine(_readPath, assetBundleName);
-
-                AssetBundle assetBundle = await LoadAssetBundleFromPath(assetBundlePath);
-                //加载依赖项
-                await LoadDependenciesAssetBundel(assetBundleName);
-
-                asyncOperation = SceneManager.LoadSceneAsync(sceneName, mode);
-                //场景加载完成卸载相关的引用
-                asyncOperation.completed += (operation02) =>
+                if(_assetsPathMapAssetbundleName.TryGetValue(sceneName,out string assetBundleName))
                 {
-                    assetBundle.Unload(false);
-                };
+                    string assetBundlePath = Path.Combine(_readPath, assetBundleName);
+                    //加载依赖项
+                    await LoadDependenciesAssetBundle(assetBundleName);
+                    //添加
+                    AssetBundle assetBundle = await LoadAssetBundleFromPath(assetBundlePath);
+                    
+                    asyncOperation = SceneManager.LoadSceneAsync(sceneName, mode);
+
+                    callback?.Invoke(asyncOperation);
+
+                    SetAssetBundleReferenceCount(assetBundle,+1);
+                    //场景加载完成卸载相关的引用
+                    // asyncOperation.completed += (operation02) =>
+                    // {
+                    //     assetBundle.Unload(false);
+                    // };
+                }
+                else
+                {
+                    throw new GameException($"Can't find scene assetbundle :{sceneName}");
+                }
 
             }
             catch (GameException ex)
@@ -271,7 +158,6 @@ namespace Wanderer.GameFramework
                 Debug.LogError(ex.ToString());
             }
 
-            return asyncOperation;
         }
 
         /// <summary>
@@ -280,8 +166,17 @@ namespace Wanderer.GameFramework
         /// <param name="sceneName"></param>
         public AsyncOperation UnloadSceneAsync(string sceneName)
         {
+            if(_assetsPathMapAssetbundleName.TryGetValue(sceneName,out string assetBundleName))
+            {
+                if(_liveAssetBundle.TryGetValue(sceneName,out AssetBundle assetBundle))
+                {
+                    SetAssetBundleReferenceCount(assetBundle,-1);
+                }
+            }
             return UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneName);
         }
+
+        #endregion
 
 
         #region 事件回调
@@ -290,12 +185,14 @@ namespace Wanderer.GameFramework
         /// </summary>
         public void Clear()
         {
-            foreach (var item in _allAssets.Values)
-                if (item != null)
-                    item.Unload(true);
-            _allAssets.Clear();
-            _allAssetBundles.Clear();
-            _mainfest = null;
+            _assetsPathMapAssetbundleName.Clear();
+            _assetBundleReferenceCount.Clear();
+            _mainfest=null;
+            foreach (var item in _liveAssetBundle.Values)
+            {
+                item.Unload(true);
+            }
+            _liveAssetBundle.Clear();
         }
 
         #endregion
@@ -304,13 +201,36 @@ namespace Wanderer.GameFramework
         /// <summary>
         /// 加载mainfest -- LoadFromFile
         /// </summary>
-        private async void LoadPlatformMainfest(string rootBundlePath)
+        private async void LoadPlatformMainfest(string rootPath,Action callback)
         {
             try
             {
+                AssetBundleVersionInfo versionInfo;
+                string assetVersionPath = Path.Combine(rootPath,"AssetVersion.txt");
+                using(UnityWebRequest request = new UnityWebRequest(assetVersionPath))
+                {
+                    request.downloadHandler=new DownloadHandlerBuffer();
+                    await request.SendWebRequest();
+                    if(request.isNetworkError)
+                    {
+                        throw new GameException($"Can't read assetbundle file : {assetVersionPath} error: {request.error}");
+                    }
+                    string content = request.downloadHandler.text;
+                    versionInfo = JsonUtility.FromJson<AssetBundleVersionInfo>(content);
+                    if(versionInfo==null)
+                    {
+                        throw new GameException($"Can't deserialize [AssetVersion.txt] file: {assetVersionPath} content:{content} error: {request.error}");
+                    }
+                }
+
+                //取根目录的assetbundle
+                string rootBundlePath = Path.Combine(rootPath,versionInfo.ManifestAssetBundle);
                 AssetBundle mainfestAssetBundle = await LoadAssetBundleFromPath(rootBundlePath);
                 _mainfest = mainfestAssetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
                 mainfestAssetBundle.Unload(false);
+
+                //加载所有的资源路径与ab包名称的映射
+                LoadAllAssetPathForAssetbundle(Path.Combine(_readPath,"assets"),callback);
             }
             catch (GameException ex)
             {
@@ -323,7 +243,7 @@ namespace Wanderer.GameFramework
         /// </summary>
         /// <param name="assetsPath"></param>
         /// <returns></returns>
-        private async void LoadAllAssetPathForAssetbundle(string assetsPath)
+        private async void LoadAllAssetPathForAssetbundle(string assetsPath,Action callback)
         {
             using(UnityWebRequest request = new UnityWebRequest(assetsPath))
             {
@@ -355,8 +275,29 @@ namespace Wanderer.GameFramework
                 }
 
                 //路径准备好了
-                GameFrameworkMode.GetModule<EventManager>().Trigger<ResourceAssetPathsMapReadyEventArgs>(this);
+                callback?.Invoke();
+               // GameFrameworkMode.GetModule<EventManager>().Trigger<ResourceAssetPathsMapReadyEventArgs>(this);
             }
+        }
+
+          //加载asstbundle
+        private async void LoadAssetBundle(string assetBundleName, Action<AssetBundle> callback)
+        {
+             //加载Assetbundle
+            AssetBundle assetBundle;
+            if (!_liveAssetBundle.TryGetValue(assetBundleName,out assetBundle))
+            {
+                string assetBundlePath = Path.Combine(_readPath, assetBundleName);
+                //先加载引用的assetbundle 
+                await LoadDependenciesAssetBundle(assetBundleName);
+                //加载assetbundle
+                assetBundle = await LoadAssetBundleFromPath(assetBundlePath);
+                //存储assetbundle
+                _liveAssetBundle[assetBundleName]=assetBundle;
+                //assetbundle 引用计数
+                _assetBundleReferenceCount[assetBundle]=0;
+            }
+            callback.Invoke(assetBundle);
         }
 
         //同步加载AssetBundle
@@ -393,32 +334,21 @@ namespace Wanderer.GameFramework
         }
 
         //加载引用的assetbundle --引用的assetbundle不卸载
-        private async Task LoadDependenciesAssetBundel(string assetBundleName)
+        private async Task LoadDependenciesAssetBundle(string assetBundleName)
         {
             //加载相关依赖 依赖暂时不异步加载了
             string[] dependencies = _mainfest.GetAllDependencies(assetBundleName);
             foreach (var item in dependencies)
             {
-                if (_allAssetBundles.ContainsKey(item))
+                if(_liveAssetBundle.ContainsKey(item))
                     continue;
 
                 string dependenciesBundlePath = Path.Combine(_readPath, item);
                 AssetBundle assetBundle = await LoadAssetBundleFromPath(dependenciesBundlePath);
-
-                //存储资源名称
-                string[] assetNames = assetBundle.GetAllAssetNames();
-                if (assetBundle.isStreamedSceneAssetBundle)
-                    assetNames = assetBundle.GetAllScenePaths();
-                foreach (var name in assetNames)
-                {
-                    if (!_allAssets.ContainsKey(name))
-                        _allAssets.Add(name, assetBundle);
-                }
-                //存储assetbundle
-                _allAssetBundles[item] = new KeyValuePair<AssetBundle, string[]>(assetBundle, assetNames);
+                  //存储资源名称
+                _liveAssetBundle[item]= assetBundle;
             }
         }
-
 
         /// <summary>
         /// 从StreamingAsset下面读取文件
@@ -464,11 +394,17 @@ namespace Wanderer.GameFramework
             
         }
 
-     
-
-   
-
-
+        /// <summary>
+        /// 设置assetbundle的引用计数
+        /// </summary>
+        /// <param name="assetBundle"></param>
+        private void SetAssetBundleReferenceCount(AssetBundle assetBundle,int interval)
+        {
+            if(_assetBundleReferenceCount.ContainsKey(assetBundle))
+            {
+                _assetBundleReferenceCount[assetBundle]+=interval;
+            }
+        }
         #endregion
 
     }

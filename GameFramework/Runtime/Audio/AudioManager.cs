@@ -193,15 +193,15 @@ namespace Wanderer.GameFramework
 		//添加音频
 		private async Task<bool> AddAuioClip(string assetBundleName,string audioClipPath, Dictionary<string, AudioClip> clips)
 		{
-			if (!clips.ContainsKey(audioClipPath))
-			{
-				AudioClip audioClip = await _resourceManager?.LoadAsset<AudioClip>(assetBundleName,audioClipPath);
-				if (audioClip != null)
-				{
-					clips.Add(audioClipPath, audioClip);
-					return true;
-				}
-			}
+			// if (!clips.ContainsKey(audioClipPath))
+			// {
+			// 	AudioClip audioClip = await _resourceManager?.LoadAsset<AudioClip>(assetBundleName,audioClipPath);
+			// 	if (audioClip != null)
+			// 	{
+			// 		clips.Add(audioClipPath, audioClip);
+			// 		return true;
+			// 	}
+			// }
 
 			return false;
 		}

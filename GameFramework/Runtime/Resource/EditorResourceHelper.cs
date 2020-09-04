@@ -24,79 +24,41 @@ namespace Wanderer.GameFramework
 {
     public class EditorResourceHelper : IResourceHelper
     {
-        public void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles", bool isEncrypt=false)
+        public void SetResource(PathType pathType,Action callback)
         {
+           callback?.Invoke();
         }
 
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public Task<T> LoadAsset<T>(string assetBundleName,string assetName) where T : Object
+		public void LoadSceneAsync(string sceneName, LoadSceneMode mode ,Action<AsyncOperation> callback)
         {
-			TaskCompletionSource<T> task = new TaskCompletionSource<T>();
-			task.SetResult(AssetDatabase.LoadAssetAtPath<T>(assetName));
-			return task.Task;
-        }
-
-		
-		/// <summary>
-		/// 卸载资源 主要为卸载AssetBundle
-		/// </summary>
-		/// <param name="assetName">资源名称</param>
-		/// <param name="allAssets">是否卸载调所有资源</param>
-		public void UnloadAsset(string assetBundleName, bool unload)
-	    {
-	    }
-
-	    /// <summary>
-		/// 异步加载场景
-		/// </summary>
-		/// <param name="sceneName"></param>
-		public Task<AsyncOperation> LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
-        {
-			TaskCompletionSource<AsyncOperation> task = new TaskCompletionSource<AsyncOperation>();
-			task.SetResult(EditorSceneManager.LoadSceneAsyncInPlayMode(sceneName, new LoadSceneParameters(mode)));
-			return task.Task;
-			//  return UnitySceneManager.LoadSceneAsync(sceneName, mode);
+            AsyncOperation asyncLoadScene = EditorSceneManager.LoadSceneAsyncInPlayMode(sceneName, new LoadSceneParameters(mode));
+			callback(asyncLoadScene);
 		}
 
-        /// <summary>
-        /// 卸载场景
-        /// </summary>
-        /// <param name="sceneName"></param>
+
         public AsyncOperation UnloadSceneAsync(string sceneName)
         {
             return UnitySceneManager.UnloadSceneAsync(sceneName);
         }
 
-        /// <summary>
-        /// 清理资源
-        /// </summary>
+
+        public void LoadAsset<T>(string assetName, Action<T> callback) where T : Object
+        {
+            callback(AssetDatabase.LoadAssetAtPath<T>(assetName));
+        }
+
+        public void UnloadAsset(string assetName)
+        {
+            
+        }
+
+        public void UnloadAssetBunlde(string assetBundleName, bool unload = false)
+        {
+            
+        }
+
         public void Clear()
         {
-        }
-
-		public Task<AssetBundle> LoadAssetBundle(string assetBundleName)
-		{
-			return null;
-		}
-
-		public T LoadAssetSync<T>(string assetBundleName, string assetName) where T : Object
-		{
-			return AssetDatabase.LoadAssetAtPath<T>(assetName);
-		}
-
-        public async Task<T> LoadAssetSync<T>(string assetName) where T : Object
-        {
-			return LoadAssetSync<T>(null,assetName);
-        }
-
-        public Task<T> LoadAsset<T>(string assetName) where T : Object
-        {
-			return LoadAsset<T>(null,assetName);
         }
     }
 }

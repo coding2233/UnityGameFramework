@@ -160,7 +160,7 @@ namespace Wanderer.GameFramework
 			UIView uiView;
 			if (!_allUiViews.TryGetValue(assetConfig, out uiView))
 			{
-				GameObject uiViewSource = await _resource.LoadAsset<GameObject>(assetConfig.AssetBundleName, assetConfig.AssetPath);
+				GameObject uiViewSource = await _resource.LoadAsset<GameObject>(assetConfig.AssetPath);
 				if (uiViewSource == null)
 					throw new Exception("uiview path not found:"+ assetConfig.AssetBundleName+":"+ assetConfig.AssetPath);
 

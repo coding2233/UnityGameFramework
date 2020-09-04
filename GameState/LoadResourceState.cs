@@ -36,15 +36,10 @@ namespace Wanderer.GameFramework
 
             GameMode.Event.AddListener<ResourceAssetPathsMapReadyEventArgs>(OnResourceAssetPathsMapReady);
 
-            string localPath = Path.Combine(GameMode.Resource.LocalPath,  "AssetVersion.txt");//Utility.GetPlatformName(),
-            if (!File.Exists(localPath))
-                throw new GameException($"can't find AssetVersion: {localPath}");
-            AssetBundleVersionInfo versionInfo = JsonUtility.FromJson<AssetBundleVersionInfo>(File.ReadAllText(localPath));
-
             //设置ab包的加载方式
             GameMode.Resource.SetResourceHelper(new BundleResourceHelper());
-            //加载ab包的mainfest文件
-            GameMode.Resource.SetMainfestAssetBundle(versionInfo.ManifestAssetBundle);//versionInfo.IsEncrypt
+            //资源管理类的初始设置
+            GameMode.Resource.SetResource();
         }
 
         public override void OnExit(FSM<GameStateContext> fsm)

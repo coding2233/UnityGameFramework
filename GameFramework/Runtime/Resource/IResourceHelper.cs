@@ -20,64 +20,42 @@ namespace Wanderer.GameFramework
         /// 设置资源的路径,默认是为只读路径:Application.streamingAssetsPath;
         /// </summary>
         /// <param name="path"></param>
-        void SetResourcePath(PathType pathType, string rootAssetBundle = "AssetBundles/AssetBundles", bool isEncrypt = false);
+        void SetResource(PathType pathType,Action callback);
+
+		// /// <summary>
+		// /// 加载assetbundle
+		// /// </summary>
+		// /// <param name="assetBundleName"></param>
+		// /// <returns></returns>
+		// void LoadAssetBundle(string assetBundleName,Action<AssetBundle> callback);
 
 		/// <summary>
-		/// 加载assetbundle
-		/// </summary>
-		/// <param name="assetBundleName"></param>
-		/// <returns></returns>
-		Task<AssetBundle> LoadAssetBundle(string assetBundleName);
-
-		/// <summary>
-		/// 加载资源 -- 同步加载
+		/// 加载资源 
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="assetName"></param>
 		/// <returns></returns>
-		T LoadAssetSync<T>(string assetBundleName, string assetName) where T : UnityEngine.Object;
+		void LoadAsset<T>(string assetName,Action<T> callback) where T : UnityEngine.Object;
 
 		/// <summary>
-		/// 加载资源
+		/// 卸载资源 -- 取消掉资源计数
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="assetBundleName"></param>
 		/// <param name="assetName"></param>
-		///  <param name="unload"></param>
-		/// <returns></returns>
-		Task<T> LoadAsset<T>(string assetBundleName,string assetName) where T : UnityEngine.Object;
-		
-        /// <summary>
-		/// 加载资源 -- 同步加载
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="assetName"></param>
-		/// <returns></returns>
-		Task<T> LoadAssetSync<T>(string assetName) where T : UnityEngine.Object;
-
-		/// <summary>
-		/// 加载资源
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="assetBundleName"></param>
-		/// <param name="assetName"></param>
-		///  <param name="unload"></param>
-		/// <returns></returns>
-		Task<T> LoadAsset<T>(string assetName) where T : UnityEngine.Object;
+		void UnloadAsset(string assetName);
 
         /// <summary>
         /// 卸载资源 主要为卸载AssetBundle
         /// </summary>
         /// <param name="assetBundleName">资源名称</param>
         /// <param name="unload">是否卸载调所有资源</param>
-        void UnloadAsset(string assetBundleName, bool unload=false);
+        void UnloadAssetBunlde(string assetBundleName, bool unload=false);
 
         /// <summary>
         /// 异步加载场景
         /// </summary>
         /// <param name="assetBundleName"></param>
         /// <param name="sceneName"></param>
-        Task<AsyncOperation> LoadSceneAsync(string assetBundleName,string sceneName, LoadSceneMode mode = LoadSceneMode.Additive);
+        void LoadSceneAsync(string sceneName, LoadSceneMode mode,Action<AsyncOperation> callback);
 
         /// <summary>
         /// 卸载场景

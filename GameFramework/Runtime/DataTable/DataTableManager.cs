@@ -32,18 +32,18 @@ namespace Wanderer.GameFramework
 	    /// <returns></returns>
 		public async void LoadDataTable<T>(string assetBundleName,string dataTablePath) where T :class, IDataTableRow,new()
 	    {
-		    string data= (await _resource.LoadAsset<TextAsset>(assetBundleName,dataTablePath)).text;
-		    DataTable<T> dataTable = new DataTable<T>();
-		    string[] rows = data.Split('\n');
-		    foreach (var item in rows)
-		    {
-				//排除多余的数据
-			    if (string.IsNullOrEmpty(item) || rows.Length == 0 || rows[0] == "#")
-				    continue;
-			    dataTable.AddDataRow(item);
-		    }
-		    int hasCode = typeof(T).GetHashCode();
-		    _allDataTabvles[hasCode] = dataTable;
+		    // string data= (await _resource.LoadAsset<TextAsset>(assetBundleName,dataTablePath)).text;
+		    // DataTable<T> dataTable = new DataTable<T>();
+		    // string[] rows = data.Split('\n');
+		    // foreach (var item in rows)
+		    // {
+			// 	//排除多余的数据
+			//     if (string.IsNullOrEmpty(item) || rows.Length == 0 || rows[0] == "#")
+			// 	    continue;
+			//     dataTable.AddDataRow(item);
+		    // }
+		    // int hasCode = typeof(T).GetHashCode();
+		    // _allDataTabvles[hasCode] = dataTable;
 		}
 
 	    /// <summary>

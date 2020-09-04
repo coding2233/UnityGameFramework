@@ -13,6 +13,7 @@ using UnityEngine.SceneManagement;
 using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 using LoadSceneMode = UnityEngine.SceneManagement.LoadSceneMode;
 using System.Threading.Tasks;
+using System;
 
 namespace Wanderer.GameFramework
 {
@@ -106,56 +107,13 @@ namespace Wanderer.GameFramework
         }
 
         /// <summary>
-        /// 在设置BundleResourceHelper 需要调用此函数加载AssetBundle的Mainfest文件
+        /// 设置资源准备
         /// </summary>
-        /// <param name="mainfestName"></param>
-        public void SetMainfestAssetBundle(string mainfestName, bool isEncrypt = true)
+        public void SetResource()
         {
-            _resourceHelper?.SetResourcePath(LocalPathType, mainfestName, isEncrypt);
-        }
-
-        /// <summary>
-        /// 加载assetbundle
-        /// </summary>
-        /// <param name="assetBundleName"></param>
-        /// <returns></returns>
-        public Task<AssetBundle> LoadAssetBundle(string assetBundleName)
-        {
-            return _resourceHelper.LoadAssetBundle(assetBundleName);
-        }
-
-        /// <summary>
-        /// 加载资源 -- 同步加载
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public T LoadAssetSync<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
-        {
-            return _resourceHelper?.LoadAssetSync<T>(assetBundleName, assetName);
-        }
-
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public Task<T> LoadAsset<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
-        {
-            return _resourceHelper?.LoadAsset<T>(assetBundleName, assetName);
-        }
-
-         /// <summary>
-        /// 加载资源 -- 同步加载
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public Task<T> LoadAssetSync<T>(string assetName) where T : UnityEngine.Object
-        {
-            return _resourceHelper?.LoadAssetSync<T>(assetName);
+            _resourceHelper?.SetResource(LocalPathType,()=>{
+               _event.Trigger<ResourceAssetPathsMapReadyEventArgs>(this);
+            });
         }
 
         /// <summary>
@@ -167,17 +125,45 @@ namespace Wanderer.GameFramework
         /// <returns></returns>
         public Task<T> LoadAsset<T>(string assetName) where T : UnityEngine.Object
         {
-            return _resourceHelper?.LoadAsset<T>(assetName);
+            assetName= assetName.ToLower();
+            var taskResult = new TaskCompletionSource<T>();
+            _resourceHelper?.LoadAsset<T>(assetName,(t)=>{
+                taskResult.SetResult(t);
+            });
+            return taskResult.Task;
+        }
+
+         /// <summary>
+        /// 加载资源
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetBundleName"></param>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
+        public void LoadAsset<T>(string assetName,Action<T> callback) where T : UnityEngine.Object
+        {
+            assetName= assetName.ToLower();
+            _resourceHelper?.LoadAsset<T>(assetName,callback);
         }
 
         /// <summary>
-        /// 卸载资源 主要为卸载AssetBundle
+        /// 卸载资源
         /// </summary>
         /// <param name="assetBundleName">资源名称</param>
         /// <param name="unload">是否卸载所有资源</param>
-        public void UnloadAsset(string assetBundleName, bool unload = false)
+        public void UnloadAsset(string assetName)
         {
-            _resourceHelper?.UnloadAsset(assetBundleName, unload);
+            _resourceHelper?.UnloadAsset(assetName);
+        }
+
+        /// <summary>
+        /// 卸载资源
+        /// </summary>
+        /// <param name="assetBundleName"></param>
+        /// <param name="unload"></param>
+        public void UnloadAssetBunlde(string assetBundleName,bool unload=false)
+        {
+            _resourceHelper?.UnloadAssetBunlde(assetBundleName,unload);
         }
 
         /// <summary>
@@ -187,14 +173,12 @@ namespace Wanderer.GameFramework
         /// <param name="sceneName"></param>
         /// <param name="mode"></param>
         /// <returns></returns>
-        public Task<AsyncOperation> LoadSceneAsync(string assetBundleName, string sceneName, LoadSceneMode mode = LoadSceneMode.Additive)
+        public void LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
         {
-            if (_resourceHelper == null)
-                return null;
-            Task<AsyncOperation> asyncOperation = _resourceHelper.LoadSceneAsync(assetBundleName, sceneName, mode);
-            _sceneAsyncOperations.Add(sceneName, asyncOperation.Result);
-            return asyncOperation;
-
+          //  sceneName= sceneName.ToLower();
+            _resourceHelper?.LoadSceneAsync(sceneName,mode,(asyncOperation)=>{
+                _sceneAsyncOperations.Add(sceneName, asyncOperation);
+            });
         }
 
         /// <summary>
@@ -327,7 +311,7 @@ namespace Wanderer.GameFramework
 
         #region 内部函数
         //异步加载资源的回调
-        private void LoadAssetAsyncCallback(string assetName, Object asset)
+        private void LoadAssetAsyncCallback(string assetName, UnityEngine.Object asset)
         {
             if (_event == null)
                 return;
