@@ -26,6 +26,16 @@ namespace Wanderer.GameFramework
             }
             return t;
         }
+
+        public FSMBase GetFSM(Type type)
+        {
+            FSMBase fsm;
+            if (_fsms.TryGetValue(type, out fsm))
+            {
+               return fsm;
+            }
+            return null;
+        }
         
         public bool HasFSM<T>()where T : FSM<T>, new()
         {
