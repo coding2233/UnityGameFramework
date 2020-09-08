@@ -21,10 +21,16 @@ namespace Wanderer.GameFramework
 			dataTable.Release();
 		});
 
+		private LoadDataTableEventArgs _loadDataTableEventArgs;
+		private EventManager _event;
+
+
 	    public DataTableManager()
 	    {
+		//	_loadDataTableEventArgs=new LoadDataTableEventArgs();
 		    _allDataTables = new Dictionary<string, DataTable>();
 		    _resource = GameFrameworkMode.GetModule<ResourceManager>();
+			_event= GameFrameworkMode.GetModule<EventManager>();
 	    }
 
 	    /// <summary>
@@ -39,14 +45,26 @@ namespace Wanderer.GameFramework
 			 	return;
 		    string data= (await _resource.LoadAsset<TextAsset>(dataTablePath)).text;
 			DataTable dataTable = _dataTablePool.Get();
+			bool result=false;
+			string message="";
 			if(dataTable.ParseData(data))
 			{
 				_allDataTables.Add(dataTablePath,dataTable);
+				
+				result=true;
+				message=$"{dataTablePath}";
 			}
 			else
 			{
 				_dataTablePool.Release(dataTable);
+				result=false;
+				message=$"{dataTablePath}";
 			}
+
+			//触发事件
+			if(_loadDataTableEventArgs==null)
+				_loadDataTableEventArgs=new LoadDataTableEventArgs();
+			_event.Trigger(this,_loadDataTableEventArgs.Set(result,message,dataTable));
 		}
 
 		/// <summary>
@@ -86,6 +104,7 @@ namespace Wanderer.GameFramework
 
 		public override void OnClose()
         {
+			_loadDataTableEventArgs=null;
 			foreach (var item in _allDataTables.Values)
 			{
 				_dataTablePool.Release(item);

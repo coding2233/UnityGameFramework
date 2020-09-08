@@ -13,7 +13,7 @@ namespace Wanderer.GameFramework
 {
     public interface IEventArgs
     {
-        int Id { get; }
+        int Id { get;}
     }
 
     public abstract class GameEventArgs<T>: IEventArgs where T : IEventArgs

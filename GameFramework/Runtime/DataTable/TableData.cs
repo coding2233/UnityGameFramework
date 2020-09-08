@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-    public class TableData : IEquatable<TableData>
+    public class TableData : IEquatable<TableData>,IEnumerable<TableData>
     {
         #region  field
         private List<TableData> _instanceArray;
@@ -18,14 +18,34 @@ namespace Wanderer.GameFramework
         private Vector2 _instanceVector2;
         private Vector3 _instanceVector3;
 
-        private TableDataType _type;
         #endregion
+#region  TableData Typs
+        private TableDataType _type;
+        public TableDataType TableType
+        {
+            get
+            {
+                return _type;
+            }
+        }
+
+        /// <summary>
+        /// 是否为数组
+        /// </summary>
+        /// <value></value>
+        public bool IsArray
+        {
+            get
+            {
+                return _type ==TableDataType.Table_Array;
+            }
+        }
+
+#endregion
 
 #region  properties
          //索引key
         private Dictionary<string,int> _indexKeys;
-
-        //  ITableData this[int index] => throw new NotImplementedException();
         #endregion
 
 
@@ -105,6 +125,34 @@ namespace Wanderer.GameFramework
             _instanceArray= data;
             _type=TableDataType.Table_Array;
             return this;
+        }
+        #endregion
+
+        #region IEnumerator
+        /// <summary>
+        /// 返回循环访问集合的枚举数。
+        /// </summary>
+        /// <returns>循环访问集合的枚举数。</returns>
+        public IEnumerator<TableData> GetEnumerator()
+        {
+            if(_type==TableDataType.Table_Array)
+            {
+                return _instanceArray.GetEnumerator();
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 返回循环访问集合的枚举数。
+        /// </summary>
+        /// <returns>循环访问集合的枚举数。</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+           if(_type==TableDataType.Table_Array)
+            {
+                return _instanceArray.GetEnumerator();
+            }
+            return null;
         }
         #endregion
 
