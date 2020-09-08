@@ -18,7 +18,8 @@ namespace Wanderer.GameFramework
         #region 属性
         public static EventManager Event;
       //  public static GameStateManager GameState;
-       public static FSManager FSM;
+        public static FSManager FSM;
+        public static DataTableManager DataTable;
         public static NodeManager Node;
         public static ResourceManager Resource;
         public static UIManager UI;
@@ -73,6 +74,7 @@ namespace Wanderer.GameFramework
             Event = GameFrameworkMode.GetModule<EventManager>();
            // GameState = GameFrameworkMode.GetModule<GameStateManager>();
             FSM= GameFrameworkMode.GetModule<FSManager>();
+            DataTable= GameFrameworkMode.GetModule<DataTableManager>();
             Node = GameFrameworkMode.GetModule<NodeManager>();
             Resource = GameFrameworkMode.GetModule<ResourceManager>();
             UI = GameFrameworkMode.GetModule<UIManager>();

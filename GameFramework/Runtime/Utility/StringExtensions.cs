@@ -9,7 +9,7 @@ namespace Wanderer.GameFramework
         public static bool ToBool(this string value)
         {
             bool result = false;
-            bool.TryParse(value,out result);
+            bool.TryParse(value.ToLower(),out result);
             return result;
         }
 

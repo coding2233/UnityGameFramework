@@ -39,7 +39,7 @@ namespace Wanderer.GameFramework
 			if(lines.Length>4)
 			{
 				//keys
-				string[] args = lines[1].Split('\t');
+				string[] args = lines[1].Trim().Split('\t');
 				if(args==null||args.Length<2)
 					return false;
 				for (int i = 1; i < args.Length; i++)
@@ -50,13 +50,13 @@ namespace Wanderer.GameFramework
 					_tableDataKeys.Add(args[i],i-1);
 				}
 				//type
-				string[] types = lines[2].Split('\t');
+				string[] types = lines[2].TrimEnd().Split('\t');
 				
 				for (int i = 4; i < lines.Length; i++)
 				{
 					if(string.IsNullOrEmpty(lines[i]))
 						continue;
-					args = lines[i].Split('\t');
+					args = lines[i].TrimEnd().Split('\t');
 					if(args.Length<2||args[0].Trim()=="#")
 						continue;
 
