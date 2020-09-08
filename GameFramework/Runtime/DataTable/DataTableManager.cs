@@ -15,35 +15,48 @@ namespace Wanderer.GameFramework
 {
     public sealed class DataTableManager : GameFrameworkModule
     {
-
-		private readonly Dictionary<int, DataTableBase> _allDataTabvles;
+		private readonly Dictionary<string, DataTable> _allDataTables;
 		private ResourceManager _resource;
+		private ObjectPool<DataTable> _dataTablePool=new ObjectPool<DataTable>(null,(dataTable)=>{
+			dataTable.Release();
+		});
 
 	    public DataTableManager()
 	    {
-		    _allDataTabvles = new Dictionary<int, DataTableBase>();
+		    _allDataTables = new Dictionary<string, DataTable>();
 		    _resource = GameFrameworkMode.GetModule<ResourceManager>();
 	    }
+
 	    /// <summary>
 	    /// 加载数据表
 	    /// </summary>
 	    /// <typeparam name="T"></typeparam>
 	    /// <param name="data">配置表的数据</param>
 	    /// <returns></returns>
-		public async void LoadDataTable<T>(string assetBundleName,string dataTablePath) where T :class, IDataTableRow,new()
+		public async void LoadDataTable(string dataTablePath)
 	    {
-		    // string data= (await _resource.LoadAsset<TextAsset>(assetBundleName,dataTablePath)).text;
-		    // DataTable<T> dataTable = new DataTable<T>();
-		    // string[] rows = data.Split('\n');
-		    // foreach (var item in rows)
-		    // {
-			// 	//排除多余的数据
-			//     if (string.IsNullOrEmpty(item) || rows.Length == 0 || rows[0] == "#")
-			// 	    continue;
-			//     dataTable.AddDataRow(item);
-		    // }
-		    // int hasCode = typeof(T).GetHashCode();
-		    // _allDataTabvles[hasCode] = dataTable;
+			if(_allDataTables.ContainsKey(dataTablePath))
+			 	return;
+		    string data= (await _resource.LoadAsset<TextAsset>(dataTablePath)).text;
+			DataTable dataTable = _dataTablePool.Get();
+			if(dataTable.ParseData(data))
+			{
+				_allDataTables.Add(dataTablePath,dataTable);
+			}
+			else
+			{
+				_dataTablePool.Release(dataTable);
+			}
+		}
+
+		/// <summary>
+		/// 是否有当前的配置表
+		/// </summary>
+		/// <param name="dataTablePath"></param>
+		/// <returns></returns>
+		public bool HasDataTable(string dataTablePath)
+		{
+			return _allDataTables.ContainsKey(dataTablePath);
 		}
 
 	    /// <summary>
@@ -51,21 +64,33 @@ namespace Wanderer.GameFramework
 	    /// </summary>
 	    /// <typeparam name="T"></typeparam>
 	    /// <returns></returns>
-	    public IDataTable<T> GetDataTable<T>() where T : class, IDataTableRow, new()
+	    public IDataTable GetDataTable(string dataTablePath)
 	    {
-		    DataTableBase dataTable = null;
-		    int hashCode = typeof(T).GetHashCode();
-		    if (_allDataTabvles.TryGetValue(hashCode, out dataTable))
-			    return (IDataTable<T>)dataTable;
+		    DataTable dataTable = null;
+		    if (_allDataTables.TryGetValue(dataTablePath, out dataTable))
+			    return dataTable;
 		    return null;
 	    }
 
-
+		/// <summary>
+		/// 移除DataTable
+		/// </summary>
+		/// <param name="dataTablePath"></param>
+		public void RemoveDataTable(string dataTablePath)
+		{
+			if (_allDataTables.TryGetValue(dataTablePath, out DataTable dataTable))
+			{
+				_dataTablePool.Release(dataTable);
+			}
+		}
 
 		public override void OnClose()
         {
-	        _allDataTabvles.Clear();
-
+			foreach (var item in _allDataTables.Values)
+			{
+				_dataTablePool.Release(item);
+			}
+	        _allDataTables.Clear();
         }
     }
 }

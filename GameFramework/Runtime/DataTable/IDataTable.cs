@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace Wanderer.GameFramework
 {
 
-    public interface IDataTable<T> where T : class, IDataTableRow,new()
+    public interface IDataTable
     {
 		/// <summary>
 		/// 总数
@@ -24,7 +24,7 @@ namespace Wanderer.GameFramework
 		/// </summary>
 		/// <param name="id">数据id</param>
 		/// <returns></returns>
-		T this[int id] { get; }
+		TableData this[int id] { get; }
 		/// <summary>
 		/// 是否存在Id的数据行
 		/// </summary>
@@ -36,11 +36,11 @@ namespace Wanderer.GameFramework
 	    /// </summary>
 	    /// <param name="id"></param>
 	    /// <returns></returns>
-	    T GetDataRow(int id);
+	    TableData GetDataRow(int id);
 	    /// <summary>
 	    /// 获取所有的数据行
 	    /// </summary>
 	    /// <returns></returns>
-	    T[] GetAllDataRows();
+	   // TableData[] GetAllDataRows();
 	}
 }

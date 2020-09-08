@@ -120,7 +120,6 @@ namespace Wanderer.GameFramework
             GUILayout.EndVertical();
         }
 
-
         public override void OnClose()
         {
           _fsmTypes.Clear();

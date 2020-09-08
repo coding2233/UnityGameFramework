@@ -12,25 +12,94 @@ using System.Collections.Generic;
 
 namespace Wanderer.GameFramework
 {
-	internal sealed class DataTable<T> : DataTableBase, IDataTable<T> where T : class,IDataTableRow, new()
+	internal sealed class DataTable : IDataTable
 	{
 		//所有的数据行
-		private readonly Dictionary<int, T> _allDataRows;
+		private readonly Dictionary<int, TableData> _allDataRows;
+		private readonly Dictionary<string,int> _tableDataKeys;
 
-		internal DataTable()
+		public DataTable()
 		{
-			_allDataRows = new Dictionary<int, T>();
+			_allDataRows = new Dictionary<int, TableData>();
+			_tableDataKeys = new Dictionary<string, int>();
 		}
 
 		/// <summary>
-		/// 添加数据
+		/// 解析数据
 		/// </summary>
-		/// <param name="dataRowText"></param>
-		public override void AddDataRow(string dataRowText)
+		/// <param name="dataText"></param>
+		internal bool ParseData(string dataText)
+        {
+			if(string.IsNullOrEmpty(dataText))
+			 return false;
+
+			_tableDataKeys.Clear();
+			
+			string[] lines = dataText.Split('\n');
+			if(lines.Length>4)
+			{
+				//keys
+				string[] args = lines[1].Split('\t');
+				if(args==null||args.Length<2)
+					return false;
+				for (int i = 1; i < args.Length; i++)
+				{
+					if(_tableDataKeys.ContainsKey(args[i]))
+						return false;
+
+					_tableDataKeys.Add(args[i],i-1);
+				}
+				//type
+				string[] types = lines[2].Split('\t');
+				
+				for (int i = 4; i < lines.Length; i++)
+				{
+					if(string.IsNullOrEmpty(lines[i]))
+						continue;
+					args = lines[i].Split('\t');
+					if(args.Length<2||args[0].Trim()=="#")
+						continue;
+
+					List<TableData> datas=new List<TableData>();
+					for (int j = 1; j < args.Length; j++)
+					{
+						if(j<types.Length)
+						{
+						    TableData tableData =TableDataPool.Get(types[j],args[j]);
+							datas.Add(tableData);
+						}
+					}
+					//依靠id来作为关键词
+					if(datas.Count>0)
+					{
+						int id =(int)datas[0];
+						TableData table= TableDataPool.Get().SetData(datas);
+						//设置索引
+						table.SetIndexKeys(_tableDataKeys);
+						_allDataRows[id]=table;
+					}
+				}
+
+				if(_allDataRows.Count>0)
+				{
+					return true;
+				}
+			}
+
+			return false;
+        }
+	    
+		/// <summary>
+		/// 释放
+		/// </summary>
+		internal void Release()
 		{
-			T dataRow = new T();
-			dataRow.ParseRowData(dataRowText);
-			_allDataRows.Add(dataRow.Id, dataRow);
+			foreach (var item in _allDataRows.Values)
+			{
+				TableDataPool.Release(item);
+			}
+			_allDataRows.Clear();
+			_tableDataKeys.Clear();
 		}
 
 		/// <summary>
@@ -43,7 +112,7 @@ namespace Wanderer.GameFramework
 		/// </summary>
 		/// <param name="id">id</param>
 		/// <returns></returns>
-		public T this[int id] => GetDataRow(id);
+		public TableData this[int id] => GetDataRow(id);
 
 		/// <summary>
 		/// 检测是否有当前id的数据
@@ -60,39 +129,39 @@ namespace Wanderer.GameFramework
 		/// </summary>
 		/// <param name="id">id</param>
 		/// <returns></returns>
-		public T GetDataRow(int id)
+		public TableData GetDataRow(int id)
 		{
-			T dataRow = null;
+			TableData dataRow = null;
 			_allDataRows.TryGetValue(id, out dataRow);
 			return dataRow;
 		}
 
-		/// <summary>
-		/// 获取所有的数据
-		/// </summary>
-		/// <returns></returns>
-		public T[] GetAllDataRows()
-		{
-			int index = 0;
-			T[] allDataRows = new T[_allDataRows.Count];
-			foreach (var item in _allDataRows)
-			{
-				allDataRows[index++] = item.Value;
-			}
-			return allDataRows;
-		}
+		// /// <summary>
+		// /// 获取所有的数据
+		// /// </summary>
+		// /// <returns></returns>
+		// public TableData[] GetAllDataRows()
+		// {
+		// 	int index = 0;
+		// 	TableData[] allDataRows = new TableData[_allDataRows.Count];
+		// 	foreach (var item in _allDataRows)
+		// 	{
+		// 		allDataRows[index++] = item.Value;
+		// 	}
+		// 	return allDataRows;
+		// }
 
 		/// <summary>
 		/// 获取所有符合条件的数据表行。
 		/// </summary>
 		/// <param name="condition">要检查的条件。</param>
 		/// <returns>所有符合条件的数据表行。</returns>
-		public T[] GetAllDataRows(Predicate<T> condition)
+		public TableData[] GetAllDataRows(Predicate<TableData> condition)
 		{
-			List<T> results = new List<T>();
+			List<TableData> results = new List<TableData>();
 			foreach (var dataRow in _allDataRows)
 			{
-				T dr = dataRow.Value;
+				TableData dr = dataRow.Value;
 				if (condition(dr))
 				{
 					results.Add(dr);
@@ -107,9 +176,9 @@ namespace Wanderer.GameFramework
 		/// </summary>
 		/// <param name="comparison">要排序的条件。</param>
 		/// <returns>所有排序后的数据表行。</returns>
-		public T[] GetAllDataRows(Comparison<T> comparison)
+		public TableData[] GetAllDataRows(Comparison<TableData> comparison)
 		{
-			List<T> allDataRows = new List<T>();
+			List<TableData> allDataRows = new List<TableData>();
 			foreach (var dataRow in _allDataRows)
 			{
 				allDataRows.Add(dataRow.Value);
@@ -119,5 +188,7 @@ namespace Wanderer.GameFramework
 			return allDataRows.ToArray();
 		}
 
-	}
+
+    }
+
 }
