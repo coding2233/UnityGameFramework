@@ -199,7 +199,48 @@ namespace Wanderer.GameFramework
             return false;
         }
 
-         #region Implicit Conversions
+        public override string ToString()
+        {  
+            string str ="";
+            switch (_type)
+            {
+                case TableDataType.Table_Array:
+                    for (int i = 0; i < _instanceArray.Count; i++)
+                    {
+                        str+=$"{_instanceArray[i].ToString()}\n";
+                    }
+                    break;
+                case TableDataType.Table_bool:
+                    str = _instanceBool.ToString();
+                    break;
+                case TableDataType.Table_double:
+                    str = _instanceDouble.ToString();
+                    break;
+                case TableDataType.Table_float:
+                    str = _instanceFloat.ToString();
+                    break;
+                case TableDataType.Table_int:
+                    str = _instanceInt.ToString();
+                    break;
+                case TableDataType.Table_long:
+                    str = _instanceLong.ToString();
+                    break;
+                case TableDataType.Table_string:
+                    str=_instanceString;
+                    break;
+                case TableDataType.Table_Vector2:
+                    str = _instanceVector2.ToString();
+                    break;
+                case TableDataType.Table_Vector3:
+                    str = _instanceVector3.ToString();
+                    break;
+                default:
+                    break;
+            }
+            return str;
+        }
+
+        #region Implicit Conversions
         public static implicit operator TableData (Boolean data)
         {
             TableData tableData =  TableDataPool.Get().SetData(data);
