@@ -3,17 +3,75 @@
 **此框架参考:**   
 
 `GameFramework`：[https://github.com/EllanJiang/GameFramework](https://github.com/EllanJiang/GameFramework)  
-`ILRuntime`: [https://github.com/Ourpalm/ILRuntime](https://github.com/Ourpalm/ILRuntime)  
-`xLua`: [https://github.com/Tencent/xLua](https://github.com/Tencent/xLua)  
 `Unity3dAsyncAwaitUtil`: [https://github.com/modesttree/Unity3dAsyncAwaitUtil](https://github.com/modesttree/Unity3dAsyncAwaitUtil)  
 `Tayx94/graphy`: [https://github.com/Tayx94/graphy](https://github.com/Tayx94/graphy)  
-`dotBunny/VSCode`: [https://github.com/dotBunny/VSCode](https://github.com/dotBunny/VSCode)
 
 ---
 
 ### 内置模块介绍
 
 ---
+
+### DataTable
+DataTable为了配置修改不再动态生成或修改对应的序列化的类，进行全动态的解析。
+为了做到通用性解析，配置表有一定的规则，以Excel操作的配置表为例。
+* 每一行前面第一列带`#`号代表忽略。前面四行是固定的
+* 第一行是配置表的名称;
+* 第二行是配置表的键值;
+* 第三行为当前列的数据类型,`[bool,int,long,float,double,string,Vector2,Vector3]`,`Vector2`示例`100,100`;
+* 第四行是每一列的说明。
+* 实际数据以第五行,第二列开始，第二列的数据一定为`int`类型的唯一识别`id`
+* 最后用excel导出为`Unicode 文本`格式即可。
+
+ 配置表示例 
+
+|||||||||  
+|-|-|-|-|-|-|-|-|  
+|#|关卡配置表|  
+|#|Id|LevelSort|UIFormId|LevelName|LevelDesc|Leveldubing|IsHide|
+|#|int|int|int|string|string|int|bool|
+|#|关卡Id|关卡排序|界面编号|关卡名称|关卡描述|配音|是否隐藏|
+||20010001|1|300|测试名称|测试说明|2352|false|
+||20010002|2|200|测试名称02|测试说明02|23521|false|
+
+使用示例
+
+```csharp
+//DataTable加载事件监听
+GameMode.Event.AddListener<LoadDataTableEventArgs>(OnLoadDataTable);
+//加载DataTable
+GameMode.DataTable.LoadDataTable("Assets/Game/DataTable/GameCheckpoint.txt");
+
+//DataTable加载事件回调
+private void OnLoadDataTable(object sender,IEventArgs e)
+{
+    LoadDataTableEventArgs ne = e as LoadDataTableEventArgs;
+    if(ne!=null)
+    {
+        IDataTable idt =  ne.Data;
+
+        TableData td=idt[20010014]["UIFormId"];
+        int uiFormId = (int)td;
+        
+        Debug.Log($"#################################:{ne.Message}");
+        foreach (var item in idt)
+        {
+            Debug.Log($"-------------------------------------------------------");
+            TableData td02 = idt[item];
+            foreach (var item02 in td02)
+            {
+                Debug.Log(item02.ToString());
+            }
+        }
+    }
+}
+
+//使用已加载的DataTable
+IDataTable idt = GameMode.DataTable.GetDataTable("Assets/Game/DataTable/GameCheckpoint.txt");
+
+```
+`IDataTable`是当前配置表的所有数据的集合，可使用`foreach`获取到数据的`key`值，`TableData`是具体数据存储对象，主要支持上述的第三行的基本类型。
+
 
 #### 一、事件模块 `EventManager`
 

@@ -8,6 +8,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Wanderer.GameFramework
@@ -188,7 +189,17 @@ namespace Wanderer.GameFramework
 			return allDataRows.ToArray();
 		}
 
+		#region  IEnumerable
+        public IEnumerator<int> GetEnumerator()
+        {
+            return _allDataRows.Keys.GetEnumerator();
+        }
 
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+             return _allDataRows.Keys.GetEnumerator();
+        }
+		#endregion
     }
 
 }

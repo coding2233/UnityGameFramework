@@ -65,6 +65,8 @@ namespace Wanderer.GameFramework
 			if(_loadDataTableEventArgs==null)
 				_loadDataTableEventArgs=new LoadDataTableEventArgs();
 			_event.Trigger(this,_loadDataTableEventArgs.Set(result,message,dataTable));
+			//去掉文本的引用计数
+			_resource.UnloadAsset(dataTablePath);
 		}
 
 		/// <summary>

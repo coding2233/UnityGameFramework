@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace Wanderer.GameFramework
 {
 
-    public interface IDataTable
+    public interface IDataTable:IEnumerable<int>
     {
 		/// <summary>
 		/// 总数
