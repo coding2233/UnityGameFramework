@@ -370,6 +370,10 @@ namespace Wanderer.GameFramework
     /// </summary>
     public enum ResourceUpdateType
     {
+         /// <summary>
+        /// 编辑器
+        /// </summary>
+        Editor,
         /// <summary>
         /// 更新
         /// </summary>
@@ -378,10 +382,6 @@ namespace Wanderer.GameFramework
         /// 本地
         /// </summary>
         Local,
-        /// <summary>
-        /// 编辑器
-        /// </summary>
-        Editor,
         /// <summary>
         /// 没有资源加载模式
         /// </summary>

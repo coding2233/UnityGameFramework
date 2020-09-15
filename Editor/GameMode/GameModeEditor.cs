@@ -75,10 +75,6 @@ namespace Wanderer.GameFramework
                     }
                 }
             }
-
-            // _listModuleEditors.Add(new ResourceModuleEditor("Resource Module", _resourceColor, _gameMode));
-            // _listModuleEditors.Add(new StateModuleEditor("State Module", _stateColor, _gameMode));
-            // _listModuleEditors.Add(new SettingModuleEditor("Setting Module", _debugColor, _gameMode));
         }
 
         private void OnDisable()

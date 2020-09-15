@@ -31,6 +31,8 @@ namespace Wanderer.GameFramework
         public static NetworkManager Network;
         public static PoolManager Pool;
 
+        public static GameMode Self;
+        
         /// <summary>
         /// 当前程序集
         /// </summary>
@@ -61,12 +63,20 @@ namespace Wanderer.GameFramework
         /// 是否开启调试器
         /// </summary>
         public bool DebugEnable = true;
+        
+        /// <summary>
+        /// 配置文件
+        /// </summary>
+        public TextAsset ConfigAsset;
         #endregion
 
         #endregion
 
         IEnumerator Start()
         {
+            GameMode.Self=this;
+
+        
             //默认不销毁
             DontDestroyOnLoad(gameObject);
 
