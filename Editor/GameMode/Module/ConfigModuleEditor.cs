@@ -9,7 +9,6 @@ namespace Wanderer.GameFramework
     [CustomModuleEditor("Config Module",0.4f,0.3f,0.9f)]
     public class ConfigModuleEditor : ModuleEditorBase
     {
-        JsonData _configJsonData;
         string _addNewKey;
         JsonType _lastSelectJsonType;
         public ConfigModuleEditor(string name, Color mainColor, GameMode gameMode)
@@ -17,8 +16,8 @@ namespace Wanderer.GameFramework
         { 
             _addNewKey="NEWKEY";
             _lastSelectJsonType=JsonType.Int;
-            UpdateJsonData();
-            _isExpand=_configJsonData==null;
+            //UpdateJsonData();
+            _isExpand=_gameMode.ConfigAsset==null;
         }
       
         public override void OnDrawGUI()
@@ -28,10 +27,10 @@ namespace Wanderer.GameFramework
             {
                 _gameMode.ConfigAsset=configAsset;
                 EditorUtility.SetDirty(_gameMode);
-                UpdateJsonData();
+              //  UpdateJsonData();
             }
 
-            if(_configJsonData==null)
+            if(_gameMode.ConfigJsonData==null)
             {
                 GUI.color=Color.red;
                 if(GUILayout.Button("Create default config file"))
@@ -43,61 +42,25 @@ namespace Wanderer.GameFramework
             else
             {
                 GUILayout.BeginVertical("HelpBox");
-                foreach (var item in _configJsonData.Keys)
+                foreach (var item in _gameMode.ConfigJsonData.Keys)
                 {
                     GUILayout.BeginHorizontal();
                     string key = EditorGUILayout.TextField(item,GUILayout.Width(150));
-                    JsonData value = _configJsonData[item];
+                    JsonData value = _gameMode.ConfigJsonData[item];
                     if(!string.IsNullOrEmpty(key)&&key!=item)
                     {
-                        _configJsonData[key]=value;
-                        _configJsonData.Remove(item);
+                        _gameMode.ConfigJsonData[key]=value;
+                        _gameMode.ConfigJsonData.Remove(item);
                         SaveConfig();
                         GUIUtility.ExitGUI();
                         break;
                     }
-                    JsonData updateValue = null;
-                    switch(value.GetJsonType())
-                    {
-                        case JsonType.Int:
-                            int intValue = (int)value;
-                            int newIntValue = EditorGUILayout.IntField(intValue);
-                            if(intValue!=newIntValue)
-                            {
-                                updateValue=new JsonData(newIntValue);
-                            }
-                            break;
-                         case JsonType.Double:
-                            double doubleValue = (double)value;
-                            double newDubleValue = EditorGUILayout.DoubleField(doubleValue);
-                            if(doubleValue!=newDubleValue)
-                            {
-                                updateValue=new JsonData(newDubleValue);
-                            }
-                            break;
-                        case JsonType.Boolean:
-                            bool boolValue = (bool)value;
-                            bool newboolValue = EditorGUILayout.Toggle(boolValue);
-                             if(boolValue!=newboolValue)
-                            {
-                                updateValue=new JsonData(newboolValue);
-                            }
-                            break;
-                         case JsonType.String:
-                            string stringValue = (string)value;
-                            string newStringValue = EditorGUILayout.TextField(stringValue);
-                             if(stringValue!=newStringValue)
-                            {
-                                updateValue=new JsonData(newStringValue);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
+                    JsonData updateValue = JsonDataEditor(value);
+                  
                     //更新数据
                     if(updateValue!=null)
                     {
-                        _configJsonData[item]=updateValue;
+                        _gameMode.ConfigJsonData[item]=updateValue;
                         SaveConfig();
                         GUIUtility.ExitGUI();
                         break;
@@ -107,7 +70,7 @@ namespace Wanderer.GameFramework
                     {
                         if(EditorUtility.DisplayDialog("Delete config data",$"[{item} : {value}]","OK","Cancel"))
                         {
-                            _configJsonData.Remove(item);
+                            _gameMode.ConfigJsonData.Remove(item);
                             SaveConfig();
                             GUIUtility.ExitGUI();
                             break;
@@ -121,7 +84,7 @@ namespace Wanderer.GameFramework
                 _lastSelectJsonType= (JsonType)EditorGUILayout.EnumPopup(_lastSelectJsonType);
                 if(GUILayout.Button("+",GUILayout.Width(30)))
                 {
-                    if(!string.IsNullOrEmpty(_addNewKey)&&!_configJsonData.ContainsKey(_addNewKey))
+                    if(!string.IsNullOrEmpty(_addNewKey)&&!_gameMode.ConfigJsonData.ContainsKey(_addNewKey))
                     {
                         JsonData addNewValue=null;
                         switch (_lastSelectJsonType)
@@ -144,7 +107,7 @@ namespace Wanderer.GameFramework
                         }
                         if(addNewValue!=null)
                         {
-                            _configJsonData[_addNewKey]=addNewValue;
+                            _gameMode.ConfigJsonData[_addNewKey]=addNewValue;
                             SaveConfig();
                             GUIUtility.ExitGUI();
                         }
@@ -162,49 +125,52 @@ namespace Wanderer.GameFramework
         }
 
 
-        private void UpdateJsonData()
-        {
-            _configJsonData=null;
-            if(_gameMode!=null&&_gameMode.ConfigAsset!=null)
-            {
-                _configJsonData=JsonMapper.ToObject(_gameMode.ConfigAsset.text);
-            }
-        }
 
-        // private JsonData JsonDataEditor(JsonData value)
-        // {
-        //     JsonData updateValue = null;
-        //     switch(value.GetJsonType())
-        //     {
-        //         case JsonType.Int:
-        //             int intValue = (int)value;
-        //             int newIntValue = EditorGUILayout.IntField(intValue);
-        //             if(intValue!=newIntValue)
-        //             {
-        //                 updateValue=new JsonData(newIntValue);
-        //             }
-        //             break;
-        //         case JsonType.Boolean:
-        //             bool boolValue = (bool)value;
-        //             bool newboolValue = EditorGUILayout.Toggle(boolValue);
-        //             if(boolValue!=newboolValue)
-        //             {
-        //                 updateValue=new JsonData(newboolValue);
-        //             }
-        //             break;
-        //         case JsonType.String:
-        //             string stringValue = (string)value;
-        //             string newStringValue = EditorGUILayout.TextField(stringValue);
-        //             if(stringValue!=newStringValue)
-        //             {
-        //                 updateValue=new JsonData(newStringValue);
-        //             }
-        //             break;
-        //         default:
-        //             break;
-        //     }
-        //     return updateValue;
-        // }
+        //JsonData编辑器
+        private JsonData JsonDataEditor(JsonData value)
+        {
+            if(value==null)
+                return null;
+            JsonData updateValue = null;
+            switch(value.GetJsonType())
+            {
+                case JsonType.Int:
+                    int intValue = (int)value;
+                    int newIntValue = EditorGUILayout.IntField(intValue);
+                    if(intValue!=newIntValue)
+                    {
+                        updateValue=new JsonData(newIntValue);
+                    }
+                    break;
+                case JsonType.Double:
+                    double doubleValue = (double)value;
+                    double newDubleValue = EditorGUILayout.DoubleField(doubleValue);
+                    if(doubleValue!=newDubleValue)
+                    {
+                        updateValue=new JsonData(newDubleValue);
+                    }
+                    break;
+                case JsonType.Boolean:
+                    bool boolValue = (bool)value;
+                    bool newboolValue = EditorGUILayout.Toggle(boolValue);
+                        if(boolValue!=newboolValue)
+                    {
+                        updateValue=new JsonData(newboolValue);
+                    }
+                    break;
+                case JsonType.String:
+                    string stringValue = (string)value;
+                    string newStringValue = EditorGUILayout.TextField(stringValue);
+                        if(stringValue!=newStringValue)
+                    {
+                        updateValue=new JsonData(newStringValue);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return updateValue;
+        }
 
         //创建默认数据
         private void CreateDefaultConfig()
@@ -214,30 +180,22 @@ namespace Wanderer.GameFramework
             string configPath =EditorUtility.SaveFilePanelInProject("Save config file","DefaultConfig","json","Default Config");
             if(!string.IsNullOrEmpty(configPath))
             {
-                _configJsonData=new JsonData();
-                _configJsonData["ResourceUpdateType"]=0;
-                _configJsonData["PathType"]=0;
-                _configJsonData["ResOfficialUpdatePath"]="";
-                _configJsonData["ResTestUpdatePath"]="";
-                _configJsonData["DefaultInStreamingAsset"]=true;
-                _configJsonData["DebugEnable"]=true;
-                File.WriteAllText(configPath,_configJsonData.ToJson());
+                JsonData configJsonData=new JsonData();
+                configJsonData["ResourceUpdateType"]=0;
+                configJsonData["PathType"]=0;
+                configJsonData["ResOfficialUpdatePath"]="";
+                configJsonData["ResTestUpdatePath"]="";
+                configJsonData["DefaultInStreamingAsset"]=true;
+                configJsonData["DebugEnable"]=true;
+                File.WriteAllText(configPath,configJsonData.ToJson());
+                _gameMode.ConfigJsonData=configJsonData;
                 AssetDatabase.Refresh();
                 _gameMode.ConfigAsset=AssetDatabase.LoadAssetAtPath<TextAsset>(configPath);
                 EditorUtility.SetDirty(_gameMode);
             }
         }
 
-        //保存配置文件
-        private void SaveConfig()
-        {
-            if(_configJsonData==null||_gameMode==null||_gameMode.ConfigAsset==null)
-                return;
-            string configPath = AssetDatabase.GetAssetPath(_gameMode.ConfigAsset);
-            File.WriteAllText(configPath,_configJsonData.ToJson());
-            AssetDatabase.Refresh();
-            EditorUtility.SetDirty(_gameMode);
-        }
+     
 
     }
 }

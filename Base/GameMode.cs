@@ -9,6 +9,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using LitJson;
 using UnityEngine;
 
 namespace Wanderer.GameFramework
@@ -40,34 +41,39 @@ namespace Wanderer.GameFramework
 
         #region 资源
         /// <summary>
-        /// 资源更新类型
-        /// </summary>
-        public ResourceUpdateType ResUpdateType = ResourceUpdateType.Editor;
-        /// <summary>
-        /// 资源本地路径
-        /// </summary>
-        public PathType LocalPathType = PathType.ReadOnly;
-        /// <summary>
-        /// 资源更新的路径
-        /// </summary>
-        public string ResOfficialUpdatePath="";
-        /// <summary>
-        /// 测试更新的路径
-        /// </summary>
-        public string ResTestUpdatePath="";
-        /// <summary>
-        /// 默认是否需要从StreamingAsset里面拷贝到可读文件夹中
-        /// </summary>
-        public bool DefaultInStreamingAsset = true;
-        /// <summary>
         /// 是否开启调试器
         /// </summary>
-        public bool DebugEnable = true;
+        //public bool DebugEnable = true;
         
         /// <summary>
         /// 配置文件
         /// </summary>
         public TextAsset ConfigAsset;
+
+        private JsonData _configJsonData;
+        public JsonData ConfigJsonData
+        {
+            get
+            {
+                if(ConfigAsset==null||string.IsNullOrEmpty(ConfigAsset.text))
+                {
+                    _configJsonData = null;
+                }
+                else
+                {
+                    if (_configJsonData==null)
+                    {
+                        _configJsonData = JsonMapper.ToObject(ConfigAsset.text);
+                    }
+                }
+                return _configJsonData;
+            }
+            set
+            {
+                _configJsonData=value;
+            }
+           
+        }
         #endregion
 
         #endregion
@@ -98,11 +104,12 @@ namespace Wanderer.GameFramework
             #endregion
 
             #region resource
-            Resource.ResUpdateType = ResUpdateType;
-            Resource.ResOfficialUpdatePath = ResOfficialUpdatePath;
-            Resource.ResTestUpdatePath = ResTestUpdatePath;
-            Resource.LocalPathType = LocalPathType;
-            Resource.DefaultInStreamingAsset = DefaultInStreamingAsset;
+            
+            Resource.ResUpdateType = (ResourceUpdateType)(int)ConfigJsonData["ResourceUpdateType"];
+            Resource.ResOfficialUpdatePath = (string)ConfigJsonData["ResOfficialUpdatePath"];
+            Resource.ResTestUpdatePath = (string)ConfigJsonData["ResTestUpdatePath"];;
+            Resource.LocalPathType = (PathType)(int)ConfigJsonData["PathType"];
+            Resource.DefaultInStreamingAsset = (bool)ConfigJsonData["DefaultInStreamingAsset"];;
 
             //添加对象池管理器
             GameObject gameObjectPoolHelper = new GameObject("IGameObjectPoolHelper");
@@ -161,5 +168,6 @@ namespace Wanderer.GameFramework
         {
             GameFrameworkMode.ShutDown();
         }
+
     }
 }

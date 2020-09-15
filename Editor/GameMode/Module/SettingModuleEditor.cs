@@ -27,7 +27,7 @@ namespace Wanderer.GameFramework
         {
             GUILayout.BeginVertical("HelpBox");
            
-            GUI.color = _gameMode.DebugEnable ? Color.white : Color.gray;
+          //  GUI.color = _gameMode.DebugEnable ? Color.white : Color.gray;
             // bool debugEnable = GUILayout.Toggle(GameMode.Setting.DebugEnable, "Debug Enable");
             // if (debugEnable != GameMode.Setting.DebugEnable)
             // {

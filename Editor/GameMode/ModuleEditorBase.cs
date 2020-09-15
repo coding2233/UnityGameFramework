@@ -9,6 +9,8 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using LitJson;
 using UnityEditor;
 using UnityEngine;
 
@@ -60,6 +62,40 @@ namespace Wanderer.GameFramework
         //关闭界面
         public abstract void OnClose();
 
+        //保存配置文件
+        protected virtual void SaveConfig()
+        {
+            if(_gameMode==null||_gameMode.ConfigAsset==null)
+                return;
+            if(_gameMode.ConfigJsonData==null)
+                return;
+            string configPath = AssetDatabase.GetAssetPath(_gameMode.ConfigAsset);
+            File.WriteAllText(configPath,_gameMode.ConfigJsonData.ToJson());
+            AssetDatabase.Refresh();
+            EditorUtility.SetDirty(_gameMode);
+        }
+
+        //检测是否有对应的key
+        protected virtual void CheckConfig(string key,object value)
+        {
+            if(!_gameMode.ConfigJsonData.ContainsKey(key))
+            {
+                 _gameMode.ConfigJsonData[key]=new JsonData(value);
+                SaveConfig();
+            }
+        }
+
+        //无配置文件错误提示
+        protected virtual bool NoConfigError()
+        {
+            bool result = false;
+            if(_gameMode==null||_gameMode.ConfigJsonData==null)
+            {
+                EditorGUILayout.HelpBox("No config file!", MessageType.Error); 
+                result=true;
+            }
+            return result;
+        }
     }
 
 }
