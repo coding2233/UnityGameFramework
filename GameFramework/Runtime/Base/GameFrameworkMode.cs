@@ -21,6 +21,8 @@ namespace Wanderer.GameFramework
         private static List<IUpdate> _allUpdates = new List<IUpdate>();
         //所有的固定帧函数
         private static List<IFixedUpdate> _allFixedUpdates = new List<IFixedUpdate>();
+        //unity imgui
+        private static List<IImGui> _allImGuis=new List<IImGui>();
         #endregion
 
         #region 外部接口
@@ -48,8 +50,21 @@ namespace Wanderer.GameFramework
         /// </summary>
         public static void FixedUpdate()
         {
-            foreach (var item in _allFixedUpdates)
-                item.OnFixedUpdate();
+            for (int i = 0; i < _allFixedUpdates.Count; i++)
+            {
+                _allFixedUpdates[i].OnFixedUpdate();
+            }
+        }
+
+        /// <summary>
+        /// imgui
+        /// </summary>
+        public static void ImGui()
+        {
+            for (int i = 0; i < _allImGuis.Count; i++)
+            {
+                _allImGuis[i].OnImGui();
+            }
         }
 
         /// <summary>
@@ -95,6 +110,9 @@ namespace Wanderer.GameFramework
             var fixedUpdate = module as IFixedUpdate;
             if (fixedUpdate != null)
                 _allFixedUpdates.Add(fixedUpdate);
+            var imgui = module as IImGui;
+            if(imgui!=null)
+                _allImGuis.Add(imgui);
             return module;
         }
 

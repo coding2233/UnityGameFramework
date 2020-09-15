@@ -31,6 +31,7 @@ namespace Wanderer.GameFramework
         public static SystemManager System;
         public static NetworkManager Network;
         public static PoolManager Pool;
+        public static DebuggerManager Debugger;
 
         public static GameMode Self;
         
@@ -101,10 +102,11 @@ namespace Wanderer.GameFramework
             System = GameFrameworkMode.GetModule<SystemManager>();
             Network = GameFrameworkMode.GetModule<NetworkManager>();
             Pool = GameFrameworkMode.GetModule<PoolManager>();
+            Debugger= GameFrameworkMode.GetModule<DebuggerManager>();
             #endregion
 
             #region resource
-            
+            //参数设置
             Resource.ResUpdateType = (ResourceUpdateType)(int)ConfigJsonData["ResourceUpdateType"];
             Resource.ResOfficialUpdatePath = (string)ConfigJsonData["ResOfficialUpdatePath"];
             Resource.ResTestUpdatePath = (string)ConfigJsonData["ResTestUpdatePath"];;
@@ -162,6 +164,11 @@ namespace Wanderer.GameFramework
         private void FixedUpdate()
         {
             GameFrameworkMode.FixedUpdate();
+        }
+
+        private void OnGUI()
+        {
+            GameFrameworkMode.ImGui();
         }
 
         private void OnDestroy()
