@@ -50,7 +50,7 @@ private void OnLoadDataTable(object sender,IEventArgs e)
     {
         IDataTable idt =  ne.Data;
 
-        TableData td=idt[20010014]["UIFormId"];
+        TableData td=idt[20010012]["UIFormId"];
         int uiFormId = (int)td;
         
         Debug.Log($"#################################:{ne.Message}");

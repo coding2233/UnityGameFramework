@@ -19,19 +19,27 @@ namespace Wanderer.GameFramework
     {
         public SettingModuleEditor(string name, Color mainColor, GameMode gameMode)
     : base(name, mainColor, gameMode)
-        { }
+        { 
+            
+        }
 
         public override void OnDrawGUI()
         {
             GUILayout.BeginVertical("HelpBox");
-
+           
             GUI.color = _gameMode.DebugEnable ? Color.white : Color.gray;
-            bool debugEnable = GUILayout.Toggle(_gameMode.DebugEnable, "Debug Enable");
-            if (debugEnable != _gameMode.DebugEnable)
-            {
-                _gameMode.DebugEnable = debugEnable;
-                EditorUtility.SetDirty(_gameMode);
-            }
+            // bool debugEnable = GUILayout.Toggle(GameMode.Setting.DebugEnable, "Debug Enable");
+            // if (debugEnable != GameMode.Setting.DebugEnable)
+            // {
+            //     GameMode.Setting.DebugEnable = debugEnable;
+            //     EditorUtility.SetDirty(_gameMode);
+            // }
+            // bool debugEnable = GUILayout.Toggle(_gameMode.DebugEnable, "Debug Enable");
+            // if (debugEnable != _gameMode.DebugEnable)
+            // {
+            //     _gameMode.DebugEnable = debugEnable;
+            //     EditorUtility.SetDirty(_gameMode);
+            // }
             GUI.color = Color.white;
 
             GUILayout.EndVertical();
