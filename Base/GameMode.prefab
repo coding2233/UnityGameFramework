@@ -43,8 +43,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 274626dace099bf4597fe6bc0ea258e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ResUpdateType: 2
-  LocalPathType: 1
-  ResUpdatePath: 
-  DefaultInStreamingAsset: 1
-  DebugEnable: 1
+  ConfigAsset: {fileID: 4900000, guid: 7705fba77f34fe243a9a21f08fa65888, type: 3}
