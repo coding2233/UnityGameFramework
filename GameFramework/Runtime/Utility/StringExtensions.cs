@@ -66,7 +66,12 @@ namespace Wanderer.GameFramework
             return result;
         }
 
-
+        public static Color ToColor(this string value)
+        {
+            Color result = Color.white;
+            UnityEngine.ColorUtility.TryParseHtmlString(value.Trim(),out result);
+            return result;
+        }
    
     }
 }

@@ -17,6 +17,7 @@ namespace Wanderer.GameFramework
         private string _instanceString;
         private Vector2 _instanceVector2;
         private Vector3 _instanceVector3;
+        private Color _instanceColor;
 
         #endregion
 #region  TableData Typs
@@ -124,6 +125,13 @@ namespace Wanderer.GameFramework
         {
             _instanceArray= data;
             _type=TableDataType.Table_Array;
+            return this;
+        }
+
+        internal TableData SetData(Color data)
+        {
+            _instanceColor=data;
+            _type=TableDataType.Table_Color;
             return this;
         }
         #endregion
@@ -288,6 +296,12 @@ namespace Wanderer.GameFramework
             TableData tableData =  TableDataPool.Get().SetData(data);
             return tableData;
         }
+
+        public static implicit operator TableData (Color data)
+        {
+            TableData tableData = TableDataPool.Get().SetData(data);
+            return tableData;
+        }
         #endregion
 
 
@@ -361,6 +375,11 @@ namespace Wanderer.GameFramework
             return data._instanceVector3;
         }
 
+        public static explicit operator Color32(TableData data)
+        {
+            return Color.white;
+        }
+
         #endregion
 
     }
@@ -378,6 +397,7 @@ namespace Wanderer.GameFramework
         Table_Vector2,
         Table_Vector3,
         Table_Array,
+        Table_Color,
     }
 
 
@@ -420,6 +440,9 @@ namespace Wanderer.GameFramework
                     break;
                 case "vector3":
                     tableData.SetData(value.ToVector3());
+                    break;
+                case "color":
+                    tableData.SetData(value.ToColor());
                     break;
                 default:
                     tableData.SetData(value);

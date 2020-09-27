@@ -18,7 +18,7 @@ DataTable为了配置修改不再动态生成或修改对应的序列化的类�
 * 每一行前面第一列带`#`号代表忽略。前面四行是固定的
 * 第一行是配置表的名称;
 * 第二行是配置表的键值;
-* 第三行为当前列的数据类型,`[bool,int,long,float,double,string,Vector2,Vector3]`,`Vector2`示例`100,100`;
+* 第三行为当前列的数据类型,`[bool,int,long,float,double,string,Vector2,Vector3,Color]`,`Vector2`示例`100,100`,`Color`示例`#F0F`或者`#FF00FF`;
 * 第四行是每一列的说明。
 * 实际数据以第五行,第二列开始，第二列的数据一定为`int`类型的唯一识别`id`
 * 最后用excel导出为`Unicode 文本`格式即可。
