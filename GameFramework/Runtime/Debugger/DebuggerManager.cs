@@ -1,29 +1,64 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Wanderer.GameFramework
 {
-    public class DebuggerManager : GameFrameworkModule, IImGui
+    public class DebuggerManager : GameFrameworkModule, IImGui, IUpdate
     {
         /// <summary>
         /// 窗口缩放
         /// </summary>
-        public float WindowScale=1.0f;
-        private bool _showFullWindow=false;
+        public float WindowScale = 1.0f;
+        private bool _showFullWindow = false;
+        //皮肤
+        private GUISkin _consoleSkin;
 
-        private Rect _defaultSmallRect = new Rect(10,10,60,60);
-        private Rect _defaultFullRect =new Rect(10,10,640,480);
+        private Rect _defaultSmallRect = new Rect(10, 10, 60, 60);
+        private Rect _defaultFullRect = new Rect(10, 10, 640, 480);
         private Rect _dragRect = new Rect(0f, 0f, float.MaxValue, 25f);
-        private int _selectIndex=-1;
+        private int _selectIndex = -1;
 
         private List<IDebuggerWindow> _allDebuggerWindows;
         private IDebuggerWindow _currentDebuggerWindow;
         private string[] _debuggerWindowTitle;
+        //ugui的EventSystem
+        private EventSystem _currentEventSystem;
+
+        private FPSCounter _fpsCounter;
 
         public DebuggerManager()
         {
-            _debuggerWindowTitle=new string[]{"<b>Close</b>"};
+            Application.targetFrameRate = 30;
+            _currentEventSystem = EventSystem.current;
+            _fpsCounter = new FPSCounter();
+            _consoleSkin = Resources.Load<GUISkin>("Console/ConsoleSkin");
+            //_debuggerWindowTitle = new string[] { "<b>Close</b>" };
+            //实例化 窗口标题以及窗口
+            List<string> _windowTitles = new List<string>();
+            _allDebuggerWindows = new List<IDebuggerWindow>();
+            //在当前类型
+            foreach (var item in TypeUtility.AllAssemblyTypes)
+            {
+                if (item.IsAbstract)
+                    continue;
+                object[] objs = item.GetCustomAttributes(typeof(DebuggerWindowAttribute), true);
+                if (objs != null && objs.Length > 0)
+                {
+                    DebuggerWindowAttribute attr = objs[0] as DebuggerWindowAttribute;
+                    if (attr != null)
+                    {
+                        _windowTitles.Add(attr.Title);
+                        IDebuggerWindow instance = (IDebuggerWindow)System.Activator.CreateInstance(item);
+                        _allDebuggerWindows.Add(instance);
+                        instance.OnInit();
+                    }
+                }
+            }
+            //添加默认的Close窗口
+            _windowTitles.Add("<b>Close</b>");
+            _debuggerWindowTitle = _windowTitles.ToArray();
         }
 
         public void OnImGui()
@@ -31,14 +66,15 @@ namespace Wanderer.GameFramework
             GUISkin lastGuiSkin = GUI.skin;
             Matrix4x4 lastMatrix = GUI.matrix;
 
+            // GUI.skin = _consoleSkin;
             GUI.matrix = Matrix4x4.Scale(new Vector3(WindowScale, WindowScale, 1f));
-            if(_showFullWindow)
+            if (_showFullWindow)
             {
-                _defaultFullRect=GUILayout.Window(0,_defaultFullRect,DrawDebuggerFullWindow,"<b>GAME FRAMEWORK DEBUGGER</b>");
+                _defaultFullRect = GUILayout.Window(0, _defaultFullRect, DrawDebuggerFullWindow, "<b>GAME FRAMEWORK DEBUGGER</b>");
             }
             else
             {
-                _defaultSmallRect=GUILayout.Window(0,_defaultSmallRect,DrawDebuggerSmallWindow,"<b>DEBUGGER</b>");
+                _defaultSmallRect = GUILayout.Window(0, _defaultSmallRect, DrawDebuggerSmallWindow, "<b>DEBUGGER</b>");
             }
             GUI.matrix = lastMatrix;
             GUI.skin = lastGuiSkin;
@@ -46,7 +82,7 @@ namespace Wanderer.GameFramework
 
         public override void OnClose()
         {
-            if(_allDebuggerWindows!=null)
+            if (_allDebuggerWindows != null)
             {
                 for (int i = 0; i < _allDebuggerWindows.Count; i++)
                 {
@@ -57,44 +93,86 @@ namespace Wanderer.GameFramework
         }
 
         #region  内部函数
-        
+        //绘制大窗口
         private void DrawDebuggerFullWindow(int windowId)
         {
             GUI.DragWindow(_dragRect);
 
-            if(_debuggerWindowTitle==null||_debuggerWindowTitle.Length<=0)
+            if (_debuggerWindowTitle == null || _debuggerWindowTitle.Length <= 0)
                 return;
 
-            int selectIndex = GUILayout.Toolbar(_selectIndex,_debuggerWindowTitle,GUILayout.Height(30f), GUILayout.MaxWidth(Screen.width));
-            if(selectIndex!=_selectIndex)
+            int selectIndex = GUILayout.Toolbar(_selectIndex, _debuggerWindowTitle, GUILayout.Height(30f), GUILayout.MaxWidth(Screen.width));
+            if (selectIndex != _selectIndex)
             {
-                if(selectIndex==_debuggerWindowTitle.Length-1)
+                if (selectIndex == _debuggerWindowTitle.Length - 1)
                 {
-                    _showFullWindow=false;
-                  //  _currentDebuggerWindow=null;
+                    _showFullWindow = false;
+                    SetUGuiEventSystem(true);
                     return;
                 }
                 else
                 {
                     _currentDebuggerWindow?.OnExit();
-                    _selectIndex=selectIndex;
-                    _currentDebuggerWindow=_allDebuggerWindows[_selectIndex];
+                    _selectIndex = selectIndex;
+                    _currentDebuggerWindow = _allDebuggerWindows[_selectIndex];
                     _currentDebuggerWindow.OnEnter();
                 }
             }
             //调用窗口
             _currentDebuggerWindow?.OnDraw();
         }
-
+        //绘制小窗口
         private void DrawDebuggerSmallWindow(int windowId)
         {
             GUI.DragWindow(_dragRect);
-            if (GUILayout.Button("FPS", GUILayout.Width(100f), GUILayout.Height(40f)))
+            if (GUILayout.Button(_fpsCounter.FPS.ToString("f2"), GUILayout.Width(100f), GUILayout.Height(40f)))
             {
                 _showFullWindow = true;
+                SetUGuiEventSystem(false);
             }
+        }
+        //设置ugui EventSystem是否激活
+        private void SetUGuiEventSystem(bool active)
+        {
+            if (_currentEventSystem != null)
+            {
+                _currentEventSystem.enabled = active;
+            }
+        }
+
+        public void OnUpdate()
+        {
+            _fpsCounter?.OnUpdate();
         }
         #endregion
     }
 
+    //帧率计数
+    internal class FPSCounter
+    {
+        private float _lastTime;
+        private float _fpsCount = 0;
+        private float _fps;
+
+        public float FPS { get { return _fps; } }
+
+        public FPSCounter()
+        {
+            _lastTime = Time.realtimeSinceStartup;
+            _fpsCount = 0;
+            _fps = 0;
+        }
+
+        public void OnUpdate()
+        {
+            float intervalTime = Time.realtimeSinceStartup - _lastTime;
+            _fpsCount++;
+            if (intervalTime > 1)
+            {
+                _fps = _fpsCount / intervalTime;
+                _fpsCount = 0;
+                _lastTime = Time.realtimeSinceStartup;
+            }
+        }
+    }
 }

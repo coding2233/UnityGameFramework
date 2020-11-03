@@ -21,18 +21,13 @@ namespace Wanderer.GameFramework
         protected readonly Dictionary<Type, FSMState<T>> _allState = new Dictionary<Type, FSMState<T>>();
         protected FSMState<T> _startState;
         //是否有覆盖当前的开始状态
-        protected bool _hasOverStartState=false;
+        protected bool _hasOverStartState = false;
         public T Context { get; private set; }
 
         public FSM()
         {
-            List<Type> types=new List<Type>();
-            //获取所有程序的类型
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            for (int i = 0; i < assemblies.Length; i++)
-            {
-                types.AddRange(assemblies[i].GetTypes());
-            }  
+            //获取所有程序集的类型
+            List<Type> types = TypeUtility.AllAssemblyTypes;
             //整理类型是否满足状态
             for (int i = 0; i < types.Count; i++)
             {
@@ -53,15 +48,15 @@ namespace Wanderer.GameFramework
                             instance.OnInit(this);
                             if (attr.StateType == FSMStateType.Start)
                             {
-                                if(!_hasOverStartState)
+                                if (!_hasOverStartState)
                                     _startState = instance;
                             }
-                            else if(attr.StateType == FSMStateType.OverStart)
+                            else if (attr.StateType == FSMStateType.OverStart)
                             {
                                 _startState = instance;
-                                _hasOverStartState=true;
+                                _hasOverStartState = true;
                             }
-                                
+
                         }
                     }
                 }
@@ -76,7 +71,7 @@ namespace Wanderer.GameFramework
 
         public override void OnBegin()
         {
-            if(_startState==null)
+            if (_startState == null)
             {
                 throw new GameException($"[{typeof(T).FullName}] FSM can't find [StartState] !!");
             }
@@ -99,10 +94,10 @@ namespace Wanderer.GameFramework
         public override void OnClose()
         {
             _allState.Clear();
-            _hasOverStartState=false;
-            Context=null;
-            _startState=null;
-            _curState=null;
+            _hasOverStartState = false;
+            Context = null;
+            _startState = null;
+            _curState = null;
         }
 
         public virtual void ChangeState<TState>() where TState : FSMState<T>

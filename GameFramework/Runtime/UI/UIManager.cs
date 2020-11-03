@@ -87,6 +87,15 @@ namespace Wanderer.GameFramework
 			_event.Trigger(this, _uiEnterArgs);
 		}
 
+		public void PushWithAnimation<T>()where T : UIView
+		{
+
+		}
+
+		public void PushWaitExitAnimation<T>()where T : UIView
+		{
+
+		}
 
 		public void Pop(bool isDestory = false)
 		{
