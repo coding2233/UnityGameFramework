@@ -68,8 +68,8 @@ namespace Wanderer.GameFramework
             }
             GUILayout.EndScrollView();
 
-            GUILayout.BeginVertical("box", GUILayout.Height(60));
-            GUILayout.BeginHorizontal("box");
+            GUILayout.BeginVertical("box", GUILayout.Height(40));
+            GUILayout.BeginHorizontal();
             _inputCommand = GUILayout.TextField(_inputCommand, GUILayout.Width(500));
             GUILayout.Space(10);
             if (GUILayout.Button("Exec", GUILayout.Width(60), GUILayout.Height(25)))

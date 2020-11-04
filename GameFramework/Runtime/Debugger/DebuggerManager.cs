@@ -17,6 +17,8 @@ namespace Wanderer.GameFramework
 
         private Rect _defaultSmallRect = new Rect(10, 10, 60, 60);
         private Rect _defaultFullRect = new Rect(10, 10, 640, 480);
+        public Rect FullRect;
+
         private Rect _dragRect = new Rect(0f, 0f, float.MaxValue, 25f);
         private int _selectIndex = -1;
 
@@ -32,7 +34,8 @@ namespace Wanderer.GameFramework
 
         public DebuggerManager()
         {
-            Application.targetFrameRate = 30;
+            FullRect = _defaultFullRect;
+            // Debug.unityLogger.logEnabled = false;
             _currentEventSystem = EventSystem.current;
             _fpsCounter = new FPSCounter();
             _consoleSkin = Resources.Load<GUISkin>("Console/ConsoleSkin");
@@ -42,7 +45,7 @@ namespace Wanderer.GameFramework
             _allDebuggerWindows = new List<IDebuggerWindow>();
             //在当前类型
             List<DebuggerWindowAttribute> listDebuggerAttribute = new List<DebuggerWindowAttribute>();
-            foreach (var item in TypeUtility.AllAssemblyTypes)
+            foreach (var item in TypeUtility.AssemblyTypes)
             {
                 if (item.IsAbstract)
                     continue;
@@ -105,7 +108,7 @@ namespace Wanderer.GameFramework
             GUI.matrix = Matrix4x4.Scale(new Vector3(WindowScale, WindowScale, 1f));
             if (_showFullWindow)
             {
-                _defaultFullRect = GUILayout.Window(0, _defaultFullRect, DrawDebuggerFullWindow, "<b>GAME FRAMEWORK DEBUGGER</b>");
+                FullRect = GUILayout.Window(0, FullRect, DrawDebuggerFullWindow, "<b>GAME FRAMEWORK DEBUGGER</b>");
             }
             else
             {
@@ -146,6 +149,16 @@ namespace Wanderer.GameFramework
             return null;
         }
 
+
+        /// <summary>
+        /// 重置布局
+        /// </summary>
+        public void ResetLayout()
+        {
+            WindowScale = 1.0f;
+            FullRect = _defaultFullRect;
+        }
+
         #region  内部函数
         //绘制大窗口
         private void DrawDebuggerFullWindow(int windowId)
@@ -156,6 +169,10 @@ namespace Wanderer.GameFramework
                 return;
 
             int selectIndex = GUILayout.Toolbar(_selectIndex, _debuggerWindowTitle, GUILayout.Height(30f), GUILayout.MaxWidth(Screen.width));
+            if (_currentDebuggerWindow == null && _allDebuggerWindows.Count > 0)
+            {
+                selectIndex = 0;
+            }
             if (selectIndex != _selectIndex)
             {
                 if (selectIndex == _debuggerWindowTitle.Length - 1)
@@ -176,9 +193,9 @@ namespace Wanderer.GameFramework
             //调用窗口
             if (_currentDebuggerWindow != null)
             {
-                GUILayout.BeginVertical("window");
+                // GUILayout.BeginVertical("window");
                 _currentDebuggerWindow?.OnDraw();
-                GUILayout.EndVertical();
+                //  GUILayout.EndVertical();
             }
         }
         //绘制小窗口
