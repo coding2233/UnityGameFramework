@@ -6,13 +6,16 @@ using UnityEngine;
 namespace Wanderer.GameFramework
 {
     [System.AttributeUsage(AttributeTargets.Class)]
-    public class DebuggerWindowAttribute :Attribute
+    public class DebuggerWindowAttribute : Attribute
     {
-        public string Title{get;private set;}
+        public string Title { get; private set; }
 
-        public DebuggerWindowAttribute(string title)
+        public int Priority { get; private set; }
+
+        public DebuggerWindowAttribute(string title, int priority = 0)
         {
-            Title=title;
+            Title = title;
+            Priority = priority;
         }
     }
 

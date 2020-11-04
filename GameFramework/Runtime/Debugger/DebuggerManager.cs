@@ -25,8 +25,10 @@ namespace Wanderer.GameFramework
         private string[] _debuggerWindowTitle;
         //ugui的EventSystem
         private EventSystem _currentEventSystem;
-
+        //帧率计算
         private FPSCounter _fpsCounter;
+        //控制台窗口
+        private LogWindow _logWindow;
 
         public DebuggerManager()
         {
@@ -39,6 +41,7 @@ namespace Wanderer.GameFramework
             List<string> _windowTitles = new List<string>();
             _allDebuggerWindows = new List<IDebuggerWindow>();
             //在当前类型
+            List<DebuggerWindowAttribute> listDebuggerAttribute = new List<DebuggerWindowAttribute>();
             foreach (var item in TypeUtility.AllAssemblyTypes)
             {
                 if (item.IsAbstract)
@@ -49,13 +52,45 @@ namespace Wanderer.GameFramework
                     DebuggerWindowAttribute attr = objs[0] as DebuggerWindowAttribute;
                     if (attr != null)
                     {
-                        _windowTitles.Add(attr.Title);
                         IDebuggerWindow instance = (IDebuggerWindow)System.Activator.CreateInstance(item);
-                        _allDebuggerWindows.Add(instance);
+                        if (attr.Priority == 0)
+                        {
+                            listDebuggerAttribute.Add(attr);
+                            _windowTitles.Add(attr.Title);
+                            _allDebuggerWindows.Add(instance);
+                        }
+                        else
+                        {
+                            bool insert = false;
+                            for (int i = 0; i < listDebuggerAttribute.Count; i++)
+                            {
+                                if (attr.Priority < listDebuggerAttribute[i].Priority)
+                                {
+                                    listDebuggerAttribute.Insert(i, attr);
+                                    _windowTitles.Insert(i, attr.Title);
+                                    _allDebuggerWindows.Insert(i, instance);
+                                    insert = true;
+                                    break;
+                                }
+                            }
+                            if (!insert)
+                            {
+                                listDebuggerAttribute.Add(attr);
+                                _windowTitles.Add(attr.Title);
+                                _allDebuggerWindows.Add(instance);
+                            }
+                        }
+
                         instance.OnInit();
+                        //日志窗口特殊处理
+                        if (instance is LogWindow)
+                        {
+                            _logWindow = instance as LogWindow;
+                        }
                     }
                 }
             }
+            listDebuggerAttribute.Clear();
             //添加默认的Close窗口
             _windowTitles.Add("<b>Close</b>");
             _debuggerWindowTitle = _windowTitles.ToArray();
@@ -66,7 +101,7 @@ namespace Wanderer.GameFramework
             GUISkin lastGuiSkin = GUI.skin;
             Matrix4x4 lastMatrix = GUI.matrix;
 
-            // GUI.skin = _consoleSkin;
+            GUI.skin = _consoleSkin;
             GUI.matrix = Matrix4x4.Scale(new Vector3(WindowScale, WindowScale, 1f));
             if (_showFullWindow)
             {
@@ -118,18 +153,30 @@ namespace Wanderer.GameFramework
                     _currentDebuggerWindow.OnEnter();
                 }
             }
+
             //调用窗口
-            _currentDebuggerWindow?.OnDraw();
+            if (_currentDebuggerWindow != null)
+            {
+                GUILayout.BeginVertical("window");
+                _currentDebuggerWindow?.OnDraw();
+                GUILayout.EndVertical();
+            }
         }
         //绘制小窗口
         private void DrawDebuggerSmallWindow(int windowId)
         {
             GUI.DragWindow(_dragRect);
+            Color defaultColor = GUI.contentColor;
+            if (_logWindow != null)
+            {
+                GUI.contentColor = _logWindow.GetLogColor();
+            }
             if (GUILayout.Button(_fpsCounter.FPS.ToString("f2"), GUILayout.Width(100f), GUILayout.Height(40f)))
             {
                 _showFullWindow = true;
                 SetUGuiEventSystem(false);
             }
+            GUI.contentColor = defaultColor;
         }
         //设置ugui EventSystem是否激活
         private void SetUGuiEventSystem(bool active)
