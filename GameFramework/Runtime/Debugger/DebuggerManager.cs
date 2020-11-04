@@ -32,8 +32,26 @@ namespace Wanderer.GameFramework
         //控制台窗口
         private LogWindow _logWindow;
 
+        private bool _enable = false;
+
+        private bool _instance = false;
         public DebuggerManager()
         {
+        }
+
+        public void SetDebuggerEnable(bool enable)
+        {
+            Debug.unityLogger.logEnabled = enable;
+            _enable = enable;
+            if (!enable)
+                return;
+
+            //实例化
+            if (_instance)
+                return;
+            _instance = true;
+
+            //其他参数
             FullRect = _defaultFullRect;
             // Debug.unityLogger.logEnabled = false;
             _currentEventSystem = EventSystem.current;
@@ -101,6 +119,9 @@ namespace Wanderer.GameFramework
 
         public void OnImGui()
         {
+            if (!_enable)
+                return;
+
             GUISkin lastGuiSkin = GUI.skin;
             Matrix4x4 lastMatrix = GUI.matrix;
 
@@ -225,6 +246,8 @@ namespace Wanderer.GameFramework
 
         public void OnUpdate()
         {
+            if (!_enable)
+                return;
             _fpsCounter?.OnUpdate();
         }
         #endregion

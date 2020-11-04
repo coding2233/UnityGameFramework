@@ -11,6 +11,10 @@ namespace Wanderer.GameFramework
 {
     public abstract class GameFrameworkModule
     {
+        //初始化
+        public virtual void OnInit()
+        { }
+
         /// <summary>
         /// 关闭当前模块
         /// </summary>

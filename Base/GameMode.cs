@@ -109,6 +109,8 @@ namespace Wanderer.GameFramework
             Pool = GameFrameworkMode.GetModule<PoolManager>();
             Debugger = GameFrameworkMode.GetModule<DebuggerManager>();
             #endregion
+            //设置是否启动
+            Debugger.SetDebuggerEnable((bool)ConfigJsonData["DebugEnable"]);
 
             #region resource
             //参数设置
@@ -116,7 +118,7 @@ namespace Wanderer.GameFramework
             Resource.ResOfficialUpdatePath = (string)ConfigJsonData["ResOfficialUpdatePath"];
             Resource.ResTestUpdatePath = (string)ConfigJsonData["ResTestUpdatePath"]; ;
             Resource.LocalPathType = (PathType)(int)ConfigJsonData["PathType"];
-            Resource.DefaultInStreamingAsset = (bool)ConfigJsonData["DefaultInStreamingAsset"]; ;
+            Resource.DefaultInStreamingAsset = (bool)ConfigJsonData["DefaultInStreamingAsset"];
 
             //添加对象池管理器
             GameObject gameObjectPoolHelper = new GameObject("IGameObjectPoolHelper");
@@ -155,6 +157,8 @@ namespace Wanderer.GameFramework
             FSM.AddFSM<GameStateContext>();
             // GameState.CreateContext();
             yield return new WaitForEndOfFrame();
+            GameFrameworkMode.Init();
+            //  yield return new WaitForEndOfFrame();
             //   GameState.SetStateStart();
             FSM.GetFSM<GameStateContext>().OnBegin();
             #endregion
