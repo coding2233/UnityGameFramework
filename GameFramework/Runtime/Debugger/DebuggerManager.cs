@@ -81,7 +81,7 @@ namespace Wanderer.GameFramework
                             }
                         }
 
-                        instance.OnInit();
+                        instance.OnInit(_consoleSkin);
                         //日志窗口特殊处理
                         if (instance is LogWindow)
                         {
@@ -101,7 +101,7 @@ namespace Wanderer.GameFramework
             GUISkin lastGuiSkin = GUI.skin;
             Matrix4x4 lastMatrix = GUI.matrix;
 
-            GUI.skin = _consoleSkin;
+            //    GUI.skin = _consoleSkin;
             GUI.matrix = Matrix4x4.Scale(new Vector3(WindowScale, WindowScale, 1f));
             if (_showFullWindow)
             {
@@ -125,6 +125,25 @@ namespace Wanderer.GameFramework
                 }
                 _allDebuggerWindows.Clear();
             }
+        }
+
+        /// <summary>
+        /// 获取窗口
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public T GetWindow<T>() where T : class, IDebuggerWindow
+        {
+            if (_allDebuggerWindows != null)
+            {
+                for (int i = 0; i < _allDebuggerWindows.Count; i++)
+                {
+                    if (_allDebuggerWindows[i].GetType() == typeof(T))
+                    {
+                        return (T)_allDebuggerWindows[i];
+                    }
+                }
+            }
+            return null;
         }
 
         #region  内部函数
