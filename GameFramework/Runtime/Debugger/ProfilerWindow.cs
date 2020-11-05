@@ -78,6 +78,26 @@ namespace Wanderer.GameFramework
     //内存分析
     internal class MemoryProfiler : ToolbarDebuggerWindow
     {
+        public override void OnDraw()
+        {
+            // base.OnDraw();
+            int selectIndex = GUILayout.SelectionGrid(_selectIndex, _windowsTitle, 6, GUILayout.Height(60));
+            if (_currentWindow == null && _childWindows.Length > 0)
+            {
+                selectIndex = 0;
+            }
+            if (selectIndex != _selectIndex)
+            {
+                _currentWindow?.OnExit();
+                _selectIndex = selectIndex;
+                _currentWindow = _childWindows[_selectIndex];
+                _currentWindow.OnEnter();
+            }
+            if (_currentWindow != null)
+            {
+                _currentWindow.OnDraw();
+            }
+        }
         public override void OnInit(params object[] args)
         {
             base.OnInit(args);

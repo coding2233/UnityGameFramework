@@ -16,7 +16,7 @@ namespace Wanderer.GameFramework
         private GUISkin _consoleSkin;
 
         private Rect _defaultSmallRect = new Rect(10, 10, 60, 60);
-        private Rect _defaultFullRect = new Rect(10, 10, 640, 480);
+        private Rect _defaultFullRect = new Rect(10, 10, 700, 500);
         public Rect FullRect;
 
         private Rect _dragRect = new Rect(0f, 0f, float.MaxValue, 25f);
@@ -208,12 +208,6 @@ namespace Wanderer.GameFramework
                     _selectIndex = selectIndex;
                     _currentDebuggerWindow = _allDebuggerWindows[_selectIndex];
                     _currentDebuggerWindow.OnEnter();
-                    //如果不是调试器， 则默认布局
-                    if (_currentDebuggerWindow.GetType() != typeof(ProfilerWindow))
-                    {
-                        FullRect = _defaultFullRect;
-                        //  ResetLayout();
-                    }
                 }
             }
 
