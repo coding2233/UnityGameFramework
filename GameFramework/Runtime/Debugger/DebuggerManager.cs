@@ -125,7 +125,7 @@ namespace Wanderer.GameFramework
             GUISkin lastGuiSkin = GUI.skin;
             Matrix4x4 lastMatrix = GUI.matrix;
 
-            //    GUI.skin = _consoleSkin;
+            GUI.skin = _consoleSkin;
             GUI.matrix = Matrix4x4.Scale(new Vector3(WindowScale, WindowScale, 1f));
             if (_showFullWindow)
             {
