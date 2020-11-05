@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #游戏模块的基类# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年6月22日 14点59分# </time>
 //-----------------------------------------------------------------------
 

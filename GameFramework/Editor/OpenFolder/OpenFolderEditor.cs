@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #打开文件夹编辑器# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年7月19日 11点12分# </time>
 //-----------------------------------------------------------------------
 
@@ -12,7 +12,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class OpenFolderEditor  {
+public class OpenFolderEditor
+{
 
     //打开读写文件夹
     [MenuItem("Tools/OpenFolder/PersistentDataPath")]

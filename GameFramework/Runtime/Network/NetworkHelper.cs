@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #网络帮助类# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年8月2日 13点42分 </time>
 //-----------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ namespace Wanderer.GameFramework
                 }
                 return lanIps;
             }
-           
+
         }
     }
 }

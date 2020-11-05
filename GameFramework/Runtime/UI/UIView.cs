@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #view的实现虚类 继承Monobehaviour# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年6月22日 16点59分# </time>
 //-----------------------------------------------------------------------
 
@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-    public abstract class UIView : MonoBehaviour,IUIView
+    public abstract class UIView : MonoBehaviour, IUIView
     {
         /// <summary>
         /// 打开界面

@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #编辑器资源加载类# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年6月25日 12点06分# </time>
 //-----------------------------------------------------------------------
 
@@ -24,16 +24,16 @@ namespace Wanderer.GameFramework
 {
     public class EditorResourceHelper : IResourceHelper
     {
-        public void SetResource(PathType pathType,Action callback)
+        public void SetResource(PathType pathType, Action callback)
         {
-           callback?.Invoke();
+            callback?.Invoke();
         }
 
-		public void LoadSceneAsync(string sceneName, LoadSceneMode mode ,Action<AsyncOperation> callback)
+        public void LoadSceneAsync(string sceneName, LoadSceneMode mode, Action<AsyncOperation> callback)
         {
             AsyncOperation asyncLoadScene = EditorSceneManager.LoadSceneAsyncInPlayMode(sceneName, new LoadSceneParameters(mode));
-			callback(asyncLoadScene);
-		}
+            callback(asyncLoadScene);
+        }
 
 
         public AsyncOperation UnloadSceneAsync(string sceneName)
@@ -49,12 +49,12 @@ namespace Wanderer.GameFramework
 
         public void UnloadAsset(string assetName)
         {
-            
+
         }
 
         public void UnloadAssetBunlde(string assetBundleName, bool unload = false)
         {
-            
+
         }
 
         public void Clear()

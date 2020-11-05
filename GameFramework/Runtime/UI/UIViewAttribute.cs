@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #ui类标记# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年6月22日 16点55分# </time>
 //-----------------------------------------------------------------------
 
@@ -18,7 +18,7 @@ namespace Wanderer.GameFramework
         public string AssetBundleName { get; private set; }
         public string ViewPath { get; private set; }
 
-        public UIViewAttribute(string assetBundleName,string viewPath)
+        public UIViewAttribute(string assetBundleName, string viewPath)
         {
             AssetBundleName = assetBundleName;
             ViewPath = viewPath;

@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #模块编辑器的基础类# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年12月15日 17点21分# </time>
 //-----------------------------------------------------------------------
 
@@ -65,22 +65,22 @@ namespace Wanderer.GameFramework
         //保存配置文件
         protected virtual void SaveConfig()
         {
-            if(_gameMode==null||_gameMode.ConfigAsset==null)
+            if (_gameMode == null || _gameMode.ConfigAsset == null)
                 return;
-            if(_gameMode.ConfigJsonData==null)
+            if (_gameMode.ConfigJsonData == null)
                 return;
             string configPath = AssetDatabase.GetAssetPath(_gameMode.ConfigAsset);
-            File.WriteAllText(configPath,_gameMode.ConfigJsonData.ToJson());
+            File.WriteAllText(configPath, _gameMode.ConfigJsonData.ToJson());
             AssetDatabase.Refresh();
             EditorUtility.SetDirty(_gameMode);
         }
 
         //检测是否有对应的key
-        protected virtual void CheckConfig(string key,object value)
+        protected virtual void CheckConfig(string key, object value)
         {
-            if(!_gameMode.ConfigJsonData.ContainsKey(key))
+            if (!_gameMode.ConfigJsonData.ContainsKey(key))
             {
-                 _gameMode.ConfigJsonData[key]=new JsonData(value);
+                _gameMode.ConfigJsonData[key] = new JsonData(value);
                 SaveConfig();
             }
         }
@@ -89,10 +89,10 @@ namespace Wanderer.GameFramework
         protected virtual bool NoConfigError()
         {
             bool result = false;
-            if(_gameMode==null||_gameMode.ConfigJsonData==null)
+            if (_gameMode == null || _gameMode.ConfigJsonData == null)
             {
-                EditorGUILayout.HelpBox("No config file!", MessageType.Error); 
-                result=true;
+                EditorGUILayout.HelpBox("No config file!", MessageType.Error);
+                result = true;
             }
             return result;
         }

@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>$
 // <describe> #对象池管理器# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年8月26日 17点23# </time>
 //-----------------------------------------------------------------------
 using System;

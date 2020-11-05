@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #网页请求管理器# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年7月12日 11点06分# </time>
 //-----------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ namespace Wanderer.GameFramework
         /// <param name="localPath"></param>
         public void StartDownload(string remoteUrl, string localPath)
         {
-            _webDownloadHelper?.StartDownload(remoteUrl, localPath, StartDownloadCallback,StartDownloadProgress);
+            _webDownloadHelper?.StartDownload(remoteUrl, localPath, StartDownloadCallback, StartDownloadProgress);
         }
 
         #endregion
@@ -146,7 +146,7 @@ namespace Wanderer.GameFramework
         /// <param name="dataLength"></param>
         /// <param name="progess"></param>
         /// <param name="seconds"></param>
-        private void StartDownloadProgress(string remoteUrl, string localPath, ulong dataLength, float progess,float seconds)
+        private void StartDownloadProgress(string remoteUrl, string localPath, ulong dataLength, float progess, float seconds)
         {
             _downloadProgress.RemoteUrl = remoteUrl;
             _downloadProgress.LocalPath = localPath;
@@ -154,7 +154,7 @@ namespace Wanderer.GameFramework
             _downloadProgress.DownloadProgress = progess;
             _downloadProgress.DownloadSeconds = seconds;
             _downloadProgress.DownloadSpeed =
-                dataLength == 0.0f ? dataLength : dataLength / 1024.0f  / seconds;
+                dataLength == 0.0f ? dataLength : dataLength / 1024.0f / seconds;
             _event.Trigger(this, _downloadProgress);
         }
 

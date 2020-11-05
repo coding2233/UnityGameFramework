@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #网页请求帮助类接口# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年7月12日 11点16分# </time>
 //-----------------------------------------------------------------------
 
@@ -20,6 +20,6 @@ namespace Wanderer.GameFramework
         /// </summary>
         /// <param name="path"></param>
         /// <param name="result"></param>
-        void ReadHttpText(string url, Action<string, bool,string> result);
+        void ReadHttpText(string url, Action<string, bool, string> result);
     }
 }

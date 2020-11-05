@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #UGUI本地化文本# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年7月22日 13点53分# </time>
 //-----------------------------------------------------------------------
 
@@ -14,35 +14,36 @@ using UnityEngine.UI;
 
 namespace Wanderer.GameFramework
 {
-	[RequireComponent(typeof(Text))]
-	public sealed class LocalizationText : MonoBehaviour
-	{
-		[SerializeField]
-		private string _text;
-		private Text _uiText;
-		
-		public string Text {
-			get
-			{
-				return _text;
-			}
-			set
-			{
-				_text = value;
-				SetUIText(_text);
-			}
-		}
+    [RequireComponent(typeof(Text))]
+    public sealed class LocalizationText : MonoBehaviour
+    {
+        [SerializeField]
+        private string _text;
+        private Text _uiText;
 
-		private void Start()
-		{
-			_uiText = GetComponent<Text>();
-			SetUIText(_text);
-		}
+        public string Text
+        {
+            get
+            {
+                return _text;
+            }
+            set
+            {
+                _text = value;
+                SetUIText(_text);
+            }
+        }
 
-		private void SetUIText(string key)
-		{
-			_uiText.text=GameFrameworkMode.GetModule<LocalizationManager>().Get(key);
-		}
+        private void Start()
+        {
+            _uiText = GetComponent<Text>();
+            SetUIText(_text);
+        }
 
-	}
+        private void SetUIText(string key)
+        {
+            _uiText.text = GameFrameworkMode.GetModule<LocalizationManager>().Get(key);
+        }
+
+    }
 }

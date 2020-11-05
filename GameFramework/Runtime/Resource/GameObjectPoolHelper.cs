@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #对象池管理帮助实现类# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年6月22日 17点05分# </time>
 //-----------------------------------------------------------------------
 
@@ -13,163 +13,163 @@ using System.Collections.Generic;
 
 namespace Wanderer.GameFramework
 {
-	public class GameObjectPoolHelper : MonoBehaviour, IGameObjectPoolHelper
-	{
-		/// <summary>
-		///		对象池名称
-		/// </summary>
-		public string PoolName { get; set; }
+    public class GameObjectPoolHelper : MonoBehaviour, IGameObjectPoolHelper
+    {
+        /// <summary>
+        ///		对象池名称
+        /// </summary>
+        public string PoolName { get; set; }
 
-		/// <summary>
-		///     对象池所有的预设
-		/// </summary>
-		private readonly Dictionary<string, PoolPrefabInfo> _prefabs = new Dictionary<string, PoolPrefabInfo>();
+        /// <summary>
+        ///     对象池所有的预设
+        /// </summary>
+        private readonly Dictionary<string, PoolPrefabInfo> _prefabs = new Dictionary<string, PoolPrefabInfo>();
 
-		/// <summary>
-		///     已经生成并显示物体
-		/// </summary>
-		private readonly Dictionary<string, List<GameObject>> _spawneds = new Dictionary<string, List<GameObject>>();
+        /// <summary>
+        ///     已经生成并显示物体
+        /// </summary>
+        private readonly Dictionary<string, List<GameObject>> _spawneds = new Dictionary<string, List<GameObject>>();
 
-		/// <summary>
-		///     已经生成未显示物体
-		/// </summary>
-		private readonly Dictionary<string, Queue<GameObject>> _despawneds = new Dictionary<string, Queue<GameObject>>();
+        /// <summary>
+        ///     已经生成未显示物体
+        /// </summary>
+        private readonly Dictionary<string, Queue<GameObject>> _despawneds = new Dictionary<string, Queue<GameObject>>();
 
-		public async void AddPrefab(string assetBundleName,string assetName, PoolPrefabInfo prefabInfo)
-		{
-			if (_prefabs.ContainsKey(assetName))
-			{
-				Debug.Log("已经存在资源:" + assetName);
-				return;
-			}
-			if (prefabInfo.Prefab == null)
-			{
-				//根据assetName,直接从ResourceManager里面加载
-				prefabInfo.Prefab = await GameFrameworkMode.GetModule<ResourceManager>().LoadAsset<GameObject>(assetName);
-				if (prefabInfo.Prefab == null)
-				{
-					Debug.Log("预设资源为null:" + assetName);
-					return;
-				}
-			}
-			_prefabs[assetName] = prefabInfo;
-			_spawneds[assetName] = new List<GameObject>();
-			
-			Initialization(assetName, prefabInfo);
-		}
+        public async void AddPrefab(string assetBundleName, string assetName, PoolPrefabInfo prefabInfo)
+        {
+            if (_prefabs.ContainsKey(assetName))
+            {
+                Debug.Log("已经存在资源:" + assetName);
+                return;
+            }
+            if (prefabInfo.Prefab == null)
+            {
+                //根据assetName,直接从ResourceManager里面加载
+                prefabInfo.Prefab = await GameFrameworkMode.GetModule<ResourceManager>().LoadAsset<GameObject>(assetName);
+                if (prefabInfo.Prefab == null)
+                {
+                    Debug.Log("预设资源为null:" + assetName);
+                    return;
+                }
+            }
+            _prefabs[assetName] = prefabInfo;
+            _spawneds[assetName] = new List<GameObject>();
 
-		public bool HasPrefab(string assetName)
-		{
-			return _prefabs.ContainsKey(assetName);
-		}
+            Initialization(assetName, prefabInfo);
+        }
 
-		private void Initialization(string assetName, PoolPrefabInfo prefabInfo)
-		{
-			var objects = new Queue<GameObject>();
-			for (var i = 0; i < prefabInfo.PreloadAmount; i++)
-			{
-				var obj = GameObject.Instantiate(prefabInfo.Prefab);
-				obj.transform.SetParent(transform);
-				obj.SetActive(false);
-				objects.Enqueue(obj);
-			}
-			_despawneds[assetName] = objects;
-		}
+        public bool HasPrefab(string assetName)
+        {
+            return _prefabs.ContainsKey(assetName);
+        }
 
-		public GameObject Spawn(string assetName)
-		{
-			//if (!_despawneds.ContainsKey(assetName))
-			//{
-			//	//在没有添加预设的时候  默认添加一个预设
-			//	AddPrefab(assetName, new PoolPrefabInfo());
-			//}
+        private void Initialization(string assetName, PoolPrefabInfo prefabInfo)
+        {
+            var objects = new Queue<GameObject>();
+            for (var i = 0; i < prefabInfo.PreloadAmount; i++)
+            {
+                var obj = GameObject.Instantiate(prefabInfo.Prefab);
+                obj.transform.SetParent(transform);
+                obj.SetActive(false);
+                objects.Enqueue(obj);
+            }
+            _despawneds[assetName] = objects;
+        }
 
-			GameObject gameObject;
-			Queue<GameObject> queueGos = _despawneds[assetName];
-			if (queueGos.Count > 0)
-			{
-				gameObject = queueGos.Dequeue();
-				gameObject.SetActive(true);
-			}
-			else
-			{
+        public GameObject Spawn(string assetName)
+        {
+            //if (!_despawneds.ContainsKey(assetName))
+            //{
+            //	//在没有添加预设的时候  默认添加一个预设
+            //	AddPrefab(assetName, new PoolPrefabInfo());
+            //}
 
-				gameObject = GameObject.Instantiate((GameObject)_prefabs[assetName].Prefab);
-				gameObject.transform.SetParent(transform);
-			}
-			_spawneds[assetName].Add(gameObject);
+            GameObject gameObject;
+            Queue<GameObject> queueGos = _despawneds[assetName];
+            if (queueGos.Count > 0)
+            {
+                gameObject = queueGos.Dequeue();
+                gameObject.SetActive(true);
+            }
+            else
+            {
 
-			return gameObject;
-		}
+                gameObject = GameObject.Instantiate((GameObject)_prefabs[assetName].Prefab);
+                gameObject.transform.SetParent(transform);
+            }
+            _spawneds[assetName].Add(gameObject);
 
-		public void Despawn(GameObject go, bool isDestroy = false)
-		{
-			foreach (var item in _spawneds)
-			{
-				if (item.Value.Contains(go))
-				{
-					if (isDestroy)
-					{
-						item.Value.Remove(go);
-						MonoBehaviour.Destroy(go);
-					}
-					else
-					{
-						Queue<GameObject> _queueObjs = _despawneds[item.Key];
-						if ((_prefabs[item.Key].MaxAmount >= 0)
-							&& (item.Value.Count + _queueObjs.Count) > _prefabs[item.Key].MaxAmount)
-						{
-							item.Value.Remove(go);
-							MonoBehaviour.Destroy(go);
-						}
-						else
-						{
-							item.Value.Remove(go);
-							go.SetActive(false);
-							_despawneds[item.Key].Enqueue(go);
-						}
-					}
-					return;
-				}
-			}
-		}
+            return gameObject;
+        }
 
-		public void DespawnAll()
-		{
-			foreach (var item in _spawneds)
-				foreach (var go in item.Value)
-				{
-					item.Value.Remove(go);
-					go.SetActive(false);
-					_despawneds[item.Key].Enqueue(go);
-				}
-		}
+        public void Despawn(GameObject go, bool isDestroy = false)
+        {
+            foreach (var item in _spawneds)
+            {
+                if (item.Value.Contains(go))
+                {
+                    if (isDestroy)
+                    {
+                        item.Value.Remove(go);
+                        MonoBehaviour.Destroy(go);
+                    }
+                    else
+                    {
+                        Queue<GameObject> _queueObjs = _despawneds[item.Key];
+                        if ((_prefabs[item.Key].MaxAmount >= 0)
+                            && (item.Value.Count + _queueObjs.Count) > _prefabs[item.Key].MaxAmount)
+                        {
+                            item.Value.Remove(go);
+                            MonoBehaviour.Destroy(go);
+                        }
+                        else
+                        {
+                            item.Value.Remove(go);
+                            go.SetActive(false);
+                            _despawneds[item.Key].Enqueue(go);
+                        }
+                    }
+                    return;
+                }
+            }
+        }
 
-		public void DestroyAll()
-		{
-			foreach (var item in _spawneds)
-				foreach (var go in item.Value)
-				{
-					item.Value.Remove(go);
-					MonoBehaviour.Destroy(go);
-				}
+        public void DespawnAll()
+        {
+            foreach (var item in _spawneds)
+                foreach (var go in item.Value)
+                {
+                    item.Value.Remove(go);
+                    go.SetActive(false);
+                    _despawneds[item.Key].Enqueue(go);
+                }
+        }
 
-			foreach (var item in _despawneds.Values)
-				MonoBehaviour.Destroy(item.Dequeue());
-		}
+        public void DestroyAll()
+        {
+            foreach (var item in _spawneds)
+                foreach (var go in item.Value)
+                {
+                    item.Value.Remove(go);
+                    MonoBehaviour.Destroy(go);
+                }
 
-		public void DespawnPrefab(string assetName)
-		{
-			if (_spawneds.ContainsKey(assetName))
-			{
-				var objs = _spawneds[assetName];
-				foreach (var go in objs)
-				{
-					objs.Remove(go);
-					go.SetActive(false);
-					_despawneds[assetName].Enqueue(go);
-				}
-			}
-		}
-	}
+            foreach (var item in _despawneds.Values)
+                MonoBehaviour.Destroy(item.Dequeue());
+        }
+
+        public void DespawnPrefab(string assetName)
+        {
+            if (_spawneds.ContainsKey(assetName))
+            {
+                var objs = _spawneds[assetName];
+                foreach (var go in objs)
+                {
+                    objs.Remove(go);
+                    go.SetActive(false);
+                    _despawneds[assetName].Enqueue(go);
+                }
+            }
+        }
+    }
 }

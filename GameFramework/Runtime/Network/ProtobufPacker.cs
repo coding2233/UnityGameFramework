@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #Protobuf的序列化的实现，后期再提接口# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年7月29日 21点28分# </time>
 //-----------------------------------------------------------------------
 
@@ -15,23 +15,23 @@ using System.IO;
 
 namespace Wanderer.GameFramework
 {
-	public class ProtobufPacker
-	{
+    public class ProtobufPacker
+    {
 
-		public byte[] ToBytes(object message)
-		{
-			// IMessage msg = message as IMessage;
-			// return msg.ToByteArray();
-			return null;
-		}
+        public byte[] ToBytes(object message)
+        {
+            // IMessage msg = message as IMessage;
+            // return msg.ToByteArray();
+            return null;
+        }
 
-		public object ToMessage(Type type, byte[] datas)
-		{
-			// IMessage result = (IMessage) Activator.CreateInstance(type);
-			// result.MergeFrom(datas, 0, datas.Length);
-			// return result;
-			return null;
-		}
+        public object ToMessage(Type type, byte[] datas)
+        {
+            // IMessage result = (IMessage) Activator.CreateInstance(type);
+            // result.MergeFrom(datas, 0, datas.Length);
+            // return result;
+            return null;
+        }
 
-	}
+    }
 }

@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #资源加载类的接口，可能需要扩展为新的资源加载方式# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年6月22日 17点01分# </time>
 //-----------------------------------------------------------------------
 
@@ -20,42 +20,42 @@ namespace Wanderer.GameFramework
         /// 设置资源的路径,默认是为只读路径:Application.streamingAssetsPath;
         /// </summary>
         /// <param name="path"></param>
-        void SetResource(PathType pathType,Action callback);
+        void SetResource(PathType pathType, Action callback);
 
-		// /// <summary>
-		// /// 加载assetbundle
-		// /// </summary>
-		// /// <param name="assetBundleName"></param>
-		// /// <returns></returns>
-		// void LoadAssetBundle(string assetBundleName,Action<AssetBundle> callback);
+        // /// <summary>
+        // /// 加载assetbundle
+        // /// </summary>
+        // /// <param name="assetBundleName"></param>
+        // /// <returns></returns>
+        // void LoadAssetBundle(string assetBundleName,Action<AssetBundle> callback);
 
-		/// <summary>
-		/// 加载资源 
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="assetName"></param>
-		/// <returns></returns>
-		void LoadAsset<T>(string assetName,Action<T> callback) where T : UnityEngine.Object;
+        /// <summary>
+        /// 加载资源 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
+        void LoadAsset<T>(string assetName, Action<T> callback) where T : UnityEngine.Object;
 
-		/// <summary>
-		/// 卸载资源 -- 取消掉资源计数
-		/// </summary>
-		/// <param name="assetName"></param>
-		void UnloadAsset(string assetName);
+        /// <summary>
+        /// 卸载资源 -- 取消掉资源计数
+        /// </summary>
+        /// <param name="assetName"></param>
+        void UnloadAsset(string assetName);
 
         /// <summary>
         /// 卸载资源 主要为卸载AssetBundle
         /// </summary>
         /// <param name="assetBundleName">资源名称</param>
         /// <param name="unload">是否卸载调所有资源</param>
-        void UnloadAssetBunlde(string assetBundleName, bool unload=false);
+        void UnloadAssetBunlde(string assetBundleName, bool unload = false);
 
         /// <summary>
         /// 异步加载场景
         /// </summary>
         /// <param name="assetBundleName"></param>
         /// <param name="sceneName"></param>
-        void LoadSceneAsync(string sceneName, LoadSceneMode mode,Action<AsyncOperation> callback);
+        void LoadSceneAsync(string sceneName, LoadSceneMode mode, Action<AsyncOperation> callback);
 
         /// <summary>
         /// 卸载场景

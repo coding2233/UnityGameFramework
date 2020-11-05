@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #检查资源状态# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年7月8日 13点20分# </time>
 //-----------------------------------------------------------------------
 
@@ -40,26 +40,26 @@ namespace Wanderer.GameFramework
         private List<string> _remainingResources;
 
         //远程更新的路径
-        private string _remoteUpdatePath= null;
+        private string _remoteUpdatePath = null;
         #endregion
 
         #region 重写函数
 
 
-        
+
 
         public override void OnInit(FSM<GameStateContext> fsm)
         {
             base.OnInit(fsm);
 
-             _downloadResouces = new Dictionary<string, string>();
+            _downloadResouces = new Dictionary<string, string>();
             _remainingResources = new List<string>();
 
-            #if TEST
+#if TEST
              _remoteUpdatePath=GameMode.Resource.ResTestUpdatePath;
-            #else
-            _remoteUpdatePath=GameMode.Resource.ResOfficialUpdatePath;
-            #endif
+#else
+            _remoteUpdatePath = GameMode.Resource.ResOfficialUpdatePath;
+#endif
 
         }
 
@@ -67,7 +67,7 @@ namespace Wanderer.GameFramework
         {
             base.OnEnter(fsm);
 
-             GameMode.Event.AddListener<HttpReadTextSuccessEventArgs>(OnHttpReadTextSuccess);
+            GameMode.Event.AddListener<HttpReadTextSuccessEventArgs>(OnHttpReadTextSuccess);
             GameMode.Event.AddListener<HttpReadTextFaileEventArgs>(OnHttpReadTextFaile);
             GameMode.Event.AddListener<DownloadSuccessEventArgs>(OnDownloadSuccess);
             GameMode.Event.AddListener<DownloadFaileEventArgs>(OnDownloadFaile);
@@ -87,7 +87,7 @@ namespace Wanderer.GameFramework
 
         public override void OnExit(FSM<GameStateContext> fsm)
         {
-  GameMode.Event.RemoveListener<HttpReadTextSuccessEventArgs>(OnHttpReadTextSuccess);
+            GameMode.Event.RemoveListener<HttpReadTextSuccessEventArgs>(OnHttpReadTextSuccess);
             GameMode.Event.RemoveListener<HttpReadTextFaileEventArgs>(OnHttpReadTextFaile);
             GameMode.Event.RemoveListener<DownloadSuccessEventArgs>(OnDownloadSuccess);
             GameMode.Event.RemoveListener<DownloadFaileEventArgs>(OnDownloadFaile);
@@ -101,7 +101,7 @@ namespace Wanderer.GameFramework
         {
             base.OnUpdate(fsm);
 
-               //更新资源
+            //更新资源
             if (_resourceUpdateDone && _remainingResources.Count == 0)
             {
                 //移动所有的下载完的文件
@@ -113,7 +113,7 @@ namespace Wanderer.GameFramework
             }
         }
 
-   
+
 
 
 
@@ -134,7 +134,7 @@ namespace Wanderer.GameFramework
                     if (assetPlatform.Platforms.Contains(platformName))
                     {
                         //更新远程资源的路径
-                        _remoteUpdatePath =Path.Combine(_remoteUpdatePath, platformName);
+                        _remoteUpdatePath = Path.Combine(_remoteUpdatePath, platformName);
                         //读取远程的文本
                         string remotePath = Path.Combine(_remoteUpdatePath, _assetVersionTxt);
                         GameMode.WebRequest.ReadHttpText(remotePath);

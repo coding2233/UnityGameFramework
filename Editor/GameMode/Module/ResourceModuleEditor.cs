@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #资源模块编辑器# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年12月15日 17点24分# </time>
 //-----------------------------------------------------------------------
 
@@ -20,16 +20,16 @@ namespace Wanderer.GameFramework
         private BuildTargetGroup _lastBuildTargetGroup;
         private string _lastScriptingDefineSymbols;
         //资源更新类型
-        private const string RESOURCEUPDATETYPE="ResourceUpdateType";
+        private const string RESOURCEUPDATETYPE = "ResourceUpdateType";
         //资源本地路径
-        private const string PATHTYPE="PathType";
+        private const string PATHTYPE = "PathType";
         //资源更新的路径
-        private const string RESOFFICIALUPDATEPATH="ResOfficialUpdatePath";
+        private const string RESOFFICIALUPDATEPATH = "ResOfficialUpdatePath";
         //测试更新的路径
         private const string RESTESTUPDATEPATH = "ResTestUpdatePath";
         //默认是否需要从StreamingAsset里面拷贝到可读文件夹中
-        private const string DEFAULTINSTREAMINGASSET= "DefaultInStreamingAsset";
-    
+        private const string DEFAULTINSTREAMINGASSET = "DefaultInStreamingAsset";
+
         public ResourceModuleEditor(string name, Color mainColor, GameMode gameMode)
             : base(name, mainColor, gameMode)
         {
@@ -41,107 +41,107 @@ namespace Wanderer.GameFramework
         public override void OnDrawGUI()
         {
             //检查配置文件
-            if(!NoConfigError())
+            if (!NoConfigError())
             {
 
-            GUILayout.BeginVertical("HelpBox");
+                GUILayout.BeginVertical("HelpBox");
 
-            GUILayout.BeginHorizontal("HelpBox");
-            GUILayout.Label("Define", GUILayout.Width(50));
-            string scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup);
-            _lastScriptingDefineSymbols = GUILayout.TextArea(_lastScriptingDefineSymbols);
-            if (GUILayout.Button("OK", GUILayout.Width(40)) && !_lastScriptingDefineSymbols.Equals(scriptingDefineSymbols))
-            {
-                _lastBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
-                PlayerSettings.SetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup, _lastScriptingDefineSymbols);
-            }
-            GUILayout.EndHorizontal();
-
-            //检查配置文件是否存在
-            CheckConfig(RESOURCEUPDATETYPE,0);
-            ResourceUpdateType gameModeResourceUpdateType= (ResourceUpdateType)(int)_gameMode.ConfigJsonData[RESOURCEUPDATETYPE];
-            CheckConfig(PATHTYPE,0);
-            PathType gameModePathType = (PathType)(int)_gameMode.ConfigJsonData[PATHTYPE];
-            CheckConfig(RESOFFICIALUPDATEPATH,"");
-            string gameModeResOfficialUpdatePath=(string)_gameMode.ConfigJsonData[RESOFFICIALUPDATEPATH];
-            CheckConfig(RESTESTUPDATEPATH,"");
-            string gameModeResTestUpdatePath = (string)_gameMode.ConfigJsonData[RESTESTUPDATEPATH];
-            CheckConfig(DEFAULTINSTREAMINGASSET,false);
-            bool gameModeDefaultInStreamingAsset = (bool)_gameMode.ConfigJsonData[DEFAULTINSTREAMINGASSET];
-
-            ResourceUpdateType resUpdateType = (ResourceUpdateType)EditorGUILayout.EnumPopup("Resource Update Type", gameModeResourceUpdateType);
-            if (resUpdateType != gameModeResourceUpdateType)
-            {
-                gameModeResourceUpdateType = resUpdateType;
-                _gameMode.ConfigJsonData[RESOURCEUPDATETYPE]=(int)resUpdateType;
-                //保存数据
-                SaveConfig();
-            }
-            PathType localPathType=gameModePathType;
-            if (gameModeResourceUpdateType != ResourceUpdateType.Editor
-            &&gameModeResourceUpdateType != ResourceUpdateType.None)
-            {
-                if (gameModeResourceUpdateType == ResourceUpdateType.Update)
+                GUILayout.BeginHorizontal("HelpBox");
+                GUILayout.Label("Define", GUILayout.Width(50));
+                string scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup);
+                _lastScriptingDefineSymbols = GUILayout.TextArea(_lastScriptingDefineSymbols);
+                if (GUILayout.Button("OK", GUILayout.Width(40)) && !_lastScriptingDefineSymbols.Equals(scriptingDefineSymbols))
                 {
-                    string officialUpdatePath = EditorGUILayout.TextField("Official Update Path",gameModeResOfficialUpdatePath);
-                    if (!officialUpdatePath.Equals(gameModeResOfficialUpdatePath))
-                    {
-                        gameModeResOfficialUpdatePath = officialUpdatePath;
-                        _gameMode.ConfigJsonData[RESOFFICIALUPDATEPATH]=officialUpdatePath;
-                        //保存数据
-                        SaveConfig();
-                    }
-                    string testUpdatePath = EditorGUILayout.TextField("Test Update Path",gameModeResTestUpdatePath);
-                    if (!testUpdatePath.Equals(gameModeResTestUpdatePath))
-                    {
-                        gameModeResTestUpdatePath = testUpdatePath;
-                        _gameMode.ConfigJsonData[RESTESTUPDATEPATH]=testUpdatePath;
-                        //保存数据
-                        SaveConfig();
-                    }
-                   localPathType =
-                        (PathType)EditorGUILayout.EnumPopup("Local Path Type", PathType.ReadWrite);
-                    bool value = GUILayout.Toggle(gameModeDefaultInStreamingAsset, "Default In StreamingAsset");
-                    if (value != gameModeDefaultInStreamingAsset)
-                    {
-                        gameModeDefaultInStreamingAsset = value;
-                        _gameMode.ConfigJsonData[DEFAULTINSTREAMINGASSET]=value;
-                         //保存数据
-                        SaveConfig();
-                    }
+                    _lastBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
+                    PlayerSettings.SetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup, _lastScriptingDefineSymbols);
                 }
-                else
+                GUILayout.EndHorizontal();
+
+                //检查配置文件是否存在
+                CheckConfig(RESOURCEUPDATETYPE, 0);
+                ResourceUpdateType gameModeResourceUpdateType = (ResourceUpdateType)(int)_gameMode.ConfigJsonData[RESOURCEUPDATETYPE];
+                CheckConfig(PATHTYPE, 0);
+                PathType gameModePathType = (PathType)(int)_gameMode.ConfigJsonData[PATHTYPE];
+                CheckConfig(RESOFFICIALUPDATEPATH, "");
+                string gameModeResOfficialUpdatePath = (string)_gameMode.ConfigJsonData[RESOFFICIALUPDATEPATH];
+                CheckConfig(RESTESTUPDATEPATH, "");
+                string gameModeResTestUpdatePath = (string)_gameMode.ConfigJsonData[RESTESTUPDATEPATH];
+                CheckConfig(DEFAULTINSTREAMINGASSET, false);
+                bool gameModeDefaultInStreamingAsset = (bool)_gameMode.ConfigJsonData[DEFAULTINSTREAMINGASSET];
+
+                ResourceUpdateType resUpdateType = (ResourceUpdateType)EditorGUILayout.EnumPopup("Resource Update Type", gameModeResourceUpdateType);
+                if (resUpdateType != gameModeResourceUpdateType)
                 {
-                    localPathType = 
-                        (PathType)EditorGUILayout.EnumPopup("Local Path Type", gameModePathType);
-                }
-                if(gameModePathType != localPathType)
-                {
-                    gameModePathType=localPathType;
-                    _gameMode.ConfigJsonData[PATHTYPE]=(int)localPathType;
+                    gameModeResourceUpdateType = resUpdateType;
+                    _gameMode.ConfigJsonData[RESOURCEUPDATETYPE] = (int)resUpdateType;
+                    //保存数据
                     SaveConfig();
                 }
-                string path = "";
-                switch (gameModePathType)
+                PathType localPathType = gameModePathType;
+                if (gameModeResourceUpdateType != ResourceUpdateType.Editor
+                && gameModeResourceUpdateType != ResourceUpdateType.None)
                 {
-                    case PathType.DataPath:
-                        path = Application.dataPath;
-                        break;
-                    case PathType.ReadOnly:
-                        path = Application.streamingAssetsPath;
-                        break;
-                    case PathType.ReadWrite:
-                        path = Application.persistentDataPath;
-                        break;
-                    case PathType.TemporaryCache:
-                        path = Application.temporaryCachePath;
-                        break;
+                    if (gameModeResourceUpdateType == ResourceUpdateType.Update)
+                    {
+                        string officialUpdatePath = EditorGUILayout.TextField("Official Update Path", gameModeResOfficialUpdatePath);
+                        if (!officialUpdatePath.Equals(gameModeResOfficialUpdatePath))
+                        {
+                            gameModeResOfficialUpdatePath = officialUpdatePath;
+                            _gameMode.ConfigJsonData[RESOFFICIALUPDATEPATH] = officialUpdatePath;
+                            //保存数据
+                            SaveConfig();
+                        }
+                        string testUpdatePath = EditorGUILayout.TextField("Test Update Path", gameModeResTestUpdatePath);
+                        if (!testUpdatePath.Equals(gameModeResTestUpdatePath))
+                        {
+                            gameModeResTestUpdatePath = testUpdatePath;
+                            _gameMode.ConfigJsonData[RESTESTUPDATEPATH] = testUpdatePath;
+                            //保存数据
+                            SaveConfig();
+                        }
+                        localPathType =
+                             (PathType)EditorGUILayout.EnumPopup("Local Path Type", PathType.ReadWrite);
+                        bool value = GUILayout.Toggle(gameModeDefaultInStreamingAsset, "Default In StreamingAsset");
+                        if (value != gameModeDefaultInStreamingAsset)
+                        {
+                            gameModeDefaultInStreamingAsset = value;
+                            _gameMode.ConfigJsonData[DEFAULTINSTREAMINGASSET] = value;
+                            //保存数据
+                            SaveConfig();
+                        }
+                    }
+                    else
+                    {
+                        localPathType =
+                            (PathType)EditorGUILayout.EnumPopup("Local Path Type", gameModePathType);
+                    }
+                    if (gameModePathType != localPathType)
+                    {
+                        gameModePathType = localPathType;
+                        _gameMode.ConfigJsonData[PATHTYPE] = (int)localPathType;
+                        SaveConfig();
+                    }
+                    string path = "";
+                    switch (gameModePathType)
+                    {
+                        case PathType.DataPath:
+                            path = Application.dataPath;
+                            break;
+                        case PathType.ReadOnly:
+                            path = Application.streamingAssetsPath;
+                            break;
+                        case PathType.ReadWrite:
+                            path = Application.persistentDataPath;
+                            break;
+                        case PathType.TemporaryCache:
+                            path = Application.temporaryCachePath;
+                            break;
+                    }
+
+                    EditorGUILayout.LabelField("Path", path);
                 }
 
-                EditorGUILayout.LabelField("Path", path);
-            }
-
-            GUILayout.EndVertical();
+                GUILayout.EndVertical();
             }
         }
 

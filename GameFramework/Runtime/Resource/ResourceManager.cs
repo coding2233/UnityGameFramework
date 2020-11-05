@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #资源管理类 资源加载&内置对象池# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年6月22日 17点11分# </time>
 //-----------------------------------------------------------------------
 
@@ -78,7 +78,7 @@ namespace Wanderer.GameFramework
         /// 正式服的更新路径
         /// </summary>
         public string ResOfficialUpdatePath = "";
-        
+
         /// <summary>
         /// 测试服的更新路径
         /// </summary>
@@ -118,8 +118,9 @@ namespace Wanderer.GameFramework
         /// </summary>
         public void SetResource()
         {
-            _resourceHelper?.SetResource(LocalPathType,()=>{
-               _event.Trigger<ResourceAssetPathsMapReadyEventArgs>(this);
+            _resourceHelper?.SetResource(LocalPathType, () =>
+            {
+                _event.Trigger<ResourceAssetPathsMapReadyEventArgs>(this);
             });
         }
 
@@ -132,25 +133,26 @@ namespace Wanderer.GameFramework
         /// <returns></returns>
         public Task<T> LoadAsset<T>(string assetName) where T : UnityEngine.Object
         {
-            assetName= assetName.ToLower();
+            assetName = assetName.ToLower();
             var taskResult = new TaskCompletionSource<T>();
-            _resourceHelper?.LoadAsset<T>(assetName,(t)=>{
+            _resourceHelper?.LoadAsset<T>(assetName, (t) =>
+            {
                 taskResult.SetResult(t);
             });
             return taskResult.Task;
         }
 
-         /// <summary>
+        /// <summary>
         /// 加载资源
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="assetBundleName"></param>
         /// <param name="assetName"></param>
         /// <returns></returns>
-        public void LoadAsset<T>(string assetName,Action<T> callback) where T : UnityEngine.Object
+        public void LoadAsset<T>(string assetName, Action<T> callback) where T : UnityEngine.Object
         {
-            assetName= assetName.ToLower();
-            _resourceHelper?.LoadAsset<T>(assetName,callback);
+            assetName = assetName.ToLower();
+            _resourceHelper?.LoadAsset<T>(assetName, callback);
         }
 
         /// <summary>
@@ -168,9 +170,9 @@ namespace Wanderer.GameFramework
         /// </summary>
         /// <param name="assetBundleName"></param>
         /// <param name="unload"></param>
-        public void UnloadAssetBunlde(string assetBundleName,bool unload=false)
+        public void UnloadAssetBunlde(string assetBundleName, bool unload = false)
         {
-            _resourceHelper?.UnloadAssetBunlde(assetBundleName,unload);
+            _resourceHelper?.UnloadAssetBunlde(assetBundleName, unload);
         }
 
         /// <summary>
@@ -182,8 +184,9 @@ namespace Wanderer.GameFramework
         /// <returns></returns>
         public void LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
         {
-          //  sceneName= sceneName.ToLower();
-            _resourceHelper?.LoadSceneAsync(sceneName,mode,(asyncOperation)=>{
+            //  sceneName= sceneName.ToLower();
+            _resourceHelper?.LoadSceneAsync(sceneName, mode, (asyncOperation) =>
+            {
                 _sceneAsyncOperations.Add(sceneName, asyncOperation);
             });
         }
@@ -370,7 +373,7 @@ namespace Wanderer.GameFramework
     /// </summary>
     public enum ResourceUpdateType
     {
-         /// <summary>
+        /// <summary>
         /// 编辑器
         /// </summary>
         Editor,

@@ -3,7 +3,7 @@
 //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // </copyright>
 // <describe> #http文件下载 继承MonoBehaviour的实现类# </describe>
-// <email> yeozhang@qq.com </email>
+// <email> dutifulwanderer@gmail.com </email>
 // <time> #2018年7月12日 11点42分# </time>
 //-----------------------------------------------------------------------
 
@@ -18,14 +18,14 @@ using UnityEngine.Networking;
 namespace Wanderer.GameFramework
 {
 
-	public sealed class WebDownloadMonoHelper : MonoBehaviour,IWebDownloadHelper
+    public sealed class WebDownloadMonoHelper : MonoBehaviour, IWebDownloadHelper
     {
-        public void StartDownload(string remoteUrl, string localPath, Action<string, string, bool, string> result, Action<string, string, ulong, float,float> progress)
+        public void StartDownload(string remoteUrl, string localPath, Action<string, string, bool, string> result, Action<string, string, ulong, float, float> progress)
         {
-            StartCoroutine(UnityWebStartDownload(remoteUrl,localPath,result,progress));
+            StartCoroutine(UnityWebStartDownload(remoteUrl, localPath, result, progress));
         }
-		
-        IEnumerator UnityWebStartDownload(string remoteUrl, string localPath, Action<string, string, bool, string> result, Action<string, string, ulong, float,float> progress)
+
+        IEnumerator UnityWebStartDownload(string remoteUrl, string localPath, Action<string, string, bool, string> result, Action<string, string, ulong, float, float> progress)
         {
             //断点续传写不写呢...
             //纠结------------------
@@ -39,7 +39,7 @@ namespace Wanderer.GameFramework
 
             while (!request.isDone)
             {
-                float seconds = (DateTime.Now.Ticks - lastTicks)/ 10000000.0f;
+                float seconds = (DateTime.Now.Ticks - lastTicks) / 10000000.0f;
                 progress.Invoke(remoteUrl, localPath, request.downloadedBytes, request.downloadProgress, seconds);
                 yield return null;
             }

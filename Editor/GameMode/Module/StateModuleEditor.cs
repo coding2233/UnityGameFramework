@@ -3,7 +3,7 @@
 // //     Copyright (c) 2018 Zhang Yang. All rights reserved.
 // // </copyright>
 // // <describe> #状态模块编辑器# </describe>
-// // <email> yeozhang@qq.com </email>
+// // <email> dutifulwanderer@gmail.com </email>
 // // <time> #2018年12月15日 17点29分# </time>
 // //-----------------------------------------------------------------------
 
