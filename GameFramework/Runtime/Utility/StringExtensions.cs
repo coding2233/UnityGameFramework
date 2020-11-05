@@ -9,46 +9,46 @@ namespace Wanderer.GameFramework
         public static bool ToBool(this string value)
         {
             bool result = false;
-            bool.TryParse(value.ToLower(),out result);
+            bool.TryParse(value.ToLower(), out result);
             return result;
         }
 
         public static int ToInt32(this string value)
         {
             int result = 0;
-            int.TryParse(value,out result);
+            int.TryParse(value, out result);
             return result;
         }
 
         public static long ToInt64(this string value)
         {
             long result = 0;
-            long.TryParse(value,out result);
+            long.TryParse(value, out result);
             return result;
         }
 
         public static float ToFloat(this string value)
         {
             float result = 0;
-            float.TryParse(value,out result);
+            float.TryParse(value, out result);
             return result;
         }
 
         public static double ToDouble(this string value)
         {
             double result = 0;
-            double.TryParse(value,out result);
+            double.TryParse(value, out result);
             return result;
         }
 
         public static Vector2 ToVector2(this string value)
         {
             Vector2 result = Vector2.zero;
-            string[] args =  value.Split(',');
-            if(args.Length==2)
+            string[] args = value.Split(',');
+            if (args.Length == 2)
             {
-                result.x=args[0].ToFloat();
-                result.y=args[1].ToFloat();
+                result.x = args[0].ToFloat();
+                result.y = args[1].ToFloat();
             }
             return result;
         }
@@ -56,12 +56,12 @@ namespace Wanderer.GameFramework
         public static Vector3 ToVector3(this string value)
         {
             Vector3 result = Vector3.zero;
-            string[] args =  value.Split(',');
-            if(args.Length==3)
+            string[] args = value.Split(',');
+            if (args.Length == 3)
             {
-                result.x=args[0].ToFloat();
-                result.y=args[1].ToFloat();
-                result.z=args[2].ToFloat();
+                result.x = args[0].ToFloat();
+                result.y = args[1].ToFloat();
+                result.z = args[2].ToFloat();
             }
             return result;
         }
@@ -69,10 +69,59 @@ namespace Wanderer.GameFramework
         public static Color ToColor(this string value)
         {
             Color result = Color.white;
-            UnityEngine.ColorUtility.TryParseHtmlString(value.Trim(),out result);
+            UnityEngine.ColorUtility.TryParseHtmlString(value.Trim(), out result);
             return result;
         }
-   
+
+
+        public static string ToByteLengthString(this long size)
+        {
+            if (size < 1024)
+            {
+                return $"{size}B";
+            }
+            else if (size < 1024 * 1024)
+            {
+                return $"{size / 1024}KB";
+            }
+            else
+            {
+                return $"{(size / 1024.0f / 1024.0f).ToString("f2")}MB";
+            }
+        }
+
+        public static string ToByteLengthString(this int size)
+        {
+            if (size < 1024)
+            {
+                return $"{size}B";
+            }
+            else if (size < 1024 * 1024)
+            {
+                return $"{size / 1024}KB";
+            }
+            else
+            {
+                return $"{(size / 1024.0f / 1024.0f).ToString("f2")}MB";
+            }
+        }
+
+        public static string ToByteLengthString(this uint size)
+        {
+            if (size < 1024)
+            {
+                return $"{size}B";
+            }
+            else if (size < 1024 * 1024)
+            {
+                return $"{size / 1024}KB";
+            }
+            else
+            {
+                return $"{(size / 1024.0f / 1024.0f).ToString("f2")}MB";
+            }
+        }
+
     }
 }
 

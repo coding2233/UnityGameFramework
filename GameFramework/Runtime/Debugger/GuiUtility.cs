@@ -13,5 +13,7 @@ namespace Wanderer.GameFramework
             GUILayout.Label(value);
             GUILayout.EndVertical();
         }
+
+
     }
 }

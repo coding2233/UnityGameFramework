@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Wanderer.GameFramework
 {
@@ -24,27 +27,52 @@ namespace Wanderer.GameFramework
     }
 
     //概要分析
-    internal class SummaryProfiler : IDebuggerWindow
+    internal class SummaryProfiler : DebuggerWindowBase
     {
-        public void OnInit(params object[] args)
+        public override void OnDraw()
         {
+            GUILayout.Label("<b>Profiler Information</b>");
+            GUILayout.BeginVertical("box");
+            {
+                GuiUtility.DrawItem("Supported", Profiler.supported.ToString());
+                GuiUtility.DrawItem("Enabled", Profiler.enabled.ToString());
+                GuiUtility.DrawItem("Enable Binary Log", Profiler.enableBinaryLog ? string.Format("True, {0}", Profiler.logFile) : "False");
+#if UNITY_2018_3_OR_NEWER
+                GuiUtility.DrawItem("Area Count", Profiler.areaCount.ToString());
+#endif
+#if UNITY_5_3 || UNITY_5_4
+                    GuiUtility.DrawItem("Max Samples Number Per Frame", Profiler.maxNumberOfSamplesPerFrame.ToString());
+#endif
+#if UNITY_2018_3_OR_NEWER
+                GuiUtility.DrawItem("Max Used Memory", Profiler.maxUsedMemory.ToByteLengthString());
+#endif
+#if UNITY_5_6_OR_NEWER
+                GuiUtility.DrawItem("Mono Used Size", Profiler.GetMonoUsedSizeLong().ToByteLengthString());
+                GuiUtility.DrawItem("Mono Heap Size", Profiler.GetMonoHeapSizeLong().ToByteLengthString());
+                GuiUtility.DrawItem("Used Heap Size", Profiler.usedHeapSizeLong.ToByteLengthString());
+                GuiUtility.DrawItem("Total Allocated Memory", Profiler.GetTotalAllocatedMemoryLong().ToByteLengthString());
+                GuiUtility.DrawItem("Total Reserved Memory", Profiler.GetTotalReservedMemoryLong().ToByteLengthString());
+                GuiUtility.DrawItem("Total Unused Reserved Memory", Profiler.GetTotalUnusedReservedMemoryLong().ToByteLengthString());
+#else
+                    GuiUtility.DrawItem("Mono Used Size", GetByteLengthString(Profiler.GetMonoUsedSize()));
+                    GuiUtility.DrawItem("Mono Heap Size", GetByteLengthString(Profiler.GetMonoHeapSize()));
+                    GuiUtility.DrawItem("Used Heap Size", GetByteLengthString(Profiler.usedHeapSize));
+                    GuiUtility.DrawItem("Total Allocated Memory", GetByteLengthString(Profiler.GetTotalAllocatedMemory()));
+                    GuiUtility.DrawItem("Total Reserved Memory", GetByteLengthString(Profiler.GetTotalReservedMemory()));
+                    GuiUtility.DrawItem("Total Unused Reserved Memory", GetByteLengthString(Profiler.GetTotalUnusedReservedMemory()));
+#endif
+#if UNITY_2018_1_OR_NEWER
+                GuiUtility.DrawItem("Allocated Memory For Graphics Driver", Profiler.GetAllocatedMemoryForGraphicsDriver().ToByteLengthString());
+#endif
+#if UNITY_5_5_OR_NEWER
+                GuiUtility.DrawItem("Temp Allocator Size", Profiler.GetTempAllocatorSize().ToByteLengthString());
+                //  GuiUtility.DrawItem("Marshal Cached HGlobal Size", Utility.Marshal.CachedHGlobalSize.);
+                //     GuiUtility.DrawItem("Data Provider Cached Bytes Size", DataProviderCreator.CachedBytesSize);
+#endif
+            }
+            GUILayout.EndVertical();
         }
 
-        public void OnClose()
-        {
-        }
-
-        public void OnDraw()
-        {
-        }
-
-        public void OnEnter()
-        {
-        }
-
-        public void OnExit()
-        {
-        }
     }
 
     //内存分析
@@ -68,9 +96,13 @@ namespace Wanderer.GameFramework
     }
 
     //内存分析基类
-    internal abstract class MemoryProfilerBase : IDebuggerWindow
+    internal abstract class MemoryProfilerBase<T> : IDebuggerWindow where T : UnityEngine.Object
     {
         Vector2 _scrollPos = Vector2.zero;
+        protected List<ProfilerSample> _samples = new List<ProfilerSample>();
+        protected long _sampleSize = 0;
+        protected DateTime _sampleDateTime = DateTime.MinValue;
+
         public virtual void OnInit(params object[] args)
         {
         }
@@ -90,6 +122,8 @@ namespace Wanderer.GameFramework
         public virtual void OnDraw()
         {
             _scrollPos = GUILayout.BeginScrollView(_scrollPos, "box");
+            string typeName = typeof(T).Name;
+            GUILayout.Label(string.Format("<b>{0} Runtime Memory Information</b>", typeName));
             if (GUILayout.Button("Take Sample"))
             {
                 TakeSample();
@@ -98,131 +132,208 @@ namespace Wanderer.GameFramework
             GUILayout.EndScrollView();
         }
 
-        protected abstract void OnScrollViewDraw();
+        protected virtual void OnScrollViewDraw()
+        {
+            // if (m_SampleTime <= DateTime.MinValue)
+            // {
+            //     GUILayout.Label(Utility.Text.Format("<b>Please take sample for {0} first.</b>", typeName));
+            // }
+            // else
+            {
+                // if (m_DuplicateSimpleCount > 0)
+                // {
+                //     GUILayout.Label(Utility.Text.Format("<b>{0} {1}s ({2}) obtained at {3}, while {4} {1}s ({5}) might be duplicated.</b>", m_Samples.Count.ToString(), typeName, GetByteLengthString(m_SampleSize), m_SampleTime.ToString("yyyy-MM-dd HH:mm:ss"), m_DuplicateSimpleCount.ToString(), GetByteLengthString(m_DuplicateSampleSize)));
+                // }
+                // else
+                // {
+                //     GUILayout.Label(Utility.Text.Format("<b>{0} {1}s ({2}) obtained at {3}.</b>", m_Samples.Count.ToString(), typeName, GetByteLengthString(m_SampleSize), m_SampleTime.ToString("yyyy-MM-dd HH:mm:ss")));
+                // }
+                string typeName = typeof(T).Name;
+                GUILayout.Label(string.Format("<b>{0} {1}s ({2}) obtained at {3}.</b>", _samples.Count.ToString(), typeName, _sampleSize.ToByteLengthString(), _sampleDateTime.ToString("yyyy-MM-dd HH:mm:ss")));
+                if (_samples.Count > 0)
+                {
+                    GUILayout.BeginHorizontal();
+                    {
+                        GUILayout.Label(string.Format("<b>{0} Name</b>", typeName));
+                        GUILayout.Label("<b>Type</b>", GUILayout.Width(240f));
+                        GUILayout.Label("<b>Size</b>", GUILayout.Width(80f));
+                    }
+                    GUILayout.EndHorizontal();
+                }
 
-        protected abstract void TakeSample();
+                for (int i = 0; i < _samples.Count; i++)
+                {
+                    GUILayout.BeginHorizontal();
+                    {
+                        GUILayout.Label(_samples[i].Highlight ? string.Format("<color=yellow>{0}</color>", _samples[i].Name) : _samples[i].Name);
+                        GUILayout.Label(_samples[i].Highlight ? string.Format("<color=yellow>{0}</color>", _samples[i].TypeName) : _samples[i].TypeName, GUILayout.Width(240f));
+                        GUILayout.Label(_samples[i].Highlight ? string.Format("<color=yellow>{0}</color>", _samples[i].Size.ToByteLengthString()) : _samples[i].Size.ToByteLengthString(), GUILayout.Width(80f));
+                    }
+                    GUILayout.EndHorizontal();
+                }
+            }
+        }
 
+        protected virtual void TakeSample()
+        {
+            ReleaseSamples();
+
+            _sampleSize = 0;
+            _sampleDateTime = DateTime.Now;
+            //整理所有的数据
+            T[] samples = Resources.FindObjectsOfTypeAll<T>();
+            for (int i = 0; i < samples.Length; i++)
+            {
+                long sampleSize = Profiler.GetRuntimeMemorySizeLong(samples[i]);
+                var sample = ProfilerSamplePool.Get(samples[i].name, samples[i].GetType().Name, sampleSize);
+                _samples.Add(sample);
+
+                _sampleSize += sampleSize;
+            }
+            //sort
+            _samples = _samples.OrderByDescending(x => x.Size).ToList();
+        }
+
+        //释放所有的数据
+        protected void ReleaseSamples()
+        {
+            foreach (var item in _samples)
+            {
+                ProfilerSamplePool.Release(item);
+            }
+            _samples.Clear();
+        }
     }
     //概要内存分析
-    internal class SummaryMemoryProfiler : MemoryProfilerBase
+    internal class SummaryMemoryProfiler : MemoryProfilerBase<UnityEngine.Object>
     {
-        protected override void OnScrollViewDraw()
-        {
-        }
 
         protected override void TakeSample()
         {
+            base.TakeSample();
+            Dictionary<string, ProfilerSample> newSamples = new Dictionary<string, ProfilerSample>();
+            ProfilerSample tempSample;
+            for (int i = 0; i < _samples.Count; i++)
+            {
+                tempSample = _samples[i];
+                ProfilerSample sample;
+                if (!newSamples.TryGetValue(tempSample.TypeName, out sample))
+                {
+                    sample = ProfilerSamplePool.Get(tempSample.TypeName, tempSample.TypeName, tempSample.Size, tempSample.Highlight);
+                    newSamples.Add(tempSample.TypeName, sample);
+                }
+                else
+                {
+                    sample.Size += tempSample.Size;
+                }
+                ProfilerSamplePool.Release(tempSample);
+                tempSample = null;
+            }
+            _samples.Clear();
+            foreach (var item in newSamples.Values)
+            {
+                _samples.Add(item);
+            }
+            newSamples.Clear();
         }
     }
     //所有的内存分析
-    internal class AllMemoryProfiler : MemoryProfilerBase
+    internal class AllMemoryProfiler : MemoryProfilerBase<UnityEngine.Object>
     {
-        protected override void OnScrollViewDraw()
-        {
-        }
-
         protected override void TakeSample()
         {
+            base.TakeSample();
+            for (int i = 0; i < _samples.Count; i++)
+            {
+                if (_samples[i].Size < 1024)
+                {
+                    for (int j = i; j < _samples.Count; j++)
+                    {
+                        ProfilerSamplePool.Release(_samples[j]);
+                    }
+                    _samples.RemoveRange(i, _samples.Count - i);
+                    break;
+                }
+            }
         }
     }
     //Texture内存分析
-    internal class TextureMemoryProfiler : MemoryProfilerBase
+    internal class TextureMemoryProfiler : MemoryProfilerBase<Texture>
     {
-        protected override void OnScrollViewDraw()
-        {
-        }
-
-        protected override void TakeSample()
-        {
-        }
     }
     //Mesh内存分析
-    internal class MeshMemoryProfiler : MemoryProfilerBase
+    internal class MeshMemoryProfiler : MemoryProfilerBase<Mesh>
     {
-        protected override void OnScrollViewDraw()
-        {
-        }
 
-        protected override void TakeSample()
-        {
-        }
     }
     //Material内存分析
-    internal class MaterialMemoryProfiler : MemoryProfilerBase
+    internal class MaterialMemoryProfiler : MemoryProfilerBase<Material>
     {
-        protected override void OnScrollViewDraw()
-        {
-        }
 
-        protected override void TakeSample()
-        {
-        }
     }
     //Shader内存分析
-    internal class ShaderMemoryProfiler : MemoryProfilerBase
+    internal class ShaderMemoryProfiler : MemoryProfilerBase<Shader>
     {
-        protected override void OnScrollViewDraw()
-        {
-        }
 
-        protected override void TakeSample()
-        {
-        }
     }
     //AnimationClip内存分析
-    internal class AnimationClipMemoryProfiler : MemoryProfilerBase
+    internal class AnimationClipMemoryProfiler : MemoryProfilerBase<AnimationClip>
     {
-        protected override void OnScrollViewDraw()
-        {
-        }
 
-        protected override void TakeSample()
-        {
-        }
     }
     //AudioClip内存分析
-    internal class AudioClipMemoryProfiler : MemoryProfilerBase
+    internal class AudioClipMemoryProfiler : MemoryProfilerBase<AudioClip>
     {
-        protected override void OnScrollViewDraw()
-        {
-        }
 
-        protected override void TakeSample()
-        {
-        }
     }
     // Font内存分析
-    internal class FontMemoryProfiler : MemoryProfilerBase
+    internal class FontMemoryProfiler : MemoryProfilerBase<Font>
     {
-        protected override void OnScrollViewDraw()
-        {
-        }
 
-        protected override void TakeSample()
-        {
-        }
     }
     //TextAsset内存分析
-    internal class TextAssetMemoryProfiler : MemoryProfilerBase
+    internal class TextAssetMemoryProfiler : MemoryProfilerBase<TextAsset>
     {
-        protected override void OnScrollViewDraw()
-        {
-        }
 
-        protected override void TakeSample()
-        {
-        }
     }
     //ScriptableObject内存分析
-    internal class ScriptableObjectMemoryProfiler : MemoryProfilerBase
+    internal class ScriptableObjectMemoryProfiler : MemoryProfilerBase<ScriptableObject>
     {
-        protected override void OnScrollViewDraw()
+
+    }
+
+    // profiler 
+    internal class ProfilerSample
+    {
+        public string Name { get; private set; }
+        public string TypeName { get; private set; }
+        public long Size { get; set; }
+        public bool Highlight { get; set; }
+
+        public ProfilerSample Set(string name, string type, long size, bool highlight)
         {
+            Name = name;
+            TypeName = type;
+            Size = size;
+            Highlight = highlight;
+            return this;
+        }
+    }
+    // profiler pool
+    internal class ProfilerSamplePool
+    {
+        static ObjectPool<ProfilerSample> _pool = new ObjectPool<ProfilerSample>(null, null);
+
+        public static ProfilerSample Get(string name, string type, long size, bool highlight = false)
+        {
+            return _pool.Get().Set(name, type, size, highlight);
         }
 
-        protected override void TakeSample()
+        public static void Release(ProfilerSample sample)
         {
+            _pool.Release(sample);
         }
+
     }
 
 }
