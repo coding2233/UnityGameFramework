@@ -41,7 +41,7 @@ namespace Wanderer.GameFramework
                 GuiUtility.DrawItem("Area Count", Profiler.areaCount.ToString());
 #endif
 #if UNITY_5_3 || UNITY_5_4
-                    GuiUtility.DrawItem("Max Samples Number Per Frame", Profiler.maxNumberOfSamplesPerFrame.ToString());
+                GuiUtility.DrawItem("Max Samples Number Per Frame", Profiler.maxNumberOfSamplesPerFrame.ToString());
 #endif
 #if UNITY_2018_3_OR_NEWER
                 GuiUtility.DrawItem("Max Used Memory", Profiler.maxUsedMemory.ToByteLengthString());
@@ -54,12 +54,12 @@ namespace Wanderer.GameFramework
                 GuiUtility.DrawItem("Total Reserved Memory", Profiler.GetTotalReservedMemoryLong().ToByteLengthString());
                 GuiUtility.DrawItem("Total Unused Reserved Memory", Profiler.GetTotalUnusedReservedMemoryLong().ToByteLengthString());
 #else
-                    GuiUtility.DrawItem("Mono Used Size", GetByteLengthString(Profiler.GetMonoUsedSize()));
-                    GuiUtility.DrawItem("Mono Heap Size", GetByteLengthString(Profiler.GetMonoHeapSize()));
-                    GuiUtility.DrawItem("Used Heap Size", GetByteLengthString(Profiler.usedHeapSize));
-                    GuiUtility.DrawItem("Total Allocated Memory", GetByteLengthString(Profiler.GetTotalAllocatedMemory()));
-                    GuiUtility.DrawItem("Total Reserved Memory", GetByteLengthString(Profiler.GetTotalReservedMemory()));
-                    GuiUtility.DrawItem("Total Unused Reserved Memory", GetByteLengthString(Profiler.GetTotalUnusedReservedMemory()));
+                GuiUtility.DrawItem("Mono Used Size", GetByteLengthString(Profiler.GetMonoUsedSize()));
+                GuiUtility.DrawItem("Mono Heap Size", GetByteLengthString(Profiler.GetMonoHeapSize()));
+                GuiUtility.DrawItem("Used Heap Size", GetByteLengthString(Profiler.usedHeapSize));
+                GuiUtility.DrawItem("Total Allocated Memory", GetByteLengthString(Profiler.GetTotalAllocatedMemory()));
+                GuiUtility.DrawItem("Total Reserved Memory", GetByteLengthString(Profiler.GetTotalReservedMemory()));
+                GuiUtility.DrawItem("Total Unused Reserved Memory", GetByteLengthString(Profiler.GetTotalUnusedReservedMemory()));
 #endif
 #if UNITY_2018_1_OR_NEWER
                 GuiUtility.DrawItem("Allocated Memory For Graphics Driver", Profiler.GetAllocatedMemoryForGraphicsDriver().ToByteLengthString());

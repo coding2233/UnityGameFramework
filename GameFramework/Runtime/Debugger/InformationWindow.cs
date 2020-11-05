@@ -172,19 +172,36 @@ namespace Wanderer.GameFramework
             GUILayout.Label("<b>Scene Information</b>");
             _scrollPos = GUILayout.BeginScrollView(_scrollPos, "box");
             {
-                GuiUtility.DrawItem("Scene Count", SceneManager.sceneCount.ToString());
-                GuiUtility.DrawItem("Scene Count In Build Settings", SceneManager.sceneCountInBuildSettings.ToString());
-
-                Scene activeScene = SceneManager.GetActiveScene();
-                GuiUtility.DrawItem("Active Scene Name", activeScene.name);
-                GuiUtility.DrawItem("Active Scene Path", activeScene.path);
-                GuiUtility.DrawItem("Active Scene Build Index", activeScene.buildIndex.ToString());
-                GuiUtility.DrawItem("Active Scene Is Dirty", activeScene.isDirty.ToString());
-                GuiUtility.DrawItem("Active Scene Is Loaded", activeScene.isLoaded.ToString());
-                GuiUtility.DrawItem("Active Scene Is Valid", activeScene.IsValid().ToString());
-                GuiUtility.DrawItem("Active Scene Root Count", activeScene.rootCount.ToString());
+                GuiUtility.DrawItem("Current Resolution", GetResolutionString(Screen.currentResolution));
+                GuiUtility.DrawItem("Screen Width", string.Format("{0} px / {1} in / {2} cm", Screen.width.ToString(), GetInchesFromPixels(Screen.width).ToString("F2"), GetCentimetersFromPixels(Screen.width).ToString("F2")));
+                GuiUtility.DrawItem("Screen Height", string.Format("{0} px / {1} in / {2} cm", Screen.height.ToString(), GetInchesFromPixels(Screen.height).ToString("F2"), GetCentimetersFromPixels(Screen.height).ToString("F2")));
+                GuiUtility.DrawItem("Screen DPI", Screen.dpi.ToString("F2"));
+                GuiUtility.DrawItem("Screen Orientation", Screen.orientation.ToString());
+                GuiUtility.DrawItem("Is Full Screen", Screen.fullScreen.ToString());
+#if UNITY_2018_1_OR_NEWER
+                GuiUtility.DrawItem("Full Screen Mode", Screen.fullScreenMode.ToString());
+#endif
+                GuiUtility.DrawItem("Sleep Timeout", GetSleepTimeoutDescription(Screen.sleepTimeout));
+#if UNITY_2019_2_OR_NEWER
+                GuiUtility.DrawItem("Brightness", Screen.brightness.ToString("F2"));
+#endif
+                GuiUtility.DrawItem("Cursor Visible", Cursor.visible.ToString());
+                GuiUtility.DrawItem("Cursor Lock State", Cursor.lockState.ToString());
+                GuiUtility.DrawItem("Auto Landscape Left", Screen.autorotateToLandscapeLeft.ToString());
+                GuiUtility.DrawItem("Auto Landscape Right", Screen.autorotateToLandscapeRight.ToString());
+                GuiUtility.DrawItem("Auto Portrait", Screen.autorotateToPortrait.ToString());
+                GuiUtility.DrawItem("Auto Portrait Upside Down", Screen.autorotateToPortraitUpsideDown.ToString());
+#if UNITY_2017_2_OR_NEWER && !UNITY_2017_2_0
+                GuiUtility.DrawItem("Safe Area", Screen.safeArea.ToString());
+#endif
+#if UNITY_2019_2_OR_NEWER
+                GuiUtility.DrawItem("Cutouts", GetCutoutsString(Screen.cutouts));
+#endif
+                GuiUtility.DrawItem("Support Resolutions", GetResolutionsString(Screen.resolutions));
             }
             GUILayout.EndScrollView();
+
+
         }
 
         public void OnEnter()
@@ -197,6 +214,70 @@ namespace Wanderer.GameFramework
 
         public void OnInit(params object[] args)
         {
+        }
+
+
+        private string GetSleepTimeoutDescription(int sleepTimeout)
+        {
+            if (sleepTimeout == SleepTimeout.NeverSleep)
+            {
+                return "Never Sleep";
+            }
+
+            if (sleepTimeout == SleepTimeout.SystemSetting)
+            {
+                return "System Setting";
+            }
+
+            return sleepTimeout.ToString();
+        }
+
+        private string GetResolutionString(Resolution resolution)
+        {
+            return string.Format("{0} x {1} @ {2}Hz", resolution.width.ToString(), resolution.height.ToString(), resolution.refreshRate.ToString());
+        }
+
+        private string GetCutoutsString(Rect[] cutouts)
+        {
+            string[] cutoutStrings = new string[cutouts.Length];
+            for (int i = 0; i < cutouts.Length; i++)
+            {
+                cutoutStrings[i] = cutouts[i].ToString();
+            }
+
+            return string.Join("; ", cutoutStrings);
+        }
+
+        private string GetResolutionsString(Resolution[] resolutions)
+        {
+            string[] resolutionStrings = new string[resolutions.Length];
+            for (int i = 0; i < resolutions.Length; i++)
+            {
+                resolutionStrings[i] = GetResolutionString(resolutions[i]);
+            }
+
+            return string.Join("; ", resolutionStrings);
+        }
+
+        /// <summary>
+        /// 将像素转换为英寸。
+        /// </summary>
+        /// <param name="pixels">像素。</param>
+        /// <returns>英寸。</returns>
+        public float GetInchesFromPixels(float pixels)
+        {
+            return pixels / Screen.dpi;
+        }
+
+        /// <summary>
+        /// 将像素转换为厘米。
+        /// </summary>
+        /// <param name="pixels">像素。</param>
+        /// <returns>厘米。</returns>
+        public static float GetCentimetersFromPixels(float pixels)
+        {
+            float inchesToCentimeters = 2.54f;  // 1 inch = 2.54 cm
+            return inchesToCentimeters * pixels / Screen.dpi;
         }
     }
 
@@ -349,26 +430,204 @@ namespace Wanderer.GameFramework
 
     internal class SummaryInputInformation : DebuggerWindowBase
     {
+        public override void OnDraw()
+        {
+            base.OnDraw();
+            GUILayout.Label("<b>Input Summary Information</b>");
+            GUILayout.BeginVertical("box");
+            {
+                GuiUtility.DrawItem("Back Button Leaves App", Input.backButtonLeavesApp.ToString());
+                GuiUtility.DrawItem("Device Orientation", Input.deviceOrientation.ToString());
+                GuiUtility.DrawItem("Mouse Present", Input.mousePresent.ToString());
+                GuiUtility.DrawItem("Mouse Position", Input.mousePosition.ToString());
+                GuiUtility.DrawItem("Mouse Scroll Delta", Input.mouseScrollDelta.ToString());
+                GuiUtility.DrawItem("Any Key", Input.anyKey.ToString());
+                GuiUtility.DrawItem("Any Key Down", Input.anyKeyDown.ToString());
+                GuiUtility.DrawItem("Input String", Input.inputString);
+                GuiUtility.DrawItem("IME Is Selected", Input.imeIsSelected.ToString());
+                GuiUtility.DrawItem("IME Composition Mode", Input.imeCompositionMode.ToString());
+                GuiUtility.DrawItem("Compensate Sensors", Input.compensateSensors.ToString());
+                GuiUtility.DrawItem("Composition Cursor Position", Input.compositionCursorPos.ToString());
+                GuiUtility.DrawItem("Composition String", Input.compositionString);
+            }
+            GUILayout.EndVertical();
+        }
     }
 
     internal class TouchInputInformation : DebuggerWindowBase
     {
+        public override void OnDraw()
+        {
+            base.OnDraw();
+            GUILayout.Label("<b>Input Touch Information</b>");
+            GUILayout.BeginVertical("box");
+            {
+                GuiUtility.DrawItem("Touch Supported", Input.touchSupported.ToString());
+                GuiUtility.DrawItem("Touch Pressure Supported", Input.touchPressureSupported.ToString());
+                GuiUtility.DrawItem("Stylus Touch Supported", Input.stylusTouchSupported.ToString());
+                GuiUtility.DrawItem("Simulate Mouse With Touches", Input.simulateMouseWithTouches.ToString());
+                GuiUtility.DrawItem("Multi Touch Enabled", Input.multiTouchEnabled.ToString());
+                GuiUtility.DrawItem("Touch Count", Input.touchCount.ToString());
+                GuiUtility.DrawItem("Touches", GetTouchesString(Input.touches));
+            }
+            GUILayout.EndVertical();
+        }
+
+        private string GetTouchString(Touch touch)
+        {
+            return string.Format("{0}, {1}, {2}, {3}, {4}", touch.position.ToString(), touch.deltaPosition.ToString(), touch.rawPosition.ToString(), touch.pressure.ToString(), touch.phase.ToString());
+        }
+
+        private string GetTouchesString(Touch[] touches)
+        {
+            string[] touchStrings = new string[touches.Length];
+            for (int i = 0; i < touches.Length; i++)
+            {
+                touchStrings[i] = GetTouchString(touches[i]);
+            }
+
+            return string.Join("; ", touchStrings);
+        }
     }
 
     internal class LocationInputInformation : DebuggerWindowBase
     {
+        public override void OnDraw()
+        {
+            base.OnDraw();
+            GUILayout.Label("<b>Input Location Information</b>");
+            GUILayout.BeginVertical("box");
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    if (GUILayout.Button("Enable", GUILayout.Height(30f)))
+                    {
+                        Input.location.Start();
+                    }
+                    if (GUILayout.Button("Disable", GUILayout.Height(30f)))
+                    {
+                        Input.location.Stop();
+                    }
+                }
+                GUILayout.EndHorizontal();
+
+                GuiUtility.DrawItem("Is Enabled By User", Input.location.isEnabledByUser.ToString());
+                GuiUtility.DrawItem("Status", Input.location.status.ToString());
+                if (Input.location.status == LocationServiceStatus.Running)
+                {
+                    GuiUtility.DrawItem("Horizontal Accuracy", Input.location.lastData.horizontalAccuracy.ToString());
+                    GuiUtility.DrawItem("Vertical Accuracy", Input.location.lastData.verticalAccuracy.ToString());
+                    GuiUtility.DrawItem("Longitude", Input.location.lastData.longitude.ToString());
+                    GuiUtility.DrawItem("Latitude", Input.location.lastData.latitude.ToString());
+                    GuiUtility.DrawItem("Altitude", Input.location.lastData.altitude.ToString());
+                    GuiUtility.DrawItem("Timestamp", Input.location.lastData.timestamp.ToString());
+                }
+            }
+            GUILayout.EndVertical();
+        }
     }
 
     internal class AccelerationInputInformation : DebuggerWindowBase
     {
+        public override void OnDraw()
+        {
+            base.OnDraw();
+            GUILayout.Label("<b>Input Acceleration Information</b>");
+            GUILayout.BeginVertical("box");
+            {
+                GuiUtility.DrawItem("Acceleration", Input.acceleration.ToString());
+                GuiUtility.DrawItem("Acceleration Event Count", Input.accelerationEventCount.ToString());
+                GuiUtility.DrawItem("Acceleration Events", GetAccelerationEventsString(Input.accelerationEvents));
+            }
+            GUILayout.EndVertical();
+        }
+
+        private string GetAccelerationEventString(AccelerationEvent accelerationEvent)
+        {
+            return string.Format("{0}, {1}", accelerationEvent.acceleration.ToString(), accelerationEvent.deltaTime.ToString());
+        }
+
+        private string GetAccelerationEventsString(AccelerationEvent[] accelerationEvents)
+        {
+            string[] accelerationEventStrings = new string[accelerationEvents.Length];
+            for (int i = 0; i < accelerationEvents.Length; i++)
+            {
+                accelerationEventStrings[i] = GetAccelerationEventString(accelerationEvents[i]);
+            }
+
+            return string.Join("; ", accelerationEventStrings);
+        }
     }
 
     internal class GyroscopeInputInformation : DebuggerWindowBase
     {
+        public override void OnDraw()
+        {
+            base.OnDraw();
+            GUILayout.Label("<b>Input Gyroscope Information</b>");
+            GUILayout.BeginVertical("box");
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    if (GUILayout.Button("Enable", GUILayout.Height(30f)))
+                    {
+                        Input.gyro.enabled = true;
+                    }
+                    if (GUILayout.Button("Disable", GUILayout.Height(30f)))
+                    {
+                        Input.gyro.enabled = false;
+                    }
+                }
+                GUILayout.EndHorizontal();
+
+                GuiUtility.DrawItem("Enabled", Input.gyro.enabled.ToString());
+                if (Input.gyro.enabled)
+                {
+                    GuiUtility.DrawItem("Update Interval", Input.gyro.updateInterval.ToString());
+                    GuiUtility.DrawItem("Attitude", Input.gyro.attitude.eulerAngles.ToString());
+                    GuiUtility.DrawItem("Gravity", Input.gyro.gravity.ToString());
+                    GuiUtility.DrawItem("Rotation Rate", Input.gyro.rotationRate.ToString());
+                    GuiUtility.DrawItem("Rotation Rate Unbiased", Input.gyro.rotationRateUnbiased.ToString());
+                    GuiUtility.DrawItem("User Acceleration", Input.gyro.userAcceleration.ToString());
+                }
+            }
+            GUILayout.EndVertical();
+        }
     }
 
     internal class CompassInputInformation : DebuggerWindowBase
     {
+        public override void OnDraw()
+        {
+            base.OnDraw();
+            GUILayout.Label("<b>Input Compass Information</b>");
+            GUILayout.BeginVertical("box");
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    if (GUILayout.Button("Enable", GUILayout.Height(30f)))
+                    {
+                        Input.compass.enabled = true;
+                    }
+                    if (GUILayout.Button("Disable", GUILayout.Height(30f)))
+                    {
+                        Input.compass.enabled = false;
+                    }
+                }
+                GUILayout.EndHorizontal();
+
+                GuiUtility.DrawItem("Enabled", Input.compass.enabled.ToString());
+                if (Input.compass.enabled)
+                {
+                    GuiUtility.DrawItem("Heading Accuracy", Input.compass.headingAccuracy.ToString());
+                    GuiUtility.DrawItem("Magnetic Heading", Input.compass.magneticHeading.ToString());
+                    GuiUtility.DrawItem("Raw Vector", Input.compass.rawVector.ToString());
+                    GuiUtility.DrawItem("Timestamp", Input.compass.timestamp.ToString());
+                    GuiUtility.DrawItem("True Heading", Input.compass.trueHeading.ToString());
+                }
+            }
+            GUILayout.EndVertical();
+        }
     }
 
     //其他信息
@@ -378,8 +637,8 @@ namespace Wanderer.GameFramework
         {
             base.OnInit(args);
 
-            var windows = new IDebuggerWindow[]{new ScreenOtherInformation(),new PathOtherInformation()
-            ,new TimeOtherInformation(),new QualityOtherInformation(),new WebPlayerOtherInformation()};
+            var windows = new IDebuggerWindow[]{new SceneOtherInformation(),new PathOtherInformation()
+            ,new TimeOtherInformation(),new QualityOtherInformation()};
             var windowTitle = new string[windows.Length];
             for (int i = 0; i < windowTitle.Length; i++)
             {
@@ -390,21 +649,217 @@ namespace Wanderer.GameFramework
         }
     }
 
-    internal class ScreenOtherInformation : DebuggerWindowBase
+    //场景信息
+    internal class SceneOtherInformation : DebuggerWindowBase
     {
+        public override void OnDraw()
+        {
+            base.OnDraw();
+            GUILayout.Label("<b>Scene Information</b>");
+            GUILayout.BeginVertical("box");
+            {
+                GuiUtility.DrawItem("Scene Count", SceneManager.sceneCount.ToString());
+                GuiUtility.DrawItem("Scene Count In Build Settings", SceneManager.sceneCountInBuildSettings.ToString());
+
+                Scene activeScene = SceneManager.GetActiveScene();
+                GuiUtility.DrawItem("Active Scene Name", activeScene.name);
+                GuiUtility.DrawItem("Active Scene Path", activeScene.path);
+                GuiUtility.DrawItem("Active Scene Build Index", activeScene.buildIndex.ToString());
+                GuiUtility.DrawItem("Active Scene Is Dirty", activeScene.isDirty.ToString());
+                GuiUtility.DrawItem("Active Scene Is Loaded", activeScene.isLoaded.ToString());
+                GuiUtility.DrawItem("Active Scene Is Valid", activeScene.IsValid().ToString());
+                GuiUtility.DrawItem("Active Scene Root Count", activeScene.rootCount.ToString());
+            }
+            GUILayout.EndVertical();
+        }
     }
     internal class PathOtherInformation : DebuggerWindowBase
     {
+        public override void OnDraw()
+        {
+            base.OnDraw();
+            GUILayout.Label("<b>Path Information</b>");
+            GUILayout.BeginVertical("box");
+            {
+                GuiUtility.DrawItem("Data Path", Application.dataPath);
+                GuiUtility.DrawItem("Persistent Data Path", Application.persistentDataPath);
+                GuiUtility.DrawItem("Streaming Assets Path", Application.streamingAssetsPath);
+                GuiUtility.DrawItem("Temporary Cache Path", Application.temporaryCachePath);
+#if UNITY_2018_3_OR_NEWER
+                GuiUtility.DrawItem("Console Log Path", Application.consoleLogPath);
+#endif
+            }
+            GUILayout.EndVertical();
+        }
     }
     internal class TimeOtherInformation : DebuggerWindowBase
     {
+        private Vector2 _scrollPos = Vector2.zero;
+        public override void OnDraw()
+        {
+            base.OnDraw();
+            GUILayout.Label("<b>Time Information</b>");
+            _scrollPos = GUILayout.BeginScrollView(_scrollPos, "box");
+            {
+                GuiUtility.DrawItem("Time Scale", string.Format("{0} [{1}]", Time.timeScale.ToString(), GetTimeScaleDescription(Time.timeScale)));
+                GuiUtility.DrawItem("Realtime Since Startup", Time.realtimeSinceStartup.ToString());
+                GuiUtility.DrawItem("Time Since Level Load", Time.timeSinceLevelLoad.ToString());
+                GuiUtility.DrawItem("Time", Time.time.ToString());
+                GuiUtility.DrawItem("Fixed Time", Time.fixedTime.ToString());
+                GuiUtility.DrawItem("Unscaled Time", Time.unscaledTime.ToString());
+#if UNITY_5_6_OR_NEWER
+                GuiUtility.DrawItem("Fixed Unscaled Time", Time.fixedUnscaledTime.ToString());
+#endif
+                GuiUtility.DrawItem("Delta Time", Time.deltaTime.ToString());
+                GuiUtility.DrawItem("Fixed Delta Time", Time.fixedDeltaTime.ToString());
+                GuiUtility.DrawItem("Unscaled Delta Time", Time.unscaledDeltaTime.ToString());
+#if UNITY_5_6_OR_NEWER
+                GuiUtility.DrawItem("Fixed Unscaled Delta Time", Time.fixedUnscaledDeltaTime.ToString());
+#endif
+                GuiUtility.DrawItem("Smooth Delta Time", Time.smoothDeltaTime.ToString());
+                GuiUtility.DrawItem("Maximum Delta Time", Time.maximumDeltaTime.ToString());
+#if UNITY_5_5_OR_NEWER
+                GuiUtility.DrawItem("Maximum Particle Delta Time", Time.maximumParticleDeltaTime.ToString());
+#endif
+                GuiUtility.DrawItem("Frame Count", Time.frameCount.ToString());
+                GuiUtility.DrawItem("Rendered Frame Count", Time.renderedFrameCount.ToString());
+                GuiUtility.DrawItem("Capture Framerate", Time.captureFramerate.ToString());
+#if UNITY_2019_2_OR_NEWER
+                GuiUtility.DrawItem("Capture Delta Time", Time.captureDeltaTime.ToString());
+#endif
+#if UNITY_5_6_OR_NEWER
+                GuiUtility.DrawItem("In Fixed Time Step", Time.inFixedTimeStep.ToString());
+#endif
+            }
+            GUILayout.EndScrollView();
+        }
+
+        private string GetTimeScaleDescription(float timeScale)
+        {
+            if (timeScale <= 0f)
+            {
+                return "Pause";
+            }
+
+            if (timeScale < 1f)
+            {
+                return "Slower";
+            }
+
+            if (timeScale > 1f)
+            {
+                return "Faster";
+            }
+
+            return "Normal";
+        }
     }
+
+
     internal class QualityOtherInformation : DebuggerWindowBase
     {
+        private bool _applyExpensiveChanges = false;
+        private Vector2 _scrollPos = Vector2.zero;
+
+        public override void OnDraw()
+        {
+            base.OnDraw();
+            _scrollPos = GUILayout.BeginScrollView(_scrollPos, "box");
+
+            GUILayout.Label("<b>Quality Level</b>");
+            GUILayout.BeginVertical("box");
+            {
+                int currentQualityLevel = QualitySettings.GetQualityLevel();
+
+                GuiUtility.DrawItem("Current Quality Level", QualitySettings.names[currentQualityLevel]);
+                _applyExpensiveChanges = GUILayout.Toggle(_applyExpensiveChanges, "Apply expensive changes on quality level change.");
+
+                int newQualityLevel = GUILayout.SelectionGrid(currentQualityLevel, QualitySettings.names, 3, "toggle");
+                if (newQualityLevel != currentQualityLevel)
+                {
+                    QualitySettings.SetQualityLevel(newQualityLevel, _applyExpensiveChanges);
+                }
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.Label("<b>Rendering Information</b>");
+            GUILayout.BeginVertical("box");
+            {
+                GuiUtility.DrawItem("Active Color Space", QualitySettings.activeColorSpace.ToString());
+                GuiUtility.DrawItem("Desired Color Space", QualitySettings.desiredColorSpace.ToString());
+                GuiUtility.DrawItem("Max Queued Frames", QualitySettings.maxQueuedFrames.ToString());
+                GuiUtility.DrawItem("Pixel Light Count", QualitySettings.pixelLightCount.ToString());
+                GuiUtility.DrawItem("Master Texture Limit", QualitySettings.masterTextureLimit.ToString());
+                GuiUtility.DrawItem("Anisotropic Filtering", QualitySettings.anisotropicFiltering.ToString());
+                GuiUtility.DrawItem("Anti Aliasing", QualitySettings.antiAliasing.ToString());
+#if UNITY_5_5_OR_NEWER
+                GuiUtility.DrawItem("Soft Particles", QualitySettings.softParticles.ToString());
+#endif
+                GuiUtility.DrawItem("Soft Vegetation", QualitySettings.softVegetation.ToString());
+                GuiUtility.DrawItem("Realtime Reflection Probes", QualitySettings.realtimeReflectionProbes.ToString());
+                GuiUtility.DrawItem("Billboards Face Camera Position", QualitySettings.billboardsFaceCameraPosition.ToString());
+#if UNITY_2017_1_OR_NEWER
+                GuiUtility.DrawItem("Resolution Scaling Fixed DPI Factor", QualitySettings.resolutionScalingFixedDPIFactor.ToString());
+#endif
+#if UNITY_2018_2_OR_NEWER
+                GuiUtility.DrawItem("Texture Streaming Enabled", QualitySettings.streamingMipmapsActive.ToString());
+                GuiUtility.DrawItem("Texture Streaming Add All Cameras", QualitySettings.streamingMipmapsAddAllCameras.ToString());
+                GuiUtility.DrawItem("Texture Streaming Memory Budget", QualitySettings.streamingMipmapsMemoryBudget.ToString());
+                GuiUtility.DrawItem("Texture Streaming Renderers Per Frame", QualitySettings.streamingMipmapsRenderersPerFrame.ToString());
+                GuiUtility.DrawItem("Texture Streaming Max Level Reduction", QualitySettings.streamingMipmapsMaxLevelReduction.ToString());
+                GuiUtility.DrawItem("Texture Streaming Max File IO Requests", QualitySettings.streamingMipmapsMaxFileIORequests.ToString());
+#endif
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.Label("<b>Shadows Information</b>");
+            GUILayout.BeginVertical("box");
+            {
+#if UNITY_2017_1_OR_NEWER
+                GuiUtility.DrawItem("Shadowmask Mode", QualitySettings.shadowmaskMode.ToString());
+#endif
+#if UNITY_5_5_OR_NEWER
+                GuiUtility.DrawItem("Shadow Quality", QualitySettings.shadows.ToString());
+#endif
+#if UNITY_5_4_OR_NEWER
+                GuiUtility.DrawItem("Shadow Resolution", QualitySettings.shadowResolution.ToString());
+#endif
+                GuiUtility.DrawItem("Shadow Projection", QualitySettings.shadowProjection.ToString());
+                GuiUtility.DrawItem("Shadow Distance", QualitySettings.shadowDistance.ToString());
+                GuiUtility.DrawItem("Shadow Near Plane Offset", QualitySettings.shadowNearPlaneOffset.ToString());
+                GuiUtility.DrawItem("Shadow Cascades", QualitySettings.shadowCascades.ToString());
+                GuiUtility.DrawItem("Shadow Cascade 2 Split", QualitySettings.shadowCascade2Split.ToString());
+                GuiUtility.DrawItem("Shadow Cascade 4 Split", QualitySettings.shadowCascade4Split.ToString());
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.Label("<b>Other Information</b>");
+            GUILayout.BeginVertical("box");
+            {
+#if UNITY_2019_1_OR_NEWER
+                GuiUtility.DrawItem("Skin Weights", QualitySettings.skinWeights.ToString());
+#else
+                    GuiUtility.DrawItem("Blend Weights", QualitySettings.blendWeights.ToString());
+#endif
+                GuiUtility.DrawItem("VSync Count", QualitySettings.vSyncCount.ToString());
+                GuiUtility.DrawItem("LOD Bias", QualitySettings.lodBias.ToString());
+                GuiUtility.DrawItem("Maximum LOD Level", QualitySettings.maximumLODLevel.ToString());
+                GuiUtility.DrawItem("Particle Raycast Budget", QualitySettings.particleRaycastBudget.ToString());
+                GuiUtility.DrawItem("Async Upload Time Slice", string.Format("{0} ms", QualitySettings.asyncUploadTimeSlice.ToString()));
+                GuiUtility.DrawItem("Async Upload Buffer Size", string.Format("{0} MB", QualitySettings.asyncUploadBufferSize.ToString()));
+#if UNITY_2018_3_OR_NEWER
+                GuiUtility.DrawItem("Async Upload Persistent Buffer", QualitySettings.asyncUploadPersistentBuffer.ToString());
+#endif
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.EndScrollView();
+        }
     }
-    internal class WebPlayerOtherInformation : DebuggerWindowBase
-    {
-    }
+    // internal class WebPlayerOtherInformation : DebuggerWindowBase
+    // {
+    //   
+    // }
 
 
 }

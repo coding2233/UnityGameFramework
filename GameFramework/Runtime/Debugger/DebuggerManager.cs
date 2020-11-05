@@ -208,6 +208,12 @@ namespace Wanderer.GameFramework
                     _selectIndex = selectIndex;
                     _currentDebuggerWindow = _allDebuggerWindows[_selectIndex];
                     _currentDebuggerWindow.OnEnter();
+                    //如果不是调试器， 则默认布局
+                    if (_currentDebuggerWindow.GetType() != typeof(ProfilerWindow))
+                    {
+                        FullRect = _defaultFullRect;
+                        //  ResetLayout();
+                    }
                 }
             }
 
