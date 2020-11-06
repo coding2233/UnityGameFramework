@@ -3,8 +3,8 @@
 **此框架参考:**   
 
 `GameFramework`：[https://github.com/EllanJiang/GameFramework](https://github.com/EllanJiang/GameFramework)  
-`Unity3dAsyncAwaitUtil`: [https://github.com/modesttree/Unity3dAsyncAwaitUtil](https://github.com/modesttree/Unity3dAsyncAwaitUtil)  
-`Tayx94/graphy`: [https://github.com/Tayx94/graphy](https://github.com/Tayx94/graphy)  
+`UniRx`: [https://github.com/neuecc/UniRx](https://github.com/neuecc/UniRx)  
+`UniTask`: [https://github.com/Cysharp/UniTask](https://github.com/Cysharp/UniTask)  
 
 ---
 

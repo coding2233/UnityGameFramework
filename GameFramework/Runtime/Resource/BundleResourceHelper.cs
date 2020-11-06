@@ -16,6 +16,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
+using Cysharp.Threading.Tasks;
 
 
 namespace Wanderer.GameFramework
