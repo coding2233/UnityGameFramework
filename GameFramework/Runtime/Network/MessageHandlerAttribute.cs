@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright>
-//     Copyright (c) 2018 Zhang Yang. All rights reserved.
+//     Copyright (c) 2018 wanderer. All rights reserved.
 // </copyright>
 // <describe> #消息处理类标记# </describe>
 // <email> dutifulwanderer@gmail.com </email>

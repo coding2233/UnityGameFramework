@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright>
-//     Copyright (c) 2018 Zhang Yang. All rights reserved.
+//     Copyright (c) 2018 wanderer. All rights reserved.
 // </copyright>
 // <describe> #AssetBundle资源管理类# </describe>
 // <email> dutifulwanderer@gmail.com </email>
@@ -97,6 +97,29 @@ namespace Wanderer.GameFramework
                 callback?.Invoke(null);
             }
         }
+        
+        
+        public T LoadAsset<T>(string assetName) where T : UnityEngine.Object
+        {
+#if UNITY_ANDROID
+            if (_pathType == PathType.ReadOnly)
+            {
+                throw new GameException("The Android path does not support synchronous loading under read-only paths!");
+            }
+#endif
+            if (_assetsPathMapAssetbundleName.TryGetValue(assetName, out string abName))
+            {
+                AssetBundle assetBundle;
+                if (!_liveAssetBundle.TryGetValue(abName, out assetBundle))
+                {
+                    assetBundle = LoadAssetBundle(abName);
+                }
+                T t = assetBundle.LoadAsset<T>(assetName);
+                SetAssetBundleReferenceCount(assetBundle, +1);
+                return t;
+            }
+            return null;
+        }
 
         public void UnloadAsset(string assetName)
         {
@@ -178,10 +201,10 @@ namespace Wanderer.GameFramework
             return UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneName);
         }
 
-        #endregion
+#endregion
 
 
-        #region 事件回调
+#region 事件回调
         /// <summary>
         /// 清理资源
         /// </summary>
@@ -197,9 +220,9 @@ namespace Wanderer.GameFramework
             _liveAssetBundle.Clear();
         }
 
-        #endregion
+#endregion
 
-        #region 内部函数
+#region 内部函数
         /// <summary>
         /// 加载mainfest -- LoadFromFile
         /// </summary>
@@ -302,7 +325,28 @@ namespace Wanderer.GameFramework
             callback.Invoke(assetBundle);
         }
 
-        //同步加载AssetBundle
+        //加载assetbundle
+        private AssetBundle LoadAssetBundle(string assetBundleName)
+        {
+            //加载Assetbundle
+            AssetBundle assetBundle;
+            if (!_liveAssetBundle.TryGetValue(assetBundleName, out assetBundle))
+            {
+                string assetBundlePath = Path.Combine(_readPath, assetBundleName);
+                //先加载引用的assetbundle 
+                LoadDependenciesAssetBundleSync(assetBundleName);
+                //加载assetbundle
+                assetBundle = LoadAssetBundleFromPathSync(assetBundlePath);
+                //存储assetbundle
+                _liveAssetBundle[assetBundleName] = assetBundle;
+                //assetbundle 引用计数
+                _assetBundleReferenceCount[assetBundle] = 0;
+            }
+
+            return assetBundle;
+        }
+
+       //异步加载assetbundle
         private Task<AssetBundle> LoadAssetBundleFromPath(string path)
         {
             var taskResult = new TaskCompletionSource<AssetBundle>();
@@ -316,24 +360,31 @@ namespace Wanderer.GameFramework
             }
             else
             {
-                if (!File.Exists(path))
-                    throw new GameException("Assetbundle not found :" + path);
-                AssetBundle assetbundle;
-                if (_isEncrypt)
-                {
-                    using (var stream = new EncryptFileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false))
-                    {
-                        assetbundle = AssetBundle.LoadFromStream(stream);
-                    }
-                }
-                else
-                {
-                    assetbundle = AssetBundle.LoadFromFile(path);
-                }
+                AssetBundle assetbundle = LoadAssetBundleFromPathSync(path);
                 taskResult.SetResult(assetbundle);
             }
 
             return taskResult.Task;
+        }
+
+        //同步加载AssetBundle
+        private AssetBundle LoadAssetBundleFromPathSync(string path)
+        {
+            if (!File.Exists(path))
+                throw new GameException("Assetbundle not found :" + path);
+            AssetBundle assetbundle;
+            if (_isEncrypt)
+            {
+                using (var stream = new EncryptFileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false))
+                {
+                    assetbundle = AssetBundle.LoadFromStream(stream);
+                }
+            }
+            else
+            {
+                assetbundle = AssetBundle.LoadFromFile(path);
+            }
+            return assetbundle;
         }
 
         //加载引用的assetbundle --引用的assetbundle不卸载
@@ -348,6 +399,23 @@ namespace Wanderer.GameFramework
 
                 string dependenciesBundlePath = Path.Combine(_readPath, item);
                 AssetBundle assetBundle = await LoadAssetBundleFromPath(dependenciesBundlePath);
+                //存储资源名称
+                _liveAssetBundle[item] = assetBundle;
+            }
+        }
+
+        //加载引用的assetbundle --引用的assetbundle不卸载
+        private void LoadDependenciesAssetBundleSync(string assetBundleName)
+        {
+            //加载相关依赖 依赖暂时不异步加载了
+            string[] dependencies = _mainfest.GetAllDependencies(assetBundleName);
+            foreach (var item in dependencies)
+            {
+                if (_liveAssetBundle.ContainsKey(item))
+                    continue;
+
+                string dependenciesBundlePath = Path.Combine(_readPath, item);
+                AssetBundle assetBundle = LoadAssetBundleFromPathSync(dependenciesBundlePath);
                 //存储资源名称
                 _liveAssetBundle[item] = assetBundle;
             }
@@ -408,7 +476,7 @@ namespace Wanderer.GameFramework
                 _assetBundleReferenceCount[assetBundle] += interval;
             }
         }
-        #endregion
+#endregion
 
     }
 }

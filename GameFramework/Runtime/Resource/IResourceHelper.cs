@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright>
-//     Copyright (c) 2018 Zhang Yang. All rights reserved.
+//     Copyright (c) 2018 wanderer. All rights reserved.
 // </copyright>
 // <describe> #资源加载类的接口，可能需要扩展为新的资源加载方式# </describe>
 // <email> dutifulwanderer@gmail.com </email>
@@ -30,12 +30,19 @@ namespace Wanderer.GameFramework
         // void LoadAssetBundle(string assetBundleName,Action<AssetBundle> callback);
 
         /// <summary>
-        /// 加载资源 
+        /// 加载资源 -- 异步加载资源
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="assetName"></param>
         /// <returns></returns>
         void LoadAsset<T>(string assetName, Action<T> callback) where T : UnityEngine.Object;
+
+        /// <summary>
+        /// 加载资源
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        T LoadAsset<T>(string assetName) where T : UnityEngine.Object;
 
         /// <summary>
         /// 卸载资源 -- 取消掉资源计数

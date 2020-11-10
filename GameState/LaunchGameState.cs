@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright>
-//     Copyright (c) 2018 Zhang Yang. All rights reserved.
+//     Copyright (c) 2018 wanderer. All rights reserved.
 // </copyright>
 // <describe> #启动游戏状态 默认为初始状态# </describe>
 // <email> dutifulwanderer@gmail.com </email>

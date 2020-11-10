@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright>
-//     Copyright (c) 2018 Zhang Yang. All rights reserved.
+//     Copyright (c) 2018 wanderer. All rights reserved.
 // </copyright>
 // <describe> #view的实现虚类 继承Monobehaviour# </describe>
 // <email> dutifulwanderer@gmail.com </email>
@@ -13,24 +13,43 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-    public abstract class UIView : MonoBehaviour, IUIView
+    public abstract class UIView : MonoBehaviour
     {
         /// <summary>
         /// 打开界面
         /// </summary>
         /// <param name="parameters">不确定参数</param>
-        public abstract void OnEnter(params object[] parameters);
+        public virtual void OnEnter(IUIContext uiConext, params object[] parameters)
+        { }
         /// <summary>
         /// 退出界面
         /// </summary>
-        public abstract void OnExit();
+        public virtual void OnExit(IUIContext uiConext)
+        { }
         /// <summary>
         /// 暂停界面
         /// </summary>
-        public abstract void OnPause();
+        public virtual void OnPause(IUIContext uiConext)
+        { }
         /// <summary>
         /// 恢复界面
         /// </summary>
-        public abstract void OnResume();
+        public virtual void OnResume(IUIContext uiConext)
+        { }
+
+        /// <summary>
+        /// 动画开始
+        /// </summary>
+        /// <param name="uiAnim"></param>
+        public virtual void OnAnimationStart(IUIAnimation uiAnim)
+        { 
+        }
+        /// <summary>
+        /// 动画结束
+        /// </summary>
+        /// <param name="uiAnim"></param>
+        public virtual void OnAnimationComplete(IUIAnimation uiAnim)
+        { 
+        }
     }
 }

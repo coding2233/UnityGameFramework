@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright>
-//     Copyright (c) 2018 Zhang Yang. All rights reserved.
+//     Copyright (c) 2018 wanderer. All rights reserved.
 // </copyright>
 // <describe> #编辑器资源加载类# </describe>
 // <email> dutifulwanderer@gmail.com </email>
@@ -60,7 +60,12 @@ namespace Wanderer.GameFramework
         public void Clear()
         {
         }
-    }
+
+		public T LoadAsset<T>(string assetName) where T : Object
+		{
+            return AssetDatabase.LoadAssetAtPath<T>(assetName);
+        }
+	}
 }
 
 #endif

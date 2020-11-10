@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright>
-//     Copyright (c) 2018 Zhang Yang. All rights reserved.
+//     Copyright (c) 2018 wanderer. All rights reserved.
 // </copyright>
 // <describe> #ui事件参数# </describe>
 // <email> dutifulwanderer@gmail.com </email>
@@ -15,7 +15,7 @@ namespace Wanderer.GameFramework
     /// </summary>
     public class UIEnterEventArgs : GameEventArgs<UIEnterEventArgs>
     {
-        public IUIView UIView;
+        public UIView UIView;
     }
 
     /// <summary>
@@ -23,7 +23,7 @@ namespace Wanderer.GameFramework
     /// </summary>
     public class UIExitEventArgs : GameEventArgs<UIExitEventArgs>
     {
-        public IUIView UIView;
+        public UIView UIView;
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ namespace Wanderer.GameFramework
     /// </summary>
     public class UIPauseEventArgs : GameEventArgs<UIPauseEventArgs>
     {
-        public IUIView UIView;
+        public UIView UIView;
     }
 
 
@@ -40,7 +40,7 @@ namespace Wanderer.GameFramework
     /// </summary>
     public class UIResumeEventArgs : GameEventArgs<UIResumeEventArgs>
     {
-        public IUIView UIView;
+        public UIView UIView;
     }
 
 }

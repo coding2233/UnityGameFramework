@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright>
-//     Copyright (c) 2018 Zhang Yang. All rights reserved.
+//     Copyright (c) 2018 wanderer. All rights reserved.
 // </copyright>
 // <describe> #资源管理类 资源加载&内置对象池# </describe>
 // <email> dutifulwanderer@gmail.com </email>
@@ -153,6 +153,18 @@ namespace Wanderer.GameFramework
         {
             assetName = assetName.ToLower();
             _resourceHelper?.LoadAsset<T>(assetName, callback);
+        }
+
+        /// <summary>
+        /// 同步加载资源
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetBundleName"></param>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
+        public T LoadAssetSync<T>(string assetName) where T : UnityEngine.Object
+        {
+            return _resourceHelper?.LoadAsset<T>(assetName);
         }
 
         /// <summary>
