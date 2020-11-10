@@ -51,5 +51,25 @@ namespace Wanderer.GameFramework
         public virtual void OnAnimationComplete(IUIAnimation uiAnim)
         { 
         }
+
+        /// <summary>
+        /// 设置深度
+        /// </summary>
+        /// <param name="depth"></param>
+        public virtual void SetDepth(int depth)
+        { }
     }
+
+    //    //[AttributeUsage(AttributeTargets.Class)]
+    //    //public sealed class UIViewAttribute : Attribute
+    //    //{
+    //    //    public string AssetBundleName { get; private set; }
+    //    //    public string ViewPath { get; private set; }
+
+    //    //    public UIViewAttribute(string assetBundleName, string viewPath)
+    //    //    {
+    //    //        AssetBundleName = assetBundleName;
+    //    //        ViewPath = viewPath;
+    //    //    }
+    //    //}
 }
