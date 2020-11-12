@@ -16,7 +16,9 @@ namespace Wanderer.GameFramework
         //action执行函数
         private Dictionary<string, Action> _commandAction = new Dictionary<string, Action>();
         //支持反射
-        private bool _reflectionsupported = true;
+        private bool _reflectionSupported = true;
+        //支持消息发送
+        private bool _sendMessageSupported = true;
         //显示文本
         private List<string> _showTexts = new List<string>();
         //滚动文本的位置坐标
@@ -49,7 +51,8 @@ namespace Wanderer.GameFramework
             {
                 ClearLines();
             }
-            _reflectionsupported = GUILayout.Toggle(_reflectionsupported, "Reflection supported");
+            _reflectionSupported = GUILayout.Toggle(_reflectionSupported, "Reflection supported");
+            _sendMessageSupported = GUILayout.Toggle(_sendMessageSupported, "SendMessage supported");
             GUILayout.EndHorizontal();
 
             _showScrollPos = GUILayout.BeginScrollView(_showScrollPos, "box");
@@ -176,42 +179,57 @@ namespace Wanderer.GameFramework
             MethodInfo callMethod;
             if (!_commandMethod.TryGetValue(command, out callMethod))
             {
-                if (_reflectionsupported)
+               
+                int index = command.LastIndexOf('.');
+                if (index > 0 && index < command.Length - 1)
                 {
-                    int index = command.LastIndexOf('.');
-                    if (index > 0 && index < command.Length - 1)
+                    string fullName = command.Substring(0, index);
+                    index++;
+                    string methodName = command.Substring(index, command.Length - index);
+                    //优先查找反射
+                    if (_reflectionSupported)
                     {
-                        string typefullName = command.Substring(0, index);
-                        index++;
-                        string methodName = command.Substring(index, command.Length - index);
-                        Type callType = TypeUtility.AllAssemblyTypes.Find(x => x.FullName.Equals(typefullName));
+                        Type callType = TypeUtility.AllAssemblyTypes.Find(x => x.FullName.Equals(fullName));
                         if (callType != null)
                         {
                             callMethod = callType.GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+
+                            if (callMethod != null)
+                            {
+                                bool call = false;
+                                var gp = callMethod.GetParameters();
+                                if (gp.Length == 0)
+                                {
+                                    parameters = null;
+                                    call = true;
+                                }
+                                else if (gp.Length == parameters.Length)
+                                {
+                                    call = true;
+                                }
+                                if (call)
+                                {
+                                    callMethod.Invoke(null, parameters);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    //支持查找GameObject SendMessage
+                    if (_sendMessageSupported)
+                    {
+                        GameObject findGameObject = GameObject.Find(fullName);
+                        if (findGameObject != null)
+                        {
+                            findGameObject.SendMessage(methodName, args);
+                            return;
                         }
                     }
                 }
             }
 
-            if (callMethod != null)
-            {
-                bool call = false;
-                var gp = callMethod.GetParameters();
-                if (gp.Length == 0)
-                {
-                    parameters = null;
-                    call = true;
-                }
-                else if (gp.Length == parameters.Length)
-                {
-                    call = true;
-                }
-                if (call)
-                {
-                    callMethod.Invoke(null, parameters);
-                    return;
-                }
-            }
+            
             //添加反馈
             AddLine($"<color=yellow>$ [{command}]</color> Can't find command or parameters error!");
         }
