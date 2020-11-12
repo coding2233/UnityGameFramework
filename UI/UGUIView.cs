@@ -19,6 +19,10 @@ namespace Wanderer.GameFramework
 			}
 		}
 
+        protected virtual void Update()
+        { 
+        }
+
         /// <summary>
         /// 打开界面
         /// </summary>
