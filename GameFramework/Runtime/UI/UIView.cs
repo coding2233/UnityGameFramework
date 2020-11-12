@@ -7,6 +7,7 @@
 // <time> #2018年6月22日 16点59分# </time>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,17 +16,23 @@ namespace Wanderer.GameFramework
 {
     public abstract class UIView : MonoBehaviour
     {
+        //外部的回调
+        protected Action<string> _callBack;
         /// <summary>
         /// 打开界面
         /// </summary>
         /// <param name="parameters">不确定参数</param>
-        public virtual void OnEnter(IUIContext uiConext, params object[] parameters)
-        { }
+        public virtual void OnEnter(IUIContext uiConext, Action<string> callBack=null,params object[] parameters)
+        {
+            _callBack = callBack;
+        }
         /// <summary>
         /// 退出界面
         /// </summary>
         public virtual void OnExit(IUIContext uiConext)
-        { }
+        {
+            _callBack = null;
+        }
         /// <summary>
         /// 暂停界面
         /// </summary>
@@ -57,7 +64,17 @@ namespace Wanderer.GameFramework
         /// </summary>
         /// <param name="depth"></param>
         public virtual void SetDepth(int depth)
-        { }
+        {
+        }
+
+        /// <summary>
+        /// 调用回调
+        /// </summary>
+        /// <param name="data"></param>
+        protected virtual void Call(string data)
+        {
+            _callBack?.Invoke(data);
+        }
     }
 
     //    //[AttributeUsage(AttributeTargets.Class)]

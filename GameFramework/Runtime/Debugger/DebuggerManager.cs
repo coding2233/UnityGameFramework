@@ -10,7 +10,7 @@ namespace Wanderer.GameFramework
         /// <summary>
         /// 窗口缩放
         /// </summary>
-        public float WindowScale = 1.0f;
+        public float WindowScale = 1.5f;
         private bool _showFullWindow = false;
         //皮肤
         private GUISkin _consoleSkin;

@@ -11,27 +11,27 @@ namespace Wanderer.GameFramework
         UIView LastUIView { get; }
 
         UIView NextUIView { get; }
+        //UITween准备好
+        IUITween OnUITweenReady(Action<UIView,UIView> onUITweenReady);
         //动画开始回调 
-        IUITween OnAnimationStart(Action OnAnimStart);
+        IUITween OnAnimationStart(Action<UIView, UIView> onAnimStart);
         //动画结束
-        IUITween OnAnimationComplete(Action OnAnimComplete);
+        IUITween OnAnimationComplete(Action<UIView, UIView> onAnimComplete);
         //动画切换
-        IUITween OnAnimationChanged(Action<IUIAnimation, IUIAnimation> OnAnimChanged);
+        IUITween OnAnimationChanged(Action<IUIAnimation, IUIAnimation> onAnimChanged);
         //设置动画数组
         IUITween SetAnimations(IUIAnimation[] anims);
-        //设置动画队列
-        IUITween SetAnimations(Queue<IUIAnimation> anims);
         //播放动画
-        IUITween RunAnimation();
+        IUITween RunAnimation(bool isQueue = false);
     }
 
     internal class UITween : IUITween
     {
-        private Action _onAnimStart;
-        private Action _onAnimComplete;
+        private Action<UIView,UIView> _onUITweenReady;
+        private Action<UIView, UIView> _onAnimStart;
+        private Action<UIView, UIView> _onAnimComplete;
         private Action<IUIAnimation, IUIAnimation> _onAnimChanged;
-        private IUIAnimation[] _arrayAnims;
-        private Queue<IUIAnimation> _queueAnims;
+        private List<IUIAnimation>  _anims=new List<IUIAnimation>();
 
         /// <summary>
         /// 上一个UIView
@@ -44,14 +44,13 @@ namespace Wanderer.GameFramework
 
         public UITween Flush()
         {
+            _onUITweenReady = null;
             _onAnimStart = null;
             _onAnimComplete = null;
             _onAnimChanged = null;
             LastUIView = null;
             NextUIView = null;
-            _arrayAnims = null;
-            _queueAnims = null;
-
+            _anims.Clear();
             return this;
         }
 
@@ -65,14 +64,19 @@ namespace Wanderer.GameFramework
             NextUIView = uiView;
         }
 
+        private void SetUITweenReady()
+        {
+            _onUITweenReady?.Invoke(LastUIView,NextUIView);
+        }
+
         private void SetAnimationStart()
         {
-            _onAnimStart?.Invoke();
+            _onAnimStart?.Invoke(LastUIView, NextUIView);
         }
 
         private void SetAnimationComplete()
         {
-            _onAnimComplete?.Invoke();
+            _onAnimComplete?.Invoke(LastUIView, NextUIView);
             Flush();
         }
 
@@ -81,89 +85,95 @@ namespace Wanderer.GameFramework
             _onAnimChanged?.Invoke(lastAnim, nextAnim);
         }
 
-        public IUITween OnAnimationChanged(Action<IUIAnimation, IUIAnimation> OnAnimChanged)
+        public IUITween OnUITweenReady(Action<UIView, UIView> onUITweenReady)
         {
-            _onAnimChanged += OnAnimChanged;
+            _onUITweenReady = onUITweenReady;
             return this;
         }
 
-        public IUITween OnAnimationComplete(Action OnAnimComplete)
+        public IUITween OnAnimationChanged(Action<IUIAnimation, IUIAnimation> onAnimChanged)
         {
-            _onAnimComplete += OnAnimComplete;
+            _onAnimChanged += onAnimChanged;
             return this;
         }
 
-        public IUITween OnAnimationStart(Action OnAnimStart)
+        public IUITween OnAnimationComplete(Action<UIView, UIView> onAnimComplete)
         {
-            _onAnimStart += OnAnimStart;
+            _onAnimComplete += onAnimComplete;
+            return this;
+        }
+
+        public IUITween OnAnimationStart(Action<UIView, UIView> onAnimStart)
+        {
+            _onAnimStart += onAnimStart;
             return this;
         }
 
         public IUITween SetAnimations(IUIAnimation[] anims)
         {
-            _arrayAnims = anims;
+            _anims.AddRange(anims);
             return this;
         }
 
-        public IUITween SetAnimations(Queue<IUIAnimation> anims)
+
+        public IUITween RunAnimation(bool isQueue = false)
         {
-            _queueAnims = anims;
+            RunAnim(isQueue);
             return this;
         }
 
-        public IUITween RunAnimation()
+        private async void RunAnim(bool isQueue = false)
         {
-            RunAnim();
-            return this;
-        }
-
-        private async void RunAnim()
-        {
-            if (_arrayAnims != null && _arrayAnims.Length > 0)
+            //回调准备
+            SetUITweenReady();
+            //播放动画
+            if (_anims != null && _anims.Count > 0)
             {
                 await UniTask.NextFrame();
-                UniTask[] animTask = new UniTask[_arrayAnims.Length];
-                for (int i = 0; i < _arrayAnims.Length; i++)
+                if (isQueue)
                 {
-                    //call ui view
-                    AnimStartCallUIView(_arrayAnims[i]);
-                    animTask[i] = _arrayAnims[i].Run();
+                    this.SetAnimationStart();
+                    IUIAnimation lastAnim = null;
+					for (int i = 0; i < _anims.Count; i++)
+					{
+                        IUIAnimation nextAnim = _anims[i];
+                        //call ui view
+                        if (lastAnim != null)
+                        {
+                            AnimEndCallUIView(lastAnim);
+                        }
+                        AnimStartCallUIView(nextAnim);
+                        //call tween 
+                        this.SetAnimationChanged(lastAnim, nextAnim);
+                        await nextAnim.Run();
+                        lastAnim = nextAnim;
+
+                    }
+                    await UniTask.NextFrame();
                 }
-                //call tween 
-                this.SetAnimationStart();
-                await UniTask.WhenAll(animTask);
-                await UniTask.NextFrame();
-                for (int i = 0; i < _arrayAnims.Length; i++)
-                {
-                    //call ui view
-                    AnimEndCallUIView(_arrayAnims[i]);
+				else
+				{
+                    UniTask[] animTask = new UniTask[_anims.Count];
+                    for (int i = 0; i < _anims.Count; i++)
+                    {
+                        //call ui view
+                        AnimStartCallUIView(_anims[i]);
+                        animTask[i] = _anims[i].Run();
+                    }
+                    //call tween 
+                    this.SetAnimationStart();
+                    await UniTask.WhenAll(animTask);
+                    await UniTask.NextFrame();
+                    for (int i = 0; i < _anims.Count; i++)
+                    {
+                        //call ui view
+                        AnimEndCallUIView(_anims[i]);
+                    }
                 }
+             
                 //call tween
                 this.SetAnimationComplete();
             }
-            else if (_queueAnims != null && _queueAnims.Count > 0)
-            {
-                await UniTask.NextFrame();
-                this.SetAnimationStart();
-                IUIAnimation lastAnim = null;
-                while (_queueAnims.Count > 0)
-                {
-                    IUIAnimation nextAnim = _queueAnims.Dequeue();
-                    //call ui view
-                    if (lastAnim != null)
-                    {
-                        AnimEndCallUIView(lastAnim);
-                    }
-                    AnimStartCallUIView(nextAnim);
-                    //call tween 
-                    this.SetAnimationChanged(lastAnim, nextAnim);
-                    await nextAnim.Run();
-                    lastAnim = nextAnim;
-                }
-                await UniTask.NextFrame();
-                this.SetAnimationComplete();
-            }
-
         }
 
         private void AnimStartCallUIView(IUIAnimation uiAnim)

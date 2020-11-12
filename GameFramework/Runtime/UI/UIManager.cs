@@ -26,6 +26,8 @@ namespace Wanderer.GameFramework
         private UIResumeEventArgs _uiResumeArgs;
         private UITween _uiTweener;
 
+        //uiview的父物体
+        private Transform _uiViewParent;
         //资源管理器
         private ResourceManager _resource;
         //ui 列表
@@ -54,14 +56,15 @@ namespace Wanderer.GameFramework
         #endregion
 
         #region 外部接口
-      
+
         /// <summary>
-        /// 推送UI
+        ///  推送UI
         /// </summary>
         /// <param name="uiContext"></param>
+        /// <param name="callBack"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public IUITween Push(IUIContext uiContext, params object[] parameters)
+        public IUITween Push(IUIContext uiContext, Action<string> callBack=null, params object[] parameters)
         {
             _uiTweener.Flush();
             if (uiContext == null)
@@ -94,13 +97,12 @@ namespace Wanderer.GameFramework
             //处理新的ui
             _activeUIContextList.Add(uiContext);
             UIView newUiView = GetUIView(uiContext);
-            newUiView.OnEnter(uiContext, parameters);
+            newUiView.OnEnter(uiContext, callBack,parameters);
             //触发打开事件
             _uiEnterArgs.UIView = newUiView;
             _event.Trigger(this, _uiEnterArgs);
             //设置打开的uiview
             _uiTweener.SetNextUIView(newUiView);
-
             return _uiTweener;
         }
 
@@ -108,14 +110,15 @@ namespace Wanderer.GameFramework
         /// 推送UI
         /// </summary>
         /// <param name="assetPath"></param>
+        /// <param name="callBack"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public IUITween Push(string assetPath, params object[] parameters)
+        public IUITween Push(string assetPath, Action<string> callBack=null, params object[] parameters)
         {
             IUIContext uiContext = UIContextMgr[assetPath];
             if (uiContext != null)
             {
-                IUITween uiTween = Push(uiContext);
+                IUITween uiTween = Push(uiContext, callBack, parameters);
                 return uiTween;
             }
             return null;
@@ -254,6 +257,15 @@ namespace Wanderer.GameFramework
             return null;
         }
 
+        /// <summary>
+        /// 设置UIView的父级物体
+        /// </summary>
+        /// <param name="parent"></param>
+        public void SetUIViewParent(Transform viewParent)
+        {
+            _uiViewParent = viewParent;
+        }
+
         #endregion
 
         #region 内部函数
@@ -267,7 +279,7 @@ namespace Wanderer.GameFramework
                 if (uiViewSource == null)
                     throw new GameException("uiview path not found:" + uiContext.AssetPath);
 
-                GameObject uiViewClone = GameObject.Instantiate(uiViewSource);
+                GameObject uiViewClone = GameObject.Instantiate(uiViewSource, _uiViewParent);
                 uiView = uiViewClone.GetComponent<UIView>();
                 if (uiView == null)
                     return null;

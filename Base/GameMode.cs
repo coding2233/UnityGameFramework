@@ -83,8 +83,6 @@ namespace Wanderer.GameFramework
         IEnumerator Start()
         {
             GameMode.Self = this;
-
-
             //默认不销毁
             DontDestroyOnLoad(gameObject);
 
@@ -145,23 +143,16 @@ namespace Wanderer.GameFramework
             WebRequest.SetWebDownloadHelper(webDownloadHelper.AddComponent<WebDownloadMonoHelper>());
             #endregion
 
-            // #region Setting
-            // GameObject debugHelper = transform.Find("[Graphy]").gameObject;
-            // Setting.SetDebuger(debugHelper);
-            // Setting.DebugEnable = DebugEnable;
-            // #endregion
-
             #region state
             //开启整个项目的流程
             Assembly = typeof(GameMode).Assembly;
             FSM.AddFSM<GameStateContext>();
-            // GameState.CreateContext();
-            yield return new WaitForEndOfFrame();
+          //  yield return new WaitForEndOfFrame();
             GameFrameworkMode.Init();
-            //  yield return new WaitForEndOfFrame();
-            //   GameState.SetStateStart();
             FSM.GetFSM<GameStateContext>().OnBegin();
             #endregion
+
+            yield return new WaitForEndOfFrame();
 
         }
 
