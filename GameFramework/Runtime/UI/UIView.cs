@@ -19,6 +19,18 @@ namespace Wanderer.GameFramework
         //外部的回调
         protected Action<string> _callBack;
         /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="uiContext"></param>
+        public virtual void OnInit(IUIContext uiContext)
+        { }
+        /// <summary>
+        /// 更新界面
+        /// </summary>
+        /// <param name="uiContext"></param>
+        public virtual void OnUpdate(IUIContext uiContext,float deltaTime)
+        { }
+        /// <summary>
         /// 打开界面
         /// </summary>
         /// <param name="parameters">不确定参数</param>
@@ -43,30 +55,24 @@ namespace Wanderer.GameFramework
         /// </summary>
         public virtual void OnResume(IUIContext uiConext)
         { }
-
         /// <summary>
         /// 动画开始
         /// </summary>
         /// <param name="uiAnim"></param>
         public virtual void OnAnimationStart(IUIAnimation uiAnim)
-        { 
-        }
+        { }
         /// <summary>
         /// 动画结束
         /// </summary>
         /// <param name="uiAnim"></param>
         public virtual void OnAnimationComplete(IUIAnimation uiAnim)
-        { 
-        }
-
+        { }
         /// <summary>
         /// 设置深度
         /// </summary>
         /// <param name="depth"></param>
         public virtual void SetDepth(int depth)
-        {
-        }
-
+        {}
         /// <summary>
         /// 调用回调
         /// </summary>

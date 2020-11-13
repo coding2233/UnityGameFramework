@@ -16,7 +16,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Wanderer.GameFramework
 {
-    public sealed class UIManager : GameFrameworkModule
+    public sealed class UIManager : GameFrameworkModule,IUpdate
     {
         //事件管理器
         private EventManager _event;
@@ -284,6 +284,7 @@ namespace Wanderer.GameFramework
                 if (uiView == null)
                     return null;
                 _allUIView[uiContext] = uiView;
+                uiView.OnInit(uiContext);
                 return uiView;
             }
             uiView.gameObject.SetActive(true);
@@ -303,6 +304,18 @@ namespace Wanderer.GameFramework
             }
             _allUIView.Clear();
         }
-        #endregion
-    }
+
+        //更新函数
+        public void OnUpdate()
+		{
+			for (int i = 0; i < _activeUIContextList.Count; i++)
+			{
+                if (_allUIView.TryGetValue(_activeUIContextList[i], out UIView uiView))
+                {
+                    uiView.OnUpdate(_activeUIContextList[i], Time.deltaTime);
+                }
+			}
+		}
+		#endregion
+	}
 }

@@ -19,8 +19,23 @@ namespace Wanderer.GameFramework
 			}
 		}
 
-        protected virtual void Update()
-        { 
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="uiContext"></param>
+        public override void OnInit(IUIContext uiContext)
+        {
+            base.OnInit(uiContext);
+        }
+
+
+        /// <summary>
+        /// 更新界面
+        /// </summary>
+        /// <param name="uiContext"></param>
+        public override void OnUpdate(IUIContext uiContext, float deltaTime)
+        {
+            base.OnUpdate(uiContext, deltaTime);
         }
 
         /// <summary>
