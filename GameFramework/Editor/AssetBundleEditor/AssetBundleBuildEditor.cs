@@ -14,7 +14,7 @@ namespace Wanderer.GameFramework
         //资源信息文本名称
         private const string _assetVersionTxt = "AssetVersion.txt";
         //所有的文件对应的文件名称
-        private const string _assetsTxt="assets";
+        private const string _assetsTxt = "assets";
         private const string _configPath = "ProjectSettings/AssetBundleEditorConifg.json";
         private static AssetBundleConifgInfo _config;
         private static List<string> _buildTargets;
@@ -29,69 +29,69 @@ namespace Wanderer.GameFramework
         //压缩内容
         string[] _compressionOptionsContent = new string[] { "No Compression", "Standard Compression (LZMA)", "Chunk Based Compression (LZ4)" };
 
-        [MenuItem("Tools/Asset Bundle/AssetBundles Options %#O")]
+        [MenuItem("Tools/Asset Bundle/AssetBundle Build Options %#O")]
         public static void AssetBundilesOptions()
         {
             _rootPath = Path.GetDirectoryName(Path.GetFullPath(Application.dataPath));
 
             LoadConfig();
 
-            BuildTarget[] allTargets = (BuildTarget[])Enum.GetValues(typeof(BuildTarget));
-            //_allTargets
-            foreach (var item in allTargets)
-            {
-                int index = (int)item;
-                if (_config.BuildTargets.Contains(index))
-                    _allTargets[item] = true;
-                else
-                    _allTargets[item] = false;
-            }
+            //BuildTarget[] allTargets = (BuildTarget[])Enum.GetValues(typeof(BuildTarget));
+            ////_allTargets
+            //foreach (var item in allTargets)
+            //{
+            //    int index = (int)item;
+            //    if (_config.BuildTargets.Contains(index))
+            //        _allTargets[item] = true;
+            //    else
+            //        _allTargets[item] = false;
+            //}
 
-            GetWindowWithRect<AssetBundleBuildEditor>(new Rect(200, 300, 500, 600), true, "Options");
+            GetWindowWithRect<AssetBundleBuildEditor>(new Rect(200, 300, 500, 400), true, "Options");
         }
 
-        [MenuItem("Tools/Asset Bundle/Build AssetBundles %#T")]
-        public static void BuildAssetBundles()
-        {
-            LoadConfig();
+        //[MenuItem("Tools/Asset Bundle/Build AssetBundles %#T")]
+        //public static void BuildAssetBundles()
+        //{
+        //    LoadConfig();
 
-            BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
-            //打包编辑器的激活平台
-            BuildTarget(target);
+        //    BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
+        //    //打包编辑器的激活平台
+        //    BuildTarget(target);
 
-            //保存平台信息
-            SavePlatformVersion(new List<BuildTarget>() { target });
-            
-            if(_config.Copy2StreamingAssets)
-            {
-                //复制资源
-                CopyResource(target);
-                AssetDatabase.Refresh();
-            }
-        }
+        //    //保存平台信息
+        //    SavePlatformVersion(new List<BuildTarget>() { target });
 
-        [MenuItem("Tools/Asset Bundle/Build AssetBundles Targets %#Y")]
-        public static void BuildAssetBundlesAllTargets()
-        {
-            LoadConfig();
+        //    if(_config.Copy2StreamingAssets)
+        //    {
+        //        //复制资源
+        //        CopyResource(target);
+        //        AssetDatabase.Refresh();
+        //    }
+        //}
 
-            List<BuildTarget> targets = new List<BuildTarget>();
-            for (int i = 0; i < _config.BuildTargets.Count; i++)
-            {
-                BuildTarget target = (BuildTarget)_config.BuildTargets[i];
-                BuildTarget(target);
-                targets.Add(target);
-            }
+        //[MenuItem("Tools/Asset Bundle/Build AssetBundles Targets %#Y")]
+        //public static void BuildAssetBundlesAllTargets()
+        //{
+        //    LoadConfig();
 
-            //保存平台信息
-            SavePlatformVersion(targets);
-            if (_config.Copy2StreamingAssets&&targets.Contains(EditorUserBuildSettings.activeBuildTarget))
-            {
-                //复制资源
-                CopyResource(EditorUserBuildSettings.activeBuildTarget);
-                AssetDatabase.Refresh();
-            }
-        }
+        //    List<BuildTarget> targets = new List<BuildTarget>();
+        //    for (int i = 0; i < _config.BuildTargets.Count; i++)
+        //    {
+        //        BuildTarget target = (BuildTarget)_config.BuildTargets[i];
+        //        BuildTarget(target);
+        //        targets.Add(target);
+        //    }
+
+        //    //保存平台信息
+        //    SavePlatformVersion(targets);
+        //    if (_config.Copy2StreamingAssets&&targets.Contains(EditorUserBuildSettings.activeBuildTarget))
+        //    {
+        //        //复制资源
+        //        CopyResource(EditorUserBuildSettings.activeBuildTarget);
+        //        AssetDatabase.Refresh();
+        //    }
+        //}
 
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Wanderer.GameFramework
             //打包编辑器的激活平台
             string buildPath = BuildTarget(target);
             //保存平台信息
-            SavePlatformVersion(new List<BuildTarget>() { target });
+          //  SavePlatformVersion(new List<BuildTarget>() { target });
             if (_config.Copy2StreamingAssets)
             {
                 //复制资源
@@ -149,7 +149,7 @@ namespace Wanderer.GameFramework
 
             //BUILD PATH
             GUILayout.BeginHorizontal("Box");
-            GUILayout.Label("BuildPath:");
+            GUILayout.Label("Build Path:");
             GUILayout.TextArea(string.IsNullOrEmpty(_config.BuildPath) ? _rootPath : _config.BuildPath);
 
             if (GUILayout.Button("BROWSE", GUILayout.Width(80)))
@@ -181,21 +181,27 @@ namespace Wanderer.GameFramework
             _config.Copy2StreamingAssets = GUILayout.Toggle(_config.Copy2StreamingAssets, "Copy to StreamingAssets");
             GUILayout.EndHorizontal();
 
-            //build targets----------------------------------------------------------------------------
-            GUILayout.BeginVertical("Box");
-            GUILayout.Label("Build Targets:");
-            _scrollViewPos = GUILayout.BeginScrollView(_scrollViewPos, "Box");
-            foreach (var item in _allTargets)
+            //build target----------------------------------------------------------------------------
+            BuildTarget buildTarget = (BuildTarget)_config.BuildTarget;
+            BuildTarget newBuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("Build Target:", buildTarget);
+            if (newBuildTarget != buildTarget)
             {
-                bool value = GUILayout.Toggle(item.Value, item.Key.ToString());
-                if (value != item.Value)
-                {
-                    _allTargets[item.Key] = value;
-                    break;
-                }
+                _config.BuildTarget = (int)newBuildTarget;
             }
-            GUILayout.EndScrollView();
-            GUILayout.EndVertical();
+            //GUILayout.BeginVertical("Box");
+            //GUILayout.Label("Build Targets:");
+            //_scrollViewPos = GUILayout.BeginScrollView(_scrollViewPos, "Box");
+            //foreach (var item in _allTargets)
+            //{
+            //    bool value = GUILayout.Toggle(item.Value, item.Key.ToString());
+            //    if (value != item.Value)
+            //    {
+            //        _allTargets[item.Key] = value;
+            //        break;
+            //    }
+            //}
+            //GUILayout.EndScrollView();
+            //GUILayout.EndVertical();
 
             //other reseources----------------------------------------------------------------------------
             GUILayout.BeginVertical("Box");
@@ -209,12 +215,21 @@ namespace Wanderer.GameFramework
             //确认更改--------------------------------------------------------------------------------
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("OK", GUILayout.Width(60)))
+            if (GUILayout.Button("Save", GUILayout.Width(60)))
             {
                 //保存配置文件
                 SaveConfig();
                 //关闭窗口
                 Close();
+            }
+            if (GUILayout.Button("Build", GUILayout.Width(60)))
+            {
+                //保存配置文件
+                SaveConfig();
+                //资源打包
+                buildTarget = (BuildTarget)_config.BuildTarget;
+                BuildAssetBundles(buildTarget);
+                //BuildTarget();
             }
             GUILayout.EndHorizontal();
 
@@ -235,14 +250,14 @@ namespace Wanderer.GameFramework
         //保存配置信息
         private static void SaveConfig()
         {
-            _config.BuildTargets = new List<int>();
-            foreach (var item in _allTargets)
-            {
-                if (item.Value)
-                {
-                    _config.BuildTargets.Add((int)item.Key);
-                }
-            }
+            //_config.BuildTargets = new List<int>();
+            //foreach (var item in _allTargets)
+            //{
+            //    if (item.Value)
+            //    {
+            //        _config.BuildTargets.Add((int)item.Key);
+            //    }
+            //}
             string json = JsonUtility.ToJson(_config);
             File.WriteAllText(_configPath, json);
         }
@@ -252,7 +267,7 @@ namespace Wanderer.GameFramework
         {
             //打包路径
             string targetName = $"{Application.version}_{_config.Version}";
-            string buildPath = Path.Combine(_config.BuildPath, target.ToString().ToLower(), targetName);
+            string buildPath = Path.Combine(_config.BuildPath, BuildTargetToString(target), targetName); ;
             if (!Directory.Exists(buildPath))
                 Directory.CreateDirectory(buildPath);
             //设置打包的相关选项
@@ -354,27 +369,27 @@ namespace Wanderer.GameFramework
         }
 
         //保存平台版本信息
-        private static void SavePlatformVersion(List<BuildTarget> targets)
-        {
-            if (targets == null || targets.Count == 0)
-                return;
+        //private static void SavePlatformVersion(List<BuildTarget> targets)
+        //{
+        //    if (targets == null || targets.Count == 0)
+        //        return;
 
-            PlatformVersionInfo platformInfo = new PlatformVersionInfo();
-            platformInfo.Version = _config.Version;
-            platformInfo.Platforms = new List<string>();
-            foreach (var item in targets)
-            {
-                platformInfo.Platforms.Add(item.ToString().ToLower());
-            }
-            string json = JsonUtility.ToJson(platformInfo);
-            //保存平台信息
-            File.WriteAllText(Path.Combine(_config.BuildPath, _assetVersionTxt), json);
-            //更新资源版本号 -- 保存配置文件
-            _config.Version++;
-            SaveConfig();
-            //打开文件夹
-            // EditorUtility.OpenWithDefaultApp(_config.BuildPath);
-        }
+        //    PlatformVersionInfo platformInfo = new PlatformVersionInfo();
+        //    platformInfo.Version = _config.Version;
+        //    platformInfo.Platforms = new List<string>();
+        //    foreach (var item in targets)
+        //    {
+        //        platformInfo.Platforms.Add(item.ToString().ToLower());
+        //    }
+        //    string json = JsonUtility.ToJson(platformInfo);
+        //    //保存平台信息
+        //    File.WriteAllText(Path.Combine(_config.BuildPath, _assetVersionTxt), json);
+        //    //更新资源版本号 -- 保存配置文件
+        //    _config.Version++;
+        //    SaveConfig();
+        //    //打开文件夹
+        //    // EditorUtility.OpenWithDefaultApp(_config.BuildPath);
+        //}
 
         //添加本地资源
         private static List<AssetHashInfo> LoadOtherResource(string buildPath)
@@ -460,6 +475,29 @@ namespace Wanderer.GameFramework
             }
         }
 
+
+        /// <summary>
+        /// BuildTarget转字符串
+        /// </summary>
+        /// <param name="target"></param>
+        private static string BuildTargetToString(BuildTarget target)
+        {
+            string targetName = target.ToString();
+            if (targetName.Contains("Windows"))
+            {
+                targetName = "Windows";
+            }
+            else if (targetName.Contains("OSX"))
+            {
+                targetName = "OSX";
+            }
+            else if (targetName.Contains("Linux"))
+            {
+                targetName = "Linux";
+            }
+            return targetName.ToLower();
+        }
+
         //ab包的配置文件信息
         [System.Serializable]
         public class AssetBundleConifgInfo
@@ -469,11 +507,10 @@ namespace Wanderer.GameFramework
             public int CompressOptions = 1;
             public bool UseAssetBundleEditor = true;
             public bool Copy2StreamingAssets = false;
-            public List<int> BuildTargets = new List<int>();
+            public int BuildTarget = 13;
+         //   public List<int> BuildTargets = new List<int>();
             public string OtherResources = "";
             public bool IsEncrypt = true;
         }
-
-
     }
 }
