@@ -7,8 +7,13 @@
 // <time> #2018年7月12日 11点06分# </time>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Networking;
+using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
@@ -19,8 +24,8 @@ namespace Wanderer.GameFramework
         //事件管理类
         private EventManager _event;
 
-        //网页请求帮助类
-        private IWebRequestHelper _webRequestHelper;
+        // //网页请求帮助类
+        // private IWebRequestHelper _webRequestHelper;
 
         //读取http文本的成功的事件
         private HttpReadTextSuccessEventArgs _httpReadTextSuccess;
@@ -47,14 +52,14 @@ namespace Wanderer.GameFramework
 
         #region 外部接口
 
-        /// <summary>
-        /// 设置网页请求帮助类
-        /// </summary>
-        /// <param name="helper"></param>
-        public void SetWebRequestHelper(IWebRequestHelper helper)
-        {
-            _webRequestHelper = helper;
-        }
+        // /// <summary>
+        // /// 设置网页请求帮助类
+        // /// </summary>
+        // /// <param name="helper"></param>
+        // public void SetWebRequestHelper(IWebRequestHelper helper)
+        // {
+        //     _webRequestHelper = helper;
+        // }
         /// <summary>
         /// 设置下载的帮助类
         /// </summary>
@@ -64,13 +69,120 @@ namespace Wanderer.GameFramework
             _webDownloadHelper = helper;
         }
 
+        // /// <summary>
+        // /// 读取文本的信息
+        // /// </summary>
+        // /// <param name="url">http链接</param>
+        // public void ReadHttpText(string url)
+        // {
+        //     _webRequestHelper?.ReadHttpText(url, ReadHttpTextCallback);
+        // }
+
         /// <summary>
-        /// 读取文本的信息
+        /// 请求网络文本的数据
         /// </summary>
-        /// <param name="url">http链接</param>
-        public void ReadHttpText(string url)
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public Task<string> RequestText(string url)
         {
-            _webRequestHelper?.ReadHttpText(url, ReadHttpTextCallback);
+            var taskResult = new TaskCompletionSource<string>();
+            RequestText(url, (result, content) =>
+            {
+                taskResult.SetResult(result ? content : null);
+            });
+            return taskResult.Task;
+        }
+
+        /// <summary>
+        /// 请求网络文本
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public async void RequestText(string url, Action<bool, string> callback)
+        {
+            UnityWebRequest request = UnityWebRequest.Get(url);
+            await request.SendWebRequest();
+            if (request.isNetworkError)
+            {
+                callback?.Invoke(false, request.error);
+            }
+            else
+            {
+                callback?.Invoke(true, request.downloadHandler.text);
+            }
+        }
+
+        /// <summary>
+        /// 请求Texture2D
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public Task<Texture2D> RequestTexture2D(string url)
+        {
+            var resultTask = new TaskCompletionSource<Texture2D>();
+            RequestTexture2D(url, (result, tex2d) =>
+            {
+                resultTask.SetResult(tex2d);
+            });
+            return resultTask.Task;
+        }
+
+        /// <summary>
+        /// 请求Texture2d
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public async void RequestTexture2D(string url, Action<bool, Texture2D> callback)
+        {
+            UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+            await request.SendWebRequest();
+            if (request.isNetworkError)
+            {
+                callback?.Invoke(false, null);
+            }
+            else
+            {
+                Texture2D tex = DownloadHandlerTexture.GetContent(request);
+                callback?.Invoke(true, tex);
+            }
+        }
+
+        /// <summary>
+        /// 请求AssetBundle
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public Task<AssetBundle> RequestAssetBundle(string url)
+        {
+            var resultTask = new TaskCompletionSource<AssetBundle>();
+            RequestAssetBundle(url, (result, ab) =>
+            {
+                resultTask.SetResult(ab);
+            });
+            return resultTask.Task;
+        }
+
+        /// <summary>
+        /// 请求AssetBundle
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public async void RequestAssetBundle(string url, Action<bool, AssetBundle> callback)
+        {
+            UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(url);
+            await request.SendWebRequest();
+            if (request.isNetworkError)
+            {
+                callback?.Invoke(false, null);
+            }
+            else
+            {
+                AssetBundle ab = DownloadHandlerAssetBundle.GetContent(request);
+                callback?.Invoke(true, ab);
+            }
         }
 
         /// <summary>

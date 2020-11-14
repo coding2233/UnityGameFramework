@@ -14,6 +14,7 @@ using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 using LoadSceneMode = UnityEngine.SceneManagement.LoadSceneMode;
 using System.Threading.Tasks;
 using System;
+using System.IO;
 
 namespace Wanderer.GameFramework
 {
@@ -23,6 +24,8 @@ namespace Wanderer.GameFramework
 
         //事件触发类
         private EventManager _event;
+        //网络请求
+        private WebRequestManager _webRequest;
         //资源管理器 帮助类
         private IResourceHelper _resourceHelper;
         //GameObject对象池管理器
@@ -84,6 +87,26 @@ namespace Wanderer.GameFramework
         /// </summary>
         public string ResTestUpdatePath = "";
 
+        //远程更新的路径
+        private string _remoteUpdatePath = null;
+
+        //平台的资源名称
+        private string _assetPlatformVersionText = "AssetPlatformVersion.txt";
+
+        //资源信息文本名称
+        private string _assetVersionTxt = "AssetVersion.txt";
+
+        /// <summary>
+        /// 远程的版本信息
+        /// </summary>
+        /// <value></value>
+        public AssetBundleVersionInfo RemoteVersion { get; private set; }
+
+        /// <summary>
+        /// 本地的版本信息
+        /// </summary>
+        /// <value></value>
+        public AssetBundleVersionInfo LocalVersion { get; private set; }
 
         #endregion
 
@@ -92,6 +115,8 @@ namespace Wanderer.GameFramework
         {
             //获取事件管理器
             _event = GameFrameworkMode.GetModule<EventManager>();
+            //获取网络请求管理器
+            _webRequest = GameFrameworkMode.GetModule<WebRequestManager>();
             //资源异步加载的事件
             _resLoadAsyncSuccessEventArgs = new ResourceLoadAsyncSuccessEventArgs();
             _resLoadAsyncFailureEventArgs = new ResourceLoadAsyncFailureEventArgs();
@@ -99,6 +124,13 @@ namespace Wanderer.GameFramework
             _sceneLoadingEventArgs = new SceneLoadingEventArgs();
             _sceneLoadedEventArgs = new SceneLoadedEventArgs();
             _sceneAsyncOperations = new Dictionary<string, AsyncOperation>();
+
+            //设置更新路径
+#if TEST
+            _remoteUpdatePath = ResTestUpdatePath;
+#else
+            _remoteUpdatePath = ResOfficialUpdatePath;
+#endif
         }
         #endregion
 
@@ -215,6 +247,54 @@ namespace Wanderer.GameFramework
             _resourceHelper.UnloadSceneAsync(sceneName);
             return;
         }
+
+        /// <summary>
+        /// 请求本地版本信息
+        /// </summary>
+        /// <param name="callback"></param>
+        public void RequestLocalVersion(Action<AssetBundleVersionInfo> callback)
+        {
+            LocalVersion = null;
+            string versionAssetPath = Path.Combine(LocalPath, _assetVersionTxt);
+
+            _webRequest.RequestText(versionAssetPath, (result, content) =>
+            {
+                if (result && !string.IsNullOrEmpty(content))
+                {
+                    LocalVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(content);
+                }
+                //本地可能就没有版本信息
+                callback?.Invoke(null);
+                // if (LocalVersion == null)
+                // {
+                //     throw new GameException($"Can't transition local [AssetBundleVersionInfo]!! {versionAssetPath} {content}");
+                // }
+            });
+        }
+
+        /// <summary>
+        /// 请求远程版本信息
+        /// </summary>
+        /// <param name="callback"></param>
+        public void RequestRemoteVersion(Action<AssetBundleVersionInfo> callback)
+        {
+            RemoteVersion = null;
+            string versionAssetPath = Path.Combine(_remoteUpdatePath, _assetVersionTxt);
+            _webRequest.RequestText(versionAssetPath, (result, content) =>
+            {
+                if (result && !string.IsNullOrEmpty(content))
+                {
+                    RemoteVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(content);
+                }
+
+                if (RemoteVersion == null)
+                {
+                    throw new GameException($"Can't transition remote [AssetBundleVersionInfo]!! {versionAssetPath} {content}");
+                }
+            });
+        }
+
+
 
         /// <summary>
         /// 设置对象池管理器的

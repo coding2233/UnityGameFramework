@@ -135,11 +135,8 @@ namespace Wanderer.GameFramework
 
             #region WebRequest
             //设置帮助类
-            GameObject webRequestHelper = new GameObject("IWebRequestHelper");
-            webRequestHelper.transform.SetParent(transform);
             GameObject webDownloadHelper = new GameObject("IWebDownloadMonoHelper");
             webDownloadHelper.transform.SetParent(transform);
-            WebRequest.SetWebRequestHelper(webRequestHelper.AddComponent<WebRquestMonoHelper>());
             WebRequest.SetWebDownloadHelper(webDownloadHelper.AddComponent<WebDownloadMonoHelper>());
             #endregion
 
