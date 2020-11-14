@@ -29,7 +29,7 @@ namespace Wanderer.GameFramework
         //压缩内容
         string[] _compressionOptionsContent = new string[] { "No Compression", "Standard Compression (LZMA)", "Chunk Based Compression (LZ4)" };
 
-        [MenuItem("Tools/AssetBundles Options %#O")]
+        [MenuItem("Tools/Asset Bundle/AssetBundles Options %#O")]
         public static void AssetBundilesOptions()
         {
             _rootPath = Path.GetDirectoryName(Path.GetFullPath(Application.dataPath));
@@ -50,7 +50,7 @@ namespace Wanderer.GameFramework
             GetWindowWithRect<AssetBundleBuildEditor>(new Rect(200, 300, 500, 600), true, "Options");
         }
 
-        [MenuItem("Tools/Build AssetBundles %#T")]
+        [MenuItem("Tools/Asset Bundle/Build AssetBundles %#T")]
         public static void BuildAssetBundles()
         {
             LoadConfig();
@@ -71,7 +71,7 @@ namespace Wanderer.GameFramework
 
         }
 
-        [MenuItem("Tools/Build AssetBundles Targets %#Y")]
+        [MenuItem("Tools/Asset Bundle/Build AssetBundles Targets %#Y")]
         public static void BuildAssetBundlesAllTargets()
         {
             LoadConfig();
