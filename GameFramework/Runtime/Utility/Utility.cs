@@ -4,26 +4,84 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-    public class Utility
-    {
-        /// <summary>
-        /// 获取平台名称
-        /// </summary>
-        /// <returns></returns>
-        public static string GetPlatformName()
-        {
-            string platformName = "StandaloneWindows";
+	public class Utility
+	{
+		/// <summary>
+		/// 获取平台名称
+		/// </summary>
+		/// <returns></returns>
+		public static string GetPlatformName()
+		{
+			string platformName = "";
 #if UNITY_IOS
-                platformName = "IOS";
+            platformName = "iOS";
 #elif UNITY_ANDROID
-                platformName = "Android";
+            platformName = "Android";
 #elif UNITY_STANDALONE_OSX
-                platformName = "StandaloneOSX";
+            platformName = "OSX";
 #elif UNITY_STANDALONE_LINUX
-            platformName = "StandaloneLinux";
+            platformName = "Linux";
+#elif UNITY_STANDALONE_WIN
+			platformName = "Windows";
+#elif UNITY_WEBGL
+			platformName="WebGL";
 #endif
-            return platformName.ToLower();
+			return platformName.ToLower();
+		}
+
+		/// <summary>
+		/// 获取运行平台
+		/// </summary>
+		/// <returns></returns>
+		public static RuntimePlatform GetRuntimePlatform()
+		{
+			return Application.platform;
+		}
+
+		/// <summary>
+		/// 获取运行时间的平台名称
+		/// </summary>
+		/// <param name="target">编辑器默认以目标平台为准</param>
+		/// <returns></returns>
+		public static string GetRuntimePlatformName(bool target=true)
+        {
+            string platformName = "";
+			switch (Application.platform)
+			{
+				case RuntimePlatform.OSXEditor:
+					platformName = target?GetPlatformName(): "OSX";
+					break;
+				case RuntimePlatform.OSXPlayer:
+					platformName = "OSX";
+					break;
+				case RuntimePlatform.WindowsPlayer:
+					platformName = "Windows";
+					break;
+				case RuntimePlatform.WindowsEditor:
+					platformName = target? GetPlatformName(): "Windows";
+					break;
+				case RuntimePlatform.IPhonePlayer:
+					platformName = "iOS";
+					break;
+				case RuntimePlatform.Android:
+					platformName = "Android";
+					break;
+				case RuntimePlatform.LinuxPlayer:
+					platformName = "Linux";
+					break;
+				case RuntimePlatform.LinuxEditor:
+					platformName = target? GetPlatformName(): "Linux";
+					break;
+				case RuntimePlatform.WebGLPlayer:
+					platformName = "WebGL";
+					break;
+				default:
+					platformName = Application.platform.ToString();
+					break;
+			}
+			return platformName.ToLower();
         }
+
     }
 
 }

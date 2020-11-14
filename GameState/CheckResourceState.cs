@@ -130,7 +130,7 @@ namespace Wanderer.GameFramework
                 if (ne.Url == Path.Combine(_remoteUpdatePath, _assetPlatformVersionText))
                 {
                     PlatformVersionInfo assetPlatform = JsonUtility.FromJson<PlatformVersionInfo>(ne.Content);
-                    string platformName = Utility.GetPlatformName();
+                    string platformName = Utility.GetRuntimePlatformName();
                     if (assetPlatform.Platforms.Contains(platformName))
                     {
                         //更新远程资源的路径
