@@ -101,15 +101,23 @@ namespace Wanderer.GameFramework
         /// <returns></returns>
         public async void RequestText(string url, Action<bool, string> callback)
         {
-            UnityWebRequest request = UnityWebRequest.Get(url);
-            await request.SendWebRequest();
-            if (request.isNetworkError)
+            Debug.Log($"[RequestText]  {url}");
+            try
             {
-                callback?.Invoke(false, request.error);
+                UnityWebRequest request = UnityWebRequest.Get(url);
+                await request.SendWebRequest();
+                if (request.isNetworkError)
+                {
+                    callback?.Invoke(false, request.error);
+                }
+                else
+                {
+                    callback?.Invoke(true, request.downloadHandler.text);
+                }
             }
-            else
+            catch (System.Exception e)
             {
-                callback?.Invoke(true, request.downloadHandler.text);
+                callback?.Invoke(false, e.ToString());
             }
         }
 

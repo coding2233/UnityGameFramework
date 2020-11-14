@@ -124,7 +124,14 @@ namespace Wanderer.GameFramework
             _sceneLoadingEventArgs = new SceneLoadingEventArgs();
             _sceneLoadedEventArgs = new SceneLoadedEventArgs();
             _sceneAsyncOperations = new Dictionary<string, AsyncOperation>();
+        }
+        #endregion
 
+
+        //初始化
+        public override void OnInit()
+        {
+            base.OnInit();
             //设置更新路径
 #if TEST
             _remoteUpdatePath = ResTestUpdatePath;
@@ -133,7 +140,7 @@ namespace Wanderer.GameFramework
 #endif
             _remoteUpdatePath = Path.Combine(_remoteUpdatePath, Utility.GetRuntimePlatformName());
         }
-        #endregion
+
 
         #region 外部接口
 
@@ -262,7 +269,9 @@ namespace Wanderer.GameFramework
             {
                 if (result && !string.IsNullOrEmpty(content))
                 {
+                    Debug.Log($"RequestLocalVersion：{versionAssetPath} {content}");
                     content = content.ToEncrypt();
+                    Debug.Log($"RequestLocalVersion：{versionAssetPath} {content}");
                     LocalVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(content);
                 }
                 //本地可能就没有版本信息
@@ -298,6 +307,7 @@ namespace Wanderer.GameFramework
             string versionAssetPath = Path.Combine(_remoteUpdatePath, _assetVersionTxt);
             _webRequest.RequestText(versionAssetPath, (result, content) =>
             {
+                Debug.Log($"RequestRemoteVersion: {_remoteUpdatePath}");
                 if (result && !string.IsNullOrEmpty(content))
                 {
                     content = content.ToEncrypt();
