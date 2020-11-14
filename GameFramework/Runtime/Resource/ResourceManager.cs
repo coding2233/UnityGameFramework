@@ -261,6 +261,7 @@ namespace Wanderer.GameFramework
             {
                 if (result && !string.IsNullOrEmpty(content))
                 {
+                    content = content.ToEncrypt();
                     LocalVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(content);
                 }
                 //本地可能就没有版本信息
@@ -284,6 +285,7 @@ namespace Wanderer.GameFramework
             {
                 if (result && !string.IsNullOrEmpty(content))
                 {
+                    content = content.ToEncrypt();
                     RemoteVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(content);
                 }
 

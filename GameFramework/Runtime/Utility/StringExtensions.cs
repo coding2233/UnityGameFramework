@@ -74,6 +74,7 @@ namespace Wanderer.GameFramework
         }
 
 
+
         public static string ToByteLengthString(this long size)
         {
             if (size < 1024)
@@ -120,6 +121,23 @@ namespace Wanderer.GameFramework
             {
                 return $"{(size / 1024.0f / 1024.0f).ToString("f2")}MB";
             }
+        }
+
+
+        /// <summary>
+        /// 字符串异或
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string ToEncrypt(this string str)
+        {
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(str);
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] ^= FileUtility.ENCRYPYKEY;
+            }
+            str = System.Text.Encoding.UTF8.GetString(data);
+            return str;
         }
 
     }

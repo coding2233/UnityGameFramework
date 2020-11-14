@@ -68,7 +68,6 @@ namespace Wanderer.GameFramework
                 CopyResource(target);
                 AssetDatabase.Refresh();
             }
-
         }
 
         [MenuItem("Tools/Asset Bundle/Build AssetBundles Targets %#Y")]
@@ -92,6 +91,26 @@ namespace Wanderer.GameFramework
                 CopyResource(EditorUserBuildSettings.activeBuildTarget);
                 AssetDatabase.Refresh();
             }
+        }
+
+
+        /// <summary>
+        /// 打包AssetBundle
+        /// </summary>
+        public static string BuildAssetBundles(BuildTarget target)
+        {
+            LoadConfig();
+            //打包编辑器的激活平台
+            string buildPath = BuildTarget(target);
+            //保存平台信息
+            SavePlatformVersion(new List<BuildTarget>() { target });
+            if (_config.Copy2StreamingAssets)
+            {
+                //复制资源
+                CopyResource(target);
+                AssetDatabase.Refresh();
+            }
+            return buildPath;
         }
 
         /// <summary>
@@ -133,7 +152,7 @@ namespace Wanderer.GameFramework
             GUILayout.Label("BuildPath:");
             GUILayout.TextArea(string.IsNullOrEmpty(_config.BuildPath) ? _rootPath : _config.BuildPath);
 
-            if (GUILayout.Button("BROWSE", GUILayout.Width(60)))
+            if (GUILayout.Button("BROWSE", GUILayout.Width(80)))
             {
                 string path = (string.IsNullOrEmpty(_config.BuildPath) || !Directory.Exists(_config.BuildPath)) ? _rootPath : _config.BuildPath;
 
@@ -157,6 +176,7 @@ namespace Wanderer.GameFramework
 
             //copy------------------------------------
             GUILayout.BeginHorizontal("Box");
+            _config.UseAssetBundleEditor = GUILayout.Toggle(_config.UseAssetBundleEditor, "Use AssetBundleEditor");
             GUILayout.FlexibleSpace();
             _config.Copy2StreamingAssets = GUILayout.Toggle(_config.Copy2StreamingAssets, "Copy to StreamingAssets");
             GUILayout.EndHorizontal();
@@ -228,10 +248,11 @@ namespace Wanderer.GameFramework
         }
 
         //资源打包
-        private static void BuildTarget(BuildTarget target)
+        private static string BuildTarget(BuildTarget target)
         {
             //打包路径
-            string buildPath = Path.Combine(_config.BuildPath, target.ToString().ToLower());
+            string targetName = $"{Application.version}_{_config.Version}";
+            string buildPath = Path.Combine(_config.BuildPath, target.ToString().ToLower(), targetName);
             if (!Directory.Exists(buildPath))
                 Directory.CreateDirectory(buildPath);
             //设置打包的相关选项
@@ -242,22 +263,41 @@ namespace Wanderer.GameFramework
             //LZ4
             else if (_config.CompressOptions == 2)
                 options |= BuildAssetBundleOptions.ChunkBasedCompression;
-            //打包
-          //  BuildPipeline.BuildAssetBundles(buildPath, options, target);
-            BuildPipeline.BuildAssetBundles(buildPath, AssetBundleEditor.GetAssetBundleBuild(), options, target);
-          //  Build
+            //打包  Build
+            if (_config.UseAssetBundleEditor)
+            {
+                BuildPipeline.BuildAssetBundles(buildPath, AssetBundleEditor.GetAssetBundleBuild(), options, target);
+            }
+            else
+            {
+                BuildPipeline.BuildAssetBundles(buildPath, options, target);
+            }
             //保存资源版本信息
-            SaveAssetVersion(buildPath, target);
+            SaveAssetVersion(buildPath, targetName, target);
+            Debug.Log($"资源打包成功: {buildPath}");
+            return buildPath;
         }
 
         //保存资源版本信息
-        private static void SaveAssetVersion(string buildPath, BuildTarget target)
+        private static void SaveAssetVersion(string buildPath, string targetName, BuildTarget target)
         {
-            string targetName = target.ToString().ToLower();
+            //string targetName = target.ToString().ToLower();
             string targetBundlePath = Path.Combine(buildPath, targetName);
             if (!File.Exists(targetBundlePath))
                 return;
+            //删除manifest文件
+            string targetManifestPath =$"{targetBundlePath}.manifest";
+            if (File.Exists(targetManifestPath))
+                File.Delete(targetManifestPath);
+            //移动manifest文件
+            targetName = "manifest";
+            string tempTargetBundlePath = Path.Combine(buildPath, targetName);
+            if (File.Exists(tempTargetBundlePath))
+                File.Delete(tempTargetBundlePath);
+            File.Move(targetBundlePath, tempTargetBundlePath) ;
+            targetBundlePath = tempTargetBundlePath;
 
+            //整理AssetBundleVersionInfo
             AssetBundleVersionInfo assetVersionInfo = new AssetBundleVersionInfo();
             assetVersionInfo.Version = _config.Version;
             assetVersionInfo.ManifestAssetBundle = targetName;
@@ -284,11 +324,11 @@ namespace Wanderer.GameFramework
                  //加密
                 if (_config.IsEncrypt)
                 {
-                    using (var stream = new EncryptFileStream(filePath, FileMode.Create))
-                    {
-                        stream.Write(data, 0, data.Length);
-                    }
-                }
+					using (var stream = new EncryptFileStream(filePath, FileMode.Create))
+					{
+						stream.Write(data, 0, data.Length);
+					}
+				}
                 assetHashInfo.Size = data.Length > 1024 ? (int)(data.Length / 1024.0f) : 1;
                 assetHashInfo.Hash = FileUtility.GetFileMD5(data);
                 assetVersionInfo.AssetHashInfos.Add(assetHashInfo);
@@ -306,7 +346,10 @@ namespace Wanderer.GameFramework
             assetVersionInfo.AssetHashInfos.AddRange(otherResInfo);
 
             string json = JsonUtility.ToJson(assetVersionInfo);
-            File.WriteAllText(Path.Combine(buildPath, _assetVersionTxt), json);
+            //VersionAsset 加密
+            json = json.ToEncrypt();
+            string buildAssetVersionPath = Path.Combine(buildPath, _assetVersionTxt);
+            File.WriteAllText(buildAssetVersionPath, json);
             targetBundle.Unload(true);
         }
 
@@ -424,6 +467,7 @@ namespace Wanderer.GameFramework
             public int Version = 0;
             public string BuildPath = "";
             public int CompressOptions = 1;
+            public bool UseAssetBundleEditor = true;
             public bool Copy2StreamingAssets = false;
             public List<int> BuildTargets = new List<int>();
             public string OtherResources = "";
