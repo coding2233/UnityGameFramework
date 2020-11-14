@@ -243,8 +243,9 @@ namespace Wanderer.GameFramework
             else if (_config.CompressOptions == 2)
                 options |= BuildAssetBundleOptions.ChunkBasedCompression;
             //打包
-            BuildPipeline.BuildAssetBundles(buildPath, options, target);
-
+          //  BuildPipeline.BuildAssetBundles(buildPath, options, target);
+            BuildPipeline.BuildAssetBundles(buildPath, AssetBundleEditor.GetAssetBundleBuild(), options, target);
+          //  Build
             //保存资源版本信息
             SaveAssetVersion(buildPath, target);
         }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -32,7 +33,7 @@ namespace Wanderer.GameFramework
 			"Shader",
 			"Sprite",
 			"Texture",
-			"VideoClip"};
+			"VideoClip","TextAsset","ScriptableObject","AnimatorController"};
 
 		//窗口的位置
 		private Rect _foldersWindowRect = Rect.zero;
@@ -41,9 +42,131 @@ namespace Wanderer.GameFramework
 
 
 		[MenuItem("Tools/Asset Bundle/Asset Bundle Editor")]
-		public static void Main()
+		private static void MainWindow()
 		{
-			GetWindowWithRect<AssetBundleEditor>(new Rect(100, 100, 900, 600),false, "Asset Bundle Editor");
+			GetWindowWithRect<AssetBundleEditor>(new Rect(100, 100, 900, 600), false, "Asset Bundle Editor");
+		}
+
+
+		/// <summary>
+		/// 获取所有的AssetBundleBuild
+		/// </summary>
+		/// <returns></returns>
+		public static AssetBundleBuild[] GetAssetBundleBuild()
+		{
+			JsonData config = ProjectSettingsConfig.LoadJsonData(_configName);
+			if (config == null || config.Count == 0)
+			{
+				if (EditorUtility.DisplayDialog("Waring!", "No data!", "OK"))
+				{
+					MainWindow();
+				}
+
+			}
+			else
+			{
+				List<AssetBundleBuild> abbs = new List<AssetBundleBuild>();
+				for (int i = 0; i < config.Count; i++)
+				{
+					JsonData item = config[i];
+					abbs.AddRange(JsonToABB(item));
+				}
+				return abbs.ToArray();
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// JsonData转AssetBundleBuild
+		/// </summary>
+		/// <param name="jsonData"></param>
+		/// <returns></returns>
+		private static List<AssetBundleBuild> JsonToABB(JsonData jsonData)
+		{
+			List<AssetBundleBuild> listABB = new List<AssetBundleBuild>();
+			//AssetBundleBuild abb = new AssetBundleBuild();
+			string abName = (string)jsonData["AssetBundleName"];
+			string abVariant = (string)jsonData["Variant"];
+			//Filter
+			int jsonFilter = (int)jsonData["Filter"];
+			string filter = "";
+			StringBuilder filterBuilder = new StringBuilder();
+			if (jsonFilter == -1)
+			{
+				foreach (var item in AssetFilter)
+				{
+					filterBuilder.Append($"t:{item} ");
+				}
+			}
+			else
+			{
+				for (int i = 0; i < AssetFilter.Length; i++)
+				{
+					int byteIndex = 1 << i;
+					if ((jsonFilter & byteIndex) == byteIndex)
+					{
+						filterBuilder.Append($"t:{AssetFilter[i]} ");
+					}
+				}
+			}
+			filter = filterBuilder.ToString().Trim();
+			//SearchInFolders
+			JsonData sifJsonData = jsonData["SearchInFolders"];
+			string[] searchInFolders = new string[sifJsonData.Count];
+			for (int i = 0; i < sifJsonData.Count; i++)
+			{
+				searchInFolders[i] = (string)sifJsonData[i];
+			}
+			//获取到所有的资源
+			string[] assets = AssetDatabase.FindAssets(filter, searchInFolders);
+			//Split
+			bool split = (bool)jsonData["Split"];
+			int splitCount=(int)jsonData["SplitCount"];
+
+			if (split && assets.Length > 0 && splitCount > 0 && assets.Length >= splitCount)
+			{
+				int splitNum = assets.Length / splitCount + 1;
+				int index = 0;
+				for (int i = 0; i < splitCount; i++)
+				{
+					string partAbName = $"{abName}_part{i}";
+					List<string> assetNames = new List<string>();
+					int tempNum = index + splitNum;
+					tempNum = Mathf.Min(tempNum, assets.Length);
+
+					for (int j = index; j < tempNum; j++)
+					{
+						string guid = assets[j];
+						assetNames.Add(AssetDatabase.GUIDToAssetPath(guid));
+					}
+					index = tempNum;
+
+					AssetBundleBuild abb = new AssetBundleBuild();
+					abb.assetBundleName = partAbName;
+					abb.assetBundleVariant = abVariant;
+					abb.assetNames = assetNames.ToArray();
+					listABB.Add(abb);
+				}
+			}
+			else
+			{
+				List<string> assetNames = new List<string>();
+				for (int j = 0; j < assets.Length; j++)
+				{
+					string guid = assets[j];
+					assetNames.Add(AssetDatabase.GUIDToAssetPath(guid));
+				}
+
+				AssetBundleBuild abb = new AssetBundleBuild();
+				abb.assetBundleName = abName;
+				abb.assetBundleVariant = abVariant;
+				abb.assetNames = assetNames.ToArray();
+				listABB.Add(abb);
+			}
+
+			return listABB;
+			//abb.assetNames = (string)jsonData["Variant"];
+			//return abb;
 		}
 
 		private void OnEnable()
@@ -182,6 +305,7 @@ namespace Wanderer.GameFramework
 			}
 		}
 
+		//绘制jsondata
 		private void DrawJsonData(JsonData jsonData)
 		{
 			string key = "AssetBundleName";
