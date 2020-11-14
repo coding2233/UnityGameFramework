@@ -129,7 +129,7 @@ namespace Wanderer.GameFramework
             {
                 if (ne.Url == Path.Combine(_remoteUpdatePath, _assetPlatformVersionText))
                 {
-                    PlatformVersionInfo assetPlatform = JsonUtility.FromJson<PlatformVersionInfo>(ne.Content);
+                       PlatformVersionInfo assetPlatform = JsonUtility.FromJson<PlatformVersionInfo>(ne.Content);
                     string platformName = Utility.GetRuntimePlatformName();
                     if (assetPlatform.Platforms.Contains(platformName))
                     {

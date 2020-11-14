@@ -9,6 +9,8 @@
 
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+
 namespace Wanderer.GameFramework
 {
 
@@ -24,10 +26,31 @@ namespace Wanderer.GameFramework
     [System.Serializable]
     public class AssetBundleVersionInfo
     {
+        private int _hashCode=0;
         public int Version = 0;
       //  public bool IsEncrypt = false;
         public string ManifestAssetBundle;
         public List<AssetHashInfo> AssetHashInfos = new List<AssetHashInfo>();
+
+		public override bool Equals(object obj)
+		{
+            AssetBundleVersionInfo other = obj as AssetBundleVersionInfo;
+            if (Version != other.Version|| other.GetHashCode()!=GetHashCode())
+            {
+                return false;
+            }
+			return true;
+		}
+
+		public override int GetHashCode()
+        {
+            if (_hashCode == 0)
+            {
+                _hashCode= JsonUtility.ToJson(this).GetHashCode();
+            }
+            return _hashCode;
+        }
+
     }
 
     //资源hash值

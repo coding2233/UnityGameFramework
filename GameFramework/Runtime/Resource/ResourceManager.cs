@@ -131,6 +131,7 @@ namespace Wanderer.GameFramework
 #else
             _remoteUpdatePath = ResOfficialUpdatePath;
 #endif
+            _remoteUpdatePath = Path.Combine(_remoteUpdatePath, Utility.GetRuntimePlatformName());
         }
         #endregion
 
@@ -274,6 +275,20 @@ namespace Wanderer.GameFramework
         }
 
         /// <summary>
+        /// 请求本地版本信息
+        /// </summary>
+        /// <returns></returns>
+        public Task<AssetBundleVersionInfo> RequestLocalVersion()
+        {
+            var resultTask = new TaskCompletionSource<AssetBundleVersionInfo>();
+            RequestLocalVersion((abvi) =>
+            {
+                resultTask.SetResult(abvi);
+            });
+            return resultTask.Task;
+        }
+
+        /// <summary>
         /// 请求远程版本信息
         /// </summary>
         /// <param name="callback"></param>
@@ -296,7 +311,45 @@ namespace Wanderer.GameFramework
             });
         }
 
+        /// <summary>
+        /// 请求远程版本信息
+        /// </summary>
+        /// <returns></returns>
+        public Task<AssetBundleVersionInfo> RequestRemoteVersion()
+        {
+            var resultTask = new TaskCompletionSource<AssetBundleVersionInfo>();
+            RequestRemoteVersion((abvi) =>
+            {
+                resultTask.SetResult(abvi);
+            });
+            return resultTask.Task;
+        }
 
+
+        /// <summary>
+        /// 同时请求本地和远程的版本信息
+        /// </summary>
+        /// <param name="callback"></param>
+        public async void RequestVersion(Action<AssetBundleVersionInfo, AssetBundleVersionInfo> callback)
+        {
+            await RequestLocalVersion();
+            await RequestRemoteVersion();
+            callback?.Invoke(LocalVersion, RemoteVersion);
+        }
+
+        /// <summary>
+        /// 同时请求本地和远程的版本信息
+        /// </summary>
+        /// <param name="callback"></param>
+        public Task<AssetBundleVersionInfo[]> RequestVersion()
+        {
+            var resultTask = new TaskCompletionSource<AssetBundleVersionInfo[]>();
+            RequestVersion((localABVI, remoteABVI) =>
+            {
+                resultTask.SetResult(new AssetBundleVersionInfo[] { localABVI, remoteABVI });
+            });
+            return resultTask.Task;
+        }
 
         /// <summary>
         /// 设置对象池管理器的

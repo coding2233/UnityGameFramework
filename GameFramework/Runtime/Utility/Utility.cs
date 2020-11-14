@@ -43,13 +43,13 @@ namespace Wanderer.GameFramework
 		/// </summary>
 		/// <param name="target">编辑器默认以目标平台为准</param>
 		/// <returns></returns>
-		public static string GetRuntimePlatformName(bool target=true)
-        {
-            string platformName = "";
+		public static string GetRuntimePlatformName(bool target = true)
+		{
+			string platformName = "";
 			switch (Application.platform)
 			{
 				case RuntimePlatform.OSXEditor:
-					platformName = target?GetPlatformName(): "OSX";
+					platformName = target ? GetPlatformName() : "OSX";
 					break;
 				case RuntimePlatform.OSXPlayer:
 					platformName = "OSX";
@@ -58,7 +58,7 @@ namespace Wanderer.GameFramework
 					platformName = "Windows";
 					break;
 				case RuntimePlatform.WindowsEditor:
-					platformName = target? GetPlatformName(): "Windows";
+					platformName = target ? GetPlatformName() : "Windows";
 					break;
 				case RuntimePlatform.IPhonePlayer:
 					platformName = "iOS";
@@ -70,7 +70,7 @@ namespace Wanderer.GameFramework
 					platformName = "Linux";
 					break;
 				case RuntimePlatform.LinuxEditor:
-					platformName = target? GetPlatformName(): "Linux";
+					platformName = target ? GetPlatformName() : "Linux";
 					break;
 				case RuntimePlatform.WebGLPlayer:
 					platformName = "WebGL";
@@ -80,8 +80,51 @@ namespace Wanderer.GameFramework
 					break;
 			}
 			return platformName.ToLower();
-        }
+		}
 
-    }
+		/// <summary>
+		/// 只读路径
+		/// </summary>
+		public static string ReadOnlyPath
+		{
+			get
+			{
+				return Application.streamingAssetsPath;
+			}
+		}
+
+		/// <summary>
+		/// 读写路径
+		/// </summary>
+		public static string ReadWritePath
+		{
+			get
+			{
+				return Application.persistentDataPath;
+			}
+		}
+
+		/// <summary>
+		/// 数据路径
+		/// </summary>
+		public static string DataPath
+		{
+			get
+			{
+				return Application.dataPath;
+			}
+		}
+
+		/// <summary>
+		/// 缓存路径
+		/// </summary>
+		public static string CachePath
+		{
+			get
+			{
+				return Application.temporaryCachePath;
+			}
+		}
+	}
 
 }

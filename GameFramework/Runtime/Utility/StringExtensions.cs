@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -138,6 +139,21 @@ namespace Wanderer.GameFramework
             }
             str = System.Text.Encoding.UTF8.GetString(data);
             return str;
+        }
+
+        /// <summary>
+        /// 获取字符串的MD5
+        /// </summary>
+        /// <param name="data">文件的数据</param>
+        /// <returns></returns>
+        public static string GetMD5(this string str)
+        {
+            System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(str);
+            //计算字节数组的哈希值  
+            byte[] toData = md5.ComputeHash(data);
+            string fileMD5 = BitConverter.ToString(toData).Replace("-", "").ToLower();
+            return fileMD5;
         }
 
     }
