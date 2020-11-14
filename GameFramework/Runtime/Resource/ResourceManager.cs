@@ -269,9 +269,7 @@ namespace Wanderer.GameFramework
             {
                 if (result && !string.IsNullOrEmpty(content))
                 {
-                    Debug.Log($"RequestLocalVersion：{versionAssetPath} {content}");
                     content = content.ToEncrypt();
-                    Debug.Log($"RequestLocalVersion：{versionAssetPath} {content}");
                     LocalVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(content);
                 }
                 //本地可能就没有版本信息
@@ -307,7 +305,6 @@ namespace Wanderer.GameFramework
             string versionAssetPath = Path.Combine(_remoteUpdatePath, _assetVersionTxt);
             _webRequest.RequestText(versionAssetPath, (result, content) =>
             {
-                Debug.Log($"RequestRemoteVersion: {_remoteUpdatePath}");
                 if (result && !string.IsNullOrEmpty(content))
                 {
                     content = content.ToEncrypt();
@@ -318,6 +315,8 @@ namespace Wanderer.GameFramework
                 {
                     throw new GameException($"Can't transition remote [AssetBundleVersionInfo]!! {versionAssetPath} {content}");
                 }
+
+                callback?.Invoke(RemoteVersion);
             });
         }
 
