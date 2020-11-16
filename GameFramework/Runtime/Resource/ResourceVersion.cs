@@ -256,6 +256,7 @@ namespace Wanderer.GameFramework
                 //所有的文件下载完成
                 if (flags&& _needDownloadFiles.Count==_downloadingFiles.Count)
                 {
+                    UpdateLocalVersion();
                     _downloadCallback?.Invoke(true, 1.0f,0.0f, _totleFileSize);
                     _downloadCallback = null;
                     _downloading = false;
@@ -296,6 +297,25 @@ namespace Wanderer.GameFramework
         #endregion
 
         #region 内部函数
+        /// <summary>
+        /// 更新本地版本信息
+        /// </summary>
+        private void UpdateLocalVersion()
+        {
+            if (CheckResource())
+            {
+                LocalVersion = RemoteVersion;
+
+                string versionAssetPath = Path.Combine(_localResourcePath, _assetVersionTxt);
+                string content = JsonUtility.ToJson(LocalVersion).ToEncrypt();
+                if (File.Exists(versionAssetPath))
+                {
+                    File.Delete(versionAssetPath);
+                }
+                File.WriteAllText(versionAssetPath, content);
+            }
+        }
+
         //整理下载资源
         private async void CollateDownloadResources()
         {
