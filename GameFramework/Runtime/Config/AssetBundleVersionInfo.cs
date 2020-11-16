@@ -69,6 +69,10 @@ namespace Wanderer.GameFramework
         /// KB
         /// </summary>
         public int Size;
+        /// <summary>
+        /// 强制更新
+        /// </summary>
+        public bool ForceUpdate = true;
 
         public override bool Equals(object obj)
         {

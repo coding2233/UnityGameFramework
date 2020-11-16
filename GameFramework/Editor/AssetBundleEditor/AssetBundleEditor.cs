@@ -44,7 +44,7 @@ namespace Wanderer.GameFramework
 		[MenuItem("Tools/Asset Bundle/Asset Bundle Editor")]
 		private static void MainWindow()
 		{
-			GetWindowWithRect<AssetBundleEditor>(new Rect(100, 100, 900, 600), false, "Asset Bundle Editor");
+			GetWindowWithRect<AssetBundleEditor>(new Rect(100, 100, 1000, 600), false, "Asset Bundle Editor");
 		}
 
 
@@ -74,6 +74,36 @@ namespace Wanderer.GameFramework
 				return abbs.ToArray();
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// 设置是否强制更新
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public static bool GetForceUpdate(string name)
+		{
+			JsonData config = ProjectSettingsConfig.LoadJsonData(_configName);
+			if (config != null || config.Count > 0)
+			{
+				for (int i = 0; i < config.Count; i++)
+				{
+					JsonData item = config[i];
+					string abName = (string)item["AssetBundleName"];
+					abName = abName.ToLower().Trim();
+					if (name.Equals(abName) || name.Contains($"{abName}_part"))
+					{
+						string key = "ForceUpdate";
+						if (item.ContainsKey(key))
+						{
+							bool forceUpdate = (bool)item[key];
+							if (!forceUpdate)
+								return false;
+						}
+					}
+				}
+			}
+			return true;
 		}
 
 		/// <summary>
@@ -219,6 +249,7 @@ namespace Wanderer.GameFramework
 			GUILayout.Label("SearchInFolders",GUILayout.Width(300));
 			GUILayout.Label("Split",GUILayout.Width(100));
 			GUILayout.Label("SplitCount", GUILayout.Width(100));
+			GUILayout.Label("ForceUpdate", GUILayout.Width(100));
 			GUILayout.EndHorizontal();
 			int configCount = _config.Count;
 			if (configCount > 0)
@@ -383,10 +414,22 @@ namespace Wanderer.GameFramework
 				jsonData[key] = 1;
 			}
 			int splitCount =(int)jsonData[key];
-			int newSplitCount = EditorGUILayout.IntField(splitCount, GUILayout.Width(70));
+			int newSplitCount = EditorGUILayout.IntField(splitCount, GUILayout.Width(100));
 			if (splitCount != newSplitCount)
 			{
 				jsonData[key] = newSplitCount;
+			}
+
+			key = "ForceUpdate";
+			if (!jsonData.Keys.Contains(key))
+			{
+				jsonData[key] = true;
+			}
+			bool forceUpdate = (bool)jsonData[key];
+			bool newForceUpdate = EditorGUILayout.Toggle(forceUpdate, GUILayout.Width(70));
+			if (forceUpdate != newForceUpdate)
+			{
+				jsonData[key] = newForceUpdate;
 			}
 		}
 	}

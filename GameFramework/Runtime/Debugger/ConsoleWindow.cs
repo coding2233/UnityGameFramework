@@ -222,7 +222,18 @@ namespace Wanderer.GameFramework
                         GameObject findGameObject = GameObject.Find(fullName);
                         if (findGameObject != null)
                         {
-                            findGameObject.SendMessage(methodName, args);
+                            if (args == null)
+                            {
+                                findGameObject.SendMessage(methodName);
+                            }
+                            else if (args.Length == 1)
+                            {
+                                findGameObject.SendMessage(methodName, args[0]);
+                            }
+                            else
+                            {
+                                findGameObject.SendMessage(methodName, args);
+                            }
                             return;
                         }
                     }

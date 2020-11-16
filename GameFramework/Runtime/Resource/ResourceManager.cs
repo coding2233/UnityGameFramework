@@ -90,24 +90,11 @@ namespace Wanderer.GameFramework
         //远程更新的路径
         private string _remoteUpdatePath = null;
 
-        //平台的资源名称
-        private string _assetPlatformVersionText = "AssetPlatformVersion.txt";
-
-        //资源信息文本名称
-        private string _assetVersionTxt = "AssetVersion.txt";
-
         /// <summary>
-        /// 远程的版本信息
+        /// 资源的版本信息
         /// </summary>
         /// <value></value>
-        public AssetBundleVersionInfo RemoteVersion { get; private set; }
-
-        /// <summary>
-        /// 本地的版本信息
-        /// </summary>
-        /// <value></value>
-        public AssetBundleVersionInfo LocalVersion { get; private set; }
-
+        public ResourceVersion Version { get; private set; }
         #endregion
 
         #region 构造函数
@@ -139,6 +126,8 @@ namespace Wanderer.GameFramework
             _remoteUpdatePath = ResOfficialUpdatePath;
 #endif
             _remoteUpdatePath = Path.Combine(_remoteUpdatePath, Utility.GetRuntimePlatformName());
+            //资源版本
+            Version = new ResourceVersion(_remoteUpdatePath,LocalPath);
         }
 
 
@@ -254,110 +243,6 @@ namespace Wanderer.GameFramework
 
             _resourceHelper.UnloadSceneAsync(sceneName);
             return;
-        }
-
-        /// <summary>
-        /// 请求本地版本信息
-        /// </summary>
-        /// <param name="callback"></param>
-        public void RequestLocalVersion(Action<AssetBundleVersionInfo> callback)
-        {
-            LocalVersion = null;
-            string versionAssetPath = Path.Combine(LocalPath, _assetVersionTxt);
-
-            _webRequest.RequestText(versionAssetPath, (result, content) =>
-            {
-                if (result && !string.IsNullOrEmpty(content))
-                {
-                    content = content.ToEncrypt();
-                    LocalVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(content);
-                }
-                //本地可能就没有版本信息
-                callback?.Invoke(null);
-                // if (LocalVersion == null)
-                // {
-                //     throw new GameException($"Can't transition local [AssetBundleVersionInfo]!! {versionAssetPath} {content}");
-                // }
-            });
-        }
-
-        /// <summary>
-        /// 请求本地版本信息
-        /// </summary>
-        /// <returns></returns>
-        public Task<AssetBundleVersionInfo> RequestLocalVersion()
-        {
-            var resultTask = new TaskCompletionSource<AssetBundleVersionInfo>();
-            RequestLocalVersion((abvi) =>
-            {
-                resultTask.SetResult(abvi);
-            });
-            return resultTask.Task;
-        }
-
-        /// <summary>
-        /// 请求远程版本信息
-        /// </summary>
-        /// <param name="callback"></param>
-        public void RequestRemoteVersion(Action<AssetBundleVersionInfo> callback)
-        {
-            RemoteVersion = null;
-            string versionAssetPath = Path.Combine(_remoteUpdatePath, _assetVersionTxt);
-            _webRequest.RequestText(versionAssetPath, (result, content) =>
-            {
-                if (result && !string.IsNullOrEmpty(content))
-                {
-                    content = content.ToEncrypt();
-                    RemoteVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(content);
-                }
-
-                if (RemoteVersion == null)
-                {
-                    throw new GameException($"Can't transition remote [AssetBundleVersionInfo]!! {versionAssetPath} {content}");
-                }
-
-                callback?.Invoke(RemoteVersion);
-            });
-        }
-
-        /// <summary>
-        /// 请求远程版本信息
-        /// </summary>
-        /// <returns></returns>
-        public Task<AssetBundleVersionInfo> RequestRemoteVersion()
-        {
-            var resultTask = new TaskCompletionSource<AssetBundleVersionInfo>();
-            RequestRemoteVersion((abvi) =>
-            {
-                resultTask.SetResult(abvi);
-            });
-            return resultTask.Task;
-        }
-
-
-        /// <summary>
-        /// 同时请求本地和远程的版本信息
-        /// </summary>
-        /// <param name="callback"></param>
-        public async void RequestVersion(Action<AssetBundleVersionInfo, AssetBundleVersionInfo> callback)
-        {
-            await RequestLocalVersion();
-            await RequestRemoteVersion();
-            callback?.Invoke(LocalVersion, RemoteVersion);
-        }
-
-        /// <summary>
-        /// 同时请求本地和远程的版本信息
-        /// </summary>
-        /// <param name="callback"></param>
-        public Task<AssetBundleVersionInfo[]> RequestVersion()
-        {
-            var resultTask = new TaskCompletionSource<AssetBundleVersionInfo[]>();
-            RequestVersion((localABVI, remoteABVI) =>
-            {
-                resultTask.SetResult(new AssetBundleVersionInfo[] { localABVI, remoteABVI });
-            });
-            return resultTask.Task;
         }
 
         /// <summary>

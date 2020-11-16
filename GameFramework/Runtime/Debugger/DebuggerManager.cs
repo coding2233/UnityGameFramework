@@ -262,6 +262,7 @@ namespace Wanderer.GameFramework
 
         public float FPS { get { return _fps; } }
 
+
         public FPSCounter()
         {
             _lastTime = Time.realtimeSinceStartup;

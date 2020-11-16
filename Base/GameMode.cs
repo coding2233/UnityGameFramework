@@ -133,13 +133,6 @@ namespace Wanderer.GameFramework
             //     audioPlayer.AddComponent<AudioSource>());
             #endregion
 
-            #region WebRequest
-            //设置帮助类
-            GameObject webDownloadHelper = new GameObject("IWebDownloadMonoHelper");
-            webDownloadHelper.transform.SetParent(transform);
-            WebRequest.SetWebDownloadHelper(webDownloadHelper.AddComponent<WebDownloadMonoHelper>());
-            #endregion
-
             #region state
             //开启整个项目的流程
             Assembly = typeof(GameMode).Assembly;

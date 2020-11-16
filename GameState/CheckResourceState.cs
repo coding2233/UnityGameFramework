@@ -249,10 +249,10 @@ namespace Wanderer.GameFramework
         //下载资源
         private void DownloadResource()
         {
-            foreach (var item in _downloadResouces)
-            {
-                GameMode.WebRequest.StartDownload(item.Key, item.Value);
-            }
+            //foreach (var item in _downloadResouces)
+            //{
+            //    GameMode.WebRequest.StartDownload(item.Key, item.Value);
+            //}
         }
 
         //复制所有的下载文件

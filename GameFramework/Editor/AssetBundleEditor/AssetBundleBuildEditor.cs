@@ -334,6 +334,7 @@ namespace Wanderer.GameFramework
             {
                 AssetHashInfo assetHashInfo = new AssetHashInfo();
                 assetHashInfo.Name = assetNames[i];
+                assetHashInfo.ForceUpdate = _config.UseAssetBundleEditor ? AssetBundleEditor.GetForceUpdate(assetHashInfo.Name) : true;
                 string filePath = Path.Combine(buildPath, assetNames[i]);
                 byte[] data = FileUtility.GetBytes(filePath);
                  //加密

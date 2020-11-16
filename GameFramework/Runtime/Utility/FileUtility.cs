@@ -37,7 +37,46 @@ namespace Wanderer.GameFramework
             return fileMD5;
         }
 
-       
+        /// <summary>
+        /// 异步计算文件的md5值
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static Task<string> GetFileMD5(string filePath)
+        {
+
+            var resultTask = new TaskCompletionSource<string>();
+
+            GetFileMD5(filePath, (md5) => {
+                resultTask.SetResult(md5);
+            });
+            return resultTask.Task;
+        }
+
+        /// <summary>
+        /// 获取文件md5
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="callback"></param>
+        public static void GetFileMD5(string filePath,Action<string> callback)
+        {
+            if (File.Exists(filePath))
+            {
+                Task.Run(() =>
+                {
+                    byte[] datas = File.ReadAllBytes(filePath);
+                    string md5 = GetFileMD5(datas);
+                    callback?.Invoke(md5);
+                });
+            }
+            else
+            {
+                callback?.Invoke(null);
+            }
+        }
+
+
+
     }
 
 
