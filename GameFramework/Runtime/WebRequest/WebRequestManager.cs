@@ -222,9 +222,9 @@ namespace Wanderer.GameFramework
         /// <param name="localPath"></param>
         /// <param name="resultCallback"></param>
         /// <param name="progressCallback"></param>
-        public async void Download(string remoteUrl, string localPath, Action<string, string, bool, string> resultCallback, Action<string, string, ulong, float, float> progressCallback)
+        public async Task Download(string remoteUrl, string localPath, Action<string, UnityWebRequest, float> callback)
         {
-            await UnityWebRequestDwonloaFile(remoteUrl, localPath, resultCallback, progressCallback);
+            await UnityWebRequestDwonloaFile(remoteUrl, localPath, callback);
         }
 
         #endregion
@@ -236,85 +236,9 @@ namespace Wanderer.GameFramework
 
         #region 内部函数
 
-        ///// <summary>
-        ///// 读取http上的文本文件的回调函数
-        ///// </summary>
-        ///// <param name="path"></param>
-        ///// <param name="result"></param>
-        ///// <param name="content"></param>
-        //private void ReadHttpTextCallback(string path, bool result, string content)
-        //{
-        //    if (result)
-        //    {
-        //        _httpReadTextSuccess.Url = path;
-        //        _httpReadTextSuccess.Content = content;
-        //        _event.Trigger(this, _httpReadTextSuccess);
-        //    }
-        //    else
-        //    {
-        //        _httpReadTextFaile.Url = path;
-        //        _httpReadTextFaile.Error = content;
-        //        _event.Trigger(this, _httpReadTextFaile);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// 开始下载的回调
-        ///// </summary>
-        ///// <param name="remoteUrl"></param>
-        ///// <param name="localPath"></param>
-        ///// <param name="result"></param>
-        ///// <param name="content"></param>
-        //private void StartDownloadCallback(string remoteUrl, string localPath, bool result, string content)
-        //{
-        //    if (result)
-        //    {
-        //        _downloadSuccess.RemoteUrl = remoteUrl;
-        //        _downloadSuccess.LocalPath = localPath;
-        //        _event.Trigger(this, _downloadSuccess);
-        //    }
-        //    else
-        //    {
-        //        _downloadFaile.RemoteUrl = remoteUrl;
-        //        _downloadFaile.LocalPath = localPath;
-        //        _downloadFaile.Error = content;
-        //        _event.Trigger(this, _downloadFaile);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// 下载的进度
-        ///// </summary>
-        ///// <param name="remoteUrl"></param>
-        ///// <param name="localPath"></param>
-        ///// <param name="dataLength"></param>
-        ///// <param name="progess"></param>
-        ///// <param name="seconds"></param>
-        //private void StartDownloadProgress(string remoteUrl, string localPath, ulong dataLength, float progess, float seconds)
-        //{
-        //    _downloadProgress.RemoteUrl = remoteUrl;
-        //    _downloadProgress.LocalPath = localPath;
-        //    _downloadProgress.DownloadBytes = dataLength;
-        //    _downloadProgress.DownloadProgress = progess;
-        //    _downloadProgress.DownloadSeconds = seconds;
-        //    _downloadProgress.DownloadSpeed =
-        //        dataLength == 0.0f ? dataLength : dataLength / 1024.0f / seconds;
-        //    _event.Trigger(this, _downloadProgress);
-        //}
-
-        public async Task<bool> UnityWebRequestDwonloaFile(string remoteUrl, string localPath)
-        {
-            UnityWebRequest request = UnityWebRequest.Get(remoteUrl);
-            request.downloadHandler = new DownloadHandlerFile(localPath);
-            request.timeout = 10;
-			//yield return request.SendWebRequest(); 
-			await request.SendWebRequest();
-
-            return !request.isNetworkError;
-        }
 
         //下载文件
-        IEnumerator UnityWebRequestDwonloaFile(string remoteUrl, string localPath, Action<string, string, bool, string> result, Action<string, string, ulong, float, float> progress)
+        IEnumerator UnityWebRequestDwonloaFile(string remoteUrl, string localPath, Action<string, UnityWebRequest,float> callback)
         {
             
             //断点续传写不写呢...
@@ -322,34 +246,30 @@ namespace Wanderer.GameFramework
 
             //换一帧运行
             yield return null;
-
+           
             UnityWebRequest request = UnityWebRequest.Get(remoteUrl);
 			request.downloadHandler = new DownloadHandlerFile(localPath);
+            
             request.timeout = 10;
-            //yield return request.SendWebRequest(); 
-            yield return request.SendWebRequest();
-
             float lastTime = Time.realtimeSinceStartup;
-
-            Debug.Log($"IEnumerator UnityWebRequestDwonloaFile {remoteUrl}  {localPath} ");
+            //yield return request.SendWebRequest(); 
+            request.SendWebRequest();
+            
+            
             yield return null;
             while (!request.isDone)
             {
                 float seconds = (Time.realtimeSinceStartup - lastTime);
-                progress.Invoke(remoteUrl, localPath, request.downloadedBytes, request.downloadProgress, seconds);
+                callback?.Invoke(localPath, request, lastTime);
                 yield return null;
             }
 
             yield return null;
 
-            Debug.Log($"#### UnityWebRequestDwonloaFile {remoteUrl}  {localPath} {request.isNetworkError} {request.isHttpError}");
-
             if (request.isNetworkError || request.isHttpError)
-                result.Invoke(remoteUrl, localPath, false,
-                    "NetworkError:" + request.isNetworkError + "  HttpError:" + request.isHttpError);
+                callback?.Invoke(localPath, request, lastTime);
             else
-                result.Invoke(remoteUrl, localPath, true,
-                    "File successfully downloaded and saved to " + localPath);
+                callback?.Invoke(localPath, request, lastTime);
         }
 
         #endregion
