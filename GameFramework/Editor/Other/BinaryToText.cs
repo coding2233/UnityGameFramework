@@ -20,7 +20,7 @@ namespace Wanderer.GameFramework
 		{
 			if (GUILayout.Button("Open File"))
 			{
-				string file = EditorUtility.OpenFilePanel("open file",Path.GetDirectoryName( Application.dataPath),"*");
+				string file = EditorUtility.OpenFilePanel("open file","","*");
 				if (!string.IsNullOrEmpty(file))
 				{
 					_content = File.ReadAllText(file).ToEncrypt();

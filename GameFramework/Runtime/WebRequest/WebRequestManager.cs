@@ -302,11 +302,21 @@ namespace Wanderer.GameFramework
         //    _event.Trigger(this, _downloadProgress);
         //}
 
+        public async Task<bool> UnityWebRequestDwonloaFile(string remoteUrl, string localPath)
+        {
+            UnityWebRequest request = UnityWebRequest.Get(remoteUrl);
+            request.downloadHandler = new DownloadHandlerFile(localPath);
+            request.timeout = 10;
+			//yield return request.SendWebRequest(); 
+			await request.SendWebRequest();
 
+            return !request.isNetworkError;
+        }
 
         //下载文件
         IEnumerator UnityWebRequestDwonloaFile(string remoteUrl, string localPath, Action<string, string, bool, string> result, Action<string, string, ulong, float, float> progress)
         {
+            
             //断点续传写不写呢...
             //纠结------------------
 
@@ -314,18 +324,25 @@ namespace Wanderer.GameFramework
             yield return null;
 
             UnityWebRequest request = UnityWebRequest.Get(remoteUrl);
-            request.downloadHandler = new DownloadHandlerFile(localPath);
+			request.downloadHandler = new DownloadHandlerFile(localPath);
+            request.timeout = 10;
             //yield return request.SendWebRequest(); 
-            request.SendWebRequest();
+            yield return request.SendWebRequest();
 
             float lastTime = Time.realtimeSinceStartup;
 
+            Debug.Log($"IEnumerator UnityWebRequestDwonloaFile {remoteUrl}  {localPath} ");
+            yield return null;
             while (!request.isDone)
             {
                 float seconds = (Time.realtimeSinceStartup - lastTime);
                 progress.Invoke(remoteUrl, localPath, request.downloadedBytes, request.downloadProgress, seconds);
                 yield return null;
             }
+
+            yield return null;
+
+            Debug.Log($"#### UnityWebRequestDwonloaFile {remoteUrl}  {localPath} {request.isNetworkError} {request.isHttpError}");
 
             if (request.isNetworkError || request.isHttpError)
                 result.Invoke(remoteUrl, localPath, false,

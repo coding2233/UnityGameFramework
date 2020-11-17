@@ -326,6 +326,7 @@ namespace Wanderer.GameFramework
 
         public void OnUpdate()
         {
+            Version?.OnUpdate();
             if (_sceneAsyncOperations.Count > 0)
             {
                 foreach (var item in _sceneAsyncOperations)

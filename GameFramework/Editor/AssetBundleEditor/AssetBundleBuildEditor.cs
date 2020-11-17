@@ -290,7 +290,10 @@ namespace Wanderer.GameFramework
             //保存资源版本信息
             SaveAssetVersion(buildPath, targetName, target);
             Debug.Log($"资源打包成功: {buildPath}");
-            return buildPath;
+			//    //更新资源版本号 -- 保存配置文件
+			_config.Version++;
+			SaveConfig();
+			return buildPath;
         }
 
         //保存资源版本信息

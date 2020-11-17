@@ -1,4 +1,5 @@
 ﻿// 资源版本管理
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,6 +44,31 @@ namespace Wanderer.GameFramework
             _localResourcePath = localResourcePath;
         }
 
+
+        public void OnUpdate()
+        {
+            if (_downloading && _needDownloadFiles.Count == _downloadingFiles.Count)
+            {
+                bool flag = true;
+                foreach (var item in _downloadingFiles)
+                {
+                    if (!item.Value.Complete)
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+                //所有的文件下载完成
+                if (flag)
+                {
+                    UpdateLocalVersion();
+                    _downloadCallback?.Invoke(true, 1.0f, 0.0f, _totleFileSize);
+                    _downloadCallback = null;
+                    _downloading = false;
+                }
+            }
+        }
+
         /// <summary>
         /// 远程的版本信息
         /// </summary>
@@ -72,7 +98,7 @@ namespace Wanderer.GameFramework
                     LocalVersion = JsonUtility.FromJson<AssetBundleVersionInfo>(content);
                 }
                 //本地可能就没有版本信息
-                callback?.Invoke(null);
+                callback?.Invoke(LocalVersion);
                 // if (LocalVersion == null)u
                 // {
                 //     throw new GameException($"Can't transition local [AssetBundleVersionInfo]!! {versionAssetPath} {content}");
@@ -229,6 +255,7 @@ namespace Wanderer.GameFramework
         {
             if (result)
             {
+                await UniTask.NextFrame();
                 var data = _downloadingFiles[localPath];
                 //验证文件的完整性
                 string md5 = await FileUtility.GetFileMD5(localPath);
@@ -243,23 +270,6 @@ namespace Wanderer.GameFramework
                     File.Move(localPath, targetPath);
                     data.Complete = true;
                     _downloadingFiles[localPath] = data;
-                }
-                bool flags = true;
-				foreach (var item in _downloadingFiles)
-				{
-                    if (!item.Value.Complete)
-                    {
-                        flags = false;
-                        break;
-                    }
-				}
-                //所有的文件下载完成
-                if (flags&& _needDownloadFiles.Count==_downloadingFiles.Count)
-                {
-                    UpdateLocalVersion();
-                    _downloadCallback?.Invoke(true, 1.0f,0.0f, _totleFileSize);
-                    _downloadCallback = null;
-                    _downloading = false;
                 }
             }
             else
@@ -286,7 +296,7 @@ namespace Wanderer.GameFramework
             data.Second = seconds;
             _downloadingFiles[localPath] = data;
             //下载进度回调
-            if (Time.realtimeSinceStartup - _downloadStartTime > 0.0f)
+            if (_totleFileSize>0&&Time.realtimeSinceStartup - _downloadStartTime > 0.0f)
             {
                 float p = _totleDownloadSize / (float)_totleFileSize;
                 float speed = _totleDownloadSize/1024.0f/ (Time.realtimeSinceStartup - _downloadStartTime);
@@ -331,6 +341,7 @@ namespace Wanderer.GameFramework
                     if (!item.ForceUpdate)
                         continue;
                     string md5 = await CheckFileMD5(item.Name);
+                    Debug.Log($"!!!!!!!!!!!!!!!! {item.Name},{item.Hash},{md5}");
                     if (!item.Hash.Equals(md5))
                     {
                         _needDownloadFiles.Add(item);
@@ -348,7 +359,7 @@ namespace Wanderer.GameFramework
         }
 
         //下载文件
-        private void DownloadFiles()
+        private async void DownloadFiles()
         {
             _downloadingFiles.Clear();
             if (_needDownloadFiles.Count > 0)
@@ -366,7 +377,26 @@ namespace Wanderer.GameFramework
                     remoteUrl = Path.Combine(_remoteUpdatePath, item.Name);
                     localPath = Path.Combine(_localResourcePath, $"{item.Name}.download");
                     _downloadingFiles.Add(localPath,new DownloadFileInfo() { Asset=item});
-                    _webRequest.Download(remoteUrl, localPath, OnDownloadCallback, OnDownloadProccess);
+                    await UniTask.NextFrame();
+                    bool result = await _webRequest.UnityWebRequestDwonloaFile(remoteUrl, localPath);
+                   // _webRequest.Download(remoteUrl, localPath, OnDownloadCallback, OnDownloadProccess);
+                    Debug.Log($"@@@result for download: {result} {remoteUrl} {localPath}");
+
+                    var data = _downloadingFiles[localPath];
+                    //验证文件的完整性
+                    string md5 = await FileUtility.GetFileMD5(localPath);
+                    if (data.Asset.Hash.Equals(md5))
+                    {
+                        int index = localPath.LastIndexOf('.');
+                        string targetPath = localPath.Substring(0, index);
+                        if (File.Exists(targetPath))
+                        {
+                            File.Delete(targetPath);
+                        }
+                        File.Move(localPath, targetPath);
+                        data.Complete = true;
+                        _downloadingFiles[localPath] = data;
+                    }
                 }
             }
         }
