@@ -35,8 +35,13 @@ namespace Wanderer.GameFramework
         private bool _enable = false;
 
         private bool _instance = false;
+
+        public LogFile Log { get; private set; }
+
         public DebuggerManager()
         {
+            Log = new LogFile();
+            Log.Start();
         }
 
         public void SetDebuggerEnable(bool enable)
@@ -141,6 +146,7 @@ namespace Wanderer.GameFramework
 
         public override void OnClose()
         {
+            Log.Close();
             if (_allDebuggerWindows != null)
             {
                 for (int i = 0; i < _allDebuggerWindows.Count; i++)
@@ -169,7 +175,6 @@ namespace Wanderer.GameFramework
             }
             return null;
         }
-
 
         /// <summary>
         /// 重置布局

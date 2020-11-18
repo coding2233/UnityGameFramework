@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,12 +24,28 @@ namespace Wanderer.GameFramework
             SetChildWindows(windows, windowTitle, args);
         }
 
+
+        public override string ToString()
+        {
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.AppendLine("[INFORMATION START]");
+            foreach (var item in _childWindows)
+			{
+                strBuilder.AppendLine($"{item.GetType().Name}{{{item.ToString()}}}");
+            }
+            strBuilder.AppendLine("[INFORMATION END]");
+            return strBuilder.ToString();
+        }
+
     }
 
 
     //系统信息
     internal class SystemInformation : IDebuggerWindow
     {
+        //信息文本
+        private string _infoText;
+
         Vector2 _scrollPos = Vector2.zero;
         public void OnClose()
         {
@@ -36,6 +53,11 @@ namespace Wanderer.GameFramework
 
         public void OnDraw()
         {
+            if (string.IsNullOrEmpty(_infoText))
+            {
+                GuiUtility.RecordTextStart();
+            }
+
             GUILayout.Label("<b>System Information</b>");
             _scrollPos = GUILayout.BeginScrollView(_scrollPos, "box");
             {
@@ -66,6 +88,12 @@ namespace Wanderer.GameFramework
                 GuiUtility.DrawItem("Genuine Check Available", Application.genuineCheckAvailable.ToString());
             }
             GUILayout.EndScrollView();
+
+
+            if (string.IsNullOrEmpty(_infoText))
+            {
+                _infoText=GuiUtility.RecordTextStop();
+            }
         }
 
         public void OnEnter()
@@ -81,12 +109,17 @@ namespace Wanderer.GameFramework
 
         }
 
+		public override string ToString()
+		{
+            return _infoText;
+        }
 
-    }
+	}
 
     //环境信息
     internal class EnvironmentInformation : IDebuggerWindow
     {
+        string _infoText;
         private Vector2 _scrollPos = Vector2.zero;
         public void OnClose()
         {
@@ -94,6 +127,11 @@ namespace Wanderer.GameFramework
 
         public void OnDraw()
         {
+            if (string.IsNullOrEmpty(_infoText))
+            {
+                GuiUtility.RecordTextStart();
+            }
+
             GUILayout.Label("<b>Environment Information</b>");
             _scrollPos = GUILayout.BeginScrollView(_scrollPos, "box");
             {
@@ -144,6 +182,11 @@ namespace Wanderer.GameFramework
 #endif
             }
             GUILayout.EndScrollView();
+
+            if (string.IsNullOrEmpty(_infoText))
+            {
+                _infoText = GuiUtility.RecordTextStop();
+            }
         }
 
         public void OnEnter()
@@ -157,11 +200,20 @@ namespace Wanderer.GameFramework
         public void OnInit(params object[] args)
         {
         }
-    }
+
+
+		public override string ToString()
+		{
+            return _infoText;
+		}
+
+	}
 
     //屏幕信息
     internal class ScreenInformation : IDebuggerWindow
     {
+        string _infoText;
+
         Vector2 _scrollPos = Vector2.zero;
         public void OnClose()
         {
@@ -169,6 +221,11 @@ namespace Wanderer.GameFramework
 
         public void OnDraw()
         {
+            if (string.IsNullOrEmpty(_infoText))
+            {
+                GuiUtility.RecordTextStart();
+            }
+
             GUILayout.Label("<b>Scene Information</b>");
             _scrollPos = GUILayout.BeginScrollView(_scrollPos, "box");
             {
@@ -201,6 +258,10 @@ namespace Wanderer.GameFramework
             }
             GUILayout.EndScrollView();
 
+            if (string.IsNullOrEmpty(_infoText))
+            {
+                _infoText = GuiUtility.RecordTextStop();
+            }
 
         }
 
@@ -216,8 +277,12 @@ namespace Wanderer.GameFramework
         {
         }
 
+		public override string ToString()
+		{
+            return _infoText;
+        }
 
-        private string GetSleepTimeoutDescription(int sleepTimeout)
+		private string GetSleepTimeoutDescription(int sleepTimeout)
         {
             if (sleepTimeout == SleepTimeout.NeverSleep)
             {
@@ -284,6 +349,7 @@ namespace Wanderer.GameFramework
     //图像信息
     internal class GraphicsInformation : IDebuggerWindow
     {
+        string _infoText;
         Vector2 _scrollPos = Vector2.zero;
         public void OnClose()
         {
@@ -291,6 +357,11 @@ namespace Wanderer.GameFramework
 
         public void OnDraw()
         {
+            if (string.IsNullOrEmpty(_infoText))
+            {
+                 GuiUtility.RecordTextStart();
+            }
+
             GUILayout.Label("<b>Graphics Information</b>");
             _scrollPos = GUILayout.BeginScrollView(_scrollPos, "box");
             {
@@ -394,6 +465,11 @@ namespace Wanderer.GameFramework
 #endif
             }
             GUILayout.EndScrollView();
+
+            if (string.IsNullOrEmpty(_infoText))
+            {
+                _infoText = GuiUtility.RecordTextStop();
+            }
         }
 
         public void OnEnter()
@@ -407,7 +483,13 @@ namespace Wanderer.GameFramework
         public void OnInit(params object[] args)
         {
         }
-    }
+
+		public override string ToString()
+		{
+            return _infoText;
+        }
+
+	}
 
     //输入信息
     internal class InputInformation : ToolbarDebuggerWindow
