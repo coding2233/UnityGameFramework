@@ -265,35 +265,43 @@ namespace Wanderer.GameFramework
         //资源打包
         private static string BuildTarget(BuildTarget target)
         {
-            //打包路径
-            string targetName = $"{Application.version}_{_config.Version}";
-            string buildPath = Path.Combine(_config.BuildPath, BuildTargetToString(target), targetName); ;
-            if (!Directory.Exists(buildPath))
-                Directory.CreateDirectory(buildPath);
-            //设置打包的相关选项
-            BuildAssetBundleOptions options = BuildAssetBundleOptions.None;
-            //设置压缩 默认LZMA
-            if (_config.CompressOptions == 0)
-                options |= BuildAssetBundleOptions.UncompressedAssetBundle;
-            //LZ4
-            else if (_config.CompressOptions == 2)
-                options |= BuildAssetBundleOptions.ChunkBasedCompression;
-            //打包  Build
-            if (_config.UseAssetBundleEditor)
+            try
             {
-                BuildPipeline.BuildAssetBundles(buildPath, AssetBundleEditor.GetAssetBundleBuild(), options, target);
+                //打包路径
+                string targetName = $"{Application.version}_{_config.Version}";
+                string buildPath = Path.Combine(_config.BuildPath, BuildTargetToString(target), targetName); ;
+                if (!Directory.Exists(buildPath))
+                    Directory.CreateDirectory(buildPath);
+                //设置打包的相关选项
+                BuildAssetBundleOptions options = BuildAssetBundleOptions.None;
+                //设置压缩 默认LZMA
+                if (_config.CompressOptions == 0)
+                    options |= BuildAssetBundleOptions.UncompressedAssetBundle;
+                //LZ4
+                else if (_config.CompressOptions == 2)
+                    options |= BuildAssetBundleOptions.ChunkBasedCompression;
+                //打包  Build
+                if (_config.UseAssetBundleEditor)
+                {
+                    BuildPipeline.BuildAssetBundles(buildPath, AssetBundleEditor.GetAssetBundleBuild(), options, target);
+                }
+                else
+                {
+                    BuildPipeline.BuildAssetBundles(buildPath, options, target);
+                }
+                //保存资源版本信息
+                SaveAssetVersion(buildPath, targetName, target);
+                Debug.Log($"资源打包成功: {buildPath}");
+                //    //更新资源版本号 -- 保存配置文件
+                _config.Version++;
+                SaveConfig();
+                return buildPath;
             }
-            else
+            catch (System.Exception e)
             {
-                BuildPipeline.BuildAssetBundles(buildPath, options, target);
+                throw new GameException($"Build assetbundle error [{target.ToString()}] :{e.ToString()}");
             }
-            //保存资源版本信息
-            SaveAssetVersion(buildPath, targetName, target);
-            Debug.Log($"资源打包成功: {buildPath}");
-			//    //更新资源版本号 -- 保存配置文件
-			_config.Version++;
-			SaveConfig();
-			return buildPath;
+			
         }
 
         //保存资源版本信息
