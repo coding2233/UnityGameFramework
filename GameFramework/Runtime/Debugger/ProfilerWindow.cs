@@ -2,6 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -10,6 +13,8 @@ namespace Wanderer.GameFramework
     [DebuggerWindow("Profiler")]
     public class ProfilerWindow : ToolbarDebuggerWindow
     {
+        private MemoryProfiler _mpWindow;
+
         public override void OnInit(params object[] args)
         {
             base.OnInit(args);
@@ -22,9 +27,38 @@ namespace Wanderer.GameFramework
             }
             //设置子窗口
             SetChildWindows(windows, windowTitle, args);
+
+            //内存窗口
+            _mpWindow = windows[1] as MemoryProfiler;
         }
 
-    }
+		public override void OnDraw()
+		{
+			base.OnDraw();
+		}
+
+        /// <summary>
+        /// 自动进行性能测试
+        /// </summary>
+        /// <param name="totalSeconds"></param>
+        /// <param name="intervalSeconds"></param>
+        public async void AutoTakeSample(int totalSeconds=30,int intervalSeconds=5)
+        {
+            if (_mpWindow != null)
+            {
+                Log.Info($"[*] [MemoryProfiler] [AutoTakeSample] [****************************************]");
+                int second = 0;
+                while (second < totalSeconds)
+                {
+                    _mpWindow.AutoTakeSample();
+                    await Task.Delay(intervalSeconds * 1000);
+                    second += intervalSeconds;
+                }
+                Log.Info($"[*] [MemoryProfiler] [AutoTakeSample] [****************************************]");
+            }
+        }
+
+	}
 
     //概要分析
     internal class SummaryProfiler : DebuggerWindowBase
@@ -73,6 +107,33 @@ namespace Wanderer.GameFramework
             GUILayout.EndVertical();
         }
 
+
+        public static string ProfilerToString()
+        {
+            Log.StrBuilder.Clear();
+            Log.StrBuilder.AppendLine($"[*] [SummaryProfiler]");
+            Log.StrBuilder.AppendLine("{");
+            Log.StrBuilder.AppendLine($"    Profiler.supported:{Profiler.supported}");
+            Log.StrBuilder.AppendLine($"    Profiler.enabled:{Profiler.enabled}");
+            Log.StrBuilder.AppendLine($"    Profiler.enableBinaryLog:{Profiler.enableBinaryLog}");
+            Log.StrBuilder.AppendLine($"    Profiler.logFile:{Profiler.logFile}");
+            Log.StrBuilder.AppendLine($"    Profiler.areaCount:{Profiler.areaCount}");
+            Log.StrBuilder.AppendLine($"    Profiler.maxUsedMemory:{Profiler.maxUsedMemory.ToByteLengthString()}");
+            Log.StrBuilder.AppendLine($"    Profiler.GetMonoUsedSizeLong():{ Profiler.GetMonoUsedSizeLong().ToByteLengthString()}");
+            Log.StrBuilder.AppendLine($"    Profiler.GetMonoHeapSizeLong():{ Profiler.GetMonoHeapSizeLong().ToByteLengthString()}");
+            Log.StrBuilder.AppendLine($"    Profiler.usedHeapSizeLong:{ Profiler.usedHeapSizeLong.ToByteLengthString()}");
+            Log.StrBuilder.AppendLine($"    Profiler.GetTotalAllocatedMemoryLong():{ Profiler.GetTotalAllocatedMemoryLong().ToByteLengthString()}");
+            Log.StrBuilder.AppendLine($"    Profiler.GetTotalReservedMemoryLong():{ Profiler.GetTotalReservedMemoryLong().ToByteLengthString()}");
+            Log.StrBuilder.AppendLine($"    Profiler.GetTotalUnusedReservedMemoryLong():{ Profiler.GetTotalUnusedReservedMemoryLong().ToByteLengthString()}");
+            Log.StrBuilder.AppendLine($"    Profiler.GetAllocatedMemoryForGraphicsDriver():{ Profiler.GetAllocatedMemoryForGraphicsDriver().ToByteLengthString()}");
+            Log.StrBuilder.AppendLine($"    Profiler.GetTempAllocatorSize():{ Profiler.GetTempAllocatorSize().ToByteLengthString()}");
+            Log.StrBuilder.AppendLine();
+            Log.StrBuilder.AppendLine("}");
+            string info = Log.StrBuilder.ToString();
+            Log.Info(info);
+            return info;
+        }
+
     }
 
     //内存分析
@@ -113,6 +174,22 @@ namespace Wanderer.GameFramework
             //设置子窗口
             SetChildWindows(windows, windowTitle, args);
         }
+
+        /// <summary>
+        /// 自动调用
+        /// </summary>
+        public void AutoTakeSample()
+        {
+			foreach (var item in _childWindows)
+			{
+                var mi = item.GetType().GetMethod("TakeSample", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (mi != null)
+                {
+                    mi.Invoke(item,null);
+                }
+            }
+        }
+    
     }
 
     //内存分析基类
@@ -212,6 +289,23 @@ namespace Wanderer.GameFramework
             }
             //sort
             _samples = _samples.OrderByDescending(x => x.Size).ToList();
+
+            //将性能信息整理到日志中
+            if (_samples.Count > 0)
+            {
+                //整体性能日志
+                SummaryProfiler.ProfilerToString();
+
+                Log.StrBuilder.Clear();
+                Log.StrBuilder.AppendLine($"[*] [MemoryProfiler] [{typeof(T).FullName}]");
+                Log.StrBuilder.AppendLine("{");
+                foreach (var item in _samples)
+                {
+                    Log.StrBuilder.AppendLine(item.ToString());
+                }
+                Log.StrBuilder.AppendLine("}");
+                Log.Info(Log.StrBuilder.ToString());
+            }
         }
 
         //释放所有的数据
@@ -338,7 +432,12 @@ namespace Wanderer.GameFramework
             Highlight = highlight;
             return this;
         }
-    }
+
+		public override string ToString()
+		{
+            return $"   >   {TypeName} {Highlight} {Size.ToByteLengthString()} {Name}";
+		}
+	}
     // profiler pool
     internal class ProfilerSamplePool
     {

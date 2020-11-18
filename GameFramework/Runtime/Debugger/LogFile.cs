@@ -44,6 +44,8 @@ namespace Wanderer.GameFramework
 
 		public void Start()
 		{
+			//检查日志文件所占的空间大小，如果太大还是需要自动删除
+
 			Application.logMessageReceived += OnLogMessageReceived;
 			if (_logFileStream == null)
 			{
