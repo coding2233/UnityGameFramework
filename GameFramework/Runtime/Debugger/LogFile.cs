@@ -44,9 +44,11 @@ namespace Wanderer.GameFramework
 
 		public void Start()
 		{
-			//检查日志文件所占的空间大小，如果太大还是需要自动删除
-
+			//监听UnityEngine.Debug
 			Application.logMessageReceived += OnLogMessageReceived;
+			//检查日志文件所占的空间大小，如果太大还是需要自动删除
+			//CheckLogFileSize();
+			//创建文件流
 			if (_logFileStream == null)
 			{
 				_strBuilder = new StringBuilder();
@@ -237,6 +239,18 @@ namespace Wanderer.GameFramework
 					GC.Collect();
 				}
 			}
+		}
+
+		/// <summary>
+		/// 检查日志文件大小
+		/// </summary>
+		private void CheckLogFileSize()
+		{
+			//string[] files = Directory.GetFiles(LogPath);
+			//if (files != null && files.Length > 1)
+			//{
+
+			//}
 		}
 
 		#endregion

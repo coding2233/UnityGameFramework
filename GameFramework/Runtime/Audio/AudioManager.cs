@@ -7,6 +7,8 @@
 // <time> #2018年7月22日 00点37分# </time>
 //-----------------------------------------------------------------------
 
+using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,230 +16,254 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-    public sealed class AudioManager : GameFrameworkModule
+    public sealed class AudioManager : GameFrameworkModule,IUpdate
     {
         #region 属性
         //资源管理器
         private ResourceManager _resourceManager;
+		//所有的音频播放器
+		Dictionary<Type, AudioPlayer> _audioPlayers = new Dictionary<Type, AudioPlayer>();
         //背景音乐
-        private AudioSource _backgroundMusic;
-        //ui音效
-        private AudioSource _uiSound;
-        //音效
-        private AudioSource _soundEffect;
+		//默认loop ,只支持1个实例
+        private MusicAudioPlayer _musicAudioPlayer;
+		//音效
+		//默认不循环，不支持loop,只支持1个实例，不支持打断
+		private SoundAudioPlayer _soundAudioPlayer;
+		//ui音效
+		//默认不循环，支持loop,支持多个实例,支持回调
+		private UISoundAudioPlayer _uiSoundAudioPlayer;
+		//音频资源
+		private Dictionary<string, AudioClip> _audioClipSources = new Dictionary<string, AudioClip>();
 
-        private readonly Dictionary<string, AudioClip> _backGroundMusicClips = new Dictionary<string, AudioClip>();
-        private readonly Dictionary<string, AudioClip> _uiSoundClips = new Dictionary<string, AudioClip>();
-        private readonly Dictionary<string, AudioClip> _soundEffectClips = new Dictionary<string, AudioClip>();
+		private bool _mute;
+		/// <summary>
+		/// 静音
+		/// </summary>
+		public bool Mute 
+		{
+			get
+			{
+				return _mute;
+			}
+			set
+			{
+				_mute = value;
 
-        #endregion
+				foreach (var item in _audioPlayers.Values)
+				{
+					item.Mute = _mute;
+				}
+			}
+		}
 
-        public AudioManager()
+		private float _volume = 1.0f;
+		/// <summary>
+		/// 音量
+		/// </summary>
+		public float Volume
+		{
+			get
+			{
+				return _volume;
+			}
+			set
+			{
+				_volume = value;
+				foreach (var item in _audioPlayers.Values)
+				{
+					item.Volume = _volume;
+				}
+			}
+		}
+		#endregion
+
+		public AudioManager()
         {
             _resourceManager = GameFrameworkMode.GetModule<ResourceManager>();
         }
 
-        #region 外部接口
-        // /// <summary>
-        // /// 设置默认声音播放器
-        // /// </summary>
-        // /// <param name="backgroundMusic"></param>
-        // /// <param name="uiSound"></param>
-        // /// <param name="soundEffect"></param>
-        // public void SetDefaultAudioSource(AudioSource backgroundMusic = null, AudioSource uiSound=null, AudioSource soundEffect=null)
-        // {
-        // 	_backgroundMusic = backgroundMusic;
-        // 	_uiSound = uiSound;
-        // 	_soundEffect = soundEffect;
-        // }
+		public void OnUpdate()
+		{
+			foreach (var item in _audioPlayers)
+			{
+				item.Value.Update();
+			}
+		}
 
-        // /// <summary>
-        // /// 添加背景音乐
-        // /// </summary>
-        // /// <param name="audioClipPath"></param>
-        // public void AddBackroundMusic(string assetBundleName,string audioClipPath)
-        // {
-        // 	AddAuioClip(assetBundleName,audioClipPath, _backGroundMusicClips);
-        // }
-        // /// <summary>
-        // /// 添加UI音效
-        // /// </summary>
-        // /// <param name="audioClipPath"></param>
-        // public void AddUISound(string assetBundleName,string audioClipPath)
-        // {
-        // 	AddAuioClip(assetBundleName,audioClipPath, _uiSoundClips);
-        // }
-        // /// <summary>
-        // /// 添加音效
-        // /// </summary>
-        // /// <param name="audioClipPath"></param>
-        // public void AddSoundEffect(string assetBundleName,string audioClipPath)
-        // {
-        // 	AddAuioClip(assetBundleName, audioClipPath, _soundEffectClips);
-        // }
+		#region 外部接口
+		/// <summary>
+		/// 设置默认声音播放器
+		/// </summary>
+		/// <param name="backgroundMusic"></param>
+		/// <param name="uiSound"></param>
+		/// <param name="soundEffect"></param>
+		public void SetDefaultAudioSource(AudioSource backgroundMusic = null, AudioSource uiSound = null, AudioSource sound = null)
+		{
+			_musicAudioPlayer = new MusicAudioPlayer(backgroundMusic);
+			_soundAudioPlayer = new SoundAudioPlayer(sound);
+			_uiSoundAudioPlayer = new UISoundAudioPlayer(uiSound);
 
-        // /// <summary>
-        // /// 播放在GameObject上的声音
-        // /// </summary>
-        // /// <param name="audioClipPath"></param>
-        // public async void PlayGameObjectSound(GameObject go,string assetBundleName,string audioClipPath)
-        // {
-        // 	AudioSource audioSource=go.GetComponent<AudioSource>();
-        // 	if (audioSource==null)
-        // 	{
-        // 		audioSource = go.AddComponent<AudioSource>();
-        // 	}
+			_audioPlayers.Add(typeof(MusicAudioPlayer), _musicAudioPlayer);
+			_audioPlayers.Add(typeof(SoundAudioPlayer), _soundAudioPlayer);
+			_audioPlayers.Add(typeof(UISoundAudioPlayer), _uiSoundAudioPlayer);
+		}
 
-        // 	audioSource.clip = await _resourceManager?.LoadAsset<AudioClip>(assetBundleName,audioClipPath);
-        // 	if (audioSource.clip != null)
-        // 		audioSource.Play();
-        // }
-        // /// <summary>
-        // /// 移除音乐
-        // /// </summary>
-        // /// <param name="audioClipPath"></param>
-        // public void RemoveGameObjectSound(GameObject go)
-        // {
-        // 	AudioSource audioSource= go.GetComponent<AudioSource>();
-        // 	if (audioSource!=null)
-        // 		MonoBehaviour.Destroy(audioSource);
-        // }
+		/// <summary>
+		/// 添加音频播放器
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="t"></param>
+		public void AddAudiPlayer<T>(T t) where T : AudioPlayer
+		{
+			if (!_audioPlayers.ContainsKey(typeof(T)))
+			{
+				_audioPlayers.Add(typeof(T), t);
+			}
+		}
+
+		/// <summary>
+		/// 设置静音
+		/// </summary>
+		/// <param name="mute"></param>
+		public void SetMute<T>(bool mute) where T : AudioPlayer
+		{
+			GetAudioPlayer<T>().Mute = mute;
+		}
+
+		/// <summary>
+		/// 设置音量
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="value"></param>
+		public void SetVolume<T>(float volume) where T : AudioPlayer
+		{
+			GetAudioPlayer<T>().Volume = volume;
+		}
+
+		/// <summary>
+		/// 播放音频
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetName"></param>
+		/// <param name="loop"></param>
+		public void Play<T>(string assetName, bool loop = false) where T : AudioPlayer
+		{
+			AudioClip audioClip = GetAudioClip(assetName);
+			GetAudioPlayer<T>().Play(audioClip, loop);
+		}
+
+		/// <summary>
+		/// 暂停
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		public void Pause<T>() where T : AudioPlayer
+		{
+			GetAudioPlayer<T>().Pause();
+		}
 
 
-        // /// <summary>
-        // /// 播放背景音乐
-        // /// </summary>
-        // /// <param name="audioClipPath">音频的资源路径</param>
-        // public void PlayBackgroundMusic(string audioClipPath,bool addAudioClip=false)
-        // {
-        //     if(_backGroundMusicClips.ContainsKey(audioClipPath))
-        // 	    PlayAudioClip(audioClipPath, _backGroundMusicClips, _backgroundMusic);
-        // }
+		/// <summary>
+		/// 恢复
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		public void Resume<T>() where T : AudioPlayer
+		{
+			GetAudioPlayer<T>().Resume();
+		}
 
-        // /// <summary>
-        // /// 停止背景音乐
-        // /// </summary>
-        // public void StopBakgroundMusic()
-        // {
-        // 	StopAudioClip(_backgroundMusic);
-        // }
+		/// <summary>
+		/// 停止
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		public void Stop<T>() where T : AudioPlayer
+		{
+			GetAudioPlayer<T>().Stop();
+		}
 
-        // /// <summary>
-        // /// 移除背景音乐
-        // /// </summary>
-        // /// <param name="audioClipPath"></param>
-        // public void RemoveBackgroundMusic(string audioClipPath)
-        // {
-        // 	RemoveAudioClip(audioClipPath, _backGroundMusicClips);
-        // }
 
-        // /// <summary>
-        // /// 播放ui音效
-        // /// </summary>
-        // /// <param name="audioClipPath"></param>
-        // public void PlayUISound(string audioClipPath,bool addAudioClip=false)
-        // {
-        //     if(_uiSoundClips.ContainsKey(audioClipPath))
-        // 	    PlayAudioClip(audioClipPath, _uiSoundClips, _uiSound);
-        // }
+		/// <summary>
+		/// 获取AudioPlayer
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public T GetAudioPlayer<T>() where T : AudioPlayer
+		{
+			if (_audioPlayers.TryGetValue(typeof(T), out AudioPlayer audioPlayer))
+			{
+				return audioPlayer as T;
+			}
+			return default(T);
+		}
 
-        // /// <summary>
-        // /// 停止
-        // /// </summary>
-        // public void StopUISoud()
-        // {
-        // 	StopAudioClip(_uiSound);
-        // }
+	
+		/// <summary>
+		/// 播放UI音效
+		/// </summary>
+		/// <param name="assetName"></param>
+		public AudioTween UISoundPlay(string assetName,bool loop=false)
+		{
+			AudioClip audioClip = GetAudioClip(assetName);
+			return _uiSoundAudioPlayer.Play(audioClip, loop);
+		}
 
-        // /// <summary>
-        // /// 移除ui音效
-        // /// </summary>
-        // /// <param name="audioClipPath"></param>
-        // public void RemoveUISound(string audioClipPath)
-        // {
-        // 	RemoveAudioClip(audioClipPath, _uiSoundClips);
-        // }
+		/// <summary>
+		/// 暂停UI音效
+		/// </summary>
+		public void UISoundPause(AudioTween audioTween)
+		{
+			_uiSoundAudioPlayer.Pasue(audioTween);
+		}
 
-        // /// <summary>
-        // /// 播放音效
-        // /// </summary>
-        // /// <param name="audioClipPath"></param>
-        // /// <param name="addAudioClip"></param>
-        // public void PlaySoundEffect(string audioClipPath,bool addAudioClip=false)
-        // {
-        // 	if (_soundEffectClips.ContainsKey(audioClipPath))
-        // 	    PlayAudioClip(audioClipPath, _soundEffectClips, _soundEffect);
-        // }
+		/// <summary>
+		/// UI音效恢复
+		/// </summary>
+		public void UISoundResume(AudioTween audioTween)
+		{
+			_uiSoundAudioPlayer.Resume(audioTween);
+		}
 
-        // /// <summary>
-        // /// 停止
-        // /// </summary>
-        // public void StopSoundEffect()
-        // {
-        // 	StopAudioClip(_soundEffect);
-        // }
+		/// <summary>
+		/// 停止UI音效
+		/// </summary>
+		public void UISoundStop(AudioTween audioTween)
+		{
+			_uiSoundAudioPlayer.Stop(audioTween);
+		}
 
-        // /// <summary>
-        // /// 移除音效
-        // /// </summary>
-        // /// <param name="audioClipPath"></param>
-        // public void RemoveSoundEffect(string audioClipPath)
-        // {
-        // 	RemoveAudioClip(audioClipPath,_soundEffectClips);
-        // }
+		/// <summary>
+		/// 停止所有的UI音效
+		/// </summary>
+		public void UISoundStopAll()
+		{
+			_uiSoundAudioPlayer.StopAll();
+		}
 
-        #endregion
+		#endregion
 
-        #region 内部函数
+		#region 内部函数
+		//获取音频
+		private AudioClip GetAudioClip(string assetName)
+		{
+			AudioClip audioClip = null;
+			if (_audioClipSources.TryGetValue(assetName, out audioClip))
+			{
+				audioClip = _resourceManager.LoadAssetSync<AudioClip>(assetName);
+				_audioClipSources.Add(assetName, audioClip);
+			}
+			return audioClip;
+		}
+		#endregion
 
-        //添加音频
-        private async Task<bool> AddAuioClip(string assetBundleName, string audioClipPath, Dictionary<string, AudioClip> clips)
+		public override void OnClose()
         {
-            // if (!clips.ContainsKey(audioClipPath))
-            // {
-            // 	AudioClip audioClip = await _resourceManager?.LoadAsset<AudioClip>(assetBundleName,audioClipPath);
-            // 	if (audioClip != null)
-            // 	{
-            // 		clips.Add(audioClipPath, audioClip);
-            // 		return true;
-            // 	}
-            // }
+			_audioClipSources.Clear();
+			foreach (var item in _audioPlayers)
+			{
+				item.Value.Close();
+			}
+			_audioPlayers.Clear();
+		}
 
-            return false;
-        }
-
-        private void PlayAudioClip(string audioClipPath, Dictionary<string, AudioClip> audioClips, AudioSource audioSource)
-        {
-            AudioClip audioClip;
-            if (audioClips.TryGetValue(audioClipPath, out audioClip))
-            {
-                if (audioSource != null && (audioSource.clip != audioClip || !audioSource.isPlaying))
-                {
-                    audioSource.clip = audioClip;
-                    audioSource.Play();
-                }
-            }
-        }
-
-        private void StopAudioClip(AudioSource audioSource)
-        {
-            audioSource?.Stop();
-        }
-
-        private void RemoveAudioClip(string audioClipPath, Dictionary<string, AudioClip> audioClips)
-        {
-            AudioClip audioClip;
-            if (audioClips.TryGetValue(audioClipPath, out audioClip))
-            {
-                audioClips.Remove(audioClipPath);
-                audioClip = null;
-            }
-        }
-
-        #endregion
-
-        public override void OnClose()
-        {
-        }
-    }
+	
+	}
 }
