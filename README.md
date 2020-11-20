@@ -5,6 +5,7 @@
 `GameFramework`：[https://github.com/EllanJiang/GameFramework](https://github.com/EllanJiang/GameFramework)  
 `UniRx`: [https://github.com/neuecc/UniRx](https://github.com/neuecc/UniRx)  
 `UniTask`: [https://github.com/Cysharp/UniTask](https://github.com/Cysharp/UniTask)  
+`odin-serializer`: [https://github.com/TeamSirenix/odin-serializer](https://github.com/TeamSirenix/odin-serializer)  
 
 ---
 

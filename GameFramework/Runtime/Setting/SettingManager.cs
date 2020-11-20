@@ -7,125 +7,151 @@
 // <time> #2018年7月22日 14点27分# </time>
 //-----------------------------------------------------------------------
 
+using LitJson;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using OdinSerializer;
 
 namespace Wanderer.GameFramework
 {
     public sealed class SettingManager : GameFrameworkModule
     {
         #region 属性
-        private bool _debugEnable = true;
-        private GameObject _debuger;
-        #endregion
+        //普通的设置
+        private Dictionary<Type, Action<string, IConvertible>> _normalSet = new Dictionary<Type, Action<string, IConvertible>>();
+        //普通的获取
+        private Dictionary<Type, Func<string, IConvertible,IConvertible>> _normalGet = new Dictionary<Type, Func<string, IConvertible,IConvertible>>();
+		//配置文件的路径
+		private const string _settingDirectory = ".userdata/";
+		private string _settingFilePath;
+		public string SettingFilePath
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_settingFilePath))
+				{
+					_settingFilePath = Path.Combine(Application.persistentDataPath, _settingDirectory);
+					if (!Directory.Exists(_settingFilePath))
+					{
+						Directory.CreateDirectory(_settingFilePath);
+					}
+				}
+				return _settingFilePath;
+			}
+		}
+		#endregion
 
-        /// <summary>
-        /// 调试器可见性
-        /// </summary>
-        public bool DebugEnable
+		public SettingManager()
         {
-            get
+            // normal set
+            _normalSet.Add(typeof(int), (key, value) => {
+                PlayerPrefs.SetInt(key, (int)value);
+            });
+
+            _normalSet.Add(typeof(float), (key, value) => {
+                PlayerPrefs.SetFloat(key, (float)value);
+            });
+
+            _normalSet.Add(typeof(string), (key, value) => {
+                PlayerPrefs.SetString(key, (string)value);
+            });
+
+            
+            //normal get
+            _normalGet.Add(typeof(int), (key,defaultValue) => {
+                return PlayerPrefs.GetInt(key, (int)defaultValue);
+            });
+
+            _normalGet.Add(typeof(float), (key, defaultValue) => {
+                return PlayerPrefs.GetFloat(key,(float)defaultValue);
+            });
+
+            _normalGet.Add(typeof(string), (key,defaultValue) => {
+                return PlayerPrefs.GetString(key,(string)defaultValue);
+            });
+        }
+
+		/// <summary>
+		/// 设置数据
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+        public void Set<T>(string key, T value)
+        {
+            if (_normalSet.TryGetValue(typeof(T), out Action<string, IConvertible> setAction))
             {
-                return _debugEnable;
+                setAction.Invoke(key, (IConvertible)value);
             }
-            set
+            else
             {
-                _debugEnable = value;
-                if (_debuger != null)
-                    _debuger.SetActive(value);
+                if (value is object)
+                {
+					SetObject(key, value);
+				}
             }
         }
 
-        public void SetDebuger(GameObject debuger)
-        {
-            _debuger = debuger;
-        }
-
-        public int GetQuality()
-        {
-            return PlayerPrefs.GetInt("QualitySettings", (int)QualitySettings.GetQualityLevel());
-        }
-
-        public void SetQuality(int level)
-        {
-            PlayerPrefs.SetInt("QualitySettings", level);
-        }
-
-        public float GetAllSoundVolume()
-        {
-            return PlayerPrefs.GetFloat("AllSoundVolume", 1.0f);
-        }
-
-        public void SetAllSoundVolume(float volume)
-        {
-            PlayerPrefs.SetFloat("AllSoundVolume", volume);
-        }
-
-        public float GetBackgrounddMusicVolumme()
-        {
-            return PlayerPrefs.GetFloat("BackgroundMusicVolume", 1.0f);
-        }
-
-        public void SetBackgroundMusicVolume(float volume)
-        {
-            PlayerPrefs.SetFloat("BackgroundMusicVolume", volume);
-        }
-
-        public void SetUISoundVolume(float volume)
-        {
-            PlayerPrefs.SetFloat("UISoundVolume", volume);
-        }
-
-        public float GetUISoundVolume()
-        {
-            return PlayerPrefs.GetFloat("UISoundVolume", 1.0f);
-
-        }
-
-        public void SetSoundEffectVolume(float volume)
-        {
-            PlayerPrefs.SetFloat("SoundEffectVolume", volume);
-        }
-
-        public float GetSoundEffectVolumme()
-        {
-            return PlayerPrefs.GetFloat("SoundEffectVolume", 1.0f);
-        }
+		/// <summary>
+		/// 获取数据
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public T Get<T>(string key,T defaultValue=default(T))
+		{
+			if (_normalGet.TryGetValue(typeof(T), out Func<string, IConvertible,IConvertible> getAction))
+			{
+				return (T)getAction.Invoke(key, (IConvertible)defaultValue);
+			}
+			else
+			{
+				return GetObject<T>(key, defaultValue);
+			}
+		}
 
 
-        public void SetInt(string key, int value)
-        {
-            PlayerPrefs.SetInt(key, value);
-        }
+		/// <summary>
+		/// 获取对象数据
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public T GetObject<T>(string key, T defaultValue= default(T))
+		{
+			string filePath = Path.Combine(SettingFilePath, key);
+			if (File.Exists(filePath))
+			{
+				byte[] buffer= File.ReadAllBytes(filePath);
+				T getValue = SerializationUtility.DeserializeValue<T>(buffer, DataFormat.Binary);
+				return getValue;
+			}
+			return defaultValue;
+		}
 
-        public int GetInt(string key)
-        {
-            return PlayerPrefs.GetInt(key, 0);
-        }
+		/// <summary>
+		/// 保存对象数据
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="key"></param>
+		public void SetObject<T>(string key, T value)
+		{
+			string filePath = Path.Combine(SettingFilePath, key);
+			using (FileStream fileStream = new FileStream(filePath,FileMode.OpenOrCreate))
+			{
+				fileStream.Flush();
+				byte[] buffer = SerializationUtility.SerializeValue(value, DataFormat.Binary);
+				fileStream.Write(buffer, 0, buffer.Length);
+				fileStream.Close();
+			}
+		}
 
-        public void SetFloat(string key, float value)
-        {
-            PlayerPrefs.SetFloat(key, value);
-        }
-
-        public float GetFloat(string key)
-        {
-            return PlayerPrefs.GetFloat(key, 0.0f);
-        }
-
-        public void SetString(string key, string value)
-        {
-            PlayerPrefs.SetString(key, value);
-        }
-
-        public string GetString(string key)
-        {
-            return PlayerPrefs.GetString(key, "");
-        }
-
-
-        public override void OnClose()
+		public override void OnClose()
         {
         }
     }

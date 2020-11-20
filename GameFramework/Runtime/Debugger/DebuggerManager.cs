@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,10 +8,12 @@ namespace Wanderer.GameFramework
 {
     public class DebuggerManager : GameFrameworkModule, IImGui, IUpdate
     {
+        private SettingManager _settingMgr;
+        private float _defaultWindowScale = 1.5f;
         /// <summary>
         /// 窗口缩放
         /// </summary>
-        public float WindowScale = 1.5f;
+        public float WindowScale;
         private bool _showFullWindow = false;
         //皮肤
         private GUISkin _consoleSkin;
@@ -40,8 +43,12 @@ namespace Wanderer.GameFramework
 
         public DebuggerManager()
         {
+            _settingMgr = GameFrameworkMode.GetModule<SettingManager>();
             Log = new LogFile();
             Log.Start();
+
+            FullRect = _settingMgr.Get<Rect>("DebuggerManager.FullRect", _defaultFullRect);
+            WindowScale = _settingMgr.Get<float>("DebuggerManager.WindowScale", _defaultWindowScale);
         }
 
         public void SetDebuggerEnable(bool enable)
@@ -57,7 +64,7 @@ namespace Wanderer.GameFramework
             _instance = true;
 
             //其他参数
-            FullRect = _defaultFullRect;
+           // FullRect = _defaultFullRect;
             // Debug.unityLogger.logEnabled = false;
             _currentEventSystem = EventSystem.current;
             _fpsCounter = new FPSCounter();
@@ -146,6 +153,9 @@ namespace Wanderer.GameFramework
 
         public override void OnClose()
         {
+            _settingMgr.Set<Rect>("DebuggerManager.FullRect", FullRect);
+            _settingMgr.Set<float>("DebuggerManager.WindowScale", WindowScale);
+
             Log.Close();
             if (_allDebuggerWindows != null)
             {
@@ -181,7 +191,7 @@ namespace Wanderer.GameFramework
         /// </summary>
         public void ResetLayout()
         {
-            WindowScale = 1.0f;
+            WindowScale = _defaultWindowScale;
             FullRect = _defaultFullRect;
         }
 
