@@ -154,6 +154,17 @@ namespace Wanderer.GameFramework
         }
 
         /// <summary>
+        /// 所有的资源路径
+        /// </summary>
+        public List<string> AllAssetPaths
+        {
+            get
+            {
+                return _resourceHelper?.AllAssetPaths;
+            }
+        }
+
+        /// <summary>
         /// 加载资源
         /// </summary>
         /// <typeparam name="T"></typeparam>

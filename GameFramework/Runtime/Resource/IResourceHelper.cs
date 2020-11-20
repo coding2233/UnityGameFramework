@@ -8,6 +8,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,11 @@ namespace Wanderer.GameFramework
 {
     public interface IResourceHelper
     {
+        /// <summary>
+        /// 所有的资源路径 全小写
+        /// </summary>
+        List<string> AllAssetPaths { get; }
+
         /// <summary>
         /// 设置资源的路径,默认是为只读路径:Application.streamingAssetsPath;
         /// </summary>

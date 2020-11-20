@@ -24,6 +24,24 @@ namespace Wanderer.GameFramework
 {
     public class EditorResourceHelper : IResourceHelper
     {
+        private List<string> _allAssetPaths = new List<string>();
+        public List<string> AllAssetPaths
+        {
+            get
+            {
+                if (_allAssetPaths.Count == 0 )
+                {
+                    Log.Warning($"AllAssetPaths[START] {Time.realtimeSinceStartup}");
+					foreach (var item in AssetDatabase.GetAllAssetPaths())
+					{
+                        _allAssetPaths.Add(item.ToLower());
+                    }
+                    Log.Warning($"AllAssetPaths[END] {Time.realtimeSinceStartup}");
+                }
+                return _allAssetPaths;
+            }
+        }
+
         public void SetResource(PathType pathType, Action callback)
         {
             callback?.Invoke();

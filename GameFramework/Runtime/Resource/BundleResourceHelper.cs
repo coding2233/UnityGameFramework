@@ -38,7 +38,20 @@ namespace Wanderer.GameFramework
         private readonly Dictionary<AssetBundle, int> _assetBundleReferenceCount = new Dictionary<AssetBundle, int>();
         //资源路径映射ab包的名称
         private readonly Dictionary<string, string> _assetsPathMapAssetbundleName = new Dictionary<string, string>();
-
+        //所有的资源路径
+        private List<string> _allAssetPaths = new List<string>();
+        public List<string> AllAssetPaths
+        {
+            get
+            {
+                if (_allAssetPaths.Count == 0|| _allAssetPaths.Count!= _assetsPathMapAssetbundleName.Count)
+                {
+                    _allAssetPaths.Clear();
+                    _allAssetPaths.AddRange(_assetsPathMapAssetbundleName.Keys);
+                }
+                return _allAssetPaths;
+            }
+        }
         #region  IResourceHelper
 
         public void SetResource(PathType pathType, Action callback)

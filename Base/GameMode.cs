@@ -18,7 +18,6 @@ namespace Wanderer.GameFramework
     {
         #region 属性
         public static EventManager Event;
-        //  public static GameStateManager GameState;
         public static FSManager FSM;
         public static DataTableManager DataTable;
         public static NodeManager Node;
@@ -37,11 +36,6 @@ namespace Wanderer.GameFramework
         public static GameMode Self;
 
         #region 资源
-        /// <summary>
-        /// 是否开启调试器
-        /// </summary>
-        //public bool DebugEnable = true;
-
         /// <summary>
         /// 配置文件
         /// </summary>

@@ -23,58 +23,13 @@ namespace Wanderer.GameFramework
 
         //事件管理类
         private EventManager _event;
-
-        // //网页请求帮助类
-        // private IWebRequestHelper _webRequestHelper;
-        ////读取http文本的成功的事件
-        //private HttpReadTextSuccessEventArgs _httpReadTextSuccess;
-        ////读取http文本失败的事件
-        //private HttpReadTextFaileEventArgs _httpReadTextFaile;
-
-        //http下载帮助类
-        //private IWebDownloadHelper _webDownloadHelper;
-        //private DownloadSuccessEventArgs _downloadSuccess;
-        //private DownloadFaileEventArgs _downloadFaile;
-        //private DownloadProgressEventArgs _downloadProgress;
         #endregion
 
         public WebRequestManager()
         {
             _event = GameFrameworkMode.GetModule<EventManager>();
-            //_httpReadTextSuccess = new HttpReadTextSuccessEventArgs();
-            //_httpReadTextFaile = new HttpReadTextFaileEventArgs();
-            //_downloadSuccess = new DownloadSuccessEventArgs();
-            //_downloadFaile = new DownloadFaileEventArgs();
-            //_downloadProgress = new DownloadProgressEventArgs();
         }
-
         #region 外部接口
-
-        // /// <summary>
-        // /// 设置网页请求帮助类
-        // /// </summary>
-        // /// <param name="helper"></param>
-        // public void SetWebRequestHelper(IWebRequestHelper helper)
-        // {
-        //     _webRequestHelper = helper;
-        // }
-        ///// <summary>
-        ///// 设置下载的帮助类
-        ///// </summary>
-        ///// <param name="helper"></param>
-        //public void SetWebDownloadHelper(IWebDownloadHelper helper)
-        //{
-        //    _webDownloadHelper = helper;
-        //}
-
-        // /// <summary>
-        // /// 读取文本的信息
-        // /// </summary>
-        // /// <param name="url">http链接</param>
-        // public void ReadHttpText(string url)
-        // {
-        //     _webRequestHelper?.ReadHttpText(url, ReadHttpTextCallback);
-        // }
 
         /// <summary>
         /// 请求网络文本的数据
@@ -110,6 +65,45 @@ namespace Wanderer.GameFramework
                 else
                 {
                     callback?.Invoke(true, request.downloadHandler.text);
+                }
+            }
+            catch (System.Exception e)
+            {
+                callback?.Invoke(false, e.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 请求网络文本 POST
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="header"></param>
+        /// <param name="body"></param>
+        /// <param name="callback"></param>
+        public async void RequestTextPOST(string url,Dictionary<string,string> header,string body, Action<bool, string> callback)
+        {
+            try
+            {
+                using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+                {
+                    request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(body));
+                    request.useHttpContinue = false;
+                    if (header != null)
+                    {
+                        foreach (var item in header)
+                        {
+                            request.SetRequestHeader(item.Key, item.Value);
+                        }
+                    }
+                    await request.SendWebRequest();
+                    if (request.isNetworkError)
+                    {
+                        callback?.Invoke(false, request.error);
+                    }
+                    else
+                    {
+                        callback?.Invoke(true, request.downloadHandler.text);
+                    }
                 }
             }
             catch (System.Exception e)
@@ -204,16 +198,6 @@ namespace Wanderer.GameFramework
             }
 
         }
-
-        ///// <summary>
-        ///// 开始下载文件
-        ///// </summary>
-        ///// <param name="remoteUrl"></param>
-        ///// <param name="localPath"></param>
-        //public void StartDownload(string remoteUrl, string localPath)
-        //{
-        //    _webDownloadHelper?.StartDownload(remoteUrl, localPath, StartDownloadCallback, StartDownloadProgress);
-        //}
 
         /// <summary>
         /// 下载文件
