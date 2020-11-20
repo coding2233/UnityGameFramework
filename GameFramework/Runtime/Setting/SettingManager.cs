@@ -74,6 +74,9 @@ namespace Wanderer.GameFramework
             _normalGet.Add(typeof(string), (key,defaultValue) => {
                 return PlayerPrefs.GetString(key,(string)defaultValue);
             });
+
+			//设置默认的质量
+			SetQualityFromUserData();
         }
 
 		/// <summary>

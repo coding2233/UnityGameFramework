@@ -26,8 +26,13 @@ namespace Wanderer.GameFramework
 			}
 			set
 			{
-				_mute = value;
-				_audioSource.mute = _mute;
+				_audioSource.mute = value;
+				if (_mute != value)
+				{
+					_mute = value;
+					//保存数据
+					GameFrameworkMode.GetModule<SettingManager>().Set<bool>($"AudioManager.AudioPlayer.{GetType().Name}.Mute", _mute);
+				}
 			}
 		}
 
@@ -42,7 +47,12 @@ namespace Wanderer.GameFramework
 			}
 			set
 			{
-				_audioSource.volume = _nativeVolume * value;
+				if (_nativeVolume * value != _audioSource.volume)
+				{
+					_audioSource.volume = _nativeVolume * value;
+					//保存数据
+					GameFrameworkMode.GetModule<SettingManager>().Set<float>($"AudioManager.AudioPlayer.{GetType().Name}.Volume", _audioSource.volume);
+				}
 			}
 		}
 
@@ -86,6 +96,12 @@ namespace Wanderer.GameFramework
 			_audioSource = audioSource;
 			_nativeVolume = audioSource.volume;
 			IsPause = false;
+			//获取默认的设置信息
+			_mute = GameFrameworkMode.GetModule<SettingManager>().Get<bool>($"AudioManager.AudioPlayer.{GetType().Name}.Mute", _mute);
+			_audioSource.volume = GameFrameworkMode.GetModule<SettingManager>().Get<float>($"AudioManager.AudioPlayer.{GetType().Name}.Volume", _audioSource.volume);
+			//设置默认的数据
+			Mute = _mute;
+			Volume = _audioSource.volume;
 		}
 
 		/// <summary>
