@@ -115,6 +115,63 @@ namespace Wanderer.GameFramework
 			}
 		}
 
+		/// <summary>
+		/// 是否包含数据
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public bool Has<T>(string key)
+		{
+			if (_normalGet.ContainsKey(typeof(T)))
+			{
+				return PlayerPrefs.HasKey(key);
+			}
+			else
+			{
+				string filePath = GetSettingFilePath(key);
+				return File.Exists(filePath);
+			}
+		}
+
+		/// <summary>
+		/// 删除数据
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="key"></param>
+		public void Delete<T>(string key)
+		{
+			if (_normalGet.ContainsKey(typeof(T)))
+			{
+				if(PlayerPrefs.HasKey(key))
+					PlayerPrefs.DeleteKey(key);
+			}
+			else
+			{
+				string filePath = GetSettingFilePath(key);
+				if (File.Exists(filePath))
+				{
+					File.Delete(filePath);
+				}
+			}
+		}
+
+		/// <summary>
+		/// 删除所有的数据
+		/// </summary>
+		public void DeleteAll()
+		{
+			PlayerPrefs.DeleteAll();
+			string[] files = Directory.GetFiles(SettingFilePath);
+			if (files != null)
+			{
+				foreach (var item in files)
+				{
+					if(File.Exists(item))
+						File.Delete(item);
+				}
+			}
+		}
 
 		/// <summary>
 		/// 获取对象数据
@@ -124,7 +181,7 @@ namespace Wanderer.GameFramework
 		/// <returns></returns>
 		public T GetObject<T>(string key, T defaultValue= default(T))
 		{
-			string filePath = Path.Combine(SettingFilePath, key);
+			string filePath = GetSettingFilePath(key);
 			if (File.Exists(filePath))
 			{
 				byte[] buffer= File.ReadAllBytes(filePath);
@@ -141,7 +198,7 @@ namespace Wanderer.GameFramework
 		/// <param name="key"></param>
 		public void SetObject<T>(string key, T value)
 		{
-			string filePath = Path.Combine(SettingFilePath, key);
+			string filePath = GetSettingFilePath(key);
 			using (FileStream fileStream = new FileStream(filePath,FileMode.OpenOrCreate))
 			{
 				fileStream.Flush();
@@ -151,8 +208,85 @@ namespace Wanderer.GameFramework
 			}
 		}
 
+		#region 质量
+		/// <summary>
+		/// 质量信息
+		/// </summary>
+		public int Quality
+		{
+			get
+			{
+				int level = QualitySettings.GetQualityLevel();
+				//获取质量信息
+				level = Get<int>("QualitySettings.QualityLevel", level);
+				return level;
+			}
+			set
+			{
+				int currentLevel = QualitySettings.GetQualityLevel();
+				if (currentLevel != value)
+				{
+					QualitySettings.SetQualityLevel(value);
+					//保存质量信息
+					Set<int>("QualitySettings.QualityLevel", value);
+				}
+			}
+		}
+		/// <summary>
+		/// 从本地数据设置质量
+		/// </summary>
+		public void SetQualityFromUserData()
+		{
+			Quality = Quality;
+		}
+		#endregion
+
+		#region 震动
+		/// <summary>
+		/// 震动是否启用
+		/// </summary>
+		public bool Vibrate 
+		{
+			get
+			{
+				return Get<bool>("UnityEngine.Vibrate",true);
+			}
+			set
+			{
+				Set<bool>("UnityEngine.Vibrate",value);
+			}
+		}
+
+		/// <summary>
+		/// 调用移动端的震动
+		/// </summary>
+		public void HandheldVibrate()
+		{
+			if (Vibrate)
+			{
+				Handheld.Vibrate();
+			}
+		}
+		#endregion
+
+		#region 内部函数
+		/// <summary>
+		/// 获取设置文件的路径
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		private string GetSettingFilePath(string key)
+		{
+			string filePath = Path.Combine(SettingFilePath, key);
+			return filePath;
+		}
+		#endregion
 		public override void OnClose()
         {
-        }
+			//暂时不清理SettingManager的数据。 其他模块可能在OnClose中保存数据
+
+			//_normalSet.Clear();
+			//_normalGet.Clear();
+		}
     }
 }

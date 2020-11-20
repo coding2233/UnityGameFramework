@@ -36,11 +36,6 @@ namespace Wanderer.GameFramework
 
         public static GameMode Self;
 
-        /// <summary>
-        /// 当前程序集
-        /// </summary>
-        public static System.Reflection.Assembly Assembly { get; private set; }
-
         #region 资源
         /// <summary>
         /// 是否开启调试器
@@ -123,19 +118,9 @@ namespace Wanderer.GameFramework
             gameObjectPoolHelper.transform.SetParent(transform);
             Resource.SetGameObjectPoolHelper(gameObjectPoolHelper.AddComponent<GameObjectPoolHelper>());
             #endregion
-
-            #region auido
-            //设置音频播放
-            GameObject audioPlayer = new GameObject("AudioSourcePlayer");
-            audioPlayer.transform.SetParent(transform);
-            //添加AduioSource
-            // Audio.SetDefaultAudioSource(audioPlayer.AddComponent<AudioSource>(), audioPlayer.AddComponent<AudioSource>(),
-            //     audioPlayer.AddComponent<AudioSource>());
-            #endregion
-
+   
             #region state
             //开启整个项目的流程
-            Assembly = typeof(GameMode).Assembly;
             FSM.AddFSM<GameStateContext>();
           //  yield return new WaitForEndOfFrame();
             GameFrameworkMode.Init();
