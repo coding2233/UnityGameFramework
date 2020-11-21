@@ -63,11 +63,11 @@ namespace Wanderer.GameFramework
 
             //图标
             _fsmIcons = new Texture2D[5];
-            _fsmIcons[0] = Resources.Load<Texture2D>("icons/fsm_start");
-            _fsmIcons[1] = Resources.Load<Texture2D>("icons/fsm_normal");
-            _fsmIcons[2] = Resources.Load<Texture2D>("icons/fsm_ignore");
-            _fsmIcons[3] = Resources.Load<Texture2D>("icons/fsm_over_start");
-            _fsmIcons[4] = Resources.Load<Texture2D>("icons/fsm_run");
+            _fsmIcons[0] = EditorResourceLibrary.GetTexture2D("icons/fsm_start");
+            _fsmIcons[1] = EditorResourceLibrary.GetTexture2D("icons/fsm_normal");
+            _fsmIcons[2] = EditorResourceLibrary.GetTexture2D("icons/fsm_ignore");
+            _fsmIcons[3] = EditorResourceLibrary.GetTexture2D("icons/fsm_over_start");
+            _fsmIcons[4] = EditorResourceLibrary.GetTexture2D("icons/fsm_run");
         }
 
         public override void OnDrawGUI()
