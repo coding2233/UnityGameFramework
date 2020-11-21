@@ -19,32 +19,61 @@ namespace Wanderer.GameFramework
 			string assetPath = AssetDatabase.GUIDToAssetPath(guid);
 			if (AssetDatabase.IsValidFolder(assetPath))
 			{
-				bool isSmall = IsIconSmall(ref selectionRect);
+				bool isSmall = IsIconSmall(selectionRect);
 
-				//Rect val = selectionRect;
-				//if (val.width > 64f)
+				Rect iconRect = GetIconRect(selectionRect, isSmall);
+				Rect textRect = GetTextRect(selectionRect, isSmall);
+				if (assetPath.Equals("Assets"))
+					return;
+				//Rect addIcon = new Rect(iconRect.x +20, iconRect.y+20, 16, 16);
+				//GUI.DrawTexture(iconRect, EditorResourceLibrary.GetTexture2D("icons/fsm_ignore"));
+				Color c = Color.white;
+				ColorUtility.TryParseHtmlString("#e76f51", out c);
+				//	GUI.DrawTexture(iconRect, Resources.Load<Texture2D>("folder"),ScaleMode.ScaleToFit,false,1.2f,c,0,0);
+				//if (AssetDatabase.GetSubFolders(assetPath) != null)//FolderOpened Icon
 				//{
-				//	float num = (val.width - 64f) * 0.5f;
-				//	val.x += num;
-				//	val.y += num;
-				//	val.width = 64;
-				//	val.height = 64;
+				//	//GUI.DrawTexture(iconRect, EditorGUIUtility.IconContent("Folder On Icon").image, ScaleMode.ScaleToFit, true, 1.0f, c, 0, 0);
 				//}
-				//val = GetBackgroundRect(val, isSmall);
-				//GUI.DrawTexture(val, EditorResourceLibrary.GetTexture2D("icons/fsm_ignore"));
-				//GUI.DrawTexture(val, Texture2D.whiteTexture);
+				//else
+				//{
+				//	GUI.DrawTexture(iconRect, EditorGUIUtility.IconContent("Folder Icon").image, ScaleMode.ScaleToFit, true, 1.0f, c, 0, 0);
+				//}
+				//	EditorGUI.DrawRect(selectionRect,);
+				//	GUI.DrawTexture
+			//	GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), Resources.Load<Texture2D>("android"));
+				//GUI.DrawTexture();
+				//GUI.Label(textRect, EditorGUIUtility.IconContent("Folder Icon"));
 			}
 		}
 		#region 内部函数
-		private static bool IsIconSmall(ref Rect rect)
+		//获取是否为小图标
+		private static bool IsIconSmall(Rect rect)
 		{
 			bool small = rect.width > rect.height;
-			rect.width = rect.height;
-
 			return small;
 		}
 
-		private static Rect GetBackgroundRect(Rect rect, bool isSmall)
+		//获取图标的Rect
+		private static Rect GetIconRect(Rect rect, bool isSmall)
+		{
+			if (isSmall)
+			{
+				if (rect.x < 16)
+				{
+					rect.x += 3;
+				}
+				rect.width = rect.height;
+			}
+			else
+			{
+				rect.height = rect.width;
+			}
+			return rect;
+		}
+
+
+		//获取文本的Rect
+		private static Rect GetTextRect(Rect rect, bool isSmall)
 		{
 			if (isSmall)
 			{
@@ -53,11 +82,20 @@ namespace Wanderer.GameFramework
 			}
 			else
 			{
-				rect.y += +rect.width;
+				rect.y += rect.width;
 				rect.height -= rect.width;
 			}
 			return rect;
 		}
+
+		private static Rect GetAddIconRect(Rect rect, bool isSmall)
+		{
+			rect.x=rect.width;
+			rect.y = rect.width;
+			rect.width = rect.height = isSmall?16:16;
+			return rect;
+		}
+
 		#endregion
 	}
 }
