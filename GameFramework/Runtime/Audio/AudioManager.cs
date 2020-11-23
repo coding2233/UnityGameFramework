@@ -44,7 +44,7 @@ namespace Wanderer.GameFramework
 			get
 			{
 				//获取数据
-				_mute=GameFrameworkMode.GetModule<SettingManager>().Get<bool>($"AudioManager.AudioPlayer.Mute", _mute);
+				//_mute=GameFrameworkMode.GetModule<SettingManager>().Get<bool>($"AudioManager.AudioPlayer.Mute", _mute);
 				return _mute;
 			}
 			set
@@ -57,7 +57,7 @@ namespace Wanderer.GameFramework
 				}
 
 				//保存数据
-				GameFrameworkMode.GetModule<SettingManager>().Set<bool>($"AudioManager.AudioPlayer.Mute", _mute);
+				//GameFrameworkMode.GetModule<SettingManager>().Set<bool>($"AudioManager.AudioPlayer.Mute", _mute);
 			}
 		}
 
@@ -103,14 +103,14 @@ namespace Wanderer.GameFramework
 
 		#region 外部接口
 
-		/// <summary>
-		/// //Gets setup information from user data.
-		/// </summary>
-		public void SettingFromUserData()
-		{
-			Mute = Mute;
-			Volume = Volume;
-		}
+		///// <summary>
+		///// //Gets setup information from user data.
+		///// </summary>
+		//public void SettingFromUserData()
+		//{
+		//	Mute = Mute;
+		//	Volume = Volume;
+		//}
 
 		/// <summary>
 		/// 设置默认声音播放器
@@ -129,7 +129,7 @@ namespace Wanderer.GameFramework
 			_audioPlayers.Add(typeof(UISoundAudioPlayer), _uiSoundAudioPlayer);
 
 			//设置默认信息
-			SettingFromUserData();
+			//SettingFromUserData();
 		}
 
 		/// <summary>

@@ -29,6 +29,7 @@ namespace Wanderer.GameFramework
 				//GUI.DrawTexture(iconRect, EditorResourceLibrary.GetTexture2D("icons/fsm_ignore"));
 				Color c = Color.white;
 				ColorUtility.TryParseHtmlString("#e76f51", out c);
+				//GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("icons/fsm_run"));
 				//	GUI.DrawTexture(iconRect, Resources.Load<Texture2D>("folder"),ScaleMode.ScaleToFit,false,1.2f,c,0,0);
 				//if (AssetDatabase.GetSubFolders(assetPath) != null)//FolderOpened Icon
 				//{
@@ -40,7 +41,7 @@ namespace Wanderer.GameFramework
 				//}
 				//	EditorGUI.DrawRect(selectionRect,);
 				//	GUI.DrawTexture
-			//	GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), Resources.Load<Texture2D>("android"));
+				//	GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), Resources.Load<Texture2D>("android"));
 				//GUI.DrawTexture();
 				//GUI.Label(textRect, EditorGUIUtility.IconContent("Folder Icon"));
 			}

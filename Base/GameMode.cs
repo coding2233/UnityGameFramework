@@ -80,8 +80,8 @@ namespace Wanderer.GameFramework
             Config = GameFrameworkMode.GetModule<ConfigManager>();
             Config.SetData(ConfigAsset.text);
 
+            Setting = GameFrameworkMode.GetModule<SettingManager>();
             Event = GameFrameworkMode.GetModule<EventManager>();
-            // GameState = GameFrameworkMode.GetModule<GameStateManager>();
             FSM = GameFrameworkMode.GetModule<FSManager>();
             DataTable = GameFrameworkMode.GetModule<DataTableManager>();
             Node = GameFrameworkMode.GetModule<NodeManager>();
@@ -90,7 +90,6 @@ namespace Wanderer.GameFramework
             WebRequest = GameFrameworkMode.GetModule<WebRequestManager>();
             Audio = GameFrameworkMode.GetModule<AudioManager>();
             Localization = GameFrameworkMode.GetModule<LocalizationManager>();
-            Setting = GameFrameworkMode.GetModule<SettingManager>();
             System = GameFrameworkMode.GetModule<SystemManager>();
             Network = GameFrameworkMode.GetModule<NetworkManager>();
             Pool = GameFrameworkMode.GetModule<PoolManager>();

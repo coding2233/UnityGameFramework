@@ -267,12 +267,14 @@ namespace Wanderer.GameFramework
 		{
 			if (Vibrate)
 			{
+#if !UNITY_EDITOR && (UNITY_ANDROID || UNITY_IOS)
 				Handheld.Vibrate();
+#endif
 			}
 		}
-		#endregion
+#endregion
 
-		#region 内部函数
+#region 内部函数
 		/// <summary>
 		/// 获取设置文件的路径
 		/// </summary>
@@ -283,7 +285,7 @@ namespace Wanderer.GameFramework
 			string filePath = Path.Combine(SettingFilePath, key);
 			return filePath;
 		}
-		#endregion
+#endregion
 		public override void OnClose()
         {
 			//暂时不清理SettingManager的数据。 其他模块可能在OnClose中保存数据
