@@ -243,26 +243,26 @@ namespace Wanderer.GameFramework
         {
             try
             {
-                AssetBundleVersionInfo versionInfo;
-                string assetVersionPath = Path.Combine(rootPath, "AssetVersion.txt");
-                using (UnityWebRequest request = new UnityWebRequest(assetVersionPath))
-                {
-                    request.downloadHandler = new DownloadHandlerBuffer();
-                    await request.SendWebRequest();
-                    if (request.isNetworkError)
-                    {
-                        throw new GameException($"Can't read assetbundle file : {assetVersionPath} error: {request.error}");
-                    }
-                    string content = request.downloadHandler.text;
-                    versionInfo = JsonUtility.FromJson<AssetBundleVersionInfo>(content);
-                    if (versionInfo == null)
-                    {
-                        throw new GameException($"Can't deserialize [AssetVersion.txt] file: {assetVersionPath} content:{content} error: {request.error}");
-                    }
-                }
+                //AssetBundleVersionInfo versionInfo;
+                //string assetVersionPath = Path.Combine(rootPath, "AssetVersion.txt");
+                //using (UnityWebRequest request = new UnityWebRequest(assetVersionPath))
+                //{
+                //    request.downloadHandler = new DownloadHandlerBuffer();
+                //    await request.SendWebRequest();
+                //    if (request.isNetworkError)
+                //    {
+                //        throw new GameException($"Can't read assetbundle file : {assetVersionPath} error: {request.error}");
+                //    }
+                //    string content = request.downloadHandler.text;
+                //    versionInfo = JsonUtility.FromJson<AssetBundleVersionInfo>(content);
+                //    if (versionInfo == null)
+                //    {
+                //        throw new GameException($"Can't deserialize [AssetVersion.txt] file: {assetVersionPath} content:{content} error: {request.error}");
+                //    }
+                //}
 
                 //取根目录的assetbundle
-                string rootBundlePath = Path.Combine(rootPath, versionInfo.ManifestAssetBundle);
+                string rootBundlePath = Path.Combine(rootPath, "manifest");
                 AssetBundle mainfestAssetBundle = await LoadAssetBundleFromPath(rootBundlePath);
                 _mainfest = mainfestAssetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
                 mainfestAssetBundle.Unload(false);
