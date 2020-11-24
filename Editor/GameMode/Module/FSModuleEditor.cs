@@ -16,7 +16,7 @@ namespace Wanderer.GameFramework
         Dictionary<Type, List<Type>> _fsmTypes = new Dictionary<Type, List<Type>>();
         Dictionary<Type, FSMStateType> _fsmStateType = new Dictionary<Type, FSMStateType>();
         //图标
-        private Texture2D[] _fsmIcons;
+        private Texture[] _fsmIcons;
         //当前正在运行的状态的
         List<string> _currentStateFullNames = new List<string>();
         public FSModuleEditor(string name, Color mainColor, GameMode gameMode) : base(name, mainColor, gameMode)
@@ -63,14 +63,15 @@ namespace Wanderer.GameFramework
 
             //图标
             _fsmIcons = new Texture2D[5];
-            _fsmIcons[0] = EditorResourceLibrary.GetTexture2D("icons/fsm_start");
-            _fsmIcons[1] = EditorResourceLibrary.GetTexture2D("icons/fsm_normal");
-            _fsmIcons[2] = EditorResourceLibrary.GetTexture2D("icons/fsm_ignore");
-            _fsmIcons[3] = EditorResourceLibrary.GetTexture2D("icons/fsm_over_start");
-            _fsmIcons[4] = EditorResourceLibrary.GetTexture2D("icons/fsm_run");
+            _fsmIcons[0] = EditorGUIUtility.IconContent("PlayButton").image;
+            _fsmIcons[1] = EditorGUIUtility.IconContent("d_SceneViewLighting").image;
+            _fsmIcons[2] = EditorGUIUtility.IconContent("d_SceneViewLighting Off").image;
+            _fsmIcons[3] = EditorGUIUtility.IconContent("preAudioAutoPlayOff").image;
+            _fsmIcons[4] = EditorGUIUtility.IconContent("PauseButton").image;
         }
 
         public override void OnDrawGUI()
+
         {
             GUILayout.BeginVertical("HelpBox", GUILayout.Height(150));
             _scrollPos = GUILayout.BeginScrollView(_scrollPos);
@@ -105,7 +106,7 @@ namespace Wanderer.GameFramework
                 {
                     Type stateType = item.Value[i];
                     GUILayout.BeginHorizontal();
-                    Texture2D ico = _fsmIcons[(int)_fsmStateType[stateType]];
+                    Texture ico = _fsmIcons[(int)_fsmStateType[stateType]];
                     if (_currentStateFullNames.Count > 0)
                     {
                         for (int m = 0; m < _currentStateFullNames.Count; m++)

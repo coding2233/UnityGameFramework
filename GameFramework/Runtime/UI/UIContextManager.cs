@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace Wanderer.GameFramework
@@ -43,6 +44,16 @@ namespace Wanderer.GameFramework
                     {
                         uiContext = GetMultipleUIContext(uiContext);
                     }
+                }
+                else
+                {
+                    //默认使用UIContextBase 不支持多个
+                    UIContextBase newUIContext = new UIContextBase();
+                    newUIContext.AssetPath = assetPath;
+                    newUIContext.Name = Path.GetFileNameWithoutExtension(assetPath);
+                    newUIContext.Multiple = false;
+                    uiContext = newUIContext;
+                    _allUIContexts[assetPath] = newUIContext;
                 }
                 return uiContext;
             }

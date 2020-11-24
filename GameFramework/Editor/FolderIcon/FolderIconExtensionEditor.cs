@@ -19,31 +19,38 @@ namespace Wanderer.GameFramework
 			string assetPath = AssetDatabase.GUIDToAssetPath(guid);
 			if (AssetDatabase.IsValidFolder(assetPath))
 			{
-				bool isSmall = IsIconSmall(selectionRect);
-
-				Rect iconRect = GetIconRect(selectionRect, isSmall);
-				Rect textRect = GetTextRect(selectionRect, isSmall);
-				if (assetPath.Equals("Assets"))
+				if (!assetPath.StartsWith("Assets/Game"))
 					return;
-				//Rect addIcon = new Rect(iconRect.x +20, iconRect.y+20, 16, 16);
-				//GUI.DrawTexture(iconRect, EditorResourceLibrary.GetTexture2D("icons/fsm_ignore"));
-				Color c = Color.white;
-				ColorUtility.TryParseHtmlString("#e76f51", out c);
-				//GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("icons/fsm_run"));
-				//	GUI.DrawTexture(iconRect, Resources.Load<Texture2D>("folder"),ScaleMode.ScaleToFit,false,1.2f,c,0,0);
-				//if (AssetDatabase.GetSubFolders(assetPath) != null)//FolderOpened Icon
-				//{
-				//	//GUI.DrawTexture(iconRect, EditorGUIUtility.IconContent("Folder On Icon").image, ScaleMode.ScaleToFit, true, 1.0f, c, 0, 0);
-				//}
-				//else
-				//{
-				//	GUI.DrawTexture(iconRect, EditorGUIUtility.IconContent("Folder Icon").image, ScaleMode.ScaleToFit, true, 1.0f, c, 0, 0);
-				//}
-				//	EditorGUI.DrawRect(selectionRect,);
-				//	GUI.DrawTexture
-				//	GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), Resources.Load<Texture2D>("android"));
-				//GUI.DrawTexture();
-				//GUI.Label(textRect, EditorGUIUtility.IconContent("Folder Icon"));
+
+				assetPath = assetPath.ToLower();
+				bool isSmall = IsIconSmall(selectionRect);
+				Rect iconRect = GetIconRect(selectionRect, isSmall);
+				//	Rect textRect = GetTextRect(selectionRect, isSmall);
+
+				if (assetPath.StartsWith("assets/game/datatable"))
+				{
+					GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("excel"));
+				}
+				else if (assetPath.StartsWith("assets/game/ui"))
+				{
+					GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("phone"));
+				}
+				else if (assetPath.StartsWith("assets/game/xlua"))
+				{
+					GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("lua"));
+				}
+				else if (assetPath.StartsWith("assets/game/update"))
+				{
+					GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("update_circle"));
+				}
+				else if (assetPath.StartsWith("assets/game/scripts"))
+				{
+					GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("script_01"));
+				}
+				else
+				{
+					GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("resource"));
+				}
 			}
 		}
 		#region 内部函数
@@ -91,9 +98,8 @@ namespace Wanderer.GameFramework
 
 		private static Rect GetAddIconRect(Rect rect, bool isSmall)
 		{
-			rect.x=rect.width;
-			rect.y = rect.width;
-			rect.width = rect.height = isSmall?16:16;
+			rect.position += rect.size * 0.5f;
+			rect.size *= 0.5f;
 			return rect;
 		}
 
