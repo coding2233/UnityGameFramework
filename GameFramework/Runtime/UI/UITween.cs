@@ -12,13 +12,15 @@ namespace Wanderer.GameFramework
 
         UIView NextUIView { get; }
         //UITween准备好
-        IUITween OnUITweenReady(Action<UIView,UIView> onUITweenReady);
+        IUITween OnUITweenReady(Action<IUITween,UIView, UIView> onUITweenReady);
         //动画开始回调 
         IUITween OnAnimationStart(Action<UIView, UIView> onAnimStart);
         //动画结束
         IUITween OnAnimationComplete(Action<UIView, UIView> onAnimComplete);
         //动画切换
         IUITween OnAnimationChanged(Action<IUIAnimation, IUIAnimation> onAnimChanged);
+        //设置动画
+        IUITween SetAnimation(IUIAnimation anim);
         //设置动画数组
         IUITween SetAnimations(IUIAnimation[] anims);
         //播放动画
@@ -27,7 +29,7 @@ namespace Wanderer.GameFramework
 
     internal class UITween : IUITween
     {
-        private Action<UIView,UIView> _onUITweenReady;
+        private Action<IUITween,UIView, UIView> _onUITweenReady;
         private Action<UIView, UIView> _onAnimStart;
         private Action<UIView, UIView> _onAnimComplete;
         private Action<IUIAnimation, IUIAnimation> _onAnimChanged;
@@ -66,7 +68,7 @@ namespace Wanderer.GameFramework
 
         private void SetUITweenReady()
         {
-            _onUITweenReady?.Invoke(LastUIView,NextUIView);
+            _onUITweenReady?.Invoke(this,LastUIView,NextUIView);
         }
 
         private void SetAnimationStart()
@@ -85,7 +87,7 @@ namespace Wanderer.GameFramework
             _onAnimChanged?.Invoke(lastAnim, nextAnim);
         }
 
-        public IUITween OnUITweenReady(Action<UIView, UIView> onUITweenReady)
+        public IUITween OnUITweenReady(Action<IUITween,UIView, UIView> onUITweenReady)
         {
             _onUITweenReady = onUITweenReady;
             return this;
@@ -109,6 +111,12 @@ namespace Wanderer.GameFramework
             return this;
         }
 
+        public IUITween SetAnimation(IUIAnimation anim)
+        {
+            _anims.Add(anim);
+            return this;
+        }
+
         public IUITween SetAnimations(IUIAnimation[] anims)
         {
             _anims.AddRange(anims);
@@ -124,6 +132,7 @@ namespace Wanderer.GameFramework
 
         private async void RunAnim(bool isQueue = false)
         {
+            await UniTask.NextFrame();
             //回调准备
             SetUITweenReady();
             //播放动画

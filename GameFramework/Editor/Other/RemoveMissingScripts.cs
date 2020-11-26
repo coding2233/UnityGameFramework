@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Wanderer.GameFramwork
+namespace Wanderer.GameFramework
 {
     public class RemoveMissingScripts
     {
@@ -16,7 +16,7 @@ namespace Wanderer.GameFramwork
             int count = 0;
             foreach (GameObject g in go)
             {
-                count+=RemoveScriptsFromGameObject(g);
+                count += RemoveScriptsFromGameObject(g);
             }
             Debug.Log($"Remove {count} MissingScripts!");
         }
@@ -25,9 +25,9 @@ namespace Wanderer.GameFramwork
         private static int RemoveScriptsFromGameObject(GameObject go)
         {
             int count = 0;
-            count=GameObjectUtility.RemoveMonoBehavioursWithMissingScript(go);
-			foreach (Transform item in go.transform)
-			{
+            count = GameObjectUtility.RemoveMonoBehavioursWithMissingScript(go);
+            foreach (Transform item in go.transform)
+            {
                 count += RemoveScriptsFromGameObject(item.gameObject);
             }
             return count;
