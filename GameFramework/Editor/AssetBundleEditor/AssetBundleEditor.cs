@@ -37,6 +37,13 @@ namespace Wanderer.GameFramework
 
 		//窗口的位置
 		private Rect _foldersWindowRect = Rect.zero;
+		public bool _haspopupFoldersWindow
+		{
+			get
+			{
+				return _foldersWindowRect != Rect.zero;
+			}
+		}
 		private Vector2 _foldersWindowScrollView = Vector2.zero;
 		private string _newFolderName = "Assets/";
 
@@ -376,19 +383,20 @@ namespace Wanderer.GameFramework
 			}
 
 			key = "SearchInFolders";
-			_selectFoldersJsonData = jsonData.Keys.Contains(key) ? jsonData[key] : null;
+			JsonData selectFoldersJsonData = jsonData.Keys.Contains(key) ? jsonData[key] : null;
 			string buttonContent = "No data";
-			if (_selectFoldersJsonData != null && _selectFoldersJsonData.Count > 0)
+			if (selectFoldersJsonData != null && selectFoldersJsonData.Count > 0)
 			{
-				buttonContent = _selectFoldersJsonData[0].ToString();
-				if (_selectFoldersJsonData.Count > 1)
+				buttonContent = selectFoldersJsonData[0].ToString();
+				if (selectFoldersJsonData.Count > 1)
 				{
-					buttonContent = $"[{_selectFoldersJsonData.Count}] {buttonContent}...";
+					buttonContent = $"[{selectFoldersJsonData.Count}] {buttonContent}...";
 				}
 			}
-			if (GUILayout.Button(buttonContent,GUILayout.Width(300)))
+			if (GUILayout.Button(buttonContent,GUILayout.Width(300))&&!_haspopupFoldersWindow)
 			{
 				_foldersWindowRect = new Rect(Event.current.mousePosition, Vector2.one * 200);
+				_selectFoldersJsonData = selectFoldersJsonData;
 				if (_selectFoldersJsonData == null)
 				{
 					_selectFoldersJsonData = new JsonData();
@@ -403,7 +411,7 @@ namespace Wanderer.GameFramework
 			}
 			bool isSplit = (bool)jsonData[key] ;
 			bool newIsSplit = EditorGUILayout.Toggle(isSplit, GUILayout.Width(100));
-			if (isSplit != newIsSplit)
+			if (isSplit != newIsSplit&&!_haspopupFoldersWindow)
 			{
 				jsonData[key] = newIsSplit;
 			}
