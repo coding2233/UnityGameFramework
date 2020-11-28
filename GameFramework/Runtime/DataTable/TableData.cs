@@ -252,55 +252,55 @@ namespace Wanderer.GameFramework
         }
 
         #region Implicit Conversions
-        public static implicit operator TableData (Boolean data)
+        public static implicit operator TableData(Boolean data)
         {
-            TableData tableData =  TableDataPool.Get().SetData(data);
+            TableData tableData = TableDataPool.Get().SetData(data);
             return tableData;
         }
 
-        public static implicit operator TableData (Int32 data)
+        public static implicit operator TableData(Int32 data)
         {
-            TableData tableData =  TableDataPool.Get().SetData(data);
+            TableData tableData = TableDataPool.Get().SetData(data);
             return tableData;
         }
 
-        public static implicit operator TableData (Int64 data)
+        public static implicit operator TableData(Int64 data)
         {
-            TableData tableData =  TableDataPool.Get().SetData(data);
+            TableData tableData = TableDataPool.Get().SetData(data);
             return tableData;
         }
 
-        public static implicit operator TableData (float data)
+        public static implicit operator TableData(float data)
         {
-            TableData tableData =  TableDataPool.Get().SetData(data);
+            TableData tableData = TableDataPool.Get().SetData(data);
             return tableData;
         }
 
-        public static implicit operator TableData (Double data)
+        public static implicit operator TableData(Double data)
         {
-            TableData tableData =  TableDataPool.Get().SetData(data);
+            TableData tableData = TableDataPool.Get().SetData(data);
             return tableData;
         }
 
-        public static implicit operator TableData (string data)
+        public static implicit operator TableData(string data)
         {
-            TableData tableData =  TableDataPool.Get().SetData(data);
+            TableData tableData = TableDataPool.Get().SetData(data);
             return tableData;
         }
 
-        public static implicit operator TableData (Vector2 data)
+        public static implicit operator TableData(Vector2 data)
         {
-            TableData tableData =  TableDataPool.Get().SetData(data);
+            TableData tableData = TableDataPool.Get().SetData(data);
             return tableData;
         }
 
-        public static implicit operator TableData (Vector3 data)
+        public static implicit operator TableData(Vector3 data)
         {
-            TableData tableData =  TableDataPool.Get().SetData(data);
+            TableData tableData = TableDataPool.Get().SetData(data);
             return tableData;
         }
 
-        public static implicit operator TableData (Color data)
+        public static implicit operator TableData(Color data)
         {
             TableData tableData = TableDataPool.Get().SetData(data);
             return tableData;
@@ -310,69 +310,69 @@ namespace Wanderer.GameFramework
 
         #region Explicit Conversions
 
-        public static explicit operator Boolean (TableData data)
+        public static explicit operator Boolean(TableData data)
         {
             if (data._type != TableDataType.Table_bool)
-                throw new InvalidCastException (
+                throw new InvalidCastException(
                     "Instance of TableData doesn't hold a Boolean");
 
             return data._instanceBool;
         }
 
-        public static explicit operator Int32 (TableData data)
+        public static explicit operator Int32(TableData data)
         {
-            if (data._type != TableDataType.Table_int&&data._type != TableDataType.Table_long)
-                throw new InvalidCastException (
+            if (data._type != TableDataType.Table_int && data._type != TableDataType.Table_long)
+                throw new InvalidCastException(
                     "Instance of TableData doesn't hold a Int32");
 
-            return data._type==TableDataType.Table_int?data._instanceInt:(int)data._instanceLong;
+            return data._type == TableDataType.Table_int ? data._instanceInt : (int)data._instanceLong;
         }
 
-        public static explicit operator Int64 (TableData data)
+        public static explicit operator Int64(TableData data)
         {
-             if (data._type != TableDataType.Table_int&&data._type != TableDataType.Table_long)
-                throw new InvalidCastException (
+            if (data._type != TableDataType.Table_int && data._type != TableDataType.Table_long)
+                throw new InvalidCastException(
                     "Instance of TableData doesn't hold a Int64");
 
-            return data._type==TableDataType.Table_long?data._instanceLong:(long)data._instanceInt;
+            return data._type == TableDataType.Table_long ? data._instanceLong : (long)data._instanceInt;
         }
 
-        public static explicit operator float (TableData data)
+        public static explicit operator float(TableData data)
         {
             if (data._type != TableDataType.Table_float)
-                throw new InvalidCastException (
+                throw new InvalidCastException(
                     "Instance of TableData doesn't hold a float");
 
             return data._instanceFloat;
         }
-        public static explicit operator double (TableData data)
+        public static explicit operator double(TableData data)
         {
             if (data._type != TableDataType.Table_double)
-                throw new InvalidCastException (
+                throw new InvalidCastException(
                     "Instance of TableData doesn't hold a double");
 
             return data._instanceDouble;
         }
-        public static explicit operator string (TableData data)
+        public static explicit operator string(TableData data)
         {
             if (data._type != TableDataType.Table_string)
-                throw new InvalidCastException (
+                throw new InvalidCastException(
                     "Instance of TableData doesn't hold a string");
 
             return data._instanceString;
         }
-        public static explicit operator Vector2 (TableData data)
+        public static explicit operator Vector2(TableData data)
         {
             if (data._type != TableDataType.Table_Vector2)
-                throw new InvalidCastException (
+                throw new InvalidCastException(
                     "Instance of TableData doesn't hold a Vector2");
 
             return data._instanceVector2;
         }
-        public static explicit operator Vector3 (TableData data)
+        public static explicit operator Vector3(TableData data)
         {
             if (data._type != TableDataType.Table_Vector3)
-                throw new InvalidCastException (
+                throw new InvalidCastException(
                     "Instance of TableData doesn't hold a Vector3");
 
             return data._instanceVector3;
@@ -380,7 +380,11 @@ namespace Wanderer.GameFramework
 
         public static explicit operator Color32(TableData data)
         {
-            return Color.white;
+            if (data._type != TableDataType.Table_Color)
+                throw new InvalidCastException(
+                    "Instance of TableData doesn't hold a Color");
+
+            return data._instanceColor;
         }
 
         #endregion
