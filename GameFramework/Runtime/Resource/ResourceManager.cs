@@ -196,6 +196,17 @@ namespace Wanderer.GameFramework
         }
 
         /// <summary>
+        /// 加载资源
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="callback"></param>
+        public void LoadAsset(string assetName, Action<UnityEngine.Object> callback)
+        {
+            assetName = assetName.ToLower();
+            _resourceHelper?.LoadAsset<UnityEngine.Object>(assetName, callback);
+        }
+
+        /// <summary>
         /// 同步加载资源
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -208,10 +219,20 @@ namespace Wanderer.GameFramework
         }
 
         /// <summary>
+        /// 加载资源
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <param name="callback"></param>
+        public UnityEngine.Object LoadAssetSync(string assetName)
+        {
+            assetName = assetName.ToLower();
+            return _resourceHelper?.LoadAsset<UnityEngine.Object>(assetName);
+        }
+
+        /// <summary>
         /// 卸载资源
         /// </summary>
-        /// <param name="assetBundleName">资源名称</param>
-        /// <param name="unload">是否卸载所有资源</param>
+        /// <param name="assetName">资源名称</param>
         public void UnloadAsset(string assetName)
         {
             _resourceHelper?.UnloadAsset(assetName);
