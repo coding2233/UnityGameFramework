@@ -20,5 +20,10 @@ namespace Wanderer.GameFramework
         /// </summary>
         /// <returns></returns>
         UniTask<int> Run();
+
+        /// <summary>
+        /// UITween执行完成的回调
+        /// </summary>
+        void OnUITweenComplete();
     }
 }

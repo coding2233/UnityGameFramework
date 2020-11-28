@@ -34,7 +34,6 @@ namespace Wanderer.GameFramework
         private Action<UIView, UIView> _onAnimComplete;
         private Action<IUIAnimation, IUIAnimation> _onAnimChanged;
         private List<IUIAnimation>  _anims=new List<IUIAnimation>();
-
         /// <summary>
         /// 上一个UIView
         /// </summary>
@@ -52,6 +51,14 @@ namespace Wanderer.GameFramework
             _onAnimChanged = null;
             LastUIView = null;
             NextUIView = null;
+            //没有运行的动画自动回收
+            if (_anims.Count > 0)
+            {
+                for (int i = 0; i < _anims.Count; i++)
+                {
+                    _anims[i].OnUITweenComplete();
+                }
+            }
             _anims.Clear();
             return this;
         }
@@ -102,6 +109,11 @@ namespace Wanderer.GameFramework
         public IUITween OnAnimationComplete(Action<UIView, UIView> onAnimComplete)
         {
             _onAnimComplete += onAnimComplete;
+			for (int i = 0; i < _anims.Count; i++)
+			{
+                _anims[i].OnUITweenComplete();
+            }
+            _anims.Clear();
             return this;
         }
 
