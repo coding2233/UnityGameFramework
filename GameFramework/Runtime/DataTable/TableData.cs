@@ -55,6 +55,27 @@ namespace Wanderer.GameFramework
         public TableData this[int index] => GetData(index);
 
         public TableData this[string key]=>GetData(key);
+
+        //获取数据
+        public TableData GetData(string key)
+        {
+            if (_indexKeys != null && _indexKeys.TryGetValue(key, out int index))
+            {
+                return GetData(index);
+            }
+            return null;
+        }
+
+        //获取数据
+        public TableData GetData(int index)
+        {
+            if (_instanceArray != null && _instanceArray.Count > 0 && index < _instanceArray.Count)
+            {
+                return _instanceArray[index];
+            }
+            return null;
+        }
+
         #endregion
 
         #region  internal
@@ -166,25 +187,7 @@ namespace Wanderer.GameFramework
 
        #region  内部函数
 
-        //获取数据
-        private TableData GetData(string key)
-        {
-            if(_indexKeys!=null && _indexKeys.TryGetValue(key,out int index))
-            {
-                return GetData(index);
-            }
-            return null;
-        }
-
-        //获取数据
-        private TableData GetData(int index)
-        {
-            if(_instanceArray!=null&&_instanceArray.Count>0&&index<_instanceArray.Count)
-            {
-                return _instanceArray[index];
-            }
-            return null;
-        }
+    
 
         /// <summary>
         /// 回收数组
