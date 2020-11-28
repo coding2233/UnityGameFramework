@@ -66,7 +66,7 @@ namespace Wanderer.GameFramework
             LocalVersion = null;
             string versionAssetPath = Path.Combine(_localResourcePath, _assetVersionTxt);
 
-            _webRequest.RequestText(versionAssetPath, (result, content) =>
+            _webRequest.RequestText(versionAssetPath, null,(result, content) =>
             {
                 if (result && !string.IsNullOrEmpty(content))
                 {
@@ -104,7 +104,7 @@ namespace Wanderer.GameFramework
         {
             RemoteVersion = null;
             string versionAssetPath = Path.Combine(_remoteUpdatePath, _assetVersionTxt);
-            _webRequest.RequestText(versionAssetPath, (result, content) =>
+            _webRequest.RequestText(versionAssetPath, null,(result, content) =>
             {
                 if (result && !string.IsNullOrEmpty(content))
                 {

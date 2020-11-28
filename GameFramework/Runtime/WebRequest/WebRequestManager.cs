@@ -36,10 +36,10 @@ namespace Wanderer.GameFramework
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public Task<string> RequestText(string url)
+        public Task<string> RequestText(string url, Dictionary<string, string> header)
         {
             var taskResult = new TaskCompletionSource<string>();
-            RequestText(url, (result, content) =>
+            RequestText(url, header,(result, content) =>
             {
                 taskResult.SetResult(result ? content : null);
             });
@@ -52,11 +52,18 @@ namespace Wanderer.GameFramework
         /// <param name="url"></param>
         /// <param name="callback"></param>
         /// <returns></returns>
-        public async void RequestText(string url, Action<bool, string> callback)
+        public async void RequestText(string url, Dictionary<string, string> header, Action<bool, string> callback)
         {
             try
             {
                 UnityWebRequest request = UnityWebRequest.Get(url);
+                if (header != null)
+                {
+                    foreach (var item in header)
+                    {
+                        request.SetRequestHeader(item.Key, item.Value);
+                    }
+                }
                 await request.SendWebRequest();
                 if (request.isNetworkError)
                 {
@@ -80,7 +87,7 @@ namespace Wanderer.GameFramework
         /// <param name="header"></param>
         /// <param name="body"></param>
         /// <param name="callback"></param>
-        public async void RequestTextPOST(string url,Dictionary<string,string> header,string body, Action<bool, string> callback)
+        public async void RequestTextPost(string url,Dictionary<string,string> header,string body, Action<bool, string> callback)
         {
             try
             {

@@ -272,9 +272,58 @@ namespace Wanderer.GameFramework
 #endif
 			}
 		}
-#endregion
+		#endregion
 
-#region 内部函数
+		#region System
+
+		/// <summary>
+		/// 获取网络的状态信息
+		/// </summary>
+		public NetworkReachability InternetReachability
+		{
+			get
+			{
+				return Application.internetReachability;
+			}
+		}
+
+		/// <summary>
+		/// 获取网络状态信息
+		/// </summary>
+		/// <returns></returns>
+		public string GetInternetReachability()
+		{
+			if (Application.internetReachability == NetworkReachability.NotReachable)
+			{
+				return "无网络";
+			}
+			//Check if the device can reach the internet via a carrier data network
+			else if (Application.internetReachability == NetworkReachability.ReachableViaCarrierDataNetwork)
+			{
+				return "移动数据";
+			}
+			//Check if the device can reach the internet via a LAN
+			else if (Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork)
+			{
+				return "WIFI";
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// 获取当前的时间戳 s数
+		/// </summary>
+		/// <returns></returns>
+		public string GetTimeStamp()
+		{
+			var t = DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0); 
+			return Convert.ToInt64(t.TotalSeconds).ToString();
+		}
+
+		#endregion
+
+
+		#region 内部函数
 		/// <summary>
 		/// 获取设置文件的路径
 		/// </summary>

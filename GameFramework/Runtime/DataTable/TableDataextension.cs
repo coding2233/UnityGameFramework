@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-	public static class TableDataextension
+	public static class TableDataExtension
 	{
 		#region Explicit Conversions
 		public static bool ToBool(this TableData tableData)
