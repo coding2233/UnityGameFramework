@@ -25,35 +25,69 @@ namespace Wanderer.GameFramework
 				assetPath = assetPath.ToLower();
 				bool isSmall = IsIconSmall(selectionRect);
 				Rect iconRect = GetIconRect(selectionRect, isSmall);
+				Rect addIconRect = GetAddIconRect(iconRect, isSmall);
 				//	Rect textRect = GetTextRect(selectionRect, isSmall);
-
-				if (assetPath.StartsWith("assets/game/datatable"))
+				if (assetPath.StartsWith("assets/game/animation"))
 				{
-					GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("excel"));
+					DrawAddIcon(addIconRect, "animation");
+				}
+				else if (assetPath.StartsWith("assets/game/audio"))
+				{
+					DrawAddIcon(addIconRect, "audio");
+				}
+				else if (assetPath.StartsWith("assets/game/datatable"))
+				{
+					DrawAddIcon(addIconRect, "excel");
+				}
+				else if (assetPath.StartsWith("assets/game/font"))
+				{
+					DrawAddIcon(addIconRect, "font");
+				}
+				else if (assetPath.StartsWith("assets/game/minigame"))
+				{
+					DrawAddIcon(addIconRect, "game");
+				}
+				else if (assetPath.StartsWith("assets/game/scene"))
+				{
+					DrawAddIcon(addIconRect, "map");
+				}
+				else if (assetPath.StartsWith("assets/game/spine"))
+				{
+					DrawAddIcon(addIconRect, "spine");
+				}
+				else if (assetPath.StartsWith("assets/game/texture"))
+				{
+					DrawAddIcon(addIconRect, "picture");
 				}
 				else if (assetPath.StartsWith("assets/game/ui"))
 				{
-					GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("phone"));
+					DrawAddIcon(addIconRect, "phone");
 				}
 				else if (assetPath.StartsWith("assets/game/xlua"))
 				{
-					GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("lua"));
+					DrawAddIcon(addIconRect, "lua");
 				}
 				else if (assetPath.StartsWith("assets/game/update"))
 				{
-					GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("update_circle"));
+					DrawAddIcon(addIconRect, "update_circle");
 				}
 				else if (assetPath.StartsWith("assets/game/scripts"))
 				{
-					GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("script_01"));
+					DrawAddIcon(addIconRect, "script_01");
 				}
 				else
 				{
-					GUI.DrawTexture(GetAddIconRect(iconRect, isSmall), EditorResourceLibrary.GetTexture2D("resource"));
+					DrawAddIcon(addIconRect, "resource");
 				}
 			}
 		}
 		#region 内部函数
+		//绘制图标
+		private static void DrawAddIcon(Rect rect,string texName)
+		{
+			GUI.DrawTexture(rect, EditorResourceLibrary.GetTexture2D(texName), ScaleMode.ScaleToFit);
+		}
+
 		//获取是否为小图标
 		private static bool IsIconSmall(Rect rect)
 		{
