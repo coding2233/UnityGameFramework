@@ -124,17 +124,10 @@ namespace Wanderer.GameFramework
 		/// <typeparam name="T"></typeparam>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		public bool Has<T>(string key)
+		public bool Has(string key)
 		{
-			if (_normalGet.ContainsKey(typeof(T)))
-			{
-				return PlayerPrefs.HasKey(key);
-			}
-			else
-			{
-				string filePath = GetSettingFilePath(key);
-				return File.Exists(filePath);
-			}
+			string filePath = GetSettingFilePath(key);
+			return PlayerPrefs.HasKey(key) || File.Exists(filePath);
 		}
 
 		/// <summary>
@@ -142,20 +135,16 @@ namespace Wanderer.GameFramework
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="key"></param>
-		public void Delete<T>(string key)
+		public void Delete(string key)
 		{
-			if (_normalGet.ContainsKey(typeof(T)))
+			//删除PlayerPrefs
+			if (PlayerPrefs.HasKey(key))
+				PlayerPrefs.DeleteKey(key);
+			//删除文件
+			string filePath = GetSettingFilePath(key);
+			if (File.Exists(filePath))
 			{
-				if(PlayerPrefs.HasKey(key))
-					PlayerPrefs.DeleteKey(key);
-			}
-			else
-			{
-				string filePath = GetSettingFilePath(key);
-				if (File.Exists(filePath))
-				{
-					File.Delete(filePath);
-				}
+				File.Delete(filePath);
 			}
 		}
 
