@@ -83,6 +83,22 @@ namespace Wanderer.GameFramework
 		}
 
 		/// <summary>
+		/// App
+		/// </summary>
+
+		public static string AppServerName
+		{
+			get
+			{
+#if TEST
+				return "Test";
+#else
+				return "Official";
+#endif
+			}
+		}
+
+		/// <summary>
 		/// 只读路径
 		/// </summary>
 		public static string ReadOnlyPath
@@ -125,6 +141,9 @@ namespace Wanderer.GameFramework
 				return Application.temporaryCachePath;
 			}
 		}
+
+
+
 	}
 
 }
