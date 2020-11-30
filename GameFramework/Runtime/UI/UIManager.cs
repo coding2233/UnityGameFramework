@@ -129,7 +129,7 @@ namespace Wanderer.GameFramework
         /// </summary>
         /// <param name="setHide"></param>
         /// <returns></returns>
-        public IUITween Pop(bool setHide = true, bool isDestory = false)
+        public IUITween Pop(bool setHide = true, bool isDestroy = false)
         {
             _uiTweener.Flush();
             //移除当前UI
@@ -137,7 +137,7 @@ namespace Wanderer.GameFramework
             {
                 //获取最上层的ui
                 IUIContext lastUIContext = _activeUIContextList[_activeUIContextList.Count - 1];
-                _uiTweener = (UITween)Close(lastUIContext, setHide, isDestory);
+                _uiTweener = (UITween)Close(lastUIContext, setHide, isDestroy);
             }
             return _uiTweener;
         }
@@ -148,7 +148,7 @@ namespace Wanderer.GameFramework
         /// <param name="uiContext"></param>
         /// <param name="setHide"></param>
         /// <returns></returns>
-        public IUITween Close(IUIContext uiContext, bool setHide = true,bool isDestory=false)
+        public IUITween Close(IUIContext uiContext, bool setHide = true,bool isDestroy=false)
         {
             _uiTweener.Flush();
 
@@ -203,7 +203,7 @@ namespace Wanderer.GameFramework
                     UIView uiView = _uiTweener.LastUIView as UIView;
                     uiView.gameObject.SetActive(false);
                     //销毁物体
-                    if (isDestory)
+                    if (isDestroy)
                     {
                         GameObject.Destroy(uiView.gameObject);
                         uiContext = null;
@@ -220,13 +220,13 @@ namespace Wanderer.GameFramework
         /// <param name="uiView"></param>
         /// <param name="setHide"></param>
         /// <returns></returns>
-        public IUITween Close(UIView uiView, bool setHide = true, bool isDestory = false)
+        public IUITween Close(UIView uiView, bool setHide = true, bool isDestroy = false)
         {
 			foreach (var item in _allUIView)
 			{
                 if (item.Value == uiView)
                 {
-                    IUITween uiTween = Close(item.Key, setHide,isDestory);
+                    IUITween uiTween = Close(item.Key, setHide,isDestroy);
                     return uiTween;
                 }
 			}
