@@ -269,7 +269,7 @@ namespace Wanderer.GameFramework
 		private AudioClip GetAudioClip(string assetName)
 		{
 			AudioClip audioClip = null;
-			if (_audioClipSources.TryGetValue(assetName, out audioClip))
+			if (!_audioClipSources.TryGetValue(assetName, out audioClip))
 			{
 				audioClip = _resourceManager.LoadAssetSync<AudioClip>(assetName);
 				_audioClipSources.Add(assetName, audioClip);

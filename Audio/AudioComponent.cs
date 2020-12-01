@@ -25,7 +25,7 @@ namespace Wanderer.GameFramework
 			//sound
 			AudioSource asSound = gameObject.AddComponent<AudioSource>();
 			asSound.playOnAwake = false;
-			asSound.outputAudioMixerGroup = amgs.Find(x => x.name.Equals("Sound0"));
+			asSound.outputAudioMixerGroup = amgs.Find(x => x.name.Equals("Sound"));
 			//uiSound
 			AudioSource asUISound = gameObject.AddComponent<AudioSource>();
 			asUISound.playOnAwake = false;
