@@ -22,7 +22,7 @@ namespace Wanderer.GameFramework
         //设置动画
         IUITween SetAnimation(IUIAnimation anim);
         //设置动画数组
-        IUITween SetAnimations(IUIAnimation[] anims);
+        IUITween SetAnimation(IUIAnimation[] anims);
         //播放动画
         IUITween RunAnimation(bool isQueue = false);
     }
@@ -129,7 +129,7 @@ namespace Wanderer.GameFramework
             return this;
         }
 
-        public IUITween SetAnimations(IUIAnimation[] anims)
+        public IUITween SetAnimation(IUIAnimation[] anims)
         {
             _anims.AddRange(anims);
             return this;
