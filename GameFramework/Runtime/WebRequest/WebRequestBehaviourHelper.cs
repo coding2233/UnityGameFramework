@@ -72,6 +72,7 @@ namespace Wanderer.GameFramework
         {
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
+                request.downloadHandler = new DownloadHandlerBuffer();
                 if (header != null)
                 {
                     foreach (var item in header)
@@ -96,6 +97,7 @@ namespace Wanderer.GameFramework
             using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
             {
                 request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(body));
+                request.downloadHandler = new DownloadHandlerBuffer();
                 request.useHttpContinue = false;
                 if (header != null)
                 {
