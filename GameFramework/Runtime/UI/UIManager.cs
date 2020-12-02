@@ -79,7 +79,11 @@ namespace Wanderer.GameFramework
                 for (int i = 0; i < _activeUIContextList.Count; i++)
                 {
                     if (uiContext == _activeUIContextList[i])
+                    {
+                        UIView nextUIView = GetUIView(uiContext);
+                        _uiTweener.SetNextUIView(nextUIView);
                         return _uiTweener;
+                    }
                 }
 
                 //获取最上层的ui
