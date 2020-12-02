@@ -142,7 +142,7 @@ namespace Wanderer.GameFramework
 			}
 			if (uiAuidoSource == null)
 			{
-				uiAuidoSource = _audioSource.Clone();
+				uiAuidoSource = _audioSource.Clone(new string[] { "minVolume", "maxVolume","rolloffFactor"});
 			}
 			return uiAuidoSource;
 		}
