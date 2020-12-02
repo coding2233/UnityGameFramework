@@ -144,7 +144,7 @@ namespace Wanderer.GameFramework
 
         private async void RunAnim(bool isQueue = false)
         {
-            await UniTask.NextFrame();
+          //  await UniTask.NextFrame();
             //回调准备
             SetUITweenReady();
             //播放动画

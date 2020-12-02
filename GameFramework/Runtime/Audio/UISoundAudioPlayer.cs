@@ -48,6 +48,7 @@ namespace Wanderer.GameFramework
 						AudioTween.Release(item.Key);
 						//移除
 						_uiSoundActiveSource.Remove(item.Key);
+						break;
 					}
 				}
 			}
@@ -114,14 +115,15 @@ namespace Wanderer.GameFramework
 
 		public void StopAll()
 		{
-			if (_uiSoundActiveSource.Count >0)
+			while (_uiSoundActiveSource.Count >0)
 			{
 				foreach (var item in _uiSoundActiveSource)
 				{
 					Stop(item.Key);
+					break;
 				}
-				_uiSoundActiveSource.Clear();
 			}
+			_uiSoundActiveSource.Clear();
 		}
 
 		public override void Close()
