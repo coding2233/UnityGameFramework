@@ -26,7 +26,9 @@ namespace Wanderer.GameFramework
 		{
 			var audioTween = AudioTween.Get(audioClip.name);
 			var uiAudioSource = GetUIAudioSource();
+			uiAudioSource.clip = audioClip;
 			uiAudioSource.loop = loop;
+			uiAudioSource.Play();
 			_uiSoundActiveSource.Add(audioTween, uiAudioSource);
 			return audioTween;
 		}
