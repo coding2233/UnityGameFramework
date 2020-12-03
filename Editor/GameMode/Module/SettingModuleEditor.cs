@@ -17,31 +17,76 @@ namespace Wanderer.GameFramework
     [CustomModuleEditor("Settings Module", 0.2f, 0.8f, 0.6f)]
     public class SettingModuleEditor : ModuleEditorBase
     {
-        public SettingModuleEditor(string name, Color mainColor, GameMode gameMode)
-    : base(name, mainColor, gameMode)
-        {
+        private BuildTargetGroup _lastBuildTargetGroup;
+        private string _lastScriptingDefineSymbols;
+        private int _selectType = 1;
+        private HashSet<string> _defineSymbols;
+        private const string TEST = "TEST";
 
+        public SettingModuleEditor(string name, Color mainColor, GameMode gameMode)
+        : base(name, mainColor, gameMode)
+        {
+            //获取当前的BuildTargetGroup
+            _lastBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
+            _lastScriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup);
+            _defineSymbols = new HashSet<string>();
+            if (!string.IsNullOrEmpty(_lastScriptingDefineSymbols))
+            {
+                string[] args = _lastScriptingDefineSymbols.Split(';');
+                if (args != null)
+                {
+					foreach (var item in args)
+					{
+                        if (!string.IsNullOrEmpty(item))
+                        {
+                            _defineSymbols.Add(item);
+                            if (item.Equals("TEST"))
+                            {
+                                _selectType = 0;
+                            }
+                        }
+					}
+                }
+            }
         }
 
         public override void OnDrawGUI()
         {
             GUILayout.BeginVertical("HelpBox");
+            //app server
+            int selectType = EditorGUILayout.IntPopup("App Server",_selectType, new string[] { "Test", "Official" },new int[] { 0,1});
+            if (selectType != _selectType)
+            {
+                if (selectType == 0)
+                {
+                    _defineSymbols.Add(TEST);
+                }
+                else
+                {
+                    _defineSymbols.Remove(TEST);
+                }
+                _lastScriptingDefineSymbols = "";
+				foreach (var item in _defineSymbols)
+				{
+                    _lastScriptingDefineSymbols = $"{_lastScriptingDefineSymbols}{item};";
+                }
+                
+                _lastBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
+                PlayerSettings.SetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup, _lastScriptingDefineSymbols);
+                _selectType = selectType;
 
-            //  GUI.color = _gameMode.DebugEnable ? Color.white : Color.gray;
-            // bool debugEnable = GUILayout.Toggle(GameMode.Setting.DebugEnable, "Debug Enable");
-            // if (debugEnable != GameMode.Setting.DebugEnable)
-            // {
-            //     GameMode.Setting.DebugEnable = debugEnable;
-            //     EditorUtility.SetDirty(_gameMode);
-            // }
-            // bool debugEnable = GUILayout.Toggle(_gameMode.DebugEnable, "Debug Enable");
-            // if (debugEnable != _gameMode.DebugEnable)
-            // {
-            //     _gameMode.DebugEnable = debugEnable;
-            //     EditorUtility.SetDirty(_gameMode);
-            // }
-            GUI.color = Color.white;
-
+            }
+            //检查配置文件
+            if (!NoConfigError())
+            {
+                bool debugEnable = (bool)_gameMode.ConfigJsonData["DebugEnable"];
+                bool newDebugEnable = GUILayout.Toggle(debugEnable, "Debug Enable");
+                if (debugEnable != newDebugEnable)
+                {
+                    _gameMode.ConfigJsonData["DebugEnable"] = newDebugEnable;
+                    SaveConfig();
+                }
+            }
             GUILayout.EndVertical();
         }
 
