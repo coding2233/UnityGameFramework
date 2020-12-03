@@ -24,7 +24,8 @@ namespace Wanderer.GameFramework
         private UIExitEventArgs _uiExitArgs;
         private UIPauseEventArgs _uiPauseArgs;
         private UIResumeEventArgs _uiResumeArgs;
-        private UITween _uiTweener;
+        //  private UITween _uiTweener;
+        private List<UITween> _activeTweeners = new List<UITween>();
 
         //uiview的父物体
         private Transform _uiViewParent;
@@ -41,7 +42,6 @@ namespace Wanderer.GameFramework
         #region 构造函数
         public UIManager()
         {
-            _uiTweener = new UITween();
             UIContextMgr = new UIContextManager();
             //获取资源模块
             _resource = GameFrameworkMode.GetModule<ResourceManager>();
@@ -66,10 +66,13 @@ namespace Wanderer.GameFramework
         /// <returns></returns>
         public IUITween Push(IUIContext uiContext, Action<string> callBack=null, params object[] parameters)
         {
-            _uiTweener.Flush();
+            //动态获取uiTween
+            UITween uiTweener = UITweePool.Get();
+            _activeTweeners.Add(uiTweener);
+            //如果uicontext为null
             if (uiContext == null)
             {
-                return _uiTweener;
+                return uiTweener;
             }
 
             //处理之前的ui
@@ -81,8 +84,8 @@ namespace Wanderer.GameFramework
                     if (uiContext == _activeUIContextList[i])
                     {
                         UIView nextUIView = GetUIView(uiContext);
-                        _uiTweener.SetNextUIView(nextUIView);
-                        return _uiTweener;
+                        uiTweener.SetNextUIView(nextUIView);
+                        return uiTweener;
                     }
                 }
 
@@ -90,7 +93,7 @@ namespace Wanderer.GameFramework
                 IUIContext lastUIContext = _activeUIContextList[_activeUIContextList.Count - 1];
                 UIView uiView = GetUIView(lastUIContext);
                 //设置之前的uiview
-                _uiTweener.SetLastUIView(uiView);
+                uiTweener.SetLastUIView(uiView);
 
                 //触发暂停事件
                 _uiPauseArgs.UIView = uiView;
@@ -106,8 +109,8 @@ namespace Wanderer.GameFramework
             _uiEnterArgs.UIView = newUiView;
             _event.Trigger(this, _uiEnterArgs);
             //设置打开的uiview
-            _uiTweener.SetNextUIView(newUiView);
-            return _uiTweener;
+            uiTweener.SetNextUIView(newUiView);
+            return uiTweener;
         }
 
         /// <summary>
@@ -135,15 +138,14 @@ namespace Wanderer.GameFramework
         /// <returns></returns>
         public IUITween Pop(bool setHide = true, bool isDestroy = false)
         {
-            _uiTweener.Flush();
             //移除当前UI
             if (_activeUIContextList.Count > 0)
             {
                 //获取最上层的ui
                 IUIContext lastUIContext = _activeUIContextList[_activeUIContextList.Count - 1];
-                _uiTweener = (UITween)Close(lastUIContext, setHide, isDestroy);
+                return Close(lastUIContext, setHide, isDestroy);
             }
-            return _uiTweener;
+            return null;
         }
        
         /// <summary>
@@ -154,7 +156,8 @@ namespace Wanderer.GameFramework
         /// <returns></returns>
         public IUITween Close(IUIContext uiContext, bool setHide = true,bool isDestroy=false)
         {
-            _uiTweener.Flush();
+            UITween uiTweener = UITweePool.Get();
+            _activeTweeners.Add(uiTweener);
 
             bool needResume = false;
             if (_activeUIContextList.Count > 0 && _activeUIContextList.Contains(uiContext))
@@ -179,7 +182,7 @@ namespace Wanderer.GameFramework
 
                     lastUiView.OnExit(uiContext);
                     //设置弹出的UI
-                    _uiTweener.SetLastUIView(lastUiView);
+                    uiTweener.SetLastUIView(lastUiView);
                 }
             }
             //触发恢复界面
@@ -195,16 +198,16 @@ namespace Wanderer.GameFramework
                     _uiResumeArgs.UIView = lastUiView;
                     _event.Trigger(this, _uiResumeArgs);
                     //设置最上层的UI
-                    _uiTweener.SetNextUIView(lastUiView);
+                    uiTweener.SetNextUIView(lastUiView);
                 }
             }
 
             //默认设置隐藏
             if (setHide)
             {
-                if (_uiTweener.LastUIView != null)
+                if (uiTweener.LastUIView != null)
                 {
-                    UIView uiView = _uiTweener.LastUIView as UIView;
+                    UIView uiView = uiTweener.LastUIView as UIView;
                     uiView.gameObject.SetActive(false);
                     //销毁物体
                     if (isDestroy)
@@ -215,7 +218,7 @@ namespace Wanderer.GameFramework
                 }
             }
 
-            return _uiTweener;
+            return uiTweener;
         }
 
         /// <summary>
@@ -323,6 +326,16 @@ namespace Wanderer.GameFramework
                 if (_allUIView.TryGetValue(_activeUIContextList[i], out UIView uiView))
                 {
                     uiView.OnUpdate(_activeUIContextList[i], Time.deltaTime);
+                }
+			}
+            //自动回收UITween
+			for (int i = 0; i < _activeTweeners.Count; i++)
+			{
+                if (!_activeTweeners[i].HasAnims)
+                {
+                    UITweePool.Release(_activeTweeners[i]);
+                    _activeTweeners.RemoveAt(i);
+                    i--;
                 }
 			}
 		}

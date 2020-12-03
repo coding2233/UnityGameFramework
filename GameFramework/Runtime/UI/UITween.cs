@@ -33,7 +33,16 @@ namespace Wanderer.GameFramework
         private Action<UIView, UIView> _onAnimStart;
         private Action<UIView, UIView> _onAnimComplete;
         private Action<IUIAnimation, IUIAnimation> _onAnimChanged;
-        private List<IUIAnimation>  _anims=new List<IUIAnimation>();
+        private List<IUIAnimation> _anims=new List<IUIAnimation>();
+        //含有动画
+        public bool HasAnims
+        {
+            get
+            {
+                return _anims.Count > 0;
+            }
+        }
+
         /// <summary>
         /// 上一个UIView
         /// </summary>
@@ -221,5 +230,21 @@ namespace Wanderer.GameFramework
             }
         }
 
+    }
+
+    internal class UITweePool
+    {
+       private static ObjectPool<UITween> _pool = new ObjectPool<UITween>(null,null);
+
+        public static UITween Get()
+        {
+            return _pool.Get().Flush();
+        }
+
+        public static void Release(UITween tween)
+        {
+            tween.Flush();
+            _pool.Release(tween);
+        }
     }
 }
