@@ -6,7 +6,7 @@ namespace Wanderer.GameFramework
 {
 	public static class AudioManagerExtension
 	{
-		// Music Audio Manager
+		#region Music Audio Manager
 		public static void MusicPlay(this AudioManager audio,string assetName,bool loop)
 		{
 			audio.Play<MusicAudioPlayer>(assetName, loop);
@@ -23,18 +23,28 @@ namespace Wanderer.GameFramework
 		{
 			audio.Stop<MusicAudioPlayer>();
 		}
-		
+		public static bool GetMusicMute(this AudioManager audio)
+		{
+			return audio.GetAudioPlayer<MusicAudioPlayer>().Mute;
+		}
+
 		public static void SetMusicMute(this AudioManager audio,bool mute)
 		{
 			audio.GetAudioPlayer<MusicAudioPlayer>().Mute = mute;
+		}
+
+		public static float GetMusicVolume(this AudioManager audio, float volume)
+		{
+			return audio.GetAudioPlayer<MusicAudioPlayer>().Volume;
 		}
 
 		public static void SetMusicVolume(this AudioManager audio, float volume)
 		{
 			audio.GetAudioPlayer<MusicAudioPlayer>().Volume = volume;
 		}
+		#endregion
 
-		//Sound Audio Manager
+		#region Sound Audio Manager
 		public static void SoundPlay(this AudioManager audio, string assetName, bool loop)
 		{
 			audio.Play<SoundAudioPlayer>(assetName, loop);
@@ -52,14 +62,47 @@ namespace Wanderer.GameFramework
 			audio.Stop<SoundAudioPlayer>();
 		}
 
+		public static bool GetSoundMute(this AudioManager audio)
+		{
+			return audio.GetAudioPlayer<SoundAudioPlayer>().Mute;
+		}
+
 		public static void SetSoundMute(this AudioManager audio, bool mute)
 		{
 			audio.GetAudioPlayer<SoundAudioPlayer>().Mute = mute;
+		}
+
+		public static float GetSoundVolume(this AudioManager audio)
+		{
+			return audio.GetAudioPlayer<SoundAudioPlayer>().Volume;
 		}
 
 		public static void SetSoundVolume(this AudioManager audio, float volume)
 		{
 			audio.GetAudioPlayer<SoundAudioPlayer>().Volume = volume;
 		}
+		#endregion
+
+		#region UISound
+		public static bool GetUISoundMute(this AudioManager audio)
+		{
+			return audio.GetAudioPlayer<UISoundAudioPlayer>().Mute;
+		}
+
+		public static void SetUISoundMute(this AudioManager audio, bool mute)
+		{
+			audio.GetAudioPlayer<UISoundAudioPlayer>().Mute = mute;
+		}
+
+		public static float GetUISoundVolume(this AudioManager audio)
+		{
+			return audio.GetAudioPlayer<UISoundAudioPlayer>().Volume;
+		}
+
+		public static void SetUISoundVolume(this AudioManager audio, float volume)
+		{
+			audio.GetAudioPlayer<UISoundAudioPlayer>().Volume = volume;
+		}
+		#endregion
 	}
 }

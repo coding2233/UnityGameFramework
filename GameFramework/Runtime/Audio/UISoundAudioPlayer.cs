@@ -14,9 +14,41 @@ namespace Wanderer.GameFramework
 		//uisound暂停的资源列表
 		private HashSet<AudioTween> _uiSoundPauseSource = new HashSet<AudioTween>();
 
+		public override bool Mute
+		{
+			get => _mute;
+			set
+			{
+				_mute = value;
+				_audioSource.mute = _mute;
+				foreach (var item in _uiSoundActiveSource)
+				{
+					item.Value.mute = _mute;
+				}
+			}
+		}
+
+
+		public override float Volume
+		{
+			get
+			{
+				return _audioSource.volume;
+			}
+			set 
+			{
+				_audioSource.volume = _nativeVolume * value;
+				foreach (var item in _uiSoundActiveSource)
+				{
+					item.Value.volume = _audioSource.volume;
+				}
+			}
+		}
+
 		public UISoundAudioPlayer(AudioSource audioSource) : base(audioSource)
 		{
 		}
+
 
 		/// <summary>
 		/// 播放音频
@@ -26,6 +58,8 @@ namespace Wanderer.GameFramework
 		{
 			var audioTween = AudioTween.Get(audioClip.name);
 			var uiAudioSource = GetUIAudioSource();
+			uiAudioSource.mute = Mute;
+			uiAudioSource.volume = Volume;
 			uiAudioSource.clip = audioClip;
 			uiAudioSource.loop = loop;
 			uiAudioSource.Play();
