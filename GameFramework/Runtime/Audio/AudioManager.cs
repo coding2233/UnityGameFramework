@@ -170,10 +170,10 @@ namespace Wanderer.GameFramework
 		/// <typeparam name="T"></typeparam>
 		/// <param name="assetName"></param>
 		/// <param name="loop"></param>
-		public void Play<T>(string assetName, bool loop = false) where T : AudioPlayer
+		public AudioTween Play<T>(string assetName, bool loop = false) where T : AudioPlayer
 		{
 			AudioClip audioClip = GetAudioClip(assetName);
-			GetAudioPlayer<T>().Play(audioClip, loop);
+			return GetAudioPlayer<T>().Play(audioClip, loop);
 		}
 
 		/// <summary>

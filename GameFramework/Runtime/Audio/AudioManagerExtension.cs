@@ -7,9 +7,9 @@ namespace Wanderer.GameFramework
 	public static class AudioManagerExtension
 	{
 		#region Music Audio Manager
-		public static void MusicPlay(this AudioManager audio,string assetName,bool loop)
+		public static AudioTween MusicPlay(this AudioManager audio,string assetName,bool loop)
 		{
-			audio.Play<MusicAudioPlayer>(assetName, loop);
+			return audio.Play<MusicAudioPlayer>(assetName, loop);
 		}
 		public static void MusicPause(this AudioManager audio)
 		{
@@ -45,9 +45,9 @@ namespace Wanderer.GameFramework
 		#endregion
 
 		#region Sound Audio Manager
-		public static void SoundPlay(this AudioManager audio, string assetName, bool loop)
+		public static AudioTween SoundPlay(this AudioManager audio, string assetName, bool loop)
 		{
-			audio.Play<SoundAudioPlayer>(assetName, loop);
+			return audio.Play<SoundAudioPlayer>(assetName, loop);
 		}
 		public static void SoundPause(this AudioManager audio)
 		{
