@@ -28,6 +28,14 @@ namespace Wanderer.GameFramework
             base.OnInit(uiContext);
         }
 
+        /// <summary>
+        /// 销毁
+        /// </summary>
+        /// <param name="uiContext"></param>
+        public override void OnDestroy(IUIContext uiContext)
+        {
+            base.OnDestroy(uiContext);
+        }
 
         /// <summary>
         /// 更新界面

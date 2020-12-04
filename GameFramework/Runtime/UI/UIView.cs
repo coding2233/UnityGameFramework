@@ -25,6 +25,12 @@ namespace Wanderer.GameFramework
         public virtual void OnInit(IUIContext uiContext)
         { }
         /// <summary>
+        /// 销毁
+        /// </summary>
+        /// <param name="uiContext"></param>
+        public virtual void OnDestroy(IUIContext uiContext)
+        { }
+        /// <summary>
         /// 更新界面
         /// </summary>
         /// <param name="uiContext"></param>
@@ -55,6 +61,7 @@ namespace Wanderer.GameFramework
         /// </summary>
         public virtual void OnResume(IUIContext uiConext)
         { }
+
         /// <summary>
         /// 动画开始
         /// </summary>
