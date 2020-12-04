@@ -32,9 +32,9 @@ namespace Wanderer.GameFramework
         /// 销毁
         /// </summary>
         /// <param name="uiContext"></param>
-        public override void OnDestroy(IUIContext uiContext)
+        public override void OnFree(IUIContext uiContext)
         {
-            base.OnDestroy(uiContext);
+            base.OnFree(uiContext);
         }
 
         /// <summary>

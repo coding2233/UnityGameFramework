@@ -212,7 +212,7 @@ namespace Wanderer.GameFramework
                     //销毁物体
                     if (isDestroy)
                     {
-                        uiView.OnDestroy(uiContext);
+                        uiView.OnFree(uiContext);
                         GameObject.Destroy(uiView.gameObject);
                         uiContext = null;
                     }

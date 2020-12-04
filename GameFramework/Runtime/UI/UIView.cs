@@ -25,10 +25,10 @@ namespace Wanderer.GameFramework
         public virtual void OnInit(IUIContext uiContext)
         { }
         /// <summary>
-        /// 销毁
+        /// 释放
         /// </summary>
         /// <param name="uiContext"></param>
-        public virtual void OnDestroy(IUIContext uiContext)
+        public virtual void OnFree(IUIContext uiContext)
         { }
         /// <summary>
         /// 更新界面
