@@ -11,6 +11,8 @@ namespace Wanderer.GameFramework
     {
         string _addNewKey;
         JsonType _lastSelectJsonType;
+        private JsonData _defaultConfigData;
+
         public ConfigModuleEditor(string name, Color mainColor, GameMode gameMode)
             : base(name, mainColor, gameMode)
         { 
@@ -18,6 +20,20 @@ namespace Wanderer.GameFramework
             _lastSelectJsonType=JsonType.Int;
             //UpdateJsonData();
             _isExpand=_gameMode.ConfigAsset==null;
+
+            //创建默认的配置的ConfigData
+            if (_defaultConfigData == null)
+            {
+                _defaultConfigData = new JsonData();
+                _defaultConfigData["ResourceUpdateType"] = 0;
+                _defaultConfigData["PathType"] = 0;
+                _defaultConfigData["ResOfficialUpdatePath"] = "";
+                _defaultConfigData["ResTestUpdatePath"] = "";
+                _defaultConfigData["DefaultInStreamingAsset"] = true;
+                _defaultConfigData["DebugEnable"] = true;
+                _defaultConfigData["DebugLogMaxLine"] = 100;
+                _defaultConfigData["LogFileEnable"] = true;
+            }
         }
       
         public override void OnDrawGUI()
@@ -26,6 +42,7 @@ namespace Wanderer.GameFramework
             if(configAsset!=_gameMode.ConfigAsset)
             {
                 _gameMode.ConfigAsset=configAsset;
+                _gameMode.ConfigJsonData = null;
                 EditorUtility.SetDirty(_gameMode);
               //  UpdateJsonData();
             }
@@ -41,6 +58,9 @@ namespace Wanderer.GameFramework
             }
             else
             {
+                //检查默认配置
+                CheckDefaultConfigData();
+                //GUI
                 GUILayout.BeginVertical("HelpBox");
                 foreach (var item in _gameMode.ConfigJsonData.Keys)
                 {
@@ -122,6 +142,7 @@ namespace Wanderer.GameFramework
 
         public override void OnClose()
         {
+            _defaultConfigData = null;
         }
 
 
@@ -161,7 +182,7 @@ namespace Wanderer.GameFramework
                 case JsonType.String:
                     string stringValue = (string)value;
                     string newStringValue = EditorGUILayout.TextField(stringValue);
-                        if(stringValue!=newStringValue)
+                     if(stringValue!=newStringValue)
                     {
                         updateValue=new JsonData(newStringValue);
                     }
@@ -180,22 +201,33 @@ namespace Wanderer.GameFramework
             string configPath =EditorUtility.SaveFilePanelInProject("Save config file","DefaultConfig","json","Default Config");
             if(!string.IsNullOrEmpty(configPath))
             {
-                JsonData configJsonData=new JsonData();
-                configJsonData["ResourceUpdateType"]=0;
-                configJsonData["PathType"]=0;
-                configJsonData["ResOfficialUpdatePath"]="";
-                configJsonData["ResTestUpdatePath"]="";
-                configJsonData["DefaultInStreamingAsset"]=true;
-                configJsonData["DebugEnable"]=true;
-                File.WriteAllText(configPath,configJsonData.ToJson());
-                _gameMode.ConfigJsonData=configJsonData;
+                File.WriteAllText(configPath, _defaultConfigData.ToJson());
                 AssetDatabase.Refresh();
-                _gameMode.ConfigAsset=AssetDatabase.LoadAssetAtPath<TextAsset>(configPath);
+                _gameMode.ConfigAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(configPath);
                 EditorUtility.SetDirty(_gameMode);
             }
         }
 
-     
+
+        /// <summary>
+        /// 检查默认的配置文件
+        /// </summary>
+        private void CheckDefaultConfigData()
+        {
+            bool update = false;
+			foreach (var item in _defaultConfigData.Keys)
+			{
+                if (!_gameMode.ConfigJsonData.ContainsKey(item))
+                {
+                    _gameMode.ConfigJsonData[item] = _defaultConfigData[item];
+                    update = true;
+                }
+			}
+            if (update)
+            {
+                SaveConfig();
+            }
+        }
 
     }
 }

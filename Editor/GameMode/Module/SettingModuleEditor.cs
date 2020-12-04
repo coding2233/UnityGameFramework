@@ -79,6 +79,9 @@ namespace Wanderer.GameFramework
             //检查配置文件
             if (!NoConfigError())
             {
+                GUILayout.BeginHorizontal();
+                
+                //启动调试器
                 bool debugEnable = (bool)_gameMode.ConfigJsonData["DebugEnable"];
                 bool newDebugEnable = GUILayout.Toggle(debugEnable, "Debug Enable");
                 if (debugEnable != newDebugEnable)
@@ -86,6 +89,15 @@ namespace Wanderer.GameFramework
                     _gameMode.ConfigJsonData["DebugEnable"] = newDebugEnable;
                     SaveConfig();
                 }
+                //启动日志文件
+                bool logFileEnable = (bool)_gameMode.ConfigJsonData["LogFileEnable"];
+                bool newLogFileEnable = GUILayout.Toggle(debugEnable, "LogFile Enable");
+                if (logFileEnable != newLogFileEnable)
+                {
+                    _gameMode.ConfigJsonData["LogFileEnable"] = newLogFileEnable;
+                    SaveConfig();
+                }
+                GUILayout.EndHorizontal();
             }
             GUILayout.EndVertical();
         }

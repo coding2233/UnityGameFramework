@@ -45,12 +45,25 @@ namespace Wanderer.GameFramework
         {
             _settingMgr = GameFrameworkMode.GetModule<SettingManager>();
             Log = new LogFile();
-            Log.Start();
 
             FullRect = _settingMgr.Get<Rect>("DebuggerManager.FullRect", _defaultFullRect);
             WindowScale = _settingMgr.Get<float>("DebuggerManager.WindowScale", _defaultWindowScale);
         }
 
+        //初始化
+        public override void OnInit()
+        {
+            base.OnInit();
+            var config = GameFrameworkMode.GetModule<ConfigManager>();
+            //设置默认参数
+            SetDebuggerEnable((bool)config["DebugEnable"]);
+            SetLogFileEnable((bool)config["LogFileEnable"]);
+        }
+
+        /// <summary>
+        /// 设置Debugger是否显示
+        /// </summary>
+        /// <param name="enable"></param>
         public void SetDebuggerEnable(bool enable)
         {
             Debug.unityLogger.logEnabled = enable;
@@ -129,6 +142,22 @@ namespace Wanderer.GameFramework
             _debuggerWindowTitle = _windowTitles.ToArray();
         }
 
+        /// <summary>
+        /// 设置日志文件是否打开
+        /// </summary>
+        /// <param name="enable"></param>
+        public void SetLogFileEnable(bool enable)
+        {
+            if (enable)
+            {
+                Log?.Start();
+            }
+            else
+            {
+                Log?.Close();
+            }
+        }
+
         public void OnImGui()
         {
             if (!_enable)
@@ -155,8 +184,7 @@ namespace Wanderer.GameFramework
         {
             _settingMgr.Set<Rect>("DebuggerManager.FullRect", FullRect);
             _settingMgr.Set<float>("DebuggerManager.WindowScale", WindowScale);
-
-            Log.Close();
+            //关闭其他的窗口
             if (_allDebuggerWindows != null)
             {
                 for (int i = 0; i < _allDebuggerWindows.Count; i++)
@@ -165,6 +193,8 @@ namespace Wanderer.GameFramework
                 }
                 _allDebuggerWindows.Clear();
             }
+            //关闭日志
+            Log?.Close();
         }
 
         /// <summary>

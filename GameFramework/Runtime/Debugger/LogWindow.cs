@@ -37,7 +37,7 @@ namespace Wanderer.GameFramework
 
         public void OnInit(params object[] args)
         {
-            _logMaxLine = (int)GameFrameworkMode.GetModule<ConfigManager>()["LogMaxLine"];
+            _logMaxLine = (int)GameFrameworkMode.GetModule<ConfigManager>()["DebugLogMaxLine"];
             Application.logMessageReceived += OnLogMessageReceived;
         }
 

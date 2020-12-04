@@ -119,6 +119,15 @@ namespace Wanderer.GameFramework
         public override void OnInit()
         {
             base.OnInit();
+
+            var config = GameFrameworkMode.GetModule<ConfigManager>();
+            //参数设置
+            ResUpdateType = (ResourceUpdateType)(int)config["ResourceUpdateType"];
+            ResOfficialUpdatePath = (string)config["ResOfficialUpdatePath"];
+            ResTestUpdatePath = (string)config["ResTestUpdatePath"]; ;
+            LocalPathType = (PathType)(int)config["PathType"];
+            DefaultInStreamingAsset = (bool)config["DefaultInStreamingAsset"];
+           
             //设置更新路径
 #if TEST
             _remoteUpdatePath = ResTestUpdatePath;

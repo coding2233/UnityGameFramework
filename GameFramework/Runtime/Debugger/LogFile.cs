@@ -34,11 +34,25 @@ namespace Wanderer.GameFramework
 
 		private StringBuilder _strBuilder;
 
+		/// <summary>
+		/// Unity Logger 是否开启
+		/// </summary>
 		private bool _useUnityLogger
 		{
 			get
 			{
 				return UnityEngine.Debug.unityLogger.logEnabled;
+			}
+		}
+
+		/// <summary>
+		/// 可以写入
+		/// </summary>
+		private bool _canWrite
+		{
+			get
+			{
+				return _logFileStream != null;
 			}
 		}
 
@@ -151,7 +165,10 @@ namespace Wanderer.GameFramework
 
 		public void Write(string message,LogType type)
 		{
-			_logNodes.Enqueue(LogNodePool.Get(message, "", type));
+			if (_canWrite)
+			{
+				_logNodes.Enqueue(LogNodePool.Get(message, "", type));
+			}
 		}
 
 		public void Close()
