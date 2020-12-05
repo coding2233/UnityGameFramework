@@ -456,7 +456,7 @@ namespace Wanderer.GameFramework
         /// BuildTarget转字符串
         /// </summary>
         /// <param name="target"></param>
-        private static string BuildTargetToString(BuildTarget target)
+        public static string BuildTargetToString(BuildTarget target)
         {
             string targetName = target.ToString();
             if (targetName.Contains("Windows"))
