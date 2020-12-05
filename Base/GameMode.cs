@@ -32,7 +32,6 @@ namespace Wanderer.GameFramework
         public static PoolManager Pool;
         public static DebuggerManager Debugger;
         public static ConfigManager Config;
-
         public static GameMode Self;
 
         #region 资源
@@ -68,7 +67,6 @@ namespace Wanderer.GameFramework
         #endregion
 
         #endregion
-
         IEnumerator Start()
         {
             GameMode.Self = this;

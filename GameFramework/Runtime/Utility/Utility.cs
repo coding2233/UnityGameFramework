@@ -83,6 +83,22 @@ namespace Wanderer.GameFramework
 		}
 
 		/// <summary>
+		/// AppVersion 从Config里面取,避免其他地方发布的时候，将版本号覆盖
+		/// </summary>
+		public static string AppVersion
+		{
+			get
+			{
+				var config = GameFrameworkMode.GetModule<ConfigManager>();
+				if(config==null|| config["AppVersion"]==null)
+				{
+					return Application.version;
+				}
+				return (string)config["AppVersion"];
+			}
+		}
+
+		/// <summary>
 		/// App
 		/// </summary>
 

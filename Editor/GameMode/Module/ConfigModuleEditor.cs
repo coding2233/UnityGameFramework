@@ -33,6 +33,7 @@ namespace Wanderer.GameFramework
                 _defaultConfigData["DebugEnable"] = true;
                 _defaultConfigData["DebugLogMaxLine"] = 100;
                 _defaultConfigData["LogFileEnable"] = true;
+                _defaultConfigData["AppVersion"] = Application.version;
             }
         }
       
@@ -223,6 +224,11 @@ namespace Wanderer.GameFramework
                     update = true;
                 }
 			}
+            if (!_gameMode.ConfigJsonData["AppVersion"].Equals(Application.version))
+            {
+                _gameMode.ConfigJsonData["AppVersion"] = Application.version;
+                update = true;
+            }
             if (update)
             {
                 SaveConfig();
