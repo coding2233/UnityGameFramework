@@ -27,9 +27,34 @@ namespace Wanderer.GameFramework
     public class AssetBundleVersionInfo
     {
         private int _hashCode=0;
+        /// <summary>
+        /// 资源版本好
+        /// </summary>
         public int Version = 0;
-      //  public bool IsEncrypt = false;
+        //  public bool IsEncrypt = false;
+        /// <summary>
+        /// 当前的AppVersion
+        /// </summary>
+        public string AppVersion = "";
+        /// <summary>
+        /// 支持的老版本的
+        /// </summary>
+        public List<string> SupportOldAppVersions = new List<string>();
+        /// <summary>
+        /// 以前的资源路径链接
+        /// </summary>
+        public string OldResourceUrl = "";
+        /// <summary>
+        /// 强制更新
+        /// </summary>
+        public bool ForceUpdate = true;
+        /// <summary>
+        /// ManifestAssetBundle
+        /// </summary>
         public string ManifestAssetBundle;
+        /// <summary>
+        /// 资源信息
+        /// </summary>
         public List<AssetHashInfo> AssetHashInfos = new List<AssetHashInfo>();
 
 		public override bool Equals(object obj)

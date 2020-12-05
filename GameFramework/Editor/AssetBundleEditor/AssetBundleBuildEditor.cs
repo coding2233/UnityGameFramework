@@ -35,64 +35,8 @@ namespace Wanderer.GameFramework
             _rootPath = Path.GetDirectoryName(Path.GetFullPath(Application.dataPath));
 
             LoadConfig();
-
-            //BuildTarget[] allTargets = (BuildTarget[])Enum.GetValues(typeof(BuildTarget));
-            ////_allTargets
-            //foreach (var item in allTargets)
-            //{
-            //    int index = (int)item;
-            //    if (_config.BuildTargets.Contains(index))
-            //        _allTargets[item] = true;
-            //    else
-            //        _allTargets[item] = false;
-            //}
-
             GetWindowWithRect<AssetBundleBuildEditor>(new Rect(200, 300, 500, 400), true, "Options");
         }
-
-        //[MenuItem("Tools/Asset Bundle/Build AssetBundles %#T")]
-        //public static void BuildAssetBundles()
-        //{
-        //    LoadConfig();
-
-        //    BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
-        //    //打包编辑器的激活平台
-        //    BuildTarget(target);
-
-        //    //保存平台信息
-        //    SavePlatformVersion(new List<BuildTarget>() { target });
-
-        //    if(_config.Copy2StreamingAssets)
-        //    {
-        //        //复制资源
-        //        CopyResource(target);
-        //        AssetDatabase.Refresh();
-        //    }
-        //}
-
-        //[MenuItem("Tools/Asset Bundle/Build AssetBundles Targets %#Y")]
-        //public static void BuildAssetBundlesAllTargets()
-        //{
-        //    LoadConfig();
-
-        //    List<BuildTarget> targets = new List<BuildTarget>();
-        //    for (int i = 0; i < _config.BuildTargets.Count; i++)
-        //    {
-        //        BuildTarget target = (BuildTarget)_config.BuildTargets[i];
-        //        BuildTarget(target);
-        //        targets.Add(target);
-        //    }
-
-        //    //保存平台信息
-        //    SavePlatformVersion(targets);
-        //    if (_config.Copy2StreamingAssets&&targets.Contains(EditorUserBuildSettings.activeBuildTarget))
-        //    {
-        //        //复制资源
-        //        CopyResource(EditorUserBuildSettings.activeBuildTarget);
-        //        AssetDatabase.Refresh();
-        //    }
-        //}
-
 
         /// <summary>
         /// 打包AssetBundle
@@ -127,12 +71,27 @@ namespace Wanderer.GameFramework
             GUILayout.BeginVertical("HelpBox");
 
             GUILayout.BeginHorizontal("Box");
+            _config.ForceUpdate = GUILayout.Toggle(_config.ForceUpdate, "Force update", GUILayout.Width(100));
+
             GUILayout.Label("Version:");
             GUILayout.Label(_config.Version.ToString());
             if (GUILayout.Button("RESET", GUILayout.Width(60)))
             {
                 _config.Version = 0;
             }
+
+            GUILayout.Label("App Version:");
+            GUILayout.Label(Application.version.ToString());
+            GUILayout.EndHorizontal();
+
+            //支持以前的app版本
+            GUILayout.BeginHorizontal("Box");
+            _config.SupportOldAppVersions = EditorGUILayout.TextField("Supported old versions:", _config.SupportOldAppVersions);
+            GUILayout.EndHorizontal();
+
+            //老版的资源链接
+            GUILayout.BeginHorizontal("Box");
+            _config.OldResourceUrl = EditorGUILayout.TextField("Old resource url:", _config.OldResourceUrl);
             GUILayout.EndHorizontal();
 
             //压缩格式
@@ -188,21 +147,7 @@ namespace Wanderer.GameFramework
             {
                 _config.BuildTarget = (int)newBuildTarget;
             }
-            //GUILayout.BeginVertical("Box");
-            //GUILayout.Label("Build Targets:");
-            //_scrollViewPos = GUILayout.BeginScrollView(_scrollViewPos, "Box");
-            //foreach (var item in _allTargets)
-            //{
-            //    bool value = GUILayout.Toggle(item.Value, item.Key.ToString());
-            //    if (value != item.Value)
-            //    {
-            //        _allTargets[item.Key] = value;
-            //        break;
-            //    }
-            //}
-            //GUILayout.EndScrollView();
-            //GUILayout.EndVertical();
-
+         
             //other reseources----------------------------------------------------------------------------
             GUILayout.BeginVertical("Box");
             GUILayout.Label("Other Resources:");
@@ -220,7 +165,8 @@ namespace Wanderer.GameFramework
                 //保存配置文件
                 SaveConfig();
                 //关闭窗口
-                Close();
+                //  Close();
+                EditorUtility.DisplayDialog("SaveConfig", "Succee", "OK");
             }
             if (GUILayout.Button("Build", GUILayout.Width(60)))
             {
@@ -326,8 +272,26 @@ namespace Wanderer.GameFramework
             //整理AssetBundleVersionInfo
             AssetBundleVersionInfo assetVersionInfo = new AssetBundleVersionInfo();
             assetVersionInfo.Version = _config.Version;
+            assetVersionInfo.ForceUpdate = _config.ForceUpdate;
+            assetVersionInfo.AppVersion = Application.version;
+            assetVersionInfo.OldResourceUrl = _config.OldResourceUrl;
             assetVersionInfo.ManifestAssetBundle = targetName;
             assetVersionInfo.AssetHashInfos = new List<AssetHashInfo>();
+            //整理当前资源支持的以前的AppVersion
+            if (!string.IsNullOrEmpty(_config.SupportOldAppVersions))
+            {
+                string[] args = _config.SupportOldAppVersions.Split(';');
+                if (args != null)
+                {
+					foreach (var item in args)
+					{
+                        if (!string.IsNullOrEmpty(item))
+                        {
+                            assetVersionInfo.SupportOldAppVersions.Add(item);
+                        }
+					}
+                }
+            }
 
             AssetBundle targetBundle = AssetBundle.LoadFromFile(targetBundlePath);
             AssetBundleManifest manifest = targetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
@@ -514,15 +478,51 @@ namespace Wanderer.GameFramework
         [System.Serializable]
         public class AssetBundleConifgInfo
         {
+            /// <summary>
+            /// 资源版本号
+            /// </summary>
             public int Version = 0;
+            /// <summary>
+            /// 打包的路径
+            /// </summary>
             public string BuildPath = "";
+            /// <summary>
+            /// 压缩格式
+            /// </summary>
             public int CompressOptions = 1;
+            /// <summary>
+            /// 使用AssestBunldeEditor的打包方式
+            /// </summary>
             public bool UseAssetBundleEditor = true;
+            /// <summary>
+            /// 这个已经过时
+            /// </summary>
             public bool Copy2StreamingAssets = false;
+            /// <summary>
+            /// 打包的目标平台
+            /// </summary>
             public int BuildTarget = 13;
          //   public List<int> BuildTargets = new List<int>();
+            /// <summary>
+            /// 其他的资源路径
+            /// </summary>
             public string OtherResources = "";
+            /// <summary>
+            /// 默认加密
+            /// </summary>
             public bool IsEncrypt = true;
+            /// <summary>
+            /// 支持旧版的App版本号
+            /// </summary>
+            public string SupportOldAppVersions = "";
+            /// <summary>
+            /// 上一版的资源链接
+            /// </summary>
+            public string OldResourceUrl = "";
+            /// <summary>
+            /// 强制更新
+            /// </summary>
+            public bool ForceUpdate = true;
         }
     }
 }

@@ -75,6 +75,14 @@ namespace Wanderer.GameFramework
 				{
 					DrawAddIcon(addIconRect, "script_01");
 				}
+				else if (assetPath.StartsWith("assets/game/shader"))
+				{
+					GUI.DrawTexture(addIconRect, EditorGUIUtility.IconContent("d_ShaderVariantCollection Icon").image, ScaleMode.ScaleToFit);
+				}
+				else if (assetPath.StartsWith("assets/game/material"))
+				{
+					GUI.DrawTexture(addIconRect, EditorGUIUtility.IconContent("Material Icon").image, ScaleMode.ScaleToFit);
+				}
 				else
 				{
 					DrawAddIcon(addIconRect, "resource");
