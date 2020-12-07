@@ -9,7 +9,7 @@ namespace Wanderer.GameFramework
 	public class BinaryToText:EditorWindow
 	{
 		private string _content;
-
+		private Vector2 _contentScollPos;
 		[MenuItem("Tools/Other/Binary To Text")]
 		static void OpenWindow()
 		{
@@ -26,7 +26,9 @@ namespace Wanderer.GameFramework
 					_content = File.ReadAllText(file).ToEncrypt();
 				}
 			}
-			GUILayout.TextArea(_content,GUILayout.Height(Screen.height));
+			_contentScollPos = GUILayout.BeginScrollView(_contentScollPos);
+			GUILayout.TextArea(_content);
+			GUILayout.EndScrollView();
 		}
 	}
 }

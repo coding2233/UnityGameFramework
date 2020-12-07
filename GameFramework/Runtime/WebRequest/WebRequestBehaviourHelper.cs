@@ -60,9 +60,9 @@ namespace Wanderer.GameFramework
         /// <param name="remoteUrl"></param>
         /// <param name="localPath"></param>
         /// <param name="callback"></param>
-        internal async Task Download(string remoteUrl, string localPath, Action<string, UnityWebRequest, float> callback)
+        internal void Download(string remoteUrl, string localPath, Action<string, UnityWebRequest, float> callback)
         {
-            await WebRequestDwonloaFile(remoteUrl,localPath, callback);
+            StartCoroutine(WebRequestDownloadFile(remoteUrl,localPath, callback));
         }
         #endregion
 
@@ -154,21 +154,21 @@ namespace Wanderer.GameFramework
         }
 
         //下载文件
-        private IEnumerator WebRequestDwonloaFile(string remoteUrl, string localPath, Action<string, UnityWebRequest, float> callback)
+        private IEnumerator WebRequestDownloadFile(string remoteUrl, string localPath, Action<string, UnityWebRequest, float> callback)
         {
             //断点续传写不写呢...
             //纠结------------------
             //换一帧运行
             yield return null;
 
-            using (UnityWebRequest request = UnityWebRequest.Get(remoteUrl))
+            UnityWebRequest request = UnityWebRequest.Get(remoteUrl);
             {
-                request.downloadHandler = new DownloadHandlerFile(localPath);
+                callback?.Invoke(localPath, request, 0);
+                request.downloadHandler = new DownloadHandlerFile(localPath, true);
 
-                request.timeout = 10;
                 float lastTime = Time.realtimeSinceStartup;
                 //yield return request.SendWebRequest(); 
-                request.SendWebRequest();
+                yield return request.SendWebRequest();
 
 
                 yield return null;

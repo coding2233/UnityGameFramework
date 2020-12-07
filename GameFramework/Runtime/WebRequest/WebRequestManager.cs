@@ -128,9 +128,9 @@ namespace Wanderer.GameFramework
         /// <param name="localPath"></param>
         /// <param name="resultCallback"></param>
         /// <param name="progressCallback"></param>
-        public Task Download(string remoteUrl, string localPath, Action<string, UnityWebRequest, float> callback)
+        public void Download(string remoteUrl, string localPath, Action<string, UnityWebRequest, float> callback)
         {
-            return _webRequest.Download(remoteUrl,localPath, callback);
+            _webRequest.Download(remoteUrl,localPath, callback);
         }
         #endregion
 

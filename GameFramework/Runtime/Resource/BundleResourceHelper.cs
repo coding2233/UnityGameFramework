@@ -86,6 +86,7 @@ namespace Wanderer.GameFramework
 
         public void LoadAsset<T>(string assetName, Action<T> callback) where T : Object
         {
+            assetName = assetName.ToLower();
             if (_assetsPathMapAssetbundleName.TryGetValue(assetName, out string abName))
             {
                 if (_liveAssetBundle.TryGetValue(abName, out AssetBundle assetBundle))
@@ -114,6 +115,7 @@ namespace Wanderer.GameFramework
         
         public T LoadAsset<T>(string assetName) where T : UnityEngine.Object
         {
+            assetName = assetName.ToLower();
 #if UNITY_ANDROID
             if (_pathType == PathType.ReadOnly)
             {
@@ -136,6 +138,7 @@ namespace Wanderer.GameFramework
 
         public void UnloadAsset(string assetName)
         {
+            assetName = assetName.ToLower();
             if (_assetsPathMapAssetbundleName.TryGetValue(assetName, out string abName))
             {
                 if (_liveAssetBundle.TryGetValue(abName, out AssetBundle assetBundle))
@@ -147,6 +150,7 @@ namespace Wanderer.GameFramework
 
         public void UnloadAssetBunlde(string assetBundleName, bool unload = false)
         {
+            assetBundleName = assetBundleName.ToLower();
             if (_liveAssetBundle.TryGetValue(assetBundleName, out AssetBundle assetBundle))
             {
                 if (_assetBundleReferenceCount.ContainsKey(assetBundle))

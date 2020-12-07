@@ -297,14 +297,15 @@ namespace Wanderer.GameFramework
                 string localPath = "";
 
                 int downloadComplete = 0;
-
+               
                 foreach (var item in _needDownloadFiles)
                 {
                     remoteUrl = Path.Combine(_remoteUpdatePath, item.Name);
                     localPath = Path.Combine(_localResourcePath, $"{item.Name}.download");
                     await UniTask.NextFrame();
                     UnityWebRequest downloadWebRequest = null;
-                    await _webRequest.Download(remoteUrl, localPath, (localUrl, webRequest, downloadTime) => {
+                    ulong  downloadSize = 0;
+                    _webRequest.Download(remoteUrl, localPath, (localUrl, webRequest, downloadTime) => {
                         downloadWebRequest = webRequest;
                         if (webRequest.isNetworkError)
                         {
@@ -317,11 +318,18 @@ namespace Wanderer.GameFramework
                             downloadBytes += totleDownloadSize;
                             progress = Mathf.Clamp((float)((downloadBytes / 1024.0f) / _totleFileSize),0.0f,0.99f);
                             callback?.Invoke(true, progress, speed, _totleFileSize);
+
+                            if (downloadWebRequest.isDone)
+                            {
+                                downloadSize = downloadWebRequest.downloadedBytes;
+                            }
                         }
+                        
                     });
+                    await UniTask.WaitUntil(() => downloadSize>0);
                     await UniTask.NextFrame();
 
-                    totleDownloadSize += downloadWebRequest.downloadedBytes;
+                    totleDownloadSize += downloadComplete;
                     if (!downloadWebRequest.isNetworkError)
                     {
                         //验证文件的完整性
@@ -349,6 +357,7 @@ namespace Wanderer.GameFramework
                 //下载完成
                 if (downloadComplete == _needDownloadFiles.Count)
                 {
+                    UpdateLocalVersion();
                     callback?.Invoke(true, 1.0f, 0, _totleFileSize);
                 }
                 else

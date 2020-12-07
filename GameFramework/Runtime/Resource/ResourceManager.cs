@@ -182,7 +182,6 @@ namespace Wanderer.GameFramework
         /// <returns></returns>
         public Task<T> LoadAsset<T>(string assetName) where T : UnityEngine.Object
         {
-            assetName = assetName.ToLower();
             var taskResult = new TaskCompletionSource<T>();
             _resourceHelper?.LoadAsset<T>(assetName, (t) =>
             {
@@ -200,7 +199,6 @@ namespace Wanderer.GameFramework
         /// <returns></returns>
         public void LoadAsset<T>(string assetName, Action<T> callback) where T : UnityEngine.Object
         {
-            assetName = assetName.ToLower();
             _resourceHelper?.LoadAsset<T>(assetName, callback);
         }
 
@@ -211,7 +209,6 @@ namespace Wanderer.GameFramework
         /// <param name="callback"></param>
         public void LoadAsset(string assetName, Action<UnityEngine.Object> callback)
         {
-            assetName = assetName.ToLower();
             _resourceHelper?.LoadAsset<UnityEngine.Object>(assetName, callback);
         }
 
@@ -234,7 +231,6 @@ namespace Wanderer.GameFramework
         /// <param name="callback"></param>
         public UnityEngine.Object LoadAssetSync(string assetName)
         {
-            assetName = assetName.ToLower();
             return _resourceHelper?.LoadAsset<UnityEngine.Object>(assetName);
         }
 
