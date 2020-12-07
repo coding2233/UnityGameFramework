@@ -186,6 +186,32 @@ namespace Wanderer.GameFramework
         }
 
         /// <summary>
+        /// 检查某一个资源是否需要更新
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="callback"></param>
+        public async void CheckResource(string name, Action<bool,bool> callback)
+        {
+#if UNITY_EDITOR
+            if (GameFrameworkMode.GetModule<ResourceManager>().ResUpdateType == ResourceUpdateType.Editor)
+            {
+                callback?.Invoke(true,false);
+            }
+#endif
+            name = name.ToLower();
+            var ahif = RemoteVersion.AssetHashInfos.Find(x => x.Name.Equals(name));
+            if (ahif != null)
+            {
+                string md5 = await CheckFileMD5(ahif.Name);
+                callback?.Invoke(!string.IsNullOrEmpty(md5),!ahif.Hash.Equals(md5));
+            }
+            else
+            {
+                throw new GameException($"There is no corresponding resource on the resource server: {name}");
+            }
+        }
+
+        /// <summary>
         /// 更新某一个资源
         /// </summary>
         /// <param name="name"></param>
@@ -198,7 +224,7 @@ namespace Wanderer.GameFramework
             {
                 throw new GameException("Request remote version information first!");
             }
-          
+            name = name.ToLower();
             var ahif = RemoteVersion.AssetHashInfos.Find(x => x.Name.Equals(name));
             if (ahif != null)
             {
