@@ -40,7 +40,7 @@ namespace Wanderer.GameFramework
 			GameMode.Resource.Version.CheckResource((needUpdate,localVersion,remoteVersion)=> {
 				if (needUpdate)
 				{
-					GameMode.Resource.Version.UpdateResource(OnResourceUpdateCallback);
+					GameMode.Resource.Version.UpdateResource(OnResourceUpdateCallback,OnDownloadComplete, OnDownloadError);
 				}
 				_updateFlag = !needUpdate;
 			});
@@ -71,19 +71,30 @@ namespace Wanderer.GameFramework
 		/// <param name="progress">当前进度 0.0-1.0</param>
 		/// <param name="speed">下载速度 KB/s</param>
 		/// <param name="size">文件大小 KB</param>
-		private void OnResourceUpdateCallback(bool result, float progress, float speed, ulong size)
+		/// 下载回调[进度(0-1)，大小(KB),速度(KB/S),剩余时间(s)]
+		private void OnResourceUpdateCallback(float progress, double size,double speed, float remainingTime)
 		{
-			if (!result)
-			{
-				Log.Warning($"资源下载失败,网络错误!!");
-				return;
-			}
-			//下载完成
-			if (progress >= 1.0f)
-			{
-				_updateFlag = true;
-			}
+			
 		}
+
+		/// <summary>
+		/// 资源下载完成
+		/// </summary>
+		private void OnDownloadComplete()
+		{
+			_updateFlag = true;
+		}
+
+		/// <summary>
+		/// 下载错误
+		/// </summary>
+		/// <param name="localPath"></param>
+		/// <param name="error"></param>
+		private void OnDownloadError(string localPath,string error)
+		{
+			Log.Warning($"资源下载失败,网络错误!! {localPath} {error}");
+		}
+
 		#endregion
 
 		#region 内部函数

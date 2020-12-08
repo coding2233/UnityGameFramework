@@ -23,12 +23,9 @@ namespace Wanderer.GameFramework
         private string _remoteUpdatePath = null;
         //本地路径
         private string _localResourcePath;
-        //需要下载的文件
-        private List<AssetHashInfo> _needDownloadFiles = new List<AssetHashInfo>();
-        private bool _downloading = false;
-        ////下载回调 报错，进度【0-1】 速度 大小
-        //private Action<bool, float, float, ulong> _downloadCallback;
-  
+        //更新中
+        private bool _updating = false;
+
 
         public ResourceVersion(string remoteUpdatePath, string localResourcePath)
         {
@@ -169,19 +166,25 @@ namespace Wanderer.GameFramework
         /// <summary>
         /// 更新资源
         /// </summary>
-        /// <param name="callback"></param>
+        /// <param name="callback">下载回调[进度(0-1)，大小(KB),速度(KB/S),剩余时间(s)]</param>
+        /// <param name="downloadComplete">下载完成</param>
+        /// <param name="errorCallback">下载错误</param>
+        /// <param name="name">是否是更新单个资源,需要更新则传单个文件的名称</param>
         /// <returns></returns>
-        public bool UpdateResource(Action<bool, float, float, ulong> callback)
+        public bool UpdateResource(Action<float, double, double, float> callback, Action downloadComplete, Action<string, string> errorCallback,string name=null)
         {
-            if (_downloading)
+            if (_updating)
                 return false;
      
             if (!CheckResource())
             {
-                callback?.Invoke(true,1, 0, 0);
+                return false;
             }
+            _updating = true;
             //整理下载资源
-            CollateDownloadResources(callback);
+             CollateDownloadResources((needDownloadFiles)=> {
+                 DownloadFiles(needDownloadFiles, callback, downloadComplete, errorCallback);
+             }, name);
             return true;
         }
 
@@ -211,42 +214,6 @@ namespace Wanderer.GameFramework
             }
         }
 
-        /// <summary>
-        /// 更新某一个资源
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public async Task<bool> UpdateResource(string name, Action<bool, float, float, ulong> callback)
-        {
-            if (_downloading)
-                return false;
-            if (RemoteVersion == null)
-            {
-                throw new GameException("Request remote version information first!");
-            }
-            name = name.ToLower();
-            var ahif = RemoteVersion.AssetHashInfos.Find(x => x.Name.Equals(name));
-            if (ahif != null)
-            {
-                string md5 = await CheckFileMD5(ahif.Name);
-                if (!ahif.Hash.Equals(md5))
-                {
-                    _needDownloadFiles.Add(ahif);
-                    //下载资源
-                    DownloadFiles(callback);
-                }
-                else
-                {
-                    callback?.Invoke(true, 1, 0, 0);
-                }
-            }
-            else
-            {
-                throw new GameException($"No corresponding resource was found: {name}");
-            }
-            return true;
-        }
-
         #region 事件回调
       
         #endregion
@@ -271,16 +238,16 @@ namespace Wanderer.GameFramework
             }
         }
 
-        //整理下载资源
-        private async void CollateDownloadResources(Action<bool, float, float, ulong> callback)
+        /// <summary>
+        /// 整理下载资源
+        /// </summary>
+        /// <param name="name">资源名称</param>
+        private async void CollateDownloadResources(Action<List<AssetHashInfo>> needDownloadCallback, string name = null)
         {
-            _needDownloadFiles.Clear();
-            if (LocalVersion == null)
+            List<AssetHashInfo> needDownloadFiles = new List<AssetHashInfo>();
+            if (string.IsNullOrEmpty(name))
             {
-                _needDownloadFiles.AddRange(RemoteVersion.AssetHashInfos);
-            }
-            else
-            {
+                //遍历需要下载的文件
                 foreach (var item in RemoteVersion.AssetHashInfos)
                 {
                     if (!item.ForceUpdate)
@@ -288,109 +255,94 @@ namespace Wanderer.GameFramework
                     string md5 = await CheckFileMD5(item.Name);
                     if (!item.Hash.Equals(md5))
                     {
-                        _needDownloadFiles.Add(item);
+                        needDownloadFiles.Add(item);
                     }
                 }
             }
-            //下载资源
-            if (_needDownloadFiles.Count > 0)
-                DownloadFiles(callback);
             else
             {
-                callback?.Invoke(true,1, 0, 0);
+                name = name.ToLower();
+                var ahif = RemoteVersion.AssetHashInfos.Find(x => x.Name.Equals(name));
+                if (ahif != null)
+                {
+                    string md5 = await CheckFileMD5(ahif.Name);
+                    if (!ahif.Hash.Equals(md5))
+                    {
+                        needDownloadFiles.Add(ahif);
+                    }
+                }
             }
+            //需要下载的文件大小
+            needDownloadCallback?.Invoke(needDownloadFiles);
         }
 
-        //下载文件
-        private async void DownloadFiles(Action<bool, float, float, ulong> callback)
+        /// <summary>
+        /// 下载资源
+        /// </summary>
+        /// <param name="callback">[进度(0-1)，大小(KB),速度(KB/S),剩余时间(s)]</param>
+        /// <param name="errorCallback">[文件路径，错误]</param>
+        private void DownloadFiles(List<AssetHashInfo> needDownloadFiles,Action<float, double, double, float> callback, Action downloadComplete, Action<string, string> errorCallback)
         {
-            if (_needDownloadFiles.Count > 0)
+            //下载资源
+            if (needDownloadFiles.Count > 0)
             {
-                _downloading = true;
-                //总文件大小
-                ulong _totleFileSize = 0;
-                //总共的下载的文件大小
-                double totleDownloadSize = 0;
-                //  float downloadStartTime = Time.realtimeSinceStartup;
-                float progress = 0.0f;
-                //文件总大小
-                foreach (var item in _needDownloadFiles)
+                int downloadFileCount = 0;
+                double totleFileSize = 0;
+                Dictionary<string, AssetHashInfo> downloadFiles = new Dictionary<string, AssetHashInfo>();
+                foreach (var item in needDownloadFiles)
                 {
-                    _totleFileSize += (ulong)item.Size;
+                    string remoteUrl = Path.Combine(_remoteUpdatePath, item.Name);
+                    string localPath = Path.Combine(_localResourcePath, $"{item.Name}.download");
+                    _webRequest.FileDownloader.AddDownloadFile(remoteUrl, localPath);
+                    //整理文件大小
+                    totleFileSize += item.Size;
+                    downloadFiles.Add(localPath, item);
                 }
-
-                string remoteUrl = "";
-                string localPath = "";
-
-                int downloadComplete = 0;
-               
-                foreach (var item in _needDownloadFiles)
+                //下载文件
+                _webRequest.FileDownloader.StartDownload((localPath, size, time, speed) =>
                 {
-                    remoteUrl = Path.Combine(_remoteUpdatePath, item.Name);
-                    localPath = Path.Combine(_localResourcePath, $"{item.Name}.download");
-                    await UniTask.NextFrame();
-                    UnityWebRequest downloadWebRequest = null;
-                    ulong  downloadSize = 0;
-                    _webRequest.Download(remoteUrl, localPath, (localUrl, webRequest, downloadTime) => {
-                        downloadWebRequest = webRequest;
-                        if (webRequest.isNetworkError)
-                        {
-                            callback?.Invoke(false, progress, 0, _totleFileSize);
-                        }
-                        else
-                        {
-                            double downloadBytes = webRequest.downloadedBytes * webRequest.downloadProgress;
-                            float speed = (float)((downloadBytes / 1024.0f) / downloadTime);
-                            downloadBytes += totleDownloadSize;
-                            progress = Mathf.Clamp((float)((downloadBytes / 1024.0f) / _totleFileSize),0.0f,0.99f);
-                            callback?.Invoke(true, progress, speed, _totleFileSize);
-
-                            if (downloadWebRequest.isDone)
-                            {
-                                downloadSize = downloadWebRequest.downloadedBytes;
-                            }
-                        }
-                        
-                    });
-                    await UniTask.WaitUntil(() => downloadSize>0);
-                    await UniTask.NextFrame();
-
-                    totleDownloadSize += downloadComplete;
-                    if (!downloadWebRequest.isNetworkError)
+                    float progress = Mathf.Clamp01((float)(size / totleFileSize));
+                    float remainingTime = (float)((totleFileSize - size) / speed);
+                    callback?.Invoke(progress, totleFileSize, speed, remainingTime);
+                }, async (localPath) =>
+                {
+                    //验证文件的完整性
+                    string md5 = await FileUtility.GetFileMD5(localPath);
+                    var assetHashInfo = downloadFiles[localPath];
+                    if (assetHashInfo.Hash.Equals(md5))
                     {
-                        //验证文件的完整性
-                        string md5 = await FileUtility.GetFileMD5(localPath);
-                        if (item.Hash.Equals(md5))
+                        int index = localPath.LastIndexOf('.');
+                        string targetPath = localPath.Substring(0, index);
+                        if (File.Exists(targetPath))
                         {
-                            int index = localPath.LastIndexOf('.');
-                            string targetPath = localPath.Substring(0, index);
-                            if (File.Exists(targetPath))
+                            File.Delete(targetPath);
+                        }
+                        File.Move(localPath, targetPath);
+                        downloadFiles.Remove(localPath);
+                        downloadFileCount++;
+                        //下载完成
+                        if (downloadFiles.Count == 0)
+                        {
+                            downloadComplete?.Invoke();
+                            //更新本地资源
+                            if (downloadFileCount == needDownloadFiles.Count)
                             {
-                                File.Delete(targetPath);
+                                UpdateLocalVersion();
                             }
-                            File.Move(localPath, targetPath);
-                            downloadComplete++;
+                            needDownloadFiles = null;
+                            _updating = false;
                         }
                     }
-                    else
-                    {
-                        callback?.Invoke(false, progress, 0, _totleFileSize);
-                    }
-                    //清理下载器
-                    downloadWebRequest.Dispose();
-                    downloadWebRequest = null;
-                }
+                }, (localPath, error) =>
+                {
+                    errorCallback?.Invoke(localPath, error);
+                });
+            }
+            else
+            {
                 //下载完成
-                if (downloadComplete == _needDownloadFiles.Count)
-                {
-                    UpdateLocalVersion();
-                    callback?.Invoke(true, 1.0f, 0, _totleFileSize);
-                }
-                else
-                {
-                    callback?.Invoke(false, progress, 0, _totleFileSize);
-                }
-
+                downloadComplete?.Invoke();
+                _updating = false;
             }
         }
 

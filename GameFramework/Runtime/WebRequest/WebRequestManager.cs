@@ -17,10 +17,12 @@ using UnityEngine;
 
 namespace Wanderer.GameFramework
 {
-    public sealed class WebRequestManager : GameFrameworkModule
+    public sealed class WebRequestManager : GameFrameworkModule,IUpdate
     {
         #region 属性
         private WebRequestBehaviourHelper _webRequest;
+        //文件下载器
+        public FileDownloader FileDownloader { get; private set; }
         #endregion
 
         public WebRequestManager()
@@ -28,6 +30,8 @@ namespace Wanderer.GameFramework
             _webRequest = new GameObject("WebRequestBehaviourHelper").AddComponent<WebRequestBehaviourHelper>();
             _webRequest.gameObject.hideFlags = HideFlags.HideAndDontSave;
             GameObject.DontDestroyOnLoad(_webRequest.gameObject);
+            //文件下载
+            FileDownloader = new FileDownloader(_webRequest);
         }
         #region 外部接口
 
@@ -121,18 +125,13 @@ namespace Wanderer.GameFramework
             _webRequest.RequestAssetBundle(url, callback);
         }
 
-        /// <summary>
-        /// 下载文件
-        /// </summary>
-        /// <param name="remoteUrl"></param>
-        /// <param name="localPath"></param>
-        /// <param name="resultCallback"></param>
-        /// <param name="progressCallback"></param>
-        public void Download(string remoteUrl, string localPath, Action<string, UnityWebRequest, float> callback)
-        {
-            _webRequest.Download(remoteUrl,localPath, callback);
-        }
+
         #endregion
+
+        public void OnUpdate()
+        {
+            FileDownloader?.OnUpdate();
+        }
 
         public override void OnClose()
         {

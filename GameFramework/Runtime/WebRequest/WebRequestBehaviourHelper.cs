@@ -8,7 +8,7 @@ using UnityEngine.Networking;
 
 namespace Wanderer.GameFramework
 {
-    internal class WebRequestBehaviourHelper : MonoBehaviour
+    internal class WebRequestBehaviourHelper : MonoBehaviour,IDownloader
     {
 
         #region 接口
@@ -54,15 +54,18 @@ namespace Wanderer.GameFramework
         {
             StartCoroutine(WebRequestAssetBundle(url, callback));
         }
+
         /// <summary>
         /// 下载文件
         /// </summary>
         /// <param name="remoteUrl"></param>
         /// <param name="localPath"></param>
-        /// <param name="callback"></param>
-        internal void Download(string remoteUrl, string localPath, Action<string, UnityWebRequest, float> callback)
+        /// <param name="callback">本地文件的路径，是否下载完成，下载的文件大小，下载的进度</param>
+        /// <param name="errorCallback">错误回调</param>
+        /// <returns></returns>
+        public void Download(string remoteUrl, string localPath, Action<string, bool, ulong, float> callback, Action<string,string> errorCallback)
         {
-            StartCoroutine(WebRequestDownloadFile(remoteUrl,localPath, callback));
+            StartCoroutine(WebRequestDownloadFile(remoteUrl,localPath, callback, errorCallback));
         }
         #endregion
 
@@ -153,38 +156,42 @@ namespace Wanderer.GameFramework
             }
         }
 
-        //下载文件
-        private IEnumerator WebRequestDownloadFile(string remoteUrl, string localPath, Action<string, UnityWebRequest, float> callback)
+        /// <summary>
+        /// 下载文件
+        /// </summary>
+        /// <param name="remoteUrl"></param>
+        /// <param name="localPath"></param>
+        /// <param name="callback">本地文件的路径，是否下载完成，下载的文件大小，下载的进度</param>
+        /// <param name="errorCallback">错误回调</param>
+        /// <returns></returns>
+        private IEnumerator WebRequestDownloadFile(string remoteUrl, string localPath, Action<string, bool,ulong, float> callback,Action<string,string> errorCallback)
         {
-            //断点续传写不写呢...
-            //纠结------------------
-            //换一帧运行
             yield return null;
 
-            UnityWebRequest request = UnityWebRequest.Get(remoteUrl);
+            using (UnityWebRequest request = UnityWebRequest.Get(remoteUrl))
             {
-                callback?.Invoke(localPath, request, 0);
                 request.downloadHandler = new DownloadHandlerFile(localPath, true);
 
-                float lastTime = Time.realtimeSinceStartup;
-                //yield return request.SendWebRequest(); 
-                yield return request.SendWebRequest();
-
+                request.SendWebRequest();
 
                 yield return null;
                 while (!request.isDone)
                 {
-                    float seconds = (Time.realtimeSinceStartup - lastTime);
-                    callback?.Invoke(localPath, request, lastTime);
+                    if (request.downloadProgress > 0)
+                    {
+                        callback?.Invoke(localPath,false, request.downloadedBytes,request.downloadProgress);
+                    }
                     yield return null;
                 }
 
                 yield return null;
 
                 if (request.isNetworkError || request.isHttpError)
-                    callback?.Invoke(localPath, request, lastTime);
+                    errorCallback?.Invoke(localPath,request.error);
                 else
-                    callback?.Invoke(localPath, request, lastTime);
+                {
+                    callback?.Invoke(localPath, true, request.downloadedBytes, request.downloadProgress);
+                }
             }
 
         }
