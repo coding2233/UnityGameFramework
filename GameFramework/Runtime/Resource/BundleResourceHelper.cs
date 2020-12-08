@@ -108,7 +108,8 @@ namespace Wanderer.GameFramework
             }
             else
             {
-                callback?.Invoke(null);
+                throw new GameException($"Can't find asset assetbundle :{assetName}");
+               // callback?.Invoke(null);
             }
         }
         
@@ -133,7 +134,10 @@ namespace Wanderer.GameFramework
                 SetAssetBundleReferenceCount(assetBundle, +1);
                 return t;
             }
-            return null;
+            else
+            {
+                throw new GameException($"Can't find asset assetbundle :{assetName}");
+            }
         }
 
         public void UnloadAsset(string assetName)
@@ -315,7 +319,10 @@ namespace Wanderer.GameFramework
                         }
                     }
                 }
-
+                if (_assetsPathMapAssetbundleName.Count == 0)
+                {
+                    Debug.LogWarning($"Assetbundle no resource!");
+                }
                 //路径准备好了
                 callback?.Invoke();
                 // GameFrameworkMode.GetModule<EventManager>().Trigger<ResourceAssetPathsMapReadyEventArgs>(this);
