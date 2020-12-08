@@ -289,44 +289,64 @@ namespace Wanderer.GameFramework
         /// </summary>
         /// <param name="assetsPath"></param>
         /// <returns></returns>
-        private async void LoadAllAssetPathForAssetbundle(string assetsPath, Action callback)
+        private void LoadAllAssetPathForAssetbundle(string assetsPath, Action callback)
         {
-            using (UnityWebRequest request = new UnityWebRequest(assetsPath))
-            {
-                request.downloadHandler = new DownloadHandlerBuffer();
-                await request.SendWebRequest();
+            _assetsPathMapAssetbundleName.Clear();
+            byte[] buffer = File.ReadAllBytes(assetsPath);
+            using (MemoryStream stream = new EncryptMemoryStream(buffer))
+			{
+				stream.Read(buffer, 0, buffer.Length);
+				string content = System.Text.Encoding.UTF8.GetString(buffer);
+				_assetsPathMapAssetbundleName.Clear();
+				string[] lines = content.Split('\n');
+				foreach (var item in lines)
+				{
+					if (!string.IsNullOrEmpty(item))
+					{
+						string[] args = item.Split('\t');
+						if (args != null && args.Length >= 2)
+						{
+							_assetsPathMapAssetbundleName[args[0].Trim()] = args[1].Trim();
+						}
+					}
+				}
+			}
+			//using (UnityWebRequest request = new UnityWebRequest(assetsPath))
+			//{
+			//    request.downloadHandler = new DownloadHandlerBuffer();
+			//    await request.SendWebRequest();
 
-                if (request.isNetworkError)
-                {
-                    throw new GameException($"Can't read assets path file from streamingasset: {assetsPath} error: {request.error}");
-                }
-                byte[] buffer = request.downloadHandler.data;
-                using (MemoryStream stream = new EncryptMemoryStream(buffer))
-                {
-                    stream.Read(buffer, 0, buffer.Length);
-                    string content = System.Text.Encoding.UTF8.GetString(buffer);
-                    _assetsPathMapAssetbundleName.Clear();
-                    string[] lines = content.Split('\n');
-                    foreach (var item in lines)
-                    {
-                        if (!string.IsNullOrEmpty(item))
-                        {
-                            string[] args = item.Split('\t');
-                            if (args != null && args.Length >= 2)
-                            {
-                                _assetsPathMapAssetbundleName[args[0].Trim()] = args[1].Trim();
-                            }
-                        }
-                    }
-                }
-                if (_assetsPathMapAssetbundleName.Count == 0)
+			//    if (request.isNetworkError)
+			//    {
+			//        throw new GameException($"Can't read assets path file from streamingasset: {assetsPath} error: {request.error}");
+			//    }
+			//    byte[] buffer = request.downloadHandler.data;
+			//    using (MemoryStream stream = new EncryptMemoryStream(buffer))
+			//    {
+			//        stream.Read(buffer, 0, buffer.Length);
+			//        string content = System.Text.Encoding.UTF8.GetString(buffer);
+			//        _assetsPathMapAssetbundleName.Clear();
+			//        string[] lines = content.Split('\n');
+			//        foreach (var item in lines)
+			//        {
+			//            if (!string.IsNullOrEmpty(item))
+			//            {
+			//                string[] args = item.Split('\t');
+			//                if (args != null && args.Length >= 2)
+			//                {
+			//                    _assetsPathMapAssetbundleName[args[0].Trim()] = args[1].Trim();
+			//                }
+			//            }
+			//        }
+			//    }
+			if (_assetsPathMapAssetbundleName.Count == 0)
                 {
                     Debug.LogWarning($"Assetbundle no resource!");
                 }
                 //路径准备好了
                 callback?.Invoke();
                 // GameFrameworkMode.GetModule<EventManager>().Trigger<ResourceAssetPathsMapReadyEventArgs>(this);
-            }
+           // }
         }
 
         //加载asstbundle
