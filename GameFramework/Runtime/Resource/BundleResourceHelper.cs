@@ -60,9 +60,9 @@ namespace Wanderer.GameFramework
             {
                 case PathType.ReadOnly:
                     _readPath = Application.streamingAssetsPath;
-#if UNITY_IOS && !UNITY_EDITOR
-                    _readPath = $"file:///{_readPath}";
-#endif
+//#if UNITY_IOS && !UNITY_EDITOR
+//                    _readPath = $"file:///{_readPath}";
+//#endif
                     break;
                 case PathType.ReadWrite:
                     _readPath = Application.persistentDataPath;
@@ -473,6 +473,7 @@ namespace Wanderer.GameFramework
         /// <returns></returns>
         private async void LoadAssetBundleFromStreamingAssets(string path, Action<AssetBundle> callback)
         {
+            path = $"file:///{path}";
             if (_isEncrypt)
             {
                 using (UnityWebRequest request = new UnityWebRequest(path))

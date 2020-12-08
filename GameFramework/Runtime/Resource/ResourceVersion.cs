@@ -68,7 +68,7 @@ namespace Wanderer.GameFramework
                 callback?.Invoke(LocalVersion);
                 return;
             }
-
+            versionAssetPath = $"file:///{versionAssetPath}";
             _webRequest.RequestText(versionAssetPath, null,(result, content) =>
             {
                 if (result && !string.IsNullOrEmpty(content))
