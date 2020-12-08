@@ -91,7 +91,7 @@ namespace Wanderer.GameFramework
                 }
                 //启动日志文件
                 bool logFileEnable = (bool)_gameMode.ConfigJsonData["LogFileEnable"];
-                bool newLogFileEnable = GUILayout.Toggle(debugEnable, "LogFile Enable");
+                bool newLogFileEnable = GUILayout.Toggle(logFileEnable, "LogFile Enable");
                 if (logFileEnable != newLogFileEnable)
                 {
                     _gameMode.ConfigJsonData["LogFileEnable"] = newLogFileEnable;

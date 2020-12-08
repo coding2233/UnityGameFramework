@@ -335,6 +335,11 @@ namespace Wanderer.GameFramework
                             _updating = false;
                         }
                     }
+                    else
+                    {
+                        File.Delete(localPath);
+                        throw new GameException($"File integrity verification failed. {localPath}");
+                    }
                 }, (localPath, error) =>
                 {
                     errorCallback?.Invoke(localPath, error);

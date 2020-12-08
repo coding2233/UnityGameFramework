@@ -104,7 +104,6 @@ namespace Wanderer.GameFramework
         }
 
 
-
         public override void Write(byte[] array, int offset, int count)
         {
             for (int i = 0; i < array.Length; i++)
