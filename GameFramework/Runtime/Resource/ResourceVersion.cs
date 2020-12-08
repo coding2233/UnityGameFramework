@@ -63,6 +63,12 @@ namespace Wanderer.GameFramework
             LocalVersion = null;
             string versionAssetPath = Path.Combine(_localResourcePath, _assetVersionTxt);
 
+            if (!File.Exists(versionAssetPath))
+            {
+                callback?.Invoke(LocalVersion);
+                return;
+            }
+
             _webRequest.RequestText(versionAssetPath, null,(result, content) =>
             {
                 if (result && !string.IsNullOrEmpty(content))
@@ -72,10 +78,6 @@ namespace Wanderer.GameFramework
                 }
                 //本地可能就没有版本信息
                 callback?.Invoke(LocalVersion);
-                // if (LocalVersion == null)u
-                // {
-                //     throw new GameException($"Can't transition local [AssetBundleVersionInfo]!! {versionAssetPath} {content}");
-                // }
             });
         }
 
