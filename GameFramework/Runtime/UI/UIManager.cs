@@ -299,6 +299,7 @@ namespace Wanderer.GameFramework
             UIView uiView;
             if (!_allUIView.TryGetValue(uiContext, out uiView)|| uiView==null)
             {
+                float loadTime = Time.realtimeSinceStartup;
                 GameObject uiViewSource = _resource.LoadAssetSync<GameObject>(uiContext.AssetPath);
                 if (uiViewSource == null)
                     throw new GameException("uiview path not found:" + uiContext.AssetPath);
@@ -309,6 +310,8 @@ namespace Wanderer.GameFramework
                     return null;
                 _allUIView[uiContext] = uiView;
                 uiView.OnInit(uiContext);
+                loadTime = Time.realtimeSinceStartup- loadTime;
+                Debug.Log($"The time it takes to instantiate UIView: {loadTime}s {uiContext.Name}");
                 return uiView;
             }
             uiView.gameObject.SetActive(true);

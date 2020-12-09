@@ -493,10 +493,20 @@ namespace Wanderer.GameFramework
                 assetNames.AddRange(ab.GetAllAssetNames());
                 for (int i = 0; i < abRequest.allAssets.Length; i++)
 				{
-                    yield return null;
+                   
                     Object asset = abRequest.allAssets[i];
                     string assetName = asset.name.ToLower();
-                    string assetPath = assetNames.Find(x => Path.GetFileNameWithoutExtension(x).Equals(assetName));
+                    bool result = false;
+                    string assetPath = null;
+                    Task.Run(() => {
+                        assetPath = assetNames.Find(x => Path.GetFileNameWithoutExtension(x).Equals(assetName));
+                        result = true;
+                    });
+                    while (!result)
+                    {
+                        yield return null;
+                    }
+                    //string assetPath = assetNames.Find(x => Path.GetFileNameWithoutExtension(x).Equals(assetName));
                     if (string.IsNullOrEmpty(assetPath))
                     {
                         throw new GameException($"The corresponding resource path was not found! {asset.name} {assetName}");

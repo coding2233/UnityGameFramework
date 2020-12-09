@@ -28,6 +28,22 @@ namespace Wanderer.GameFramework
 
         public void OnInit(params object[] args)
         {
+            _commandAction.Add("d1", () =>
+            {
+                Debug.unityLogger.logEnabled = true;
+            });
+            _commandAction.Add("d0", () =>
+            {
+                Debug.unityLogger.logEnabled = false;
+            });
+            _commandAction.Add("f1", () =>
+            {
+                GameFrameworkMode.GetModule<DebuggerManager>().SetLogFileEnable(true);
+            });
+            _commandAction.Add("f0", () =>
+            {
+                GameFrameworkMode.GetModule<DebuggerManager>().SetLogFileEnable(false);
+            });
         }
 
         public void OnEnter()
