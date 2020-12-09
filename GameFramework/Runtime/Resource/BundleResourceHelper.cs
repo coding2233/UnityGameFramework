@@ -475,25 +475,44 @@ namespace Wanderer.GameFramework
         //资源预加载
         private IEnumerator ResourcePreload(List<AssetHashInfo> preloadAsset, Action<float> progressCallback)
         {
+         //   Application.backgroundLoadingPriority = ThreadPriority.High;
             float loadTime = Time.realtimeSinceStartup;
             _preloadAssets.Clear();
             float progressCount = 0;
             foreach (var item in preloadAsset)
 			{
                 yield return null;
-                var ab = LoadAssetBundle(item.Name);
+                //  var ab = LoadAssetBundle(item.Name);
+                AssetBundle ab = null;
+                string abPath = Path.Combine(_readPath, item.Name);
+                using (var stream = new EncryptFileStream(abPath, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false))
+                {
+                    var ablfsa = AssetBundle.LoadFromStreamAsync(stream);
+                    while (!ablfsa.isDone)
+                    {
+                        progressCallback?.Invoke(GetPreloadProgress(0, ablfsa.progress, progressCount, preloadAsset.Count));
+                        yield return null;
+                    }
+                    yield return null;
+                    ab = ablfsa.assetBundle;
+                }
+                //存储assetbundle
+                _liveAssetBundle[item.Name] = ab;
+                //assetbundle 引用计数
+                _assetBundleReferenceCount[ab] = 0;
+
                 var abRequest = ab.LoadAllAssetsAsync();
                 while (!abRequest.isDone)
                 {
-                    float progress = (abRequest.progress+ progressCount )/preloadAsset.Count;
-                    progressCallback?.Invoke(progress);
+                    progressCallback?.Invoke(GetPreloadProgress(0.3f, abRequest.progress, progressCount, preloadAsset.Count));
                     yield return null;
                 }
                 List<string> assetNames = new List<string>();
                 assetNames.AddRange(ab.GetAllAssetNames());
                 for (int i = 0; i < abRequest.allAssets.Length; i++)
 				{
-                   
+                    progressCallback?.Invoke(GetPreloadProgress(0.6f, i/(float)(abRequest.allAssets.Length-1), progressCount, preloadAsset.Count));
+
                     Object asset = abRequest.allAssets[i];
                     string assetName = asset.name.ToLower();
                     bool result = false;
@@ -528,8 +547,15 @@ namespace Wanderer.GameFramework
             progressCallback?.Invoke(1.0f);
         }
 
+        //获取预加载的进度
+        private float GetPreloadProgress(float startProgress,float progress,float progressIndex,int progressCount)
+        {
+            progress = (startProgress + 0.3f * progress + progressIndex) / progressCount;
+            progress = Mathf.Clamp(progress, 0.0f, 0.995f);
+            return progress;
+        }
 
-		#endregion
+        #endregion
 
-	}
+    }
 }
