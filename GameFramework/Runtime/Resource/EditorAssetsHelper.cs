@@ -22,7 +22,7 @@ using UnityEditor.SceneManagement;
 
 namespace Wanderer.GameFramework
 {
-    public class EditorResourceHelper : IResourceHelper
+    public class EditorAssetsHelper : IAssetsHelper
     {
         private List<string> _allAssetPaths = new List<string>();
         public List<string> AllAssetPaths
@@ -40,7 +40,7 @@ namespace Wanderer.GameFramework
             }
         }
 
-        public void SetResource(PathType pathType, Action callback)
+        public void SetResource(Action callback)
         {
             callback?.Invoke();
         }

@@ -24,10 +24,7 @@ namespace Wanderer.GameFramework
 
         //事件触发类
         private EventManager _event;
-        //网络请求
-        private WebRequestManager _webRequest;
-        //资源管理器 帮助类
-        private IResourceHelper _resourceHelper;
+
         //GameObject对象池管理器
         private IGameObjectPoolHelper _gameObjectPoolHelper;
 
@@ -93,7 +90,7 @@ namespace Wanderer.GameFramework
         /// <summary>
         /// 资源
         /// </summary>
-        public IResourceHelper Asset { get; private set; }
+        public IAssetsHelper Asset { get; private set; }
         /// <summary>
         /// 资源的版本信息
         /// </summary>
@@ -106,8 +103,7 @@ namespace Wanderer.GameFramework
         {
             //获取事件管理器
             _event = GameFrameworkMode.GetModule<EventManager>();
-            //获取网络请求管理器
-            _webRequest = GameFrameworkMode.GetModule<WebRequestManager>();
+       
             //资源异步加载的事件
             _resLoadAsyncSuccessEventArgs = new ResourceLoadAsyncSuccessEventArgs();
             _resLoadAsyncFailureEventArgs = new ResourceLoadAsyncFailureEventArgs();
@@ -118,13 +114,11 @@ namespace Wanderer.GameFramework
 
             //BundleResourceHelper
             GameObject bundleBehaviourHelper = new GameObject("AssetBundleBehaviourHelper");
-            _resourceHelper = bundleBehaviourHelper.AddComponent<BundleResourceHelper>();
+            Asset = bundleBehaviourHelper.AddComponent<BundleAssetsHelper>();
             bundleBehaviourHelper.hideFlags = HideFlags.HideAndDontSave;
             GameObject.DontDestroyOnLoad(bundleBehaviourHelper);
-            Asset = _resourceHelper;
         }
         #endregion
-
 
         //初始化
         public override void OnInit()
@@ -152,153 +146,21 @@ namespace Wanderer.GameFramework
 
 
         #region 外部接口
-
         /// <summary>
         /// 设置资源帮助类
         /// </summary>
         /// <param name="resourceHelper"></param>
-        public void SetResourceHelper(IResourceHelper resourceHelper)
+        public void SetResourceHelper(IAssetsHelper resourceHelper)
         {
-            _resourceHelper = resourceHelper;
-            Asset = _resourceHelper;
+            Asset?.Clear();
+            Asset = resourceHelper;
         }
 
-        /// <summary>
-        /// 设置资源准备
-        /// </summary>
-        public void SetResource()
-        {
-            _resourceHelper?.SetResource(LocalPathType, () =>
-            {
-                _event.Trigger<ResourceAssetPathsMapReadyEventArgs>(this);
-            });
-        }
-
-        /// <summary>
-        /// 所有的资源路径
-        /// </summary>
-        public List<string> AllAssetPaths
-        {
-            get
-            {
-                return _resourceHelper?.AllAssetPaths;
-            }
-        }
-
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public Task<T> LoadAsset<T>(string assetName) where T : UnityEngine.Object
-        {
-            var taskResult = new TaskCompletionSource<T>();
-            _resourceHelper?.LoadAsset<T>(assetName, (t) =>
-            {
-                taskResult.SetResult(t);
-            });
-            return taskResult.Task;
-        }
-
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public void LoadAsset<T>(string assetName, Action<T> callback) where T : UnityEngine.Object
-        {
-            _resourceHelper?.LoadAsset<T>(assetName, callback);
-        }
-
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <param name="assetName"></param>
-        /// <param name="callback"></param>
-        public void LoadAsset(string assetName, Action<UnityEngine.Object> callback)
-        {
-            _resourceHelper?.LoadAsset<UnityEngine.Object>(assetName, callback);
-        }
-
-        /// <summary>
-        /// 同步加载资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="assetBundleName"></param>
-        /// <param name="assetName"></param>
-        /// <returns></returns>
-        public T LoadAssetSync<T>(string assetName) where T : UnityEngine.Object
-        {
-            return _resourceHelper?.LoadAsset<T>(assetName);
-        }
-
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <param name="assetName"></param>
-        /// <param name="callback"></param>
-        public UnityEngine.Object LoadAssetSync(string assetName)
-        {
-            return _resourceHelper?.LoadAsset<UnityEngine.Object>(assetName);
-        }
-
-        /// <summary>
-        /// 卸载资源
-        /// </summary>
-        /// <param name="assetName">资源名称</param>
-        public void UnloadAsset(string assetName)
-        {
-            _resourceHelper?.UnloadAsset(assetName);
-        }
-
-        /// <summary>
-        /// 卸载资源
-        /// </summary>
-        /// <param name="assetBundleName"></param>
-        /// <param name="unload"></param>
-        public void UnloadAssetBunlde(string assetBundleName, bool unload = false)
-        {
-            _resourceHelper?.UnloadAssetBunlde(assetBundleName, unload);
-        }
-
-        /// <summary>
-        /// 异步加载场景
-        /// </summary>
-        /// <param name="assetBundleName"></param>
-        /// <param name="sceneName"></param>
-        /// <param name="mode"></param>
-        /// <returns></returns>
-        public void LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
-        {
-            //  sceneName= sceneName.ToLower();
-            _resourceHelper?.LoadSceneAsync(sceneName, mode, (asyncOperation) =>
-            {
-                _sceneAsyncOperations.Add(sceneName, asyncOperation);
-            });
-        }
-
-        /// <summary>
-        /// 卸载场景
-        /// </summary>
-        /// <param name="sceneName"></param>
-        public void UnloadSceneAsync(string sceneName)
-        {
-            if (_resourceHelper == null)
-                return;
-
-            _resourceHelper.UnloadSceneAsync(sceneName);
-            return;
-        }
-
-        /// <summary>
-        /// 设置对象池管理器的
-        /// </summary>
-        /// <param name="helper"></param>
-        public void SetGameObjectPoolHelper(IGameObjectPoolHelper helper)
+		/// <summary>
+		/// 设置对象池管理器的
+		/// </summary>
+		/// <param name="helper"></param>
+		public void SetGameObjectPoolHelper(IGameObjectPoolHelper helper)
         {
             _gameObjectPoolHelper = helper;
         }
@@ -400,9 +262,7 @@ namespace Wanderer.GameFramework
 
         public override void OnClose()
         {
-            if (_resourceHelper != null)
-                _resourceHelper.Clear();
-
+            Asset?.Clear();
             if (_gameObjectPoolHelper != null)
                 _gameObjectPoolHelper.DestroyAll();
         }

@@ -15,7 +15,7 @@ using UnityEngine.SceneManagement;
 
 namespace Wanderer.GameFramework
 {
-    public interface IResourceHelper
+    public interface IAssetsHelper
     {
         /// <summary>
         /// 所有的资源路径 全小写
@@ -26,7 +26,7 @@ namespace Wanderer.GameFramework
         /// 设置资源的路径,默认是为只读路径:Application.streamingAssetsPath;
         /// </summary>
         /// <param name="path"></param>
-        void SetResource(PathType pathType, Action callback);
+        void SetResource(Action callback);
 
         /// <summary>
         /// 预加载回调

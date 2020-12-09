@@ -49,7 +49,7 @@ namespace Wanderer.GameFramework
                     break;
                 case ResourceUpdateType.Editor:
 #if UNITY_EDITOR
-                    GameMode.Resource.SetResourceHelper(new EditorResourceHelper());
+                    GameMode.Resource.SetResourceHelper(new EditorAssetsHelper());
                     ChangeState<PreloadState>(fsm);
 #else
 					//如果在非编辑器模式下选择了Editor，则默认使用本地文件

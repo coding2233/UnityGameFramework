@@ -44,7 +44,7 @@ namespace Wanderer.GameFramework
                 return;
             }
             //DataTable解析
-            _resource.LoadAsset<TextAsset>(dataTablePath,(data) =>
+            _resource.Asset.LoadAsset<TextAsset>(dataTablePath,(data) =>
             {
                 bool result = false;
                 IDataTable iDataTable = null;
@@ -66,7 +66,7 @@ namespace Wanderer.GameFramework
                 //加载DataTable的回调
                 callback?.Invoke(result, dataTablePath, iDataTable);
                 //去掉文本的引用计数
-                _resource.UnloadAsset(dataTablePath);
+                _resource.Asset.UnloadAsset(dataTablePath);
             });
 
          

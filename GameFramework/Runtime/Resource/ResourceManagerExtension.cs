@@ -9,32 +9,32 @@ namespace Wanderer.GameFramework
 	{
 		public static void LoadGameObject(this ResourceManager resource, string assetPath, Action<GameObject> callback)
 		{
-			resource.LoadAsset<GameObject>(assetPath, callback);
+			resource.Asset.LoadAsset<GameObject>(assetPath, callback);
 		}
 
 		public static GameObject LoadGameObjectSync(this ResourceManager resource, string assetPath)
 		{
-			return resource.LoadAssetSync<GameObject>(assetPath);
+			return resource.Asset.LoadAsset<GameObject>(assetPath);
 		}
 
 		public static void LoadTextAsset(this ResourceManager resource, string assetPath, Action<TextAsset> callback)
 		{
-			resource.LoadAsset<TextAsset>(assetPath, callback);
+			resource.Asset.LoadAsset<TextAsset>(assetPath, callback);
 		}
 
 		public static TextAsset LoadTextAssetSync(this ResourceManager resource, string assetPath)
 		{
-			return resource.LoadAssetSync<TextAsset>(assetPath);
+			return resource.Asset.LoadAsset<TextAsset>(assetPath);
 		}
 
 		public static void LoadSprite(this ResourceManager resource, string assetPath, Action<Sprite> callback)
 		{
-			resource.LoadAsset<Sprite>(assetPath, callback);
+			resource.Asset.LoadAsset<Sprite>(assetPath, callback);
 		}
 
 		public static Sprite LoadSpriteSync(this ResourceManager resource, string assetPath)
 		{
-			return resource.LoadAssetSync<Sprite>(assetPath);
+			return resource.Asset.LoadAsset<Sprite>(assetPath);
 		}
 	}
 }
