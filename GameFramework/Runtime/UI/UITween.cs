@@ -52,8 +52,11 @@ namespace Wanderer.GameFramework
         /// </summary>
         public UIView NextUIView { get; private set; }
 
+        bool _setUITweenReady = false;
+
         public UITween Flush()
         {
+            _setUITweenReady = false;
             _onUITweenReady = null;
             _onAnimStart = null;
             _onAnimComplete = null;
@@ -82,9 +85,13 @@ namespace Wanderer.GameFramework
             NextUIView = uiView;
         }
 
-        private void SetUITweenReady()
+       
+        public void SetUITweenReady()
         {
+            _setUITweenReady = true;
             _onUITweenReady?.Invoke(this,LastUIView,NextUIView);
+
+            RunAnimation();
         }
 
         private void SetAnimationStart()
@@ -147,7 +154,10 @@ namespace Wanderer.GameFramework
 
         public IUITween RunAnimation(bool isQueue = false)
         {
-            RunAnim(isQueue);
+            if (_setUITweenReady)
+            {
+                RunAnim(isQueue);
+            }
             return this;
         }
 
@@ -155,7 +165,7 @@ namespace Wanderer.GameFramework
         {
           //  await UniTask.NextFrame();
             //回调准备
-            SetUITweenReady();
+         //   SetUITweenReady();
             //播放动画
             if (_anims != null && _anims.Count > 0)
             {

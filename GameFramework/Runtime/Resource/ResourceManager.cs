@@ -91,6 +91,10 @@ namespace Wanderer.GameFramework
         private string _remoteUpdatePath = null;
 
         /// <summary>
+        /// 资源
+        /// </summary>
+        public IResourceHelper Asset { get; private set; }
+        /// <summary>
         /// 资源的版本信息
         /// </summary>
         /// <value></value>
@@ -111,6 +115,13 @@ namespace Wanderer.GameFramework
             _sceneLoadingEventArgs = new SceneLoadingEventArgs();
             _sceneLoadedEventArgs = new SceneLoadedEventArgs();
             _sceneAsyncOperations = new Dictionary<string, AsyncOperation>();
+
+            //BundleResourceHelper
+            GameObject bundleBehaviourHelper = new GameObject("AssetBundleBehaviourHelper");
+            _resourceHelper = bundleBehaviourHelper.AddComponent<BundleResourceHelper>();
+            bundleBehaviourHelper.hideFlags = HideFlags.HideAndDontSave;
+            GameObject.DontDestroyOnLoad(bundleBehaviourHelper);
+            Asset = _resourceHelper;
         }
         #endregion
 
@@ -149,6 +160,7 @@ namespace Wanderer.GameFramework
         public void SetResourceHelper(IResourceHelper resourceHelper)
         {
             _resourceHelper = resourceHelper;
+            Asset = _resourceHelper;
         }
 
         /// <summary>
@@ -360,7 +372,6 @@ namespace Wanderer.GameFramework
         #endregion
 
         #region 重写函数
-
         public void OnUpdate()
         {
             Version?.OnUpdate();

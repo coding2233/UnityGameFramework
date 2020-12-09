@@ -325,7 +325,6 @@ namespace Wanderer.GameFramework
                         //下载完成
                         if (downloadFiles.Count == 0)
                         {
-                            downloadComplete?.Invoke();
                             //更新本地资源
                             if (downloadFileCount == needDownloadFiles.Count)
                             {
@@ -333,6 +332,7 @@ namespace Wanderer.GameFramework
                             }
                             needDownloadFiles = null;
                             _updating = false;
+                            downloadComplete?.Invoke();
                         }
                     }
                     else

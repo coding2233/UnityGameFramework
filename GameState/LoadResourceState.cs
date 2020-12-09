@@ -37,7 +37,7 @@ namespace Wanderer.GameFramework
             GameMode.Event.AddListener<ResourceAssetPathsMapReadyEventArgs>(OnResourceAssetPathsMapReady);
 
             //设置ab包的加载方式
-            GameMode.Resource.SetResourceHelper(new BundleResourceHelper());
+         //   GameMode.Resource.SetResourceHelper(new BundleResourceHelper());
             //资源管理类的初始设置
             GameMode.Resource.SetResource();
         }

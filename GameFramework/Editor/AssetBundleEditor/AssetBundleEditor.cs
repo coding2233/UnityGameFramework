@@ -51,7 +51,7 @@ namespace Wanderer.GameFramework
 		[MenuItem("Tools/Asset Bundle/Asset Bundle Editor")]
 		private static void MainWindow()
 		{
-			GetWindowWithRect<AssetBundleEditor>(new Rect(100, 100, 1000, 600), false, "Asset Bundle Editor");
+			GetWindowWithRect<AssetBundleEditor>(new Rect(100, 100, 1200, 600), false, "Asset Bundle Editor");
 		}
 
 
@@ -111,6 +111,37 @@ namespace Wanderer.GameFramework
 				}
 			}
 			return true;
+		}
+
+
+		/// <summary>
+		/// 设置是否预加载
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public static bool GetPreload(string name)
+		{
+			JsonData config = ProjectSettingsConfig.LoadJsonData(_configName);
+			if (config != null || config.Count > 0)
+			{
+				for (int i = 0; i < config.Count; i++)
+				{
+					JsonData item = config[i];
+					string abName = (string)item["AssetBundleName"];
+					abName = abName.ToLower().Trim();
+					if (name.Equals(abName) || name.Contains($"{abName}_part"))
+					{
+						string key = "Preload";
+						if (item.ContainsKey(key))
+						{
+							bool preload = (bool)item[key];
+							if (preload)
+								return true;
+						}
+					}
+				}
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -257,6 +288,7 @@ namespace Wanderer.GameFramework
 			GUILayout.Label("Split",GUILayout.Width(100));
 			GUILayout.Label("SplitCount", GUILayout.Width(100));
 			GUILayout.Label("ForceUpdate", GUILayout.Width(100));
+			GUILayout.Label("Preload");
 			GUILayout.EndHorizontal();
 			int configCount = _config.Count;
 			if (configCount > 0)
@@ -434,10 +466,22 @@ namespace Wanderer.GameFramework
 				jsonData[key] = true;
 			}
 			bool forceUpdate = (bool)jsonData[key];
-			bool newForceUpdate = EditorGUILayout.Toggle(forceUpdate, GUILayout.Width(70));
+			bool newForceUpdate = EditorGUILayout.Toggle(forceUpdate, GUILayout.Width(110));
 			if (forceUpdate != newForceUpdate)
 			{
 				jsonData[key] = newForceUpdate;
+			}
+
+			key = "Preload";
+			if (!jsonData.Keys.Contains(key))
+			{
+				jsonData[key] = false;
+			}
+			bool preloadUpdate = (bool)jsonData[key];
+			bool newPreloadUpdate = EditorGUILayout.Toggle(preloadUpdate, GUILayout.Width(70));
+			if (preloadUpdate != newPreloadUpdate)
+			{
+				jsonData[key] = newPreloadUpdate;
 			}
 		}
 	}

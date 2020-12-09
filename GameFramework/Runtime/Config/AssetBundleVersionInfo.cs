@@ -98,7 +98,10 @@ namespace Wanderer.GameFramework
         /// 强制更新
         /// </summary>
         public bool ForceUpdate = true;
-
+        /// <summary>
+        /// 是否预加载
+        /// </summary>
+        public bool Preload = false;
         public override bool Equals(object obj)
         {
             AssetHashInfo other = obj as AssetHashInfo;

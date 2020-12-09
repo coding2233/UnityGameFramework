@@ -81,6 +81,11 @@ namespace Wanderer.GameFramework
 		{
             return AssetDatabase.LoadAssetAtPath<T>(assetName);
         }
+
+		public void Preload(Action<float> progressCallback)
+		{
+            progressCallback?.Invoke(1.0f);
+        }
 	}
 }
 

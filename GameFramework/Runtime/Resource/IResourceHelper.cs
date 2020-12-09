@@ -28,6 +28,12 @@ namespace Wanderer.GameFramework
         /// <param name="path"></param>
         void SetResource(PathType pathType, Action callback);
 
+        /// <summary>
+        /// 预加载回调
+        /// </summary>
+        /// <param name="progressCallback"></param>
+        void Preload(Action<float> progressCallback);
+
         // /// <summary>
         // /// 加载assetbundle
         // /// </summary>

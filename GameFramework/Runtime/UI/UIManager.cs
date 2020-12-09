@@ -103,14 +103,24 @@ namespace Wanderer.GameFramework
             }
             //处理新的ui
             _activeUIContextList.Add(uiContext);
-            UIView newUiView = GetUIView(uiContext);
-            newUiView.OnEnter(uiContext, callBack,parameters);
-            //触发打开事件
-            _uiEnterArgs.UIView = newUiView;
-            _event.Trigger(this, _uiEnterArgs);
-            //设置打开的uiview
-            uiTweener.SetNextUIView(newUiView);
-            return uiTweener;
+			////异步加载
+			//GetUIView(uiContext, (newUiView) => {
+			//    newUiView.OnEnter(uiContext, callBack, parameters);
+			//    _uiEnterArgs.UIView = newUiView;
+			//    _event.Trigger(this, _uiEnterArgs);
+			//    //设置打开的uiview
+			//    uiTweener.SetNextUIView(newUiView);
+			//    uiTweener.SetUITweenReady();
+			//});
+
+			UIView newUiView = GetUIView(uiContext);
+			newUiView.OnEnter(uiContext, callBack, parameters);
+			//触发打开事件
+			_uiEnterArgs.UIView = newUiView;
+			_event.Trigger(this, _uiEnterArgs);
+			//设置打开的uiview
+			uiTweener.SetNextUIView(newUiView);
+			return uiTweener;
         }
 
         /// <summary>
@@ -304,6 +314,44 @@ namespace Wanderer.GameFramework
             uiView.gameObject.SetActive(true);
             return uiView;
         }
+
+        /// <summary>
+        /// 异步加载UIView
+        /// </summary>
+        /// <param name="uiContext"></param>
+        /// <param name="callback"></param>
+        private async void GetUIView(IUIContext uiContext,Action<UIView> callback)
+        {
+            await UniTask.NextFrame();
+            UIView uiView;
+            if (!_allUIView.TryGetValue(uiContext, out uiView) || uiView == null)
+            {
+                _resource.LoadAsset<GameObject>(uiContext.AssetPath, (uiViewSource) =>
+                {
+                    if (uiViewSource == null)
+                    {
+                        throw new GameException($"UIView path not found: {uiContext.AssetPath}");
+                    }
+                    GameObject uiViewClone = GameObject.Instantiate(uiViewSource, _uiViewParent);
+                    uiView = uiViewClone.GetComponent<UIView>();
+                    if (uiView == null)
+                    {
+                        throw new GameException($"There are no bound UIView components on the GameObject! {uiContext.AssetPath}");
+                    }
+                    _allUIView[uiContext] = uiView;
+                    uiView.gameObject.SetActive(true);
+                    uiView.OnInit(uiContext);
+                    callback?.Invoke(uiView);
+                });
+            }
+            else
+            {
+                await UniTask.NextFrame();
+                uiView.gameObject.SetActive(true);
+                callback?.Invoke(uiView);
+            }
+        }
+
         #endregion
 
 

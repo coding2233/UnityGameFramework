@@ -21,7 +21,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Wanderer.GameFramework
 {
-    public sealed class BundleResourceHelper : IResourceHelper
+    internal sealed class BundleResourceHelper : MonoBehaviour, IResourceHelper
     {
         //路径类型
         private PathType _pathType;
@@ -31,7 +31,6 @@ namespace Wanderer.GameFramework
         private AssetBundleManifest _mainfest;
         //默认加密
         private bool _isEncrypt = true;
-
         //当前激活的Assetbundle
         private readonly Dictionary<string, AssetBundle> _liveAssetBundle = new Dictionary<string, AssetBundle>();
         //assetbundle的引用计数
@@ -52,7 +51,25 @@ namespace Wanderer.GameFramework
                 return _allAssetPaths;
             }
         }
-        #region  IResourceHelper
+        //异步资源加载
+        private Dictionary<AssetBundleRequest, Action<Object>> _assetAsyncRequest = new Dictionary<AssetBundleRequest, Action<Object>>();
+        private Dictionary<string, Object> _preloadAssets = new Dictionary<string, Object>();
+        private void Update()
+        {
+            //异步资源检测
+			if (_assetAsyncRequest.Count > 0)
+			{
+				foreach (var item in _assetAsyncRequest)
+				{
+					if (item.Key.isDone)
+					{
+						item.Value.Invoke(item.Key.asset);
+						_assetAsyncRequest.Remove(item.Key);
+						break;
+					}
+				}
+			}
+		}
 
         public void SetResource(PathType pathType, Action callback)
         {
@@ -81,40 +98,59 @@ namespace Wanderer.GameFramework
             LoadPlatformMainfest(_readPath, callback);
         }
 
+        /// <summary>
+        /// 异步加载Asset
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="assetName"></param>
+        /// <param name="callback"></param>
         public void LoadAsset<T>(string assetName, Action<T> callback) where T : Object
         {
+            float loadTime = Time.realtimeSinceStartup;
+            LoadAssetAsync(assetName, (asset) =>
+            {
+                loadTime = Time.realtimeSinceStartup - loadTime;
+                Debug.Log($"LoadAsset Async time spent: {assetName} {loadTime}");
+                callback?.Invoke((T)asset);
+            });
+        }
+
+        //异步加载资源
+        private void LoadAssetAsync(string assetName, Action<Object> callback)
+        {
             assetName = assetName.ToLower();
+
+            if (_preloadAssets.TryGetValue(assetName,out Object asset))
+            {
+                callback?.Invoke(asset);
+                return;
+            }
+
             if (_assetsPathMapAssetbundleName.TryGetValue(assetName, out string abName))
             {
-                if (_liveAssetBundle.TryGetValue(abName, out AssetBundle assetBundle))
+                AssetBundle assetBundle;
+                if (!_liveAssetBundle.TryGetValue(abName, out assetBundle))
                 {
-                  //  T t = (T)await assetBundle.LoadAssetAsync<T>(assetName);
-                    T t = assetBundle.LoadAsset<T>(assetName);
-                    callback.Invoke(t);
-                    SetAssetBundleReferenceCount(assetBundle, +1);
-
+                    assetBundle=LoadAssetBundle(abName);
                 }
-                else
-                {
-                    LoadAssetBundle(abName, async (ab) =>
-                    {
-                         T t = ab.LoadAsset<T>(assetName);
-                     //   T t = (T)await assetBundle.LoadAssetAsync<T>(assetName);
-                        callback.Invoke(t);
-                        SetAssetBundleReferenceCount(ab, +1);
-                    });
-                }
+                var assetBundleRequest = assetBundle.LoadAssetAsync(assetName);
+                _assetAsyncRequest.Add(assetBundleRequest, callback);
             }
             else
             {
                 throw new GameException($"Can't find asset assetbundle :{assetName}");
-               // callback?.Invoke(null);
+                // callback?.Invoke(null);
             }
         }
-        
-        
-        public T LoadAsset<T>(string assetName) where T : UnityEngine.Object
+
+		public T LoadAsset<T>(string assetName) where T : UnityEngine.Object
         {
+            if (_preloadAssets.TryGetValue(assetName, out Object asset))
+            {
+                return (T)asset;
+            }
+
+            float loadTime = Time.realtimeSinceStartup;
             assetName = assetName.ToLower();
 #if UNITY_ANDROID
             if (_pathType == PathType.ReadOnly)
@@ -131,14 +167,17 @@ namespace Wanderer.GameFramework
                 }
                 T t = assetBundle.LoadAsset<T>(assetName);
                 SetAssetBundleReferenceCount(assetBundle, +1);
+                loadTime = Time.realtimeSinceStartup - loadTime;
+                Debug.Log($"LoadAssetSync time spent: {assetName} {loadTime}");
                 return t;
             }
             else
             {
                 throw new GameException($"Can't find asset assetbundle :{assetName}");
             }
-        }
 
+        }
+      
         public void UnloadAsset(string assetName)
         {
             assetName = assetName.ToLower();
@@ -150,7 +189,7 @@ namespace Wanderer.GameFramework
                 }
             }
         }
-        
+       
         public void UnloadAssetBunlde(string assetBundleName, bool unload = false)
         {
             assetBundleName = assetBundleName.ToLower();
@@ -163,7 +202,7 @@ namespace Wanderer.GameFramework
                 assetBundle.Unload(unload);
             }
         }
-
+        
         /// <summary>
         /// 异步加载场景
         /// </summary>
@@ -220,8 +259,6 @@ namespace Wanderer.GameFramework
             }
             return UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneName);
         }
-#endregion
-
 
 #region 事件回调
         /// <summary>
@@ -411,7 +448,77 @@ namespace Wanderer.GameFramework
                 _assetBundleReferenceCount[assetBundle] += interval;
             }
         }
-#endregion
 
-    }
+        /// <summary>
+        /// 资源预加载
+        /// </summary>
+        /// <param name="progressCallback"></param>
+		public void Preload(Action<float> progressCallback)
+		{
+            var version = GameFrameworkMode.GetModule<ResourceManager>().Version.LocalVersion;
+            if (version == null)
+            {
+                throw new GameException("Version information for the local resource was not found！");
+            }
+            List<AssetHashInfo> preloadAsset = new List<AssetHashInfo>();
+			foreach (var item in version.AssetHashInfos)
+			{
+                if (item.Preload)
+                {
+                    preloadAsset.Add(item);
+                }
+            }
+            //协程异步加载
+            StartCoroutine(ResourcePreload(preloadAsset, progressCallback));
+		}
+
+        //资源预加载
+        private IEnumerator ResourcePreload(List<AssetHashInfo> preloadAsset, Action<float> progressCallback)
+        {
+            float loadTime = Time.realtimeSinceStartup;
+            _preloadAssets.Clear();
+            float progressCount = 0;
+            foreach (var item in preloadAsset)
+			{
+                yield return null;
+                var ab = LoadAssetBundle(item.Name);
+                var abRequest = ab.LoadAllAssetsAsync();
+                while (!abRequest.isDone)
+                {
+                    float progress = (abRequest.progress+ progressCount )/preloadAsset.Count;
+                    progressCallback?.Invoke(progress);
+                    yield return null;
+                }
+                List<string> assetNames = new List<string>();
+                assetNames.AddRange(ab.GetAllAssetNames());
+                for (int i = 0; i < abRequest.allAssets.Length; i++)
+				{
+                    Object asset = abRequest.allAssets[i];
+                    string assetName = asset.name.ToLower();
+                    string assetPath = assetNames.Find(x => Path.GetFileNameWithoutExtension(x).Equals(assetName));
+                    if (string.IsNullOrEmpty(assetPath))
+                    {
+                        throw new GameException($"The corresponding resource path was not found! {asset.name} {assetName}");
+                    }
+                    if (!_preloadAssets.ContainsKey(assetPath))
+                    {
+                        _preloadAssets.Add(assetPath, asset);
+                    }
+                    else
+                    {
+                        Debug.LogError($"Preload redundant data. {assetPath}");
+                    }
+                }
+                //UnloadAssetBunlde(item.Name);
+                progressCount++;
+            }
+            loadTime = Time.realtimeSinceStartup- loadTime;
+            Debug.Log($"Preload spent time: {loadTime}");
+            progressCallback?.Invoke(1.0f);
+        }
+
+
+		#endregion
+
+	}
 }
