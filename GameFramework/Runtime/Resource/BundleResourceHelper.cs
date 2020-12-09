@@ -493,6 +493,7 @@ namespace Wanderer.GameFramework
                 assetNames.AddRange(ab.GetAllAssetNames());
                 for (int i = 0; i < abRequest.allAssets.Length; i++)
 				{
+                    yield return null;
                     Object asset = abRequest.allAssets[i];
                     string assetName = asset.name.ToLower();
                     string assetPath = assetNames.Find(x => Path.GetFileNameWithoutExtension(x).Equals(assetName));
