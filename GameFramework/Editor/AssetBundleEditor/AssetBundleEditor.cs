@@ -51,7 +51,8 @@ namespace Wanderer.GameFramework
 		[MenuItem("Tools/Asset Bundle/Asset Bundle Editor")]
 		private static void MainWindow()
 		{
-			GetWindowWithRect<AssetBundleEditor>(new Rect(100, 100, 1200, 600), false, "Asset Bundle Editor");
+			//GetWindowWithRect<AssetBundleEditor>(new Rect(100, 100, 1200, 600), false, "Asset Bundle Editor");
+			GetWindow<AssetBundleEditor>("Asset Bundle Editor");
 		}
 
 

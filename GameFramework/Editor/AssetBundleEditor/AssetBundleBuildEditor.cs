@@ -29,7 +29,7 @@ namespace Wanderer.GameFramework
         //压缩内容
         string[] _compressionOptionsContent = new string[] { "No Compression", "Standard Compression (LZMA)", "Chunk Based Compression (LZ4)" };
 
-        [MenuItem("Tools/Asset Bundle/AssetBundle Build Options %#O")]
+        [MenuItem("Tools/Asset Bundle/AssetBundle Build Options #&O")]
         public static void AssetBundilesOptions()
         {
             _rootPath = Path.GetDirectoryName(Path.GetFullPath(Application.dataPath));

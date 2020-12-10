@@ -429,17 +429,28 @@ namespace Wanderer.GameFramework
 
             using (Stream abStream = _isEncrypt ? new EncryptFileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false) : new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false))
             {
-                float loadTime = Time.realtimeSinceStartup;
-                var ablfsa = AssetBundle.LoadFromStreamAsync(abStream);
-                while (!ablfsa.isDone)
+                while (!abStream.CanRead)
                 {
-                    progress?.Invoke(ablfsa.progress);
                     yield return null;
                 }
+                string fileName = Path.GetFileNameWithoutExtension(path);
                 yield return null;
-                loadTime = Time.realtimeSinceStartup - loadTime;
-                Debug.Log($"LoadAssetBundleFromPath Async time spent: {loadTime} {path} ");
-                callback?.Invoke(ablfsa.assetBundle);
+                AssetBundle assetBundle;
+                if (!_liveAssetBundle.TryGetValue(fileName, out assetBundle))
+                {
+                    float loadTime = Time.realtimeSinceStartup;
+                    var ablfsa = AssetBundle.LoadFromStreamAsync(abStream);
+                    while (!ablfsa.isDone)
+                    {
+                        progress?.Invoke(ablfsa.progress);
+                        yield return null;
+                    }
+                    yield return null;
+                    loadTime = Time.realtimeSinceStartup - loadTime;
+                    Debug.Log($"LoadAssetBundleFromPath Async time spent: {loadTime} {path} ");
+                    assetBundle = ablfsa.assetBundle;
+                }
+                callback?.Invoke(assetBundle);
             }
         }
         #endregion
