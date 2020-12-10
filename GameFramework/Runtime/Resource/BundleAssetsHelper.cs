@@ -516,15 +516,19 @@ namespace Wanderer.GameFramework
                     //string assetPath = assetNames.Find(x => Path.GetFileNameWithoutExtension(x).Equals(assetName));
                     if (string.IsNullOrEmpty(assetPath))
                     {
-                        throw new GameException($"The corresponding resource path was not found! {asset.name} {assetName}");
+                        //throw new GameException($"The corresponding resource path was not found! {asset.name} {assetName}");
+                        Debug.LogWarning($"There may be abnormal resources. {asset.name} {assetName}");
                     }
-                    if (!_preloadAssets.ContainsKey(assetPath))
+                    else 
                     {
-                        _preloadAssets.Add(assetPath, asset);
-                    }
-                    else
-                    {
-                        Debug.LogError($"Preload redundant data. {assetPath}");
+                        if (!_preloadAssets.ContainsKey(assetPath))
+                        {
+                            _preloadAssets.Add(assetPath, asset);
+                        }
+                        else
+                        {
+                            Debug.LogError($"Preload redundant data. {assetPath}");
+                        }
                     }
                 }
                 //UnloadAssetBunlde(item.Name);
