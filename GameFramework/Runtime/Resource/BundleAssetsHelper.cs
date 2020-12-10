@@ -49,6 +49,12 @@ namespace Wanderer.GameFramework
                 return _allAssetPaths;
             }
         }
+        /// <summary>
+        /// 预加载的所有资源
+        /// </summary>
+        private Dictionary<string, Object> _preloadAssets = new Dictionary<string, Object>();
+        //异步加载锁定的文件
+        private HashSet<string> _asyncLockFiles = new HashSet<string>();
 
         /// <summary>
         /// 设置资源准备
@@ -84,10 +90,7 @@ namespace Wanderer.GameFramework
             StartCoroutine(LoadPlatformMainfest(_readPath, callback));
         }
 
-        /// <summary>
-        /// 预加载的所有资源
-        /// </summary>
-        private Dictionary<string, Object> _preloadAssets = new Dictionary<string, Object>();
+    
 
         /// <summary>
         /// 资源预加载
@@ -427,16 +430,19 @@ namespace Wanderer.GameFramework
             if (!File.Exists(path))
                 throw new GameException("Assetbundle not found :" + path);
 
-            using (Stream abStream = _isEncrypt ? new EncryptFileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false) : new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false))
+            if (_asyncLockFiles.Contains(path))
             {
-                while (!abStream.CanRead)
+                string fileName = Path.GetFileNameWithoutExtension(path);
+                while (!_liveAssetBundle.ContainsKey(fileName))
                 {
                     yield return null;
                 }
-                string fileName = Path.GetFileNameWithoutExtension(path);
-                yield return null;
-                AssetBundle assetBundle;
-                if (!_liveAssetBundle.TryGetValue(fileName, out assetBundle))
+                callback.Invoke(_liveAssetBundle[fileName]);
+            }
+            else
+            {
+                _asyncLockFiles.Add(path);
+                using (Stream abStream = _isEncrypt ? new EncryptFileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false) : new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false))
                 {
                     float loadTime = Time.realtimeSinceStartup;
                     var ablfsa = AssetBundle.LoadFromStreamAsync(abStream);
@@ -448,9 +454,10 @@ namespace Wanderer.GameFramework
                     yield return null;
                     loadTime = Time.realtimeSinceStartup - loadTime;
                     Debug.Log($"LoadAssetBundleFromPath Async time spent: {loadTime} {path} ");
-                    assetBundle = ablfsa.assetBundle;
+                    callback?.Invoke(ablfsa.assetBundle);
                 }
-                callback?.Invoke(assetBundle);
+                yield return null;
+                _asyncLockFiles.Remove(path);
             }
         }
         #endregion

@@ -194,7 +194,7 @@ namespace Wanderer.GameFramework
         /// 检查某一个资源是否需要更新
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="callback"></param>
+        /// <param name="callback">[本地是否存在文件，是否需要更新]</param>
         public async void CheckResource(string name, Action<bool,bool> callback)
         {
             
@@ -214,7 +214,8 @@ namespace Wanderer.GameFramework
             }
             else
             {
-                throw new GameException($"There is no corresponding resource on the resource server: {name}");
+                callback?.Invoke(false, true);
+                //throw new GameException($"There is no corresponding resource on the resource server: {name}");
             }
         }
 
