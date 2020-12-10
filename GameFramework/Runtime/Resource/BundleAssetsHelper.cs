@@ -394,7 +394,7 @@ namespace Wanderer.GameFramework
                     StartCoroutine(LoadAssetBundleFromPathAsync(assetBundlePath, (ab) =>
                     {
                         AddAssetBundle(assetBundleName, ab);
-                        SetAssetBundleReferenceCount(assetBundle, +1);
+                        SetAssetBundleReferenceCount(ab, +1);
                         callback?.Invoke(ab);
                     }, null));
                 }));
