@@ -203,6 +203,7 @@ namespace Wanderer.GameFramework
                 {
                     _assetBundleReferenceCount.Remove(assetBundle);
                 }
+                _liveAssetBundle.Remove(assetBundleName);
                 assetBundle.Unload(unload);
             }
         }

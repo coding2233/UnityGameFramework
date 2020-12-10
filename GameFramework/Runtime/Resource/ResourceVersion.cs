@@ -178,10 +178,11 @@ namespace Wanderer.GameFramework
             if (_updating)
                 return false;
      
-            if (!CheckResource())
+            if (string.IsNullOrEmpty(name) && !CheckResource())
             {
                 return false;
             }
+
             _updating = true;
             //整理下载资源
              CollateDownloadResources((needDownloadFiles)=> {
@@ -331,7 +332,10 @@ namespace Wanderer.GameFramework
                             //更新本地资源
                             if (downloadFileCount == needDownloadFiles.Count)
                             {
-                                UpdateLocalVersion();
+                                if (CheckResource())
+                                {
+                                    UpdateLocalVersion();
+                                }
                             }
                             needDownloadFiles = null;
                             _updating = false;
