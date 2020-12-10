@@ -64,7 +64,7 @@ namespace Wanderer.GameFramework
         /// <param name="callBack"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public IUITween Push(IUIContext uiContext, Action<string> callBack=null, params object[] parameters)
+        public IUITween Push(IUIContext uiContext, Action<string> callBack=null, bool async = false, params object[] parameters)
         {
             //动态获取uiTween
             UITween uiTweener = UITweePool.Get();
@@ -103,23 +103,30 @@ namespace Wanderer.GameFramework
             }
             //处理新的ui
             _activeUIContextList.Add(uiContext);
-			////异步加载
-			//GetUIView(uiContext, (newUiView) => {
-			//    newUiView.OnEnter(uiContext, callBack, parameters);
-			//    _uiEnterArgs.UIView = newUiView;
-			//    _event.Trigger(this, _uiEnterArgs);
-			//    //设置打开的uiview
-			//    uiTweener.SetNextUIView(newUiView);
-			//    uiTweener.SetUITweenReady();
-			//});
 
-			UIView newUiView = GetUIView(uiContext);
-			newUiView.OnEnter(uiContext, callBack, parameters);
-			//触发打开事件
-			_uiEnterArgs.UIView = newUiView;
-			_event.Trigger(this, _uiEnterArgs);
-			//设置打开的uiview
-			uiTweener.SetNextUIView(newUiView);
+            if (async)
+            {
+                //异步加载
+                GetUIView(uiContext, (newUiView) =>
+                {
+                    newUiView.OnEnter(uiContext, callBack, parameters);
+                    _uiEnterArgs.UIView = newUiView;
+                    _event.Trigger(this, _uiEnterArgs);
+                    //设置打开的uiview
+                    uiTweener.SetNextUIView(newUiView);
+                    uiTweener.SetUITweenReadyAsync();
+                });
+            }
+            else
+            {
+                UIView newUiView = GetUIView(uiContext);
+                newUiView.OnEnter(uiContext, callBack, parameters);
+                //触发打开事件
+                _uiEnterArgs.UIView = newUiView;
+                _event.Trigger(this, _uiEnterArgs);
+                //设置打开的uiview
+                uiTweener.SetNextUIView(newUiView);
+            }
 			return uiTweener;
         }
 
@@ -130,12 +137,12 @@ namespace Wanderer.GameFramework
         /// <param name="callBack"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public IUITween Push(string assetPath, Action<string> callBack=null, params object[] parameters)
+        public IUITween Push(string assetPath, Action<string> callBack=null, bool async = false,params object[] parameters)
         {
             IUIContext uiContext = UIContextMgr[assetPath];
             if (uiContext != null)
             {
-                IUITween uiTween = Push(uiContext, callBack, parameters);
+                IUITween uiTween = Push(uiContext, callBack, async, parameters);
                 return uiTween;
             }
             return null;

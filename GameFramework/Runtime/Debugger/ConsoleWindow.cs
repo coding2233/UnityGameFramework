@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Reflection;
+using System.Text;
 
 namespace Wanderer.GameFramework
 {
@@ -15,6 +16,10 @@ namespace Wanderer.GameFramework
         private Dictionary<string, MethodInfo> _commandMethod = new Dictionary<string, MethodInfo>();
         //action执行函数
         private Dictionary<string, Action> _commandAction = new Dictionary<string, Action>();
+        //命令帮助
+        private Dictionary<string, string> _commandHelp = new Dictionary<string, string>();
+        //命令反馈
+        private Dictionary<string, string> _commandFeedback=new Dictionary<string, string>();
         //支持反射
         private bool _reflectionSupported = true;
         //支持消息发送
@@ -28,22 +33,10 @@ namespace Wanderer.GameFramework
 
         public void OnInit(params object[] args)
         {
-            _commandAction.Add("d1", () =>
-            {
-                Debug.unityLogger.logEnabled = true;
-            });
-            _commandAction.Add("d0", () =>
-            {
-                Debug.unityLogger.logEnabled = false;
-            });
-            _commandAction.Add("f1", () =>
-            {
-                GameFrameworkMode.GetModule<DebuggerManager>().SetLogFileEnable(true);
-            });
-            _commandAction.Add("f0", () =>
-            {
-                GameFrameworkMode.GetModule<DebuggerManager>().SetLogFileEnable(false);
-            });
+            AddCommand("d0", () => { Debug.unityLogger.logEnabled = false; }, "关闭Debug.Log","Log disabled.");
+            AddCommand("d1", () => { Debug.unityLogger.logEnabled = true; }, "开启Debug.Log", "Log enabled.");
+            AddCommand("f0", () => { GameFrameworkMode.GetModule<DebuggerManager>().SetLogFileEnable(false); }, "关闭日志文件", "Log file disabled.");
+            AddCommand("f1", () => { GameFrameworkMode.GetModule<DebuggerManager>().SetLogFileEnable(true); }, "开启日志文件", "Log file enabled.");
         }
 
         public void OnEnter()
@@ -106,11 +99,25 @@ namespace Wanderer.GameFramework
         /// </summary>
         /// <param name="command"></param>
         /// <param name="callAction"></param>
-        public void AddCommand(string command, Action callAction)
+        public void AddCommand(string command, Action callAction,string help=null,string feedback = null)
         {
             if (!_commandAction.ContainsKey(command))
             {
                 _commandAction.Add(command, callAction);
+            }
+            if (!string.IsNullOrEmpty(help))
+            {
+                if (!_commandHelp.ContainsKey(command))
+                {
+                    _commandHelp.Add(command, help);
+                }
+            }
+            if (!string.IsNullOrEmpty(feedback))
+            {
+                if (!_commandFeedback.ContainsKey(command))
+                {
+                    _commandFeedback.Add(command, feedback);
+                }
             }
         }
         /// <summary>
@@ -118,11 +125,25 @@ namespace Wanderer.GameFramework
         /// </summary>
         /// <param name="command"></param>
         /// <param name="callMethod"></param>
-        public void AddCommand(string command, MethodInfo callMethod)
+        public void AddCommand(string command, MethodInfo callMethod,string help = null, string feedback = null)
         {
             if (!_commandMethod.ContainsKey(command))
             {
                 _commandMethod.Add(command, callMethod);
+            }
+            if (!string.IsNullOrEmpty(help))
+            {
+                if (!_commandHelp.ContainsKey(command))
+                {
+                    _commandHelp.Add(command, help);
+                }
+            }
+            if (!string.IsNullOrEmpty(feedback))
+            {
+                if (!_commandFeedback.ContainsKey(command))
+                {
+                    _commandFeedback.Add(command, feedback);
+                }
             }
         }
         /// <summary>
@@ -138,6 +159,14 @@ namespace Wanderer.GameFramework
             if (_commandMethod.ContainsKey(command))
             {
                 _commandMethod.Remove(command);
+            }
+            if (_commandHelp.ContainsKey(command))
+            {
+                _commandHelp.Remove(command);
+            }
+            if (_commandFeedback.ContainsKey(command))
+            {
+                _commandFeedback.Remove(command);
             }
         }
         #endregion
@@ -179,6 +208,10 @@ namespace Wanderer.GameFramework
             if (_commandAction.TryGetValue(command, out Action callAction))
             {
                 callAction.Invoke();
+                if (_commandFeedback.TryGetValue(command, out string feedback))
+                {
+                    AddLine(feedback);
+                }
                 return;
             }
 
@@ -195,7 +228,6 @@ namespace Wanderer.GameFramework
             MethodInfo callMethod;
             if (!_commandMethod.TryGetValue(command, out callMethod))
             {
-               
                 int index = command.LastIndexOf('.');
                 if (index > 0 && index < command.Length - 1)
                 {
@@ -255,6 +287,15 @@ namespace Wanderer.GameFramework
                     }
                 }
             }
+            else
+            {
+                callMethod.Invoke(null,null);
+                if (_commandFeedback.TryGetValue(command, out string feedback))
+                {
+                    AddLine(feedback);
+                }
+                return;
+            }
 
             
             //添加反馈
@@ -264,10 +305,21 @@ namespace Wanderer.GameFramework
         //执行默认的命令
         private int ExecuteDefaultCommand(string command)
         {
+            command = command.ToLower();
             switch (command)
             {
                 case "clear":
                     ClearLines();
+                    return 0;
+                case "help":
+                    StringBuilder helpBuilder = new StringBuilder();
+                    helpBuilder.AppendLine("help\tSee all the commands and the corresponding help.");
+                    helpBuilder.AppendLine("clear\tClean up all lines.");
+					foreach (var item in _commandHelp)
+					{
+                        helpBuilder.AppendLine($"{item.Key}\t{item.Value}.");
+                    }
+                    AddLine(helpBuilder.ToString());
                     return 0;
             }
             return -1;

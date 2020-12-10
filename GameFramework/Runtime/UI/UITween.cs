@@ -13,6 +13,8 @@ namespace Wanderer.GameFramework
         UIView NextUIView { get; }
         //UITween准备好
         IUITween OnUITweenReady(Action<IUITween,UIView, UIView> onUITweenReady);
+        //UITween准备好 异步
+        IUITween OnUITweenReadyAsync(Action<IUITween, UIView, UIView> onUITweenReady);
         //动画开始回调 
         IUITween OnAnimationStart(Action<UIView, UIView> onAnimStart);
         //动画结束
@@ -30,6 +32,7 @@ namespace Wanderer.GameFramework
     internal class UITween : IUITween
     {
         private Action<IUITween,UIView, UIView> _onUITweenReady;
+        private Action<IUITween, UIView, UIView> _onUITweenReadyAsync;
         private Action<UIView, UIView> _onAnimStart;
         private Action<UIView, UIView> _onAnimComplete;
         private Action<IUIAnimation, IUIAnimation> _onAnimChanged;
@@ -55,6 +58,7 @@ namespace Wanderer.GameFramework
         public UITween Flush()
         {
             _onUITweenReady = null;
+            _onUITweenReadyAsync = null;
             _onAnimStart = null;
             _onAnimComplete = null;
             _onAnimChanged = null;
@@ -110,6 +114,13 @@ namespace Wanderer.GameFramework
             return this;
         }
 
+        //UITween准备好 异步
+        public IUITween OnUITweenReadyAsync(Action<IUITween, UIView, UIView> onUITweenReady)
+        {
+            _onUITweenReadyAsync = onUITweenReady;
+            return this;
+        }
+
         public IUITween OnAnimationChanged(Action<IUIAnimation, IUIAnimation> onAnimChanged)
         {
             _onAnimChanged += onAnimChanged;
@@ -131,6 +142,14 @@ namespace Wanderer.GameFramework
         {
             _onAnimStart += onAnimStart;
             return this;
+        }
+
+        /// <summary>
+        /// 设置异步准备
+        /// </summary>
+        public void SetUITweenReadyAsync()
+        {
+            _onUITweenReadyAsync?.Invoke(this, LastUIView, NextUIView);
         }
 
         public IUITween SetAnimation(IUIAnimation anim)
