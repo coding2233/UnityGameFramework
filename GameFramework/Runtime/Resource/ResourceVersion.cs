@@ -197,10 +197,12 @@ namespace Wanderer.GameFramework
         /// <param name="callback"></param>
         public async void CheckResource(string name, Action<bool,bool> callback)
         {
+            
 #if UNITY_EDITOR
             if (GameFrameworkMode.GetModule<ResourceManager>().ResUpdateType == ResourceUpdateType.Editor)
             {
                 callback?.Invoke(true,false);
+                return;
             }
 #endif
             name = name.ToLower();
