@@ -33,7 +33,7 @@ namespace Wanderer.GameFramework
 		//默认不循环，支持loop,支持多个实例,支持回调
 		private UISoundAudioPlayer _uiSoundAudioPlayer;
 		//音频资源
-		private Dictionary<string, AudioClip> _audioClipSources = new Dictionary<string, AudioClip>();
+		private readonly Dictionary<string, AudioClip> _audioClipSources = new Dictionary<string, AudioClip>();
 
 		private bool _mute;
 		/// <summary>
@@ -268,11 +268,11 @@ namespace Wanderer.GameFramework
 		//获取音频
 		private AudioClip GetAudioClip(string assetName)
 		{
-			AudioClip audioClip = null;
-			if (!_audioClipSources.TryGetValue(assetName, out audioClip))
+			AudioClip audioClip;
+			if (!_audioClipSources.TryGetValue(assetName, out audioClip)|| audioClip==null)
 			{
 				audioClip = _resourceManager.Asset.LoadAsset<AudioClip>(assetName);
-				_audioClipSources.Add(assetName, audioClip);
+				_audioClipSources[assetName]=audioClip;
 			}
 			return audioClip;
 		}
