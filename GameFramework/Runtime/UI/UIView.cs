@@ -18,12 +18,20 @@ namespace Wanderer.GameFramework
     {
         //外部的回调
         protected Action<string> _callBack;
+
+        /// <summary>
+        /// 当前UI的UIContext
+        /// </summary>
+        public IUIContext UIContext { get; private set; }
+
         /// <summary>
         /// 初始化
         /// </summary>
         /// <param name="uiContext"></param>
         public virtual void OnInit(IUIContext uiContext)
-        { }
+        {
+            UIContext = uiContext;
+        }
         /// <summary>
         /// 释放
         /// </summary>
@@ -87,6 +95,17 @@ namespace Wanderer.GameFramework
         protected virtual void Call(string data)
         {
             _callBack?.Invoke(data);
+        }
+
+        /// <summary>
+        /// 本身物体的销毁
+        /// </summary>
+        protected virtual void OnDestroy()
+        {
+            if (UIContext != null)
+            {
+                OnFree(UIContext);
+            }
         }
     }
 
