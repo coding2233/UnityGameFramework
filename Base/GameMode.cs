@@ -7,6 +7,7 @@
 // <time> #2018年6月25日 12点06分# </time>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using LitJson;
@@ -33,6 +34,7 @@ namespace Wanderer.GameFramework
         public static DebuggerManager Debugger;
         public static ConfigManager Config;
         public static GameMode Self;
+        
 
         #region 资源
         /// <summary>
@@ -64,6 +66,19 @@ namespace Wanderer.GameFramework
             }
 
         }
+        #endregion
+
+        #region 回调
+        /// <summary>
+        /// 游戏进入后台时执行该方法 pause为true 切换回前台时pause为false
+        /// 强制暂停时,先 OnApplicationPause
+        /// </summary>
+        public static Action<bool> OnAppPause;
+        /// <summary>
+        /// 游戏失去焦点也就是进入后台时 focus为false 切换回前台时 focus为true
+        /// 重新“启动”手机时,OnApplicationFocus
+        /// </summary>
+        public static Action<bool> OnAppFocus;
         #endregion
 
         #endregion
@@ -131,6 +146,16 @@ namespace Wanderer.GameFramework
         private void OnDestroy()
         {
             GameFrameworkMode.ShutDown();
+        }
+
+        private void OnApplicationPause(bool pause)
+        {
+            OnAppPause?.Invoke(pause);
+        }
+
+        private void OnApplicationFocus(bool focus)
+        {
+            OnAppFocus?.Invoke(focus);
         }
 
     }
