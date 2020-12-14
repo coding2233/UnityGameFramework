@@ -10,7 +10,7 @@ namespace Wanderer.GameFramework
 {
 	public class LogFile
 	{
-		private const string _logDirectory = ".logs/";
+		private const string _logDirectory = "logs/";
 		//日志路径
 		private string _logPath;
 		public string LogPath
@@ -67,7 +67,7 @@ namespace Wanderer.GameFramework
 			{
 				_strBuilder = new StringBuilder();
 
-				string logFilePath = Path.Combine(LogPath, $"{DateTime.Now.ToString("yyyy-MM-dd")}.log");
+				string logFilePath = Path.Combine(LogPath, $"{SystemInfo.deviceUniqueIdentifier}_{DateTime.Now.ToString("yyyy-MM-dd")}.log");
 				if (!File.Exists(logFilePath))
 				{
 					_strBuilder.AppendLine("[INFORMATION]");

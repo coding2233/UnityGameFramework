@@ -370,11 +370,12 @@ namespace Wanderer.GameFramework
         {
             _activeUIContextList.Clear();
 
-            foreach (var item in _allUIView.Values)
-            {
-                MonoBehaviour.Destroy(item);
-            }
-            _allUIView.Clear();
+			foreach (var item in _allUIView.Values)
+			{
+				GameObject.Destroy(item);
+			}
+
+			_allUIView.Clear();
         }
 
         //更新函数

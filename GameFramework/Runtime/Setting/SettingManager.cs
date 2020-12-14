@@ -21,9 +21,11 @@ namespace Wanderer.GameFramework
 {
     public sealed class SettingManager : GameFrameworkModule
     {
-        #region 属性
-        //普通的设置
-        private Dictionary<Type, Action<string, IConvertible>> _normalSet = new Dictionary<Type, Action<string, IConvertible>>();
+		public override int Priority => 1000;
+
+		#region 属性
+		//普通的设置
+		private Dictionary<Type, Action<string, IConvertible>> _normalSet = new Dictionary<Type, Action<string, IConvertible>>();
         //普通的获取
         private Dictionary<Type, Func<string, IConvertible,IConvertible>> _normalGet = new Dictionary<Type, Func<string, IConvertible,IConvertible>>();
 		//配置文件的路径

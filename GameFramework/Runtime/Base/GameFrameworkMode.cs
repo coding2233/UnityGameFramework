@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Wanderer.GameFramework
 {
@@ -41,9 +42,12 @@ namespace Wanderer.GameFramework
         /// </summary>
         public static void Init()
         {
-            foreach (var item in _allGameModules.Values)
-            {
-                item.OnInit();
+            //根据优先级排序
+            //初始化的OnInit
+            var orderResult = _allGameModules.OrderBy(x => x.Value.Priority);
+			foreach (var item in orderResult)
+			{
+                item.Value.OnInit();
             }
         }
 
@@ -83,8 +87,12 @@ namespace Wanderer.GameFramework
         /// </summary>
         public static void ShutDown()
         {
-            foreach (var item in _allGameModules.Values)
-                item.OnClose();
+            //根据优先级 调用OnClose
+            var orderResult = _allGameModules.OrderBy(x => x.Value.Priority);
+            foreach (var item in orderResult)
+            {
+                item.Value.OnClose();
+            }
 
             _allUpdates.Clear();
             _allFixedUpdates.Clear();

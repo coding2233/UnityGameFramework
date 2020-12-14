@@ -11,6 +11,11 @@ namespace Wanderer.GameFramework
 {
     public abstract class GameFrameworkModule
     {
+        /// <summary>
+        /// 优先级,默认100
+        /// </summary>
+        public virtual int Priority => 100;
+
         //初始化
         public virtual void OnInit()
         { }
