@@ -283,6 +283,7 @@ namespace Wanderer.GameFramework
 			GUILayout.EndHorizontal();
 			GUILayout.BeginHorizontal("box",GUILayout.Width(Screen.width));//GUILayout.Width(100)
 			GUILayout.Label("AssetBundleName", GUILayout.Width(150));
+			GUILayout.Label("Annotation", GUILayout.Width(100));
 			GUILayout.Label("Variant", GUILayout.Width(100));
 			GUILayout.Label("Filter", GUILayout.Width(100));
 			GUILayout.Label("SearchInFolders",GUILayout.Width(300));
@@ -386,6 +387,18 @@ namespace Wanderer.GameFramework
 			}
 			string content = jsonData[key].ToString();
 			string newContent = EditorGUILayout.TextField(content, GUILayout.Width(150));
+			if (!content.Equals(newContent))
+			{
+				jsonData[key] = newContent;
+			}
+
+			key = "Annotation";
+			if (!jsonData.Keys.Contains(key))
+			{
+				jsonData[key] = "";
+			}
+			content = jsonData[key].ToString();
+			newContent = EditorGUILayout.TextField(content, GUILayout.Width(100));
 			if (!content.Equals(newContent))
 			{
 				jsonData[key] = newContent;
