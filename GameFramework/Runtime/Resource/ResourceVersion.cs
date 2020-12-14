@@ -26,6 +26,18 @@ namespace Wanderer.GameFramework
         //更新中
         private bool _updating = false;
 
+        /// <summary>
+        /// 远程的版本信息
+        /// </summary>
+        /// <value></value>
+        public AssetBundleVersionInfo RemoteVersion { get; private set; }
+
+        /// <summary>
+        /// 本地的版本信息
+        /// </summary>
+        /// <value></value>
+        public AssetBundleVersionInfo LocalVersion { get; private set; }
+
 
         public ResourceVersion(string remoteUpdatePath, string localResourcePath)
         {
@@ -43,16 +55,17 @@ namespace Wanderer.GameFramework
         }
 
         /// <summary>
-        /// 远程的版本信息
+        /// 设置远程访问的连接,需要设置新的远程资源路径的链接
         /// </summary>
-        /// <value></value>
-        public AssetBundleVersionInfo RemoteVersion { get; private set; }
-
-        /// <summary>
-        /// 本地的版本信息
-        /// </summary>
-        /// <value></value>
-        public AssetBundleVersionInfo LocalVersion { get; private set; }
+        /// <param name="remoteUpdatePath"></param>
+        public void SetRemoteUpdatePath(string remoteUpdatePath)
+        {
+            if (string.IsNullOrEmpty(remoteUpdatePath))
+            {
+                throw new GameException($"The remote version information link cannot be empty!");
+            }
+            _remoteUpdatePath = remoteUpdatePath;
+        }
 
         /// <summary>
         /// 请求本地版本信息
