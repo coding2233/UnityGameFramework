@@ -353,10 +353,10 @@ namespace Wanderer.GameFramework
 
             using (Stream abStream = _isEncrypt ? new EncryptFileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false) : new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false))
             {
-                float loadTime = Time.realtimeSinceStartup;
+              //  float loadTime = Time.realtimeSinceStartup;
                 var assetbundle = AssetBundle.LoadFromStream(abStream);
-                loadTime = Time.realtimeSinceStartup - loadTime;
-                Debug.Log($"LoadAssetBundleFromPath sync time spent:  {loadTime} {path}");
+                //loadTime = Time.realtimeSinceStartup - loadTime;
+                //Debug.Log($"LoadAssetBundleFromPath sync time spent:  {loadTime} {path}");
                 return assetbundle;
             }
         }
@@ -366,7 +366,7 @@ namespace Wanderer.GameFramework
         //异步加载资源
         private IEnumerator LoadAssetAsync<T>(string assetName, AssetBundle assetBundle, Action<T> callback, Action<float> progress) where T : Object
         {
-            float loadTime = Time.realtimeSinceStartup;
+         //   float loadTime = Time.realtimeSinceStartup;
             assetName = assetName.ToLower();
             var abRequest = assetBundle.LoadAssetAsync<T>(assetName);
             while (!abRequest.isDone)
@@ -375,8 +375,8 @@ namespace Wanderer.GameFramework
                 yield return null;
             }
             yield return null;
-            loadTime = Time.realtimeSinceStartup - loadTime;
-            Debug.Log($"LoadAsset Async time spent: {assetName} {loadTime}");
+            //loadTime = Time.realtimeSinceStartup - loadTime;
+            //Debug.Log($"LoadAsset Async time spent: {assetName} {loadTime}");
             callback?.Invoke((T)abRequest.asset);
         }
 
@@ -445,7 +445,7 @@ namespace Wanderer.GameFramework
                 _asyncLockFiles.Add(path);
                 using (Stream abStream = _isEncrypt ? new EncryptFileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false) : new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, 1024 * 4, false))
                 {
-                    float loadTime = Time.realtimeSinceStartup;
+                  //  float loadTime = Time.realtimeSinceStartup;
                     var ablfsa = AssetBundle.LoadFromStreamAsync(abStream);
                     while (!ablfsa.isDone)
                     {
@@ -453,8 +453,8 @@ namespace Wanderer.GameFramework
                         yield return null;
                     }
                     yield return null;
-                    loadTime = Time.realtimeSinceStartup - loadTime;
-                    Debug.Log($"LoadAssetBundleFromPath Async time spent: {loadTime} {path} ");
+                    //loadTime = Time.realtimeSinceStartup - loadTime;
+                    //Debug.Log($"LoadAssetBundleFromPath Async time spent: {loadTime} {path} ");
                     callback?.Invoke(ablfsa.assetBundle);
                 }
                 yield return null;
@@ -467,7 +467,7 @@ namespace Wanderer.GameFramework
         private IEnumerator ResourcePreload(List<AssetHashInfo> preloadAsset, Action<float> progressCallback)
         {
          //   Application.backgroundLoadingPriority = ThreadPriority.High;
-            float loadTime = Time.realtimeSinceStartup;
+         //   float loadTime = Time.realtimeSinceStartup;
             _preloadAssets.Clear();
             float progressCount = 0;
             foreach (var item in preloadAsset)
@@ -535,8 +535,8 @@ namespace Wanderer.GameFramework
                 //UnloadAssetBunlde(item.Name);
                 progressCount++;
             }
-            loadTime = Time.realtimeSinceStartup- loadTime;
-            Debug.Log($"Preload spent time: {loadTime}");
+            //loadTime = Time.realtimeSinceStartup- loadTime;
+            //Debug.Log($"Preload spent time: {loadTime}");
             progressCallback?.Invoke(1.0f);
         }
 
