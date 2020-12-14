@@ -391,7 +391,7 @@ namespace Wanderer.GameFramework
             //自动回收UITween
 			for (int i = 0; i < _activeTweeners.Count; i++)
 			{
-                if (!_activeTweeners[i].HasAnims)
+                if (_activeTweeners[i].CanRecycle)
                 {
                     UITweePool.Release(_activeTweeners[i]);
                     _activeTweeners.RemoveAt(i);

@@ -37,12 +37,15 @@ namespace Wanderer.GameFramework
         private Action<UIView, UIView> _onAnimComplete;
         private Action<IUIAnimation, IUIAnimation> _onAnimChanged;
         private List<IUIAnimation> _anims=new List<IUIAnimation>();
-        //含有动画
-        public bool HasAnims
+
+        /// <summary>
+        /// 可以回收
+        /// </summary>
+        public bool CanRecycle
         {
             get
             {
-                return _anims.Count > 0;
+                return _anims.Count == 0 && _onUITweenReadyAsync == null;
             }
         }
 
@@ -150,6 +153,7 @@ namespace Wanderer.GameFramework
         public void SetUITweenReadyAsync()
         {
             _onUITweenReadyAsync?.Invoke(this, LastUIView, NextUIView);
+            _onUITweenReadyAsync = null;
         }
 
         public IUITween SetAnimation(IUIAnimation anim)
