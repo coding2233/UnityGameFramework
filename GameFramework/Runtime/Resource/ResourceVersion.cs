@@ -358,11 +358,14 @@ namespace Wanderer.GameFramework
                     else
                     {
                         File.Delete(localPath);
+                        _webRequest.FileDownloader.StopDownload();
                         //throw new GameException($"File integrity verification failed. {localPath}");
                         errorCallback?.Invoke(localPath, "File integrity verification failed.");
+                        
                     }
                 }, (localPath, error) =>
                 {
+                    _webRequest.FileDownloader.StopDownload();
                     errorCallback?.Invoke(localPath, error);
                 });
             }

@@ -79,11 +79,7 @@ namespace Wanderer.GameFramework
 				{
 					if (_downloadingFiles.Count == 0)
 					{
-						Downloading = false;
-						//下载回调
-						_downloadCallback = null;
-						_downloadCompleteCallback = null;
-						_downloadErrorCallback = null;
+						StopDownload();
 					}
 				}
 			}
@@ -121,6 +117,24 @@ namespace Wanderer.GameFramework
 			NeedDownloadFileCount = _needDownloadFiles.Count;
 			_downloadSize = 0;
 			return true;
+		}
+
+
+		/// <summary>
+		/// 停止下载
+		/// </summary>
+		public void StopDownload()
+		{
+			if (Downloading)
+			{
+				//下载回调
+				_downloadCallback = null;
+				_downloadCompleteCallback = null;
+				_downloadErrorCallback = null;
+				_downloadingFiles.Clear();
+				_remainingFiles.Clear();
+				Downloading = false;
+			}
 		}
 
 		#endregion
