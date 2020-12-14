@@ -11,7 +11,10 @@ namespace Wanderer.GameFramework
 	{
 		static FolderIconExtensionEditor()
 		{
+			//暂时只支持windows
+#if UNITY_EDITOR_WIN
 			EditorApplication.projectWindowItemOnGUI += OnProjectWindowItemOnGUI;
+#endif
 		}
 
 		private static void OnProjectWindowItemOnGUI(string guid, Rect selectionRect)
