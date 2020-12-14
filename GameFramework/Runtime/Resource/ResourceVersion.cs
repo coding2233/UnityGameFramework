@@ -358,7 +358,8 @@ namespace Wanderer.GameFramework
                     else
                     {
                         File.Delete(localPath);
-                        throw new GameException($"File integrity verification failed. {localPath}");
+                        //throw new GameException($"File integrity verification failed. {localPath}");
+                        errorCallback?.Invoke(localPath, "File integrity verification failed.");
                     }
                 }, (localPath, error) =>
                 {
