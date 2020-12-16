@@ -33,7 +33,7 @@ namespace Wanderer.GameFramework
 			"Shader",
 			"Sprite",
 			"Texture",
-			"VideoClip","TextAsset","ScriptableObject","AnimatorController"};
+			"VideoClip","TextAsset","ScriptableObject","AnimatorController","SpriteAtlas"};
 
 		//窗口的位置
 		private Rect _foldersWindowRect = Rect.zero;
@@ -429,27 +429,41 @@ namespace Wanderer.GameFramework
 			}
 
 			key = "SearchInFolders";
-			JsonData selectFoldersJsonData = jsonData.Keys.Contains(key) ? jsonData[key] : null;
-			string buttonContent = "No data";
-			if (selectFoldersJsonData != null && selectFoldersJsonData.Count > 0)
+			if (!jsonData.Keys.Contains(key))
 			{
-				buttonContent = selectFoldersJsonData[0].ToString();
-				if (selectFoldersJsonData.Count > 1)
+				jsonData[key] = new JsonData();
+				jsonData[key].SetJsonType(JsonType.Array);
+			}
+			JsonData selectFoldersJsonData = jsonData[key];
+			content = selectFoldersJsonData.ToJson();
+			newContent = EditorGUILayout.TextField(content, GUILayout.Width(300));
+			if (!content.Equals(newContent))
+			{
+				var jd = JsonMapper.ToObject(newContent);
+				if (jd != null)
 				{
-					buttonContent = $"[{selectFoldersJsonData.Count}] {buttonContent}...";
+					jsonData[key] = jd;
 				}
 			}
-			if (GUILayout.Button(buttonContent,GUILayout.Width(300))&&!_haspopupFoldersWindow)
-			{
-				_foldersWindowRect = new Rect(Event.current.mousePosition, Vector2.one * 200);
-				_selectFoldersJsonData = selectFoldersJsonData;
-				if (_selectFoldersJsonData == null)
-				{
-					_selectFoldersJsonData = new JsonData();
-					_selectFoldersJsonData.SetJsonType(JsonType.Array);
-					jsonData[key] = _selectFoldersJsonData;
-				}
-			}
+			//if (selectFoldersJsonData != null && selectFoldersJsonData.Count > 0)
+			//{
+			//	buttonContent = selectFoldersJsonData[0].ToString();
+			//	if (selectFoldersJsonData.Count > 1)
+			//	{
+			//		buttonContent = $"[{selectFoldersJsonData.Count}] {buttonContent}...";
+			//	}
+			//}
+			//if (GUILayout.Button(buttonContent,GUILayout.Width(300))&&!_haspopupFoldersWindow)
+			//{
+			//	_foldersWindowRect = new Rect(Event.current.mousePosition, Vector2.one * 200);
+			//	_selectFoldersJsonData = selectFoldersJsonData;
+			//	if (_selectFoldersJsonData == null)
+			//	{
+			//		_selectFoldersJsonData = new JsonData();
+			//		_selectFoldersJsonData.SetJsonType(JsonType.Array);
+			//		jsonData[key] = _selectFoldersJsonData;
+			//	}
+			//}
 			key = "Split";
 			if (!jsonData.Keys.Contains(key))
 			{
