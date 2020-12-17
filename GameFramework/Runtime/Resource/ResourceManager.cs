@@ -15,6 +15,7 @@ using LoadSceneMode = UnityEngine.SceneManagement.LoadSceneMode;
 using System.Threading.Tasks;
 using System;
 using System.IO;
+using UnityEngine.U2D;
 
 namespace Wanderer.GameFramework
 {
@@ -96,11 +97,25 @@ namespace Wanderer.GameFramework
         /// </summary>
         /// <value></value>
         public ResourceVersion Version { get; private set; }
+
         #endregion
 
         #region 构造函数
         public ResourceManager()
         {
+            //自动监听图集请求，并异步加载图集资源
+            SpriteAtlasManager.atlasRequested += (tag, callback) => {
+                string assetPath = Asset.AllAssetPaths.Find(x =>x.EndsWith($"{tag.ToLower()}.spriteatlas"));
+                if (!string.IsNullOrEmpty(assetPath))
+                {
+                    Asset.LoadAsset<SpriteAtlas>(assetPath, callback);
+                }
+                else
+                {
+                    throw new GameException($"The path to the SpriteAtlas file could not be found. {tag}");
+                }
+            };
+
             //获取事件管理器
             _event = GameFrameworkMode.GetModule<EventManager>();
        
@@ -154,7 +169,9 @@ namespace Wanderer.GameFramework
         {
             Asset?.Clear();
             Asset = resourceHelper;
+
         }
+
 
 		/// <summary>
 		/// 设置对象池管理器的
@@ -262,6 +279,7 @@ namespace Wanderer.GameFramework
 
         public override void OnClose()
         {
+            //资源清理
             Asset?.Clear();
             if (_gameObjectPoolHelper != null)
                 _gameObjectPoolHelper.DestroyAll();
