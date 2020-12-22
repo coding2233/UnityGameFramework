@@ -103,18 +103,19 @@ namespace Wanderer.GameFramework
         #region 构造函数
         public ResourceManager()
         {
-            //自动监听图集请求，并异步加载图集资源
-            SpriteAtlasManager.atlasRequested += (tag, callback) => {
-                string assetPath = Asset.AllAssetPaths.Find(x =>x.EndsWith($"{tag.ToLower()}.spriteatlas"));
-                if (!string.IsNullOrEmpty(assetPath))
-                {
-                    Asset.LoadAsset<SpriteAtlas>(assetPath, callback);
-                }
-                else
-                {
-                    throw new GameException($"The path to the SpriteAtlas file could not be found. {tag}");
-                }
-            };
+            ////自动监听图集请求，并异步加载图集资源
+            //SpriteAtlasManager.atlasRequested += (tag, callback) =>
+            //{
+            //    string assetPath = Resource.Asset.AllAssetPaths.Find(x => x.EndsWith($"{tag.ToLower()}.spriteatlas"));
+            //    if (!string.IsNullOrEmpty(assetPath))
+            //    {
+            //        Resource.Asset.LoadAsset<SpriteAtlas>(assetPath, callback);
+            //    }
+            //    else
+            //    {
+            //        throw new GameException($"The path to the SpriteAtlas file could not be found. {tag}");
+            //    }
+            //};
 
             //获取事件管理器
             _event = GameFrameworkMode.GetModule<EventManager>();
@@ -126,12 +127,6 @@ namespace Wanderer.GameFramework
             _sceneLoadingEventArgs = new SceneLoadingEventArgs();
             _sceneLoadedEventArgs = new SceneLoadedEventArgs();
             _sceneAsyncOperations = new Dictionary<string, AsyncOperation>();
-
-            //BundleResourceHelper
-            GameObject bundleBehaviourHelper = new GameObject("AssetBundleBehaviourHelper");
-            Asset = bundleBehaviourHelper.AddComponent<BundleAssetsHelper>();
-            bundleBehaviourHelper.hideFlags = HideFlags.HideAndDontSave;
-            GameObject.DontDestroyOnLoad(bundleBehaviourHelper);
         }
         #endregion
 
@@ -157,7 +152,34 @@ namespace Wanderer.GameFramework
             _remoteUpdatePath = Path.Combine(_remoteUpdatePath, Utility.GetRuntimePlatformName());
             //资源版本
             Version = new ResourceVersion(_remoteUpdatePath,LocalPath);
-        }
+
+            //选择更新 | 读取本地 | 编辑器
+            switch (ResUpdateType)
+            {
+                case ResourceUpdateType.None:
+                    break;
+                case ResourceUpdateType.Update:
+                    //BundleResourceHelper
+                    GameObject bundleBehaviourHelper = new GameObject("AssetBundleBehaviourHelper");
+                    Asset = bundleBehaviourHelper.AddComponent<BundleAssetsHelper>();
+                    bundleBehaviourHelper.hideFlags = HideFlags.HideAndDontSave;
+                    GameObject.DontDestroyOnLoad(bundleBehaviourHelper);
+                    break;
+                case ResourceUpdateType.Local:
+                    break;
+                case ResourceUpdateType.Editor:
+#if UNITY_EDITOR
+                    Asset = new EditorAssetsHelper();
+#else
+        		//如果在非编辑器模式下选择了Editor，使用本地文件
+                throw new GameException("Please select the correct resource type, not ResourceUpdateType.Editor!");
+#endif
+                    break;
+            }
+
+			
+
+		}
 
 
         #region 外部接口
@@ -169,15 +191,34 @@ namespace Wanderer.GameFramework
         {
             Asset?.Clear();
             Asset = resourceHelper;
-
         }
 
+        /// <summary>
+        /// 图集请求
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="callback"></param>
+        public void OnAtlasRequested(string operation, Action<string,Action<SpriteAtlas>> callback)
+        {
+            if (string.IsNullOrEmpty(operation))
+            {
+                return;
+            }
+            if (operation.Equals("+"))
+            {
+                SpriteAtlasManager.atlasRequested += callback;
+            }
+            else if(operation.Equals("-"))
+            {
+                SpriteAtlasManager.atlasRequested -= callback;
+            }
+        }
 
-		/// <summary>
-		/// 设置对象池管理器的
-		/// </summary>
-		/// <param name="helper"></param>
-		public void SetGameObjectPoolHelper(IGameObjectPoolHelper helper)
+        /// <summary>
+        /// 设置对象池管理器的
+        /// </summary>
+        /// <param name="helper"></param>
+        public void SetGameObjectPoolHelper(IGameObjectPoolHelper helper)
         {
             _gameObjectPoolHelper = helper;
         }

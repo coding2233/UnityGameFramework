@@ -115,7 +115,7 @@ namespace Wanderer.GameFramework
         public void RequestRemoteVersion(Action<AssetBundleVersionInfo> callback)
         {
             RemoteVersion = null;
-            string versionAssetPath = Path.Combine(_remoteUpdatePath, _assetVersionTxt);
+            string versionAssetPath = string.Format("{0}/{1}", _remoteUpdatePath, _assetVersionTxt);// Path.Combine(_remoteUpdatePath, _assetVersionTxt);
             _webRequest.RequestText(versionAssetPath, null,(result, content) =>
             {
                 if (result && !string.IsNullOrEmpty(content))
