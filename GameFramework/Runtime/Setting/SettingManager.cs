@@ -286,12 +286,12 @@ namespace Wanderer.GameFramework
 		{
 			if (Application.internetReachability == NetworkReachability.NotReachable)
 			{
-				return "无网络";
+				return "NOLAN";
 			}
 			//Check if the device can reach the internet via a carrier data network
 			else if (Application.internetReachability == NetworkReachability.ReachableViaCarrierDataNetwork)
 			{
-				return "移动数据";
+				return "4G";
 			}
 			//Check if the device can reach the internet via a LAN
 			else if (Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork)

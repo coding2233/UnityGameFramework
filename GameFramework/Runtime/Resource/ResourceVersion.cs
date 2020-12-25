@@ -359,6 +359,7 @@ namespace Wanderer.GameFramework
                     {
                         File.Delete(localPath);
                         _webRequest.FileDownloader.StopDownload();
+                        _updating = false;
                         //throw new GameException($"File integrity verification failed. {localPath}");
                         errorCallback?.Invoke(localPath, "File integrity verification failed.");
                         
@@ -366,6 +367,7 @@ namespace Wanderer.GameFramework
                 }, (localPath, error) =>
                 {
                     _webRequest.FileDownloader.StopDownload();
+                    _updating = false;
                     errorCallback?.Invoke(localPath, error);
                 });
             }
