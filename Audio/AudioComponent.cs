@@ -18,7 +18,7 @@ namespace Wanderer.GameFramework
 			amgs.AddRange(_audioMixer.FindMatchingGroups("Master"));
 			//music
 			AudioSource asMusic = gameObject.AddComponent<AudioSource>();
-			asMusic.volume = 0.3f;
+			asMusic.volume = 0.8f;
 			asMusic.playOnAwake = false;
 			asMusic.loop = true;
 			asMusic.outputAudioMixerGroup = amgs.Find(x => x.name.Equals("Music"));
