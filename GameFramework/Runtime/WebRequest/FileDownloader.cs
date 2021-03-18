@@ -133,6 +133,7 @@ namespace Wanderer.GameFramework
 				_downloadErrorCallback = null;
 				_downloadingFiles.Clear();
 				_remainingFiles.Clear();
+				_needDownloadFiles.Clear();
 				Downloading = false;
 			}
 		}
