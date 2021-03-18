@@ -167,6 +167,12 @@ namespace Wanderer.GameFramework
         private IEnumerator WebRequestDownloadFile(string remoteUrl, string localPath, Action<string, bool,ulong, float> callback,Action<string,string> errorCallback)
         {
             yield return null;
+	    
+	      //删除本地文件
+	   if (File.Exists(localPath))
+	   {
+                File.Delete(localPath);
+            }
 
             using (UnityWebRequest request = UnityWebRequest.Get(remoteUrl))
             {
