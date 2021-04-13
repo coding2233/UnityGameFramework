@@ -46,7 +46,8 @@ namespace Wanderer.GameFramework
             _settingMgr = GameFrameworkMode.GetModule<SettingManager>();
             Log = new LogFile();
 
-            FullRect = _settingMgr.Get<Rect>("DebuggerManager.FullRect", _defaultFullRect);
+            //FullRect = _settingMgr.Get<Rect>("DebuggerManager.FullRect", _defaultFullRect);
+            FullRect = _defaultFullRect;
             WindowScale = _settingMgr.Get<float>("DebuggerManager.WindowScale", _defaultWindowScale);
         }
 
@@ -182,7 +183,7 @@ namespace Wanderer.GameFramework
 
         public override void OnClose()
         {
-            _settingMgr.Set<Rect>("DebuggerManager.FullRect", FullRect);
+            //_settingMgr.Set<Rect>("DebuggerManager.FullRect", FullRect);
             _settingMgr.Set<float>("DebuggerManager.WindowScale", WindowScale);
             //关闭其他的窗口
             if (_allDebuggerWindows != null)
