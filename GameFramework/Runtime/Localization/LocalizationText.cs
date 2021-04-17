@@ -36,12 +36,15 @@ namespace Wanderer.GameFramework
 
         private void Start()
         {
-            _uiText = GetComponent<Text>();
             SetUIText(_text);
         }
 
         private void SetUIText(string key)
         {
+            if(_uiText = null)
+            {
+                _uiText = GetComponent<Text>();
+            }
             _uiText.text = GameFrameworkMode.GetModule<LocalizationManager>().Get(key);
         }
 
