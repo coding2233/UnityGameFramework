@@ -41,7 +41,7 @@ namespace Wanderer.GameFramework
 
         private void SetUIText(string key)
         {
-            if(_uiText = null)
+            if(_uiText == null)
             {
                 _uiText = GetComponent<Text>();
             }
