@@ -1,0 +1,13 @@
+{
+    "name": "com.wanderer.ugf",
+    "version": "0.0.1",
+    "displayName": "Unity GameFramework",
+    "description": "Unity GameFramework",
+    "unity": "2019.4",
+    "keywords": [],
+    "author": {
+        "name": "wanderer",
+        "email": "dutifulwanderer@gmail.com",
+        "url": "https://github.com/coding2233/UnityGameFramework"
+    }
+}
