@@ -98,6 +98,15 @@ namespace Wanderer.GameFramework
         }
 
         /// <summary>
+        /// UIModel变量更新
+        /// </summary>
+        /// <param name="key"></param>
+        internal virtual void OnUIModelVariableChanged(string key)
+        {
+            
+        }
+
+        /// <summary>
         /// 本身物体的销毁
         /// </summary>
         protected virtual void OnDestroy()
