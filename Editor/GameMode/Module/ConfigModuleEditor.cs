@@ -32,8 +32,10 @@ namespace Wanderer.GameFramework
                 _defaultConfigData["DefaultInStreamingAsset"] = true;
                 _defaultConfigData["DebugEnable"] = true;
                 _defaultConfigData["DebugLogMaxLine"] = 100;
+                //_defaultConfigData["AddressablesSupport"] = false;
                 _defaultConfigData["LogFileEnable"] = true;
                 _defaultConfigData["AppVersion"] = Application.version;
+                _defaultConfigData["DefineSymbols"] = "UNITASK_DOTWEEN_SUPPORT;";//ADDRESSABLES_SUPPORT;
             }
         }
       

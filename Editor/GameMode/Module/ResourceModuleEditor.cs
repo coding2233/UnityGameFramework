@@ -36,6 +36,11 @@ namespace Wanderer.GameFramework
             //获取当前的BuildTargetGroup
             _lastBuildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
             _lastScriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup);
+            //if (string.IsNullOrEmpty(_lastScriptingDefineSymbols))
+            //{
+            //    _lastScriptingDefineSymbols= (string)_gameMode.ConfigJsonData["DefineSymbols"];
+            //    PlayerSettings.SetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup, _lastScriptingDefineSymbols);
+            //}
         }
 
         public override void OnDrawGUI()
@@ -49,6 +54,11 @@ namespace Wanderer.GameFramework
                 GUILayout.BeginHorizontal("HelpBox");
                 GUILayout.Label("Define", GUILayout.Width(50));
                 string scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup);
+                if (string.IsNullOrEmpty(_lastScriptingDefineSymbols))
+                {
+                    _lastScriptingDefineSymbols = (string)_gameMode.ConfigJsonData["DefineSymbols"];
+                    PlayerSettings.SetScriptingDefineSymbolsForGroup(_lastBuildTargetGroup, _lastScriptingDefineSymbols);
+                }
                 _lastScriptingDefineSymbols = GUILayout.TextArea(_lastScriptingDefineSymbols);
                 if (GUILayout.Button("OK", GUILayout.Width(40)) && !_lastScriptingDefineSymbols.Equals(scriptingDefineSymbols))
                 {
@@ -57,6 +67,7 @@ namespace Wanderer.GameFramework
                 }
                 GUILayout.EndHorizontal();
 
+#if !ADDRESSABLES_SUPPORT
                 //检查配置文件是否存在
                 CheckConfig(RESOURCEUPDATETYPE, 0);
                 ResourceUpdateType gameModeResourceUpdateType = (ResourceUpdateType)(int)_gameMode.ConfigJsonData[RESOURCEUPDATETYPE];
@@ -140,7 +151,7 @@ namespace Wanderer.GameFramework
 
                     EditorGUILayout.LabelField("Path", path);
                 }
-
+#endif
                 GUILayout.EndVertical();
             }
         }

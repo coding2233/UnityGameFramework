@@ -44,16 +44,24 @@ namespace Wanderer.GameFramework
         //默认绘制界面
         public virtual void OnInspectorGUI()
         {
-            GUI.color = _mainColor;
-            GUILayout.BeginVertical("Box");
-            GUI.color = _defaultColor;
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(12);
-            _isExpand = EditorGUILayout.Foldout(_isExpand, _name, true);
-            GUILayout.EndHorizontal();
-            if (_isExpand)
-                OnDrawGUI();
-            GUILayout.EndVertical();
+            if (EditorApplication.isCompiling)
+            {
+                EditorUtility.DisplayProgressBar("", "Compiling, please wait...", 1.0f);
+            }
+            else
+            {
+                EditorUtility.ClearProgressBar();
+                GUI.color = _mainColor;
+                GUILayout.BeginVertical("Box");
+                GUI.color = _defaultColor;
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(12);
+                _isExpand = EditorGUILayout.Foldout(_isExpand, _name, true);
+                GUILayout.EndHorizontal();
+                if (_isExpand)
+                    OnDrawGUI();
+                GUILayout.EndVertical();
+            }
         }
 
         //绘制界面
