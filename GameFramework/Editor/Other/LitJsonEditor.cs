@@ -156,7 +156,11 @@ namespace Wanderer.GameFramework
                 for (int i = 0; i < rootJson.Count; i++)
                 {
                     GUILayout.BeginHorizontal("Box");
-                    JsonDataEditor(rootJson[i]);
+                    var updateJsonData = JsonDataEditor(rootJson[i]);
+                    if (updateJsonData != null)
+                    {
+                        rootJson[i] = updateJsonData;
+                    }
                     GUILayout.EndHorizontal();
                 }
                 GUILayout.BeginHorizontal("Box");
@@ -164,7 +168,7 @@ namespace Wanderer.GameFramework
                 if (GUILayout.Button("+", GUILayout.Width(30)))
                 {
                     JsonData newItem = new JsonData();
-                    newItem.SetJsonType(_newArrayJsonType);
+                    newItem.SetJsonType(arrayJsonType);
                     rootJson.Add(newItem);
                 }
                 GUILayout.EndHorizontal();
