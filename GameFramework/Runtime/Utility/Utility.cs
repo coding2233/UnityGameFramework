@@ -99,6 +99,21 @@ namespace Wanderer.GameFramework
 		}
 
 		/// <summary>
+		/// 资源加载方案
+		/// </summary>
+		public static string ResoucePlan
+		{
+			get
+			{
+#if ADDRESSABLES_SUPPORT
+				return "Addressables";
+#else
+				return "AssetBundle";
+#endif
+			}
+		}
+
+		/// <summary>
 		/// App
 		/// </summary>
 
