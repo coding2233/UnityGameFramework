@@ -102,7 +102,10 @@ namespace Wanderer.GameFramework
             {
                 var @object = _objectAsync[assetName];
                 _objectAsync.Remove(assetName);
-                Addressables.Release(@object);
+                if (@object != null)
+                {
+                    Addressables.Release(@object);
+                }
             }
         }
 
