@@ -57,6 +57,22 @@ namespace Wanderer.GameFramework
         T LoadAsset<T>(string assetName) where T : UnityEngine.Object;
 
         /// <summary>
+        /// 加载多个资源
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="tags"></param>
+        /// <returns></returns>
+        T[] FindAssets<T>(List<string> tags) where T : UnityEngine.Object;
+
+        /// <summary>
+        /// 加载多个资源
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="tags"></param>
+        /// <param name="callback"></param>
+        void FindAssets<T>(List<string> tags,Action<T[]> callback) where T : UnityEngine.Object;
+
+        /// <summary>
         /// 卸载资源 -- 取消掉资源计数
         /// </summary>
         /// <param name="assetName"></param>
@@ -68,6 +84,7 @@ namespace Wanderer.GameFramework
         /// <param name="assetBundleName">资源名称</param>
         /// <param name="unload">是否卸载调所有资源</param>
         void UnloadAssetBunlde(string assetBundleName, bool unload = false);
+
 
         /// <summary>
         /// 异步加载场景

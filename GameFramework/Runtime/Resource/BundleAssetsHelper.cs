@@ -172,7 +172,86 @@ namespace Wanderer.GameFramework
             }
 
         }
-      
+
+        public T[] FindAssets<T>(List<string> tags) where T : UnityEngine.Object
+        {
+            HashSet<string> lowerTags = new HashSet<string>();
+            foreach (var item in tags)
+            {
+                lowerTags.Add(item.ToLower());
+            }
+
+            List<string> matchPaths = new List<string>();
+            foreach (var item in _allAssetPaths)
+            {
+                bool contains = true;
+                foreach (var tag in lowerTags)
+                {
+                    contains = item.Contains(tag);
+                    if (!contains)
+                        break;
+                }
+                if (contains)
+                {
+                    matchPaths.Add(item);
+                }
+            }
+
+            List<T> result = new List<T>();
+            foreach (var item in matchPaths)
+            {
+                T asset = LoadAsset<T>(item);
+                if (asset != null)
+                {
+                    result.Add(asset);
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        public void FindAssets<T>(List<string> tags, Action<T[]> callback) where T : UnityEngine.Object
+        {
+            HashSet<string> lowerTags = new HashSet<string>();
+            foreach (var item in tags)
+            {
+                lowerTags.Add(item.ToLower());
+            }
+
+            List<string> matchPaths = new List<string>();
+            foreach (var item in _allAssetPaths)
+            {
+                bool contains = true;
+                foreach (var tag in lowerTags)
+                {
+                    contains = item.Contains(tag);
+                    if (!contains)
+                        break;
+                }
+                if (contains)
+                {
+                    matchPaths.Add(item);
+                }
+            }
+
+            List<T> result = new List<T>();
+            int resultCount = 0;
+            foreach (var item in matchPaths)
+            {
+                LoadAsset<T>(item,(asset)=> {
+                    resultCount++;
+                    if (asset != null)
+                    {
+                        result.Add(asset);
+                    }
+                    if (resultCount >= matchPaths.Count)
+                    {
+                        callback?.Invoke(result.ToArray());
+                    }
+                });
+            }
+        }
+
         /// <summary>
         /// 卸载资源
         /// </summary>

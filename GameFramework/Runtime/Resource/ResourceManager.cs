@@ -134,8 +134,10 @@ namespace Wanderer.GameFramework
         public override void OnInit()
         {
             base.OnInit();
-
-            var config = GameFrameworkMode.GetModule<ConfigManager>();
+#if ADDRESSABLES_SUPPORT
+            Asset = new AddressablesAssetsHelper();
+#else
+          var config = GameFrameworkMode.GetModule<ConfigManager>();
             //参数设置
             ResUpdateType = (ResourceUpdateType)(int)config["ResourceUpdateType"];
             ResOfficialUpdatePath = (string)config["ResOfficialUpdatePath"];
@@ -178,8 +180,10 @@ namespace Wanderer.GameFramework
             }
 
 			
+#endif
 
-		}
+
+        }
 
 
         #region 外部接口
@@ -289,9 +293,9 @@ namespace Wanderer.GameFramework
             _gameObjectPoolHelper.DespawnPrefab(assetName);
         }
 
-        #endregion
+#endregion
 
-        #region 重写函数
+#region 重写函数
         public void OnUpdate()
         {
             Version?.OnUpdate();
@@ -325,10 +329,10 @@ namespace Wanderer.GameFramework
             if (_gameObjectPoolHelper != null)
                 _gameObjectPoolHelper.DestroyAll();
         }
-        #endregion
+#endregion
 
 
-        #region 内部函数
+#region 内部函数
         //异步加载资源的回调
         private void LoadAssetAsyncCallback(string assetName, UnityEngine.Object asset)
         {
@@ -348,11 +352,11 @@ namespace Wanderer.GameFramework
             }
         }
 
-        #endregion
+#endregion
 
     }
 
-    #region 类型枚举
+#region 类型枚举
 
     /// <summary>
     /// 路径类型
@@ -400,6 +404,6 @@ namespace Wanderer.GameFramework
         None,
     }
 
-    #endregion
+#endregion
 
 }
