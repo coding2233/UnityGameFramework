@@ -42,7 +42,6 @@ namespace Wanderer.GameFramework
 
         private void Awake()
         {
-
         }
 
         public void Set(string key, JsonData value)
@@ -74,9 +73,16 @@ namespace Wanderer.GameFramework
             return buildResult;
         }
 
-        //public void Add(string key, JsonData value)
+
+        //private ModelViewBind<TValue, TComponent> Bind<TValue, TComponent>(string key,TComponent target, TValue value = default(TValue))
         //{
-        //    Json[key].Add(value);
+        //    var mvb = new ModelViewBind<TValue, TComponent>(target);
+        //    if (!value.Equals(default(TValue)))
+        //    {
+        //        mvb.Variable = value;
+        //    }
+        //    return mvb;
         //}
+
     }
 }
