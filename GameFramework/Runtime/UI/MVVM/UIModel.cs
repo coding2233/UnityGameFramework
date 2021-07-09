@@ -53,7 +53,10 @@ namespace Wanderer.GameFramework
             }
             set
             {
-                Model.Variable = value;
+                if (!value.Equals(Model.Variable))
+                {
+                    Model.Variable = value;
+                }
             }
         }
 

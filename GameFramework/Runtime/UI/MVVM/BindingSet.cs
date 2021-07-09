@@ -10,9 +10,7 @@ namespace Wanderer.GameFramework
     public interface IBindingSet
     {
         void Set(JsonData jsonData);
-
     }
-
 
     public class BindResult: IBindingSet
     {
