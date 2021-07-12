@@ -1,8 +1,10 @@
 {
     "name": "GameFramework.Editor",
+    "rootNamespace": "",
     "references": [
         "GameFramework",
-        "Libraries"
+        "Libraries",
+        "Unity.Addressables.Editor"
     ],
     "includePlatforms": [
         "Editor"
