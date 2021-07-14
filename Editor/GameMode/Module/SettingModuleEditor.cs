@@ -74,7 +74,6 @@ namespace Wanderer.GameFramework
                 _resourcePlanType = resourcePlanType;
                 SaveScriptingDefineSymbols();
             }
-#if !ADDRESSABLES_SUPPORT
             //app server
             int selectType = EditorGUILayout.IntPopup("App Server",_selectType, new string[] { "Test", "Official" },new int[] { 0,1});
             if (selectType != _selectType)
@@ -90,7 +89,6 @@ namespace Wanderer.GameFramework
                 _selectType = selectType;
                 SaveScriptingDefineSymbols();
             }
-#endif
             //检查配置文件
             if (!NoConfigError())
             {
