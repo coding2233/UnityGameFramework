@@ -85,7 +85,9 @@ namespace Wanderer.GameFramework
                     }
                 }
                 yield return request.SendWebRequest();
-                if (request.isNetworkError)
+                if (request.result== UnityWebRequest.Result.ConnectionError
+                    || request.result == UnityWebRequest.Result.DataProcessingError
+                    || request.result == UnityWebRequest.Result.ProtocolError)
                 {
                     callback?.Invoke(false, request.error);
                 }
@@ -111,7 +113,9 @@ namespace Wanderer.GameFramework
                     }
                 }
                 yield return request.SendWebRequest();
-                if (request.isNetworkError)
+                if (request.result == UnityWebRequest.Result.ConnectionError
+                    || request.result == UnityWebRequest.Result.DataProcessingError
+                    || request.result == UnityWebRequest.Result.ProtocolError)
                 {
                     callback?.Invoke(false, request.error);
                 }
@@ -127,7 +131,9 @@ namespace Wanderer.GameFramework
             using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(url))
             {
                 yield return request.SendWebRequest();
-                if (request.isNetworkError)
+                if (request.result == UnityWebRequest.Result.ConnectionError
+                    || request.result == UnityWebRequest.Result.DataProcessingError
+                    || request.result == UnityWebRequest.Result.ProtocolError)
                 {
                     callback?.Invoke(null);
                 }
@@ -145,7 +151,9 @@ namespace Wanderer.GameFramework
             using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(url))
             {
                 yield return request.SendWebRequest();
-                if (request.isNetworkError)
+                if (request.result == UnityWebRequest.Result.ConnectionError
+                    || request.result == UnityWebRequest.Result.DataProcessingError
+                    || request.result == UnityWebRequest.Result.ProtocolError)
                 {
                     callback?.Invoke(null);
                 }
@@ -193,7 +201,9 @@ namespace Wanderer.GameFramework
 
                 yield return null;
 
-                if (request.isNetworkError || request.isHttpError)
+                if (request.result == UnityWebRequest.Result.ConnectionError
+                    || request.result == UnityWebRequest.Result.DataProcessingError
+                    || request.result == UnityWebRequest.Result.ProtocolError)
                     errorCallback?.Invoke(localPath,request.error);
                 else
                 {

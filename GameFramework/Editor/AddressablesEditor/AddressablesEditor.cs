@@ -23,7 +23,7 @@ namespace Wanderer.GameFramework
                 string binPath = ContentUpdateScript.GetContentStateDataPath(false);
                 if (File.Exists(binPath))
                 {
-                    Debug.Log($"binPath: {binPath}");
+                    //Debug.Log($"binPath: {binPath}");
                     buildPlayerContent = false;
 
                     //Check update
