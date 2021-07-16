@@ -314,7 +314,11 @@ namespace Wanderer.GameFramework
                 GameObject uiViewClone = GameObject.Instantiate(uiViewSource, _uiViewParent);
                 uiView = uiViewClone.GetComponent<UIView>();
                 if (uiView == null)
+                {
+                    MonoBehaviour.Destroy(uiViewClone);
                     return null;
+                }
+                uiViewClone.layer = LayerMask.NameToLayer("UI");
                 _allUIView[uiContext] = uiView;
                 uiView.OnInit(uiContext);
                 loadTime = Time.realtimeSinceStartup- loadTime;

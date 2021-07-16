@@ -36,7 +36,7 @@ namespace Wanderer.GameFramework
                             @string.AppendLine(item.address);
                         }
                         //将被修改过的资源单独分组
-                        var groupName = string.Format("UpdateGroup_{0}_", System.DateTime.Now.ToString("yyyyMMdd"));
+                        var groupName = string.Format("UpdateGroup_{0}#", System.DateTime.Now.ToString("yyyyMMdd"));
                         ContentUpdateScript.CreateContentUpdateGroup(settings, entries, groupName);
                         Debug.Log($"Update content:{@string}");
                         AssetDatabase.Refresh();
@@ -57,8 +57,19 @@ namespace Wanderer.GameFramework
                 return settings.RemoteCatalogBuildPath.GetValue(settings);
 
             return "";
-
         }
-         
+
+        public static void ShellBuildPlayerContent(string activeProfileId = "Default")
+        {
+            var settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings != null && settings.BuildRemoteCatalog)
+            {
+                var profileId = settings.profileSettings.GetProfileId(activeProfileId);
+                settings.activeProfileId = profileId;
+            }
+            AddressableAssetSettings.BuildPlayerContent();
+            AssetDatabase.Refresh();
+        }
+
     }
 }

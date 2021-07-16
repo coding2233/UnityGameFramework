@@ -54,7 +54,7 @@ namespace Wanderer.GameFramework
         {
             var handle= Addressables.LoadAssetsAsync<T>(tags, (tObject) =>
             {
-            },Addressables.MergeMode.Intersection);
+            },Addressables.MergeMode.Union);
 
             var resultList= handle.WaitForCompletion();
             T[] result = new T[resultList.Count];
@@ -66,7 +66,7 @@ namespace Wanderer.GameFramework
         {
             var handle = Addressables.LoadAssetsAsync<T>(tags, (tObject) =>
             {
-            }, Addressables.MergeMode.Intersection);
+            }, Addressables.MergeMode.Union);
 
             handle.Completed += (resultHandle) => {
                 var resultList = resultHandle.Result;
