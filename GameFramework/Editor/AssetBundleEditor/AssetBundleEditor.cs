@@ -17,24 +17,7 @@ namespace Wanderer.GameFramework
 
 		private Vector2 _scrollView = Vector2.zero;
 
-		public static string[] AssetFilter = new string[] { "AnimationClip",
-			"AudioClip",
-			"AudioMixer",
-			"ComputeShader",
-			"Font",
-			"GUISkin",
-			"Material",
-			"Mesh",
-			"Model",
-			"PhysicMaterial",
-			"Prefab",
-			"Scene",
-			"Script",
-			"Shader",
-			"Sprite",
-			"Texture",
-			"VideoClip","TextAsset","ScriptableObject","AnimatorController","SpriteAtlas"};
-
+		private static string[] _assetFilter;
 		//窗口的位置
 		private Rect _foldersWindowRect = Rect.zero;
 		public bool _haspopupFoldersWindow
@@ -51,6 +34,8 @@ namespace Wanderer.GameFramework
 		[MenuItem("Tools/Asset Bundle/Asset Bundle Editor")]
 		private static void MainWindow()
 		{
+			_assetFilter = AssetFilterEditor.GetAssetFilters().ToArray();
+
 			//GetWindowWithRect<AssetBundleEditor>(new Rect(100, 100, 1200, 600), false, "Asset Bundle Editor");
 			GetWindow<AssetBundleEditor>("Asset Bundle Editor");
 		}
@@ -162,19 +147,19 @@ namespace Wanderer.GameFramework
 			StringBuilder filterBuilder = new StringBuilder();
 			if (jsonFilter == -1)
 			{
-				foreach (var item in AssetFilter)
+				foreach (var item in _assetFilter)
 				{
 					filterBuilder.Append($"t:{item} ");
 				}
 			}
 			else
 			{
-				for (int i = 0; i < AssetFilter.Length; i++)
+				for (int i = 0; i < _assetFilter.Length; i++)
 				{
 					int byteIndex = 1 << i;
 					if ((jsonFilter & byteIndex) == byteIndex)
 					{
-						filterBuilder.Append($"t:{AssetFilter[i]} ");
+						filterBuilder.Append($"t:{_assetFilter[i]} ");
 					}
 				}
 			}
@@ -422,7 +407,7 @@ namespace Wanderer.GameFramework
 				jsonData[key] = 1024;
 			}
 			int filter = (int)jsonData[key];
-			int newFilter = EditorGUILayout.MaskField(filter, AssetFilter, GUILayout.Width(100));
+			int newFilter = EditorGUILayout.MaskField(filter, _assetFilter, GUILayout.Width(100));
 			if (filter != newFilter)
 			{
 				jsonData[key] = newFilter;
