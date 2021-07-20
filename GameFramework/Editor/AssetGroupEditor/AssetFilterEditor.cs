@@ -99,8 +99,7 @@ namespace Wanderer.GameFramework
                 {
                     if (!string.IsNullOrEmpty(itemType.Namespace))
                     {
-                        if (itemType.Namespace.Contains("UnityEditor")
-                            || itemType.Namespace.Contains("UnityEngine"))
+                        if (itemType.Namespace.Contains("UnityEditor"))
                         {
                             continue;
                         }

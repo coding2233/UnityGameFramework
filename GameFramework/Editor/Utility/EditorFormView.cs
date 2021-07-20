@@ -75,15 +75,15 @@ namespace Wanderer.GameFramework
                     {
 						FormHeaderInfo itemHeader = _formHeader[j];
 						JsonData itemData = null;
-						if (!itemRowData.ContainsKey(itemHeader.Title))
+						if (itemRowData.ContainsKey(itemHeader.Title))
+						{
+							itemData = itemRowData[itemHeader.Title];
+						}
+						if (itemData == null)
 						{
 							itemData = new JsonData();
 							itemData.SetJsonType(itemHeader.JsonType);
 							itemRowData[itemHeader.Title] = itemData;
-						}
-						else
-						{
-							itemData = itemRowData[itemHeader.Title];
 						}
 
 						GUILayout.Space(_spacePixels);

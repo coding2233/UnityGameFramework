@@ -156,13 +156,13 @@ namespace Wanderer.GameFramework
                     Close();
                 }
             },50)
-                .SetMenuItem("Tools",new string[] { "Filter Edit","Labels Edit" },(itemIndex) => 
+                .SetMenuItem("Tools",new string[] { "Filter Edit","Labels Edit","Addressables Edit" },(itemIndex) => 
                 {
                     if (itemIndex == 0)
                     {
                         EditorApplication.ExecuteMenuItem("Tools/Asset Management/Asset Filter");
                     }
-                    else if (itemIndex == 1)
+                    else if (itemIndex == 1|| itemIndex==2)
                     {
                         EditorApplication.ExecuteMenuItem("Window/Asset Management/Addressables/Groups");
                     }
@@ -290,7 +290,11 @@ namespace Wanderer.GameFramework
 
                 })
                 .SetTitle("BuildPath",150,JsonType.String,(jsonData,width)=> {
-                    string buildPath = jsonData.ToString();
+                    if (jsonData == null)
+                    {
+                        jsonData = new JsonData("RemoteBuildPath");
+                    }
+                    string buildPath =jsonData.ToString();
                     int buildPathIndex = _profileVariables.IndexOf(buildPath);
                     int newBuildPathIndex = EditorGUILayout.Popup(buildPathIndex, _profileVariables.ToArray(),GUILayout.Width(width));
                     if (newBuildPathIndex != buildPathIndex)
@@ -300,6 +304,10 @@ namespace Wanderer.GameFramework
                     }
                 })
                 .SetTitle("LoadPath", 150, JsonType.String, (jsonData, width) => {
+                    if (jsonData == null)
+                    {
+                        jsonData = new JsonData("RemoteLoadPath");
+                    }
                     string loadPath = jsonData.ToString();
                     int loadPathIndex = _profileVariables.IndexOf(loadPath);
                     int newLoadPathIndex = EditorGUILayout.Popup(loadPathIndex, _profileVariables.ToArray(),GUILayout.Width(width));
