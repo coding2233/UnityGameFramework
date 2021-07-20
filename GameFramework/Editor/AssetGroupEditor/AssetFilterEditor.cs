@@ -27,7 +27,7 @@ namespace Wanderer.GameFramework
         [MenuItem("Tools/Assets Management/Asset Filter")]
         private static void OpenWindow()
         {
-            GetWindow<AssetFilterEditor>(true, "Asset Filter Editor",true).ShowModalUtility();
+            GetWindow<AssetFilterEditor>(true, "Asset Filter Editor",true);
         }
 
         public static List<string> GetAssetFilters()
@@ -47,6 +47,8 @@ namespace Wanderer.GameFramework
             }
             else
             {
+                AutomaticRefresh();
+
                 _config = new JsonData();
                 _config.SetJsonType(JsonType.Array);
             }
@@ -84,16 +86,42 @@ namespace Wanderer.GameFramework
                 _showAddItemWindow = true;
                
             };
-
             //_labelReorderableList.drawElementBackgroundCallback = (rect, index, isActive, isFocused) => { };
             //_labelReorderableList.elementHeightCallback = (index) => { return 80.0f; };
         }
 
+        private static void AutomaticRefresh()
+        {
+            var assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+            foreach (var item in assemblies)
+            {
+                foreach (var itemType in item.GetTypes())
+                {
+                    if (!string.IsNullOrEmpty(itemType.Namespace))
+                    {
+                        if (itemType.Namespace.Contains("UnityEditor"))
+                        {
+                            continue;
+                        }
+                    }
+                    if (itemType.BaseType == typeof(ScriptableObject))
+                    {
+                        string labelName = itemType.Name;
+                        if (!_listLabels.Contains(labelName))
+                            _listLabels.Add(labelName);
+                    }
+                }
+            }
+        }
 
         private void OnGUI()
         {
             if (_config == null)
                 return;
+            if (GUILayout.Button("Automatic refresh of system type"))
+            {
+                AutomaticRefresh();
+            }
             _scrollView = EditorGUILayout.BeginScrollView(_scrollView);
             //GUILayout.BeginVertical("HelpBox");
             _labelReorderableList?.DoLayoutList();
@@ -137,7 +165,7 @@ namespace Wanderer.GameFramework
 
                 }
             }
-           
+      
             //GUILayout.EndVertical();
             EditorGUILayout.EndScrollView();
         }
