@@ -1,7 +1,11 @@
 using LitJson;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Build;
+using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEditor.EditorTools;
 using UnityEngine;
 
@@ -15,11 +19,13 @@ namespace Wanderer.GameFramework
   
         private Vector2 _scrollView = Vector2.zero;
 		private string[] _assetFilter;
+        private string[] _labels = new string[] { "none" };
+        private List<string> _profileVariables = new List<string> { "LocalBuildPath","LocalLoadPath" };
 
         private EditorMenuItemView _menuItem;
         private EditorFormView _editorForm;
 
-		[MenuItem("Tools/Assets Management/Asset Group #&G")]
+		[MenuItem("Tools/Asset Management/Asset Group #&G")]
         private static void OpenWindow()
         {
             GetWindow<AssetGroupEditor>("Asset Group Editor");
@@ -28,6 +34,12 @@ namespace Wanderer.GameFramework
         private void OnFocus()
         {
             _assetFilter = AssetFilterEditor.GetAssetFilters().ToArray();
+            var settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings != null)
+            {
+                _labels = settings.GetLabels().ToArray();
+                _profileVariables = settings.profileSettings.GetVariableNames();
+            }
         }
 
         private void OnEnable()
@@ -39,8 +51,15 @@ namespace Wanderer.GameFramework
                 _config.SetJsonType(JsonType.Array);
             }
 
+            //var settings = AddressableAssetSettingsDefaultObject.Settings;
+            //if (settings != null)
+            //{
+            //    _labels = settings.GetLabels().ToArray();
+            //    _profileVariables = settings.profileSettings.GetVariableNames();
+            //}
+
             OnMenuInit();
-            _assetFilter = AssetFilterEditor.GetAssetFilters().ToArray();
+            //_assetFilter = AssetFilterEditor.GetAssetFilters().ToArray();
 			_editorForm = new EditorFormView(_config);
             OnFormInit();
 		}
@@ -48,14 +67,106 @@ namespace Wanderer.GameFramework
         private void OnMenuInit()
         {
             _menuItem = new EditorMenuItemView();
-            _menuItem.SetMenuItem("File", new string[] { "Save Config", "Exit" }, (itemIndex) => {
-                if (itemIndex==0)
+            _menuItem.SetMenuItem("File", new string[] { "Save Config","Set Addressables", "Exit" }, (itemIndex) => {
+                if (itemIndex == 0)
                 {
                     ProjectSettingsConfig.SaveJsonData(_configName, _config);
                     EditorUtility.DisplayDialog("Save Config", "Data saved successfully!", "OK");
                 }
+                else if (itemIndex == 1)
+                {
+                    var settings = AddressableAssetSettingsDefaultObject.Settings;
+                    if (settings != null)
+                    {
+                        string binPath = ContentUpdateScript.GetContentStateDataPath(false);
+                        if (_config != null && _config.Count > 0)
+                        {
+                            for (int i = 0; i < _config.Count; i++)
+                            {
+                                JsonData item = _config[i];
+                                string groupName = item["GroupName"].ToString();
+                                var group = settings.FindGroup(groupName);
+                                if (group == null)
+                                {
+                                    group = settings.CreateGroup(groupName,false,false,false,null);
+                                }
+                                BundledAssetGroupSchema bagSchema=group.GetSchema<BundledAssetGroupSchema>();
+                                if (bagSchema == null)
+                                {
+                                    bagSchema= group.AddSchema<BundledAssetGroupSchema>();
+                                }
+                                bagSchema.BuildPath.SetVariableByName(settings, item["BuildPath"].ToString());
+                                bagSchema.LoadPath.SetVariableByName(settings, item["LoadPath"].ToString());
+
+                                ContentUpdateGroupSchema cugSchema =group.GetSchema<ContentUpdateGroupSchema>();
+                                if (cugSchema == null)
+                                {
+                                    cugSchema= group.AddSchema<ContentUpdateGroupSchema>();
+                                }
+                                cugSchema.StaticContent = ((int)item["UpdateRestriction"]==1);
+
+                                //Filter
+                                StringBuilder filterBuilder = new StringBuilder();
+                                for (int filterIndex = 0; filterIndex < item["Filter"].Count; filterIndex++)
+                                {
+                                    filterBuilder.Append($"t:{item["Filter"][filterIndex].ToString()} ");
+                                }
+                                //SearchInFolders
+                                List<string> folders = new List<string>();
+                                for (int folderIndex = 0; folderIndex < item["SearchInFolders"].Count; folderIndex++)
+                                {
+                                    folders.Add(item["SearchInFolders"][folderIndex].ToString());
+                                }
+                                //Labels
+                                List<string> labels = new List<string>();
+                                for (int labelIndex = 0; labelIndex < item["Labels"].Count; labelIndex++)
+                                {
+                                    labels.Add(item["Labels"][labelIndex].ToString());
+                                }
+
+                                //Find All Asset
+                                var findAssets = AssetDatabase.FindAssets(filterBuilder.ToString(), folders.ToArray());
+                                for (int findIndex = 0; findIndex < findAssets.Length; findIndex++)
+                                {
+                                    string guid = findAssets[findIndex];
+                                    string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                                    if (AssetDatabase.IsValidFolder(assetPath)|| assetPath.EndsWith(".cs"))
+                                    {
+                                        continue;
+                                    }
+                                    if (group.GetAssetEntry(guid) == null)
+                                    {
+                                        var entry = settings.CreateOrMoveEntry(guid, group);
+                                        foreach (var itemLabel in labels)
+                                        {
+                                            entry.SetLabel(itemLabel, true);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        EditorUtility.SetDirty(settings);
+                        AssetDatabase.Refresh();
+
+                        EditorApplication.ExecuteMenuItem("Window/Asset Management/Addressables/Groups");
+                    }
+                }
+                else
+                {
+                    Close();
+                }
             },50)
-                .SetMenuItem("Tools",new string[] { "Filter Edit" },(itemIndex) => { EditorApplication.ExecuteMenuItem("Tools/Assets Management/Asset Filter"); });
+                .SetMenuItem("Tools",new string[] { "Filter Edit","Labels Edit" },(itemIndex) => 
+                {
+                    if (itemIndex == 0)
+                    {
+                        EditorApplication.ExecuteMenuItem("Tools/Asset Management/Asset Filter");
+                    }
+                    else if (itemIndex == 1)
+                    {
+                        EditorApplication.ExecuteMenuItem("Window/Asset Management/Addressables/Groups");
+                    }
+                });
         }
 
 		private void OnFormInit()
@@ -63,24 +174,59 @@ namespace Wanderer.GameFramework
 			_editorForm.SetTitle("GroupName", 150, JsonType.String, null)
 				.SetTitle("Description", 100, JsonType.String, null)
 				//.SetTitle("Variant", 100, JsonType.String, null)
-				.SetTitle("Filter", 100, JsonType.Int, (jsonData,width)=> {
-					int filter = (int)jsonData;
-					int newFilter = EditorGUILayout.MaskField(filter, _assetFilter, GUILayout.Width(100));
-					if (filter != newFilter)
-					{
-						(jsonData as IJsonWrapper).SetInt(newFilter);
-					}
+				.SetTitle("Filter", 100, JsonType.Array, (jsonData,width)=> {
+                    string buttonText = "None";
+                    HashSet<string> selectFilter = new HashSet<string>();
+                    if (jsonData!=null && jsonData.Count>0)
+                    {
+                        if (jsonData.Count == 1)
+                        {
+                            buttonText = jsonData[0].ToString();
+                        }
+                        else
+                        {
+                            buttonText = "Mixed...";
+                        }
+                        for (int i = 0; i < jsonData.Count; i++)
+                        {
+                            selectFilter.Add(jsonData[i].ToString());
+                        }
+                    }
+                    if (GUILayout.Button(buttonText, EditorStyles.toolbarDropDown,GUILayout.Width(width)))
+                    {
+                        GenericMenu gm = new GenericMenu();
+                        for (int i = 0; i < _assetFilter.Length; i++)
+                        {
+                            string itemFilter = _assetFilter[i];
+                            bool filterOn = selectFilter.Contains(itemFilter);
+                            gm.AddItem(new GUIContent(itemFilter), filterOn, () => {
+                                if (filterOn)
+                                {
+                                    jsonData.Remove(itemFilter);
+                                    selectFilter.Remove(itemFilter);
+                                }
+                                else
+                                {
+                                    selectFilter.Add(itemFilter);
+                                    jsonData.Add(itemFilter);
+                                }
+                            });
+                        }
+                        gm.ShowAsContext();
+                    }
 				})
 				.SetTitle("SearchInFolders", 120, JsonType.Array, (jsonData, width) => {
                     string buttonText = "No folder selected";
                     if (jsonData != null && jsonData.Count > 0)
                     {
-                        buttonText = $"[{jsonData.Count}]{jsonData[0].ToString()}";
-                        if (buttonText.Length > 13)
+                        if (jsonData.Count == 1)
                         {
-                            buttonText = buttonText.Substring(0, 13);
+                            buttonText = jsonData[0].ToString();
                         }
-                        buttonText += "...|...";
+                        else
+                        {
+                            buttonText = "Mixed...";
+                        }
                     }
                     if (GUILayout.Button(buttonText, EditorStyles.toolbarDropDown, GUILayout.Width(width)))
                     {
@@ -100,8 +246,79 @@ namespace Wanderer.GameFramework
                             }
                         });
                     }
-				});
-		}
+				})
+                .SetTitle("Labels",100,JsonType.Array,(jsonData,width)=> {
+                    string buttonText = "None";
+                    HashSet<string> selectLabels = new HashSet<string>();
+                    if (jsonData != null && jsonData.Count > 0)
+                    {
+                        if (jsonData.Count == 1)
+                        {
+                            buttonText = jsonData[0].ToString();
+                        }
+                        else
+                        {
+                            buttonText = "Mixed...";
+                        }
+                        for (int i = 0; i < jsonData.Count; i++)
+                        {
+                            selectLabels.Add(jsonData[i].ToString());
+                        }
+                    }
+                    if (GUILayout.Button(buttonText, EditorStyles.toolbarDropDown, GUILayout.Width(width)))
+                    {
+                        GenericMenu gm = new GenericMenu();
+                        for (int i = 0; i < _labels.Length; i++)
+                        {
+                            string itemLabel = _labels[i];
+                            bool labelOn = selectLabels.Contains(itemLabel);
+                            gm.AddItem(new GUIContent(itemLabel), labelOn, () => {
+                                if (labelOn)
+                                {
+                                    jsonData.Remove(itemLabel);
+                                    selectLabels.Remove(itemLabel);
+                                }
+                                else
+                                {
+                                    selectLabels.Add(itemLabel);
+                                    jsonData.Add(itemLabel);
+                                }
+                            });
+                        }
+                        gm.ShowAsContext();
+                    }
+
+                })
+                .SetTitle("BuildPath",150,JsonType.String,(jsonData,width)=> {
+                    string buildPath = jsonData.ToString();
+                    int buildPathIndex = _profileVariables.IndexOf(buildPath);
+                    int newBuildPathIndex = EditorGUILayout.Popup(buildPathIndex, _profileVariables.ToArray(),GUILayout.Width(width));
+                    if (newBuildPathIndex != buildPathIndex)
+                    {
+                        buildPath = _profileVariables[newBuildPathIndex];
+                        (jsonData as IJsonWrapper).SetString(buildPath);
+                    }
+                })
+                .SetTitle("LoadPath", 150, JsonType.String, (jsonData, width) => {
+                    string loadPath = jsonData.ToString();
+                    int loadPathIndex = _profileVariables.IndexOf(loadPath);
+                    int newLoadPathIndex = EditorGUILayout.Popup(loadPathIndex, _profileVariables.ToArray(),GUILayout.Width(width));
+                    if (newLoadPathIndex != loadPathIndex)
+                    {
+                        loadPath = _profileVariables[newLoadPathIndex];
+                        (jsonData as IJsonWrapper).SetString(loadPath);
+                    }
+                })
+                .SetTitle("UpdateRestriction",200,JsonType.Int,(jsonData,width)=> {
+                    int updateType = (int)jsonData;
+                    int newUpdateType =EditorGUILayout.Popup(updateType,new string[] {"Can Change Post Release", "Cannot Change Post Release" },GUILayout.Width(width));
+                    if (newUpdateType != updateType)
+                    {
+                        (jsonData as IJsonWrapper).SetInt(newUpdateType);
+                    }
+                })
+                ;
+        }
 
         private void OnDisable()
         {

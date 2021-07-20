@@ -14,7 +14,7 @@ namespace Wanderer.GameFramework
         private static JsonData _config;
         private Vector2 _scrollView = Vector2.zero;
         
-        private static List<string> _listLabels = new List<string>(){ "AnimationClip",
+        private static List<string> _listLabels = new List<string>(){"Object", "AnimationClip",
             "AudioClip","AudioMixer","ComputeShader","Font","GUISkin","Material",
             "Mesh","Model","PhysicMaterial","Prefab","Scene","Script","Shader",
             "Sprite","Texture","VideoClip","TextAsset","ScriptableObject",
@@ -24,7 +24,7 @@ namespace Wanderer.GameFramework
         private ReorderableList _labelReorderableList;
         private bool _showAddItemWindow;
 
-        [MenuItem("Tools/Assets Management/Asset Filter")]
+        [MenuItem("Tools/Asset Management/Asset Filter")]
         private static void OpenWindow()
         {
             GetWindow<AssetFilterEditor>(true, "Asset Filter Editor",true);
@@ -47,7 +47,7 @@ namespace Wanderer.GameFramework
             }
             else
             {
-                AutomaticRefresh();
+                //AutomaticRefresh();
 
                 _config = new JsonData();
                 _config.SetJsonType(JsonType.Array);
@@ -99,7 +99,8 @@ namespace Wanderer.GameFramework
                 {
                     if (!string.IsNullOrEmpty(itemType.Namespace))
                     {
-                        if (itemType.Namespace.Contains("UnityEditor"))
+                        if (itemType.Namespace.Contains("UnityEditor")
+                            || itemType.Namespace.Contains("UnityEngine"))
                         {
                             continue;
                         }
@@ -118,10 +119,16 @@ namespace Wanderer.GameFramework
         {
             if (_config == null)
                 return;
+            GUILayout.BeginHorizontal();
             if (GUILayout.Button("Automatic refresh of system type"))
             {
                 AutomaticRefresh();
             }
+            if (GUILayout.Button("Save Config"))
+            {
+                SaveConfig();
+            }
+            GUILayout.EndHorizontal();
             _scrollView = EditorGUILayout.BeginScrollView(_scrollView);
             //GUILayout.BeginVertical("HelpBox");
             _labelReorderableList?.DoLayoutList();
@@ -165,7 +172,8 @@ namespace Wanderer.GameFramework
 
                 }
             }
-      
+
+            GUILayout.Space(100);
             //GUILayout.EndVertical();
             EditorGUILayout.EndScrollView();
         }
@@ -178,7 +186,8 @@ namespace Wanderer.GameFramework
             {
                 _config.Add(item);
             }
-            ProjectSettingsConfig.SaveJsonData(_configName,_config);
+                ProjectSettingsConfig.SaveJsonData(_configName, _config);
+
         }
 
     }

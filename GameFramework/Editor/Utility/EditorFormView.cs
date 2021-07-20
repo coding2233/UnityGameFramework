@@ -22,7 +22,7 @@ namespace Wanderer.GameFramework
 		private JsonData _newData;
 		private Vector2 _scrollView = Vector2.zero;
 
-        private float _spacePixels = 5.0f;
+        private float _spacePixels = 15;
         private List<float> _verticalLineX = new List<float>();
 
         public EditorFormView(JsonData jsonData)
@@ -50,6 +50,7 @@ namespace Wanderer.GameFramework
 		
 
 			_scrollView = GUILayout.BeginScrollView(_scrollView,"HelpBox");
+
 			GUILayout.BeginHorizontal("box", GUILayout.Width(Screen.width));
 			_verticalLineX.Clear();
 			foreach (var item in _formHeader)
@@ -59,8 +60,8 @@ namespace Wanderer.GameFramework
 				GUILayout.Space(_spacePixels);
 				Rect latRect = GUILayoutUtility.GetLastRect();
 				_verticalLineX.Add(latRect.x + latRect.width);
+				//GUILayout.Space(_spacePixels);
 			}
-
 			GUILayout.EndHorizontal();
 
 			int configCount = _data.Count;
