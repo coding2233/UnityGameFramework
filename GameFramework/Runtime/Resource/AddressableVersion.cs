@@ -36,12 +36,14 @@ namespace Wanderer.GameFramework
         /// <param name="downloadComplete">下载完成</param>
         /// <param name="errorCallback">下载错误</param>
         /// <returns></returns>
-        public override async void UpdateResource(Action<float, double, double, float> callback, Action downloadComplete, Action<string, string> errorCallback)
+        public override async void UpdateResource(Action<float, double, double, float> callback, Action downloadComplete, Action<string, string> errorCallback,string label)
         {
             try
             {
                 if (_isCheckUpdate)
                 {
+                    bool hasLabel = !string.IsNullOrEmpty(label);
+
                     if (_checkHandle.Result.Count > 0)
                     {
                         var updateHandle = Addressables.UpdateCatalogs(_checkHandle.Result, false);
@@ -56,10 +58,25 @@ namespace Wanderer.GameFramework
                             long downloadSize = sizeHandle.Result;
                             if (downloadSize > 0)
                             {
-                                totalDownloadSize += downloadSize;
-                                foreach (var key in locator.Keys)
+                                if (hasLabel)
                                 {
-                                    downloadKeys.Add(key);
+                                    foreach (var key in locator.Keys)
+                                    {
+                                        if (key.ToString().Equals(label))
+                                        {
+                                            totalDownloadSize += downloadSize;
+                                            downloadKeys.Add(key);
+                                            break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    totalDownloadSize += downloadSize;
+                                    foreach (var key in locator.Keys)
+                                    {
+                                        downloadKeys.Add(key);
+                                    }
                                 }
                             }
                         }

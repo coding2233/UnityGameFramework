@@ -25,7 +25,7 @@ namespace Wanderer.GameFramework
         /// <param name="downloadComplete">下载完成</param>
         /// <param name="errorCallback">下载错误</param>
         /// <returns></returns>
-        public abstract void UpdateResource(Action<float, double, double, float> callback, Action downloadComplete, Action<string, string> errorCallback);
+        public abstract void UpdateResource(Action<float, double, double, float> callback, Action downloadComplete, Action<string, string> errorCallback,string key=null);
 
     }
 }

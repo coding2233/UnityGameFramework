@@ -71,17 +71,28 @@ namespace Wanderer.GameFramework
             return "";
         }
 
+
+        [MenuItem("Tools/Asset Management/Addressables Player Content")]
+        private static void BuildPlayerContent()
+        {
+            ShellBuildPlayerContent();
+        }
+
         public static void ShellBuildPlayerContent(string activeProfileId = "Default")
         {
             var settings = AddressableAssetSettingsDefaultObject.Settings;
-            if (settings != null && settings.BuildRemoteCatalog)
+            if (settings != null)
             {
                 var profileId = settings.profileSettings.GetProfileId(activeProfileId);
                 settings.activeProfileId = profileId;
+
+                AddressableAssetSettings.CleanPlayerContent(settings.ActivePlayerDataBuilder);
             }
             AddressableAssetSettings.BuildPlayerContent();
             EditorUtility.SetDirty(settings);
             AssetDatabase.Refresh();
+            //BuildPlayerWindow.RegisterBuildPlayerHandler
+            //BuildPlayerWindow.DefaultBuildMethods.BuildPlayer();
         }
 
     }

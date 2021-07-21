@@ -186,30 +186,54 @@ namespace Wanderer.GameFramework
             return false;
         }
 
+        ///// <summary>
+        ///// 更新资源
+        ///// </summary>
+        ///// <param name="callback">下载回调[进度(0-1)，大小(KB),速度(KB/S),剩余时间(s)]</param>
+        ///// <param name="downloadComplete">下载完成</param>
+        ///// <param name="errorCallback">下载错误</param>
+        ///// <param name="name">是否是更新单个资源,需要更新则传单个文件的名称</param>
+        ///// <returns></returns>
+        //public bool UpdateResource(Action<float, double, double, float> callback, Action downloadComplete, Action<string, string> errorCallback,string name=null)
+        //{
+        //    if (_updating)
+        //        return false;
+
+        //    if (string.IsNullOrEmpty(name) && !CheckResource())
+        //    {
+        //        return false;
+        //    }
+
+        //    _updating = true;
+        //    //整理下载资源
+        //     CollateDownloadResources((needDownloadFiles)=> {
+        //         DownloadFiles(needDownloadFiles, callback, downloadComplete, errorCallback);
+        //     }, name);
+        //    return true;
+        //}
+
         /// <summary>
         /// 更新资源
         /// </summary>
-        /// <param name="callback">下载回调[进度(0-1)，大小(KB),速度(KB/S),剩余时间(s)]</param>
-        /// <param name="downloadComplete">下载完成</param>
-        /// <param name="errorCallback">下载错误</param>
-        /// <param name="name">是否是更新单个资源,需要更新则传单个文件的名称</param>
-        /// <returns></returns>
-        public bool UpdateResource(Action<float, double, double, float> callback, Action downloadComplete, Action<string, string> errorCallback,string name=null)
+        /// <param name="callback"></param>
+        /// <param name="downloadComplete"></param>
+        /// <param name="errorCallback"></param>
+        public override void UpdateResource(Action<float, double, double, float> callback, Action downloadComplete, Action<string, string> errorCallback, string name)
         {
-            if (_updating)
-                return false;
-     
-            if (string.IsNullOrEmpty(name) && !CheckResource())
+            if (!_updating)
             {
-                return false;
-            }
+                if(string.IsNullOrEmpty(name) && !CheckResource())
+                {
+                    return;
+                }
 
-            _updating = true;
-            //整理下载资源
-             CollateDownloadResources((needDownloadFiles)=> {
-                 DownloadFiles(needDownloadFiles, callback, downloadComplete, errorCallback);
-             }, name);
-            return true;
+                _updating = true;
+                //整理下载资源
+                CollateDownloadResources((needDownloadFiles) =>
+                {
+                    DownloadFiles(needDownloadFiles, callback, downloadComplete, errorCallback);
+                }, name);
+            }
         }
 
         /// <summary>
@@ -241,16 +265,7 @@ namespace Wanderer.GameFramework
             }
         }
 
-        /// <summary>
-        /// 更新资源
-        /// </summary>
-        /// <param name="callback"></param>
-        /// <param name="downloadComplete"></param>
-        /// <param name="errorCallback"></param>
-        public override void UpdateResource(Action<float, double, double, float> callback, Action downloadComplete, Action<string, string> errorCallback)
-        {
-            bool result = UpdateResource(callback,downloadComplete,errorCallback,null);
-        }
+      
 
 
         #region 事件回调

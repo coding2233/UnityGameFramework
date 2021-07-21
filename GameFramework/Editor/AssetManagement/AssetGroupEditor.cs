@@ -136,13 +136,15 @@ namespace Wanderer.GameFramework
                                     {
                                         continue;
                                     }
-                                    if (group.GetAssetEntry(guid) == null)
+                                    var entry = group.GetAssetEntry(guid);
+                                    if (entry == null)
                                     {
-                                        var entry = settings.CreateOrMoveEntry(guid, group);
-                                        foreach (var itemLabel in labels)
-                                        {
-                                            entry.SetLabel(itemLabel, true);
-                                        }
+                                        entry = settings.CreateOrMoveEntry(guid, group);
+                                    }
+                                    entry.labels.Clear();
+                                    foreach (var itemLabel in labels)
+                                    {
+                                        entry.SetLabel(itemLabel, true);
                                     }
                                 }
                             }
