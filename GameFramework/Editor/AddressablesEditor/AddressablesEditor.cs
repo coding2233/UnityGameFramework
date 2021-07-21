@@ -7,6 +7,7 @@ using UnityEditor.AddressableAssets;
 using System.Text;
 using UnityEditor.AddressableAssets.Settings;
 using System.IO;
+using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 
 namespace Wanderer.GameFramework
 {
@@ -38,7 +39,18 @@ namespace Wanderer.GameFramework
                         //将被修改过的资源单独分组
                         var groupName = string.Format("UpdateGroup_{0}#", System.DateTime.Now.ToString("yyyyMMdd"));
                         ContentUpdateScript.CreateContentUpdateGroup(settings, entries, groupName);
+                        var group= settings.FindGroup(groupName);
+                        BundledAssetGroupSchema bagSchema = group.GetSchema<BundledAssetGroupSchema>();
+                        if (bagSchema == null)
+                        {
+                            bagSchema = group.AddSchema<BundledAssetGroupSchema>();
+                        }
+                        var defultBAGSchema = settings.DefaultGroup.GetSchema<BundledAssetGroupSchema>();
+                        
+                        bagSchema.BuildPath.SetVariableByName(settings, defultBAGSchema.BuildPath.GetValue(settings));
+                        bagSchema.LoadPath.SetVariableByName(settings, defultBAGSchema.LoadPath.GetValue(settings));
                         Debug.Log($"Update content:{@string}");
+                        EditorUtility.SetDirty(settings);
                         AssetDatabase.Refresh();
                     }
 
