@@ -34,13 +34,13 @@ namespace Wanderer.GameFramework
 		public override void OnEnter(FSM<GameStateContext> fsm)
 		{
 			_updateFlag = false;
-
 			base.OnEnter(fsm);
 			//检查资源版本信息
-			GameMode.Resource.Version.CheckResource((needUpdate,localVersion,remoteVersion)=> {
+			var version = GameMode.Resource.Version;
+			version.CheckUpdate((needUpdate)=> {
 				if (needUpdate)
 				{
-					GameMode.Resource.Version.UpdateResource(OnResourceUpdateCallback,OnDownloadComplete, OnDownloadError);
+					version.UpdateResource(OnResourceUpdateCallback,OnDownloadComplete, OnDownloadError);
 				}
 				_updateFlag = !needUpdate;
 			});

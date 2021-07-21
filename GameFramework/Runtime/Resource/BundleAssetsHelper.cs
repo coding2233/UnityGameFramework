@@ -98,7 +98,11 @@ namespace Wanderer.GameFramework
         /// <param name="progressCallback"></param>
         public void Preload(Action<float> progressCallback)
         {
-            var version = GameFrameworkMode.GetModule<ResourceManager>().Version.LocalVersion;
+#if ADDRESSABLES_SUPPORT
+
+#else
+          ResourceVersion rv = GameFrameworkMode.GetModule<ResourceManager>().Version as ResourceVersion;
+            var version = rv.LocalVersion;
             if (version == null)
             {
                 throw new GameException("Version information for the local resource was not found！");
@@ -113,8 +117,9 @@ namespace Wanderer.GameFramework
             }
             //协程异步加载
             StartCoroutine(ResourcePreload(preloadAsset, progressCallback));
+#endif
         }
-        
+
         /// <summary>
         /// 异步加载Asset
         /// </summary>

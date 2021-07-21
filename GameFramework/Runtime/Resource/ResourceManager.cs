@@ -96,7 +96,7 @@ namespace Wanderer.GameFramework
         /// 资源的版本信息
         /// </summary>
         /// <value></value>
-        public ResourceVersion Version { get; private set; }
+        public IResourceVersion Version { get; private set; }
 
         #endregion
 
@@ -136,6 +136,7 @@ namespace Wanderer.GameFramework
             base.OnInit();
 #if ADDRESSABLES_SUPPORT
             Asset = new AddressablesAssetsHelper();
+            Version = new AddressableVersion();
 #else
           var config = GameFrameworkMode.GetModule<ConfigManager>();
             //参数设置
@@ -184,7 +185,6 @@ namespace Wanderer.GameFramework
 
 
         }
-
 
         #region 外部接口
         /// <summary>
@@ -293,12 +293,13 @@ namespace Wanderer.GameFramework
             _gameObjectPoolHelper.DespawnPrefab(assetName);
         }
 
+
+
 #endregion
 
 #region 重写函数
         public void OnUpdate()
         {
-            Version?.OnUpdate();
             if (_sceneAsyncOperations.Count > 0)
             {
                 foreach (var item in _sceneAsyncOperations)

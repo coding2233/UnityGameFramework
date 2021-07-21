@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 
 namespace Wanderer.GameFramework
 {
-    public class ResourceVersion
+    public class ResourceVersion: IResourceVersion
     {
         private WebRequestManager _webRequest;
         //   private ResourceManager _resource;
@@ -162,6 +162,14 @@ namespace Wanderer.GameFramework
             callback?.Invoke(result, local, remote);
         }
 
+        public override void CheckUpdate(Action<bool> onNeedUpdate)
+        {
+            CheckResource((needUpdate, localVersion, remoteVersion) =>
+            {
+                onNeedUpdate?.Invoke(needUpdate);
+            });
+        }
+
         /// <summary>
         /// 检查资源
         /// </summary>
@@ -233,8 +241,20 @@ namespace Wanderer.GameFramework
             }
         }
 
+        /// <summary>
+        /// 更新资源
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <param name="downloadComplete"></param>
+        /// <param name="errorCallback"></param>
+        public override void UpdateResource(Action<float, double, double, float> callback, Action downloadComplete, Action<string, string> errorCallback)
+        {
+            bool result = UpdateResource(callback,downloadComplete,errorCallback,null);
+        }
+
+
         #region 事件回调
-      
+
         #endregion
 
         #region 内部函数
