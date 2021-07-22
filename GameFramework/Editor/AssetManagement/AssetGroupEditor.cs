@@ -92,20 +92,25 @@ namespace Wanderer.GameFramework
                                 {
                                     group = settings.CreateGroup(groupName,false,false,false,null);
                                 }
-                                BundledAssetGroupSchema bagSchema=group.GetSchema<BundledAssetGroupSchema>();
+
+                                ContentUpdateGroupSchema cugSchema = group.GetSchema<ContentUpdateGroupSchema>();
+                                if (cugSchema == null)
+                                {
+                                    cugSchema = group.AddSchema<ContentUpdateGroupSchema>();
+                                }
+                                cugSchema.StaticContent = ((int)item["UpdateRestriction"] == 1);
+                                BundledAssetGroupSchema bagSchema =group.GetSchema<BundledAssetGroupSchema>();
                                 if (bagSchema == null)
                                 {
                                     bagSchema= group.AddSchema<BundledAssetGroupSchema>();
                                 }
                                 bagSchema.BuildPath.SetVariableByName(settings, item["BuildPath"].ToString());
                                 bagSchema.LoadPath.SetVariableByName(settings, item["LoadPath"].ToString());
-
-                                ContentUpdateGroupSchema cugSchema =group.GetSchema<ContentUpdateGroupSchema>();
-                                if (cugSchema == null)
+                                if (cugSchema.StaticContent)
                                 {
-                                    cugSchema= group.AddSchema<ContentUpdateGroupSchema>();
+                                    bagSchema.UseAssetBundleCrc = false;
+                                    bagSchema.UseAssetBundleCrcForCachedBundles = false;
                                 }
-                                cugSchema.StaticContent = ((int)item["UpdateRestriction"]==1);
 
                                 //Filter
                                 StringBuilder filterBuilder = new StringBuilder();
@@ -337,7 +342,6 @@ namespace Wanderer.GameFramework
             _config = null;
             _editorForm = null;
         }
-
 
         private void OnGUI()
         {

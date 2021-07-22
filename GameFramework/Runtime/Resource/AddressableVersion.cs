@@ -26,6 +26,12 @@ namespace Wanderer.GameFramework
             _checkHandle =  Addressables.CheckForCatalogUpdates(false);
             _isCheckUpdate = true;
             await _checkHandle.Task;
+            Log.Info($"Check Result Count:{_checkHandle.Result.Count}");
+            foreach (var item in _checkHandle.Result)
+            {
+                Log.Info($"Check Result :{item}");
+            }
+
             needUpdate?.Invoke(_checkHandle.Result.Count>0);
         }
 
@@ -53,6 +59,8 @@ namespace Wanderer.GameFramework
                         long totalDownloadSize = 0;
                         foreach (var locator in locators)
                         {
+                            Log.Info($"Update locator:{locator.LocatorId}");
+
                             var sizeHandle = Addressables.GetDownloadSizeAsync(locator.Keys);
                             await sizeHandle.Task;
                             long downloadSize = sizeHandle.Result;
@@ -76,6 +84,7 @@ namespace Wanderer.GameFramework
                                     foreach (var key in locator.Keys)
                                     {
                                         downloadKeys.Add(key);
+                                        //Log.Info($"locator[{locator}] size:{downloadSize} key:{key}");
                                     }
                                 }
                             }
