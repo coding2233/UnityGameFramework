@@ -4,7 +4,8 @@
     "references": [
         "GameFramework",
         "Libraries",
-        "Unity.Addressables.Editor"
+        "Unity.Addressables.Editor",
+        "OdinSerializer"
     ],
     "includePlatforms": [
         "Editor"
