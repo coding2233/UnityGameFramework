@@ -101,7 +101,7 @@
 //            }
 //        }
 
-//        public virtual AssetImporter Importer { get; set; }
+//        public virtual JsonData ImporterConfig { get; set; }
 
 //        protected FieldInfo[] _filedInfos;
 //        protected PropertyInfo[] _propertyInfos;
@@ -113,25 +113,6 @@
 //    class TextureStandardAsset : StandardAssetBase
 //    {
 //        private TextureImporter _textureImporter;
-//        public override AssetImporter Importer
-//        {
-//            get
-//            {
-//                return _textureImporter;
-//            }
-//            set
-//            {
-//                if (value == null)
-//                {
-//                    var template = AssetDatabase.LoadAssetAtPath<TextAsset>($"Assets/UnityGameFramework/GameFramework/Editor/AssetManagement/StandardAsset/TextureImporter.bytes");
-//                    _textureImporter = SerializationUtility.DeserializeValue<TextureImporter>(template.bytes, DataFormat.Binary);
-//                }
-//                else
-//                {
-//                    _textureImporter = value as TextureImporter;
-//                }
-//            }
-//        }
 
 //        public override void OnDraw()
 //        {

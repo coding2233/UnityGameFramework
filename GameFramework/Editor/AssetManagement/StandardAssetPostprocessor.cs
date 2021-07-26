@@ -81,7 +81,15 @@ namespace Wanderer.GameFramework
         /// </summary>
         void OnPreprocessModel()
         {
-            
+            if (!CheckFlag("ModelFlag"))
+            {
+                ModelImporter modelImporter = (ModelImporter)assetImporter;
+                modelImporter.useFileUnits = false;
+
+                EditorUtility.SetDirty(assetImporter);
+                modelImporter.SaveAndReimport();
+                AssetDatabase.Refresh();
+            }
         }
 
         /// <summary>
