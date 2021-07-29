@@ -34,6 +34,8 @@ namespace Wanderer.GameFramework
 
         private List<InfiniteListItem> _items = new List<InfiniteListItem>();
 
+        public List<InfiniteListItem> Items => _items;
+
         private Vector2 _maskSize;
 
         private Vector2 _dragMin = Vector2.zero;
@@ -43,6 +45,7 @@ namespace Wanderer.GameFramework
         private Vector2 _renderMax = Vector2.zero;
 
         private float _maxLength;
+        public float MaxLength => _maxLength;
 
         private List<RectTransform> _renderItems = new List<RectTransform>();
         private Queue<RectTransform> _rendererItemCachePool;
