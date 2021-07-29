@@ -9,6 +9,14 @@ namespace Wanderer.GameFramework
 {
     public class InfiniteListView : UIBehaviour, IInitializePotentialDragHandler, IEventSystemHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IScrollHandler, ICanvasElement, ILayoutElement, ILayoutGroup, ILayoutController
     {
+        enum Layout
+        {
+            Horizontal,
+            Vertical,
+        }
+
+        [SerializeField]
+        private InfiniteListView.Layout _renderLayout=Layout.Vertical;
 
         [SerializeField]
         private RectTransform _mask;
@@ -17,7 +25,7 @@ namespace Wanderer.GameFramework
         private RectTransform _rendererItemPrefab;
 
         [SerializeField]
-        private int _columns = 2;
+        private int _splitCount = 2;
 
         private Vector2 _itemSize;
 
@@ -34,92 +42,111 @@ namespace Wanderer.GameFramework
         private Vector2 _renderMin = Vector2.zero;
         private Vector2 _renderMax = Vector2.zero;
 
-        private float _maxHeight;
+        private float _maxLength;
 
         private List<RectTransform> _renderItems = new List<RectTransform>();
         private Queue<RectTransform> _rendererItemCachePool;
 
         private Action<List<InfiniteListItem>> _onRenderItems;
+        private Action _onRenderHeader;
+        private Action _onRenderTail;
 
         protected override void Start()
         {
             base.Start();
 
-            Setup(60, () =>
-            {
-                StartCoroutine(TestItems(9999));
-            }, (items) =>
-            {
-                foreach (var item in items)
-                {
-                    item.RenderItem.transform.Find("Text").GetComponent<Text>().text = item.Id.ToString("d5");
-                }
-            });
-
-        }
-
-
-        IEnumerator TestItems(int num)
-        {
-            for (int i = 0; i < num; i++)
-            {
-                yield return null;
-                AddItem(1, UnityEngine.Random.Range(1.3f, 1.7f) * _itemSize.y);
-            }
-            //yield return new WaitForSeconds(5.0f);
-            //for (int i = 0; i < 18; i++)
+            //Setup(60, () =>
             //{
-            //    yield return new WaitForSeconds(1.0f);
-            //    AddItem(-1);
-            //}
+            //    StartCoroutine(TestItems(50));
+            //}, (items) =>
+            //{
+            //    foreach (var item in items)
+            //    {
+            //        item.RenderItem.transform.Find("Text").GetComponent<Text>().text = item.Id.ToString("d5");
+            //    }
+            //});
+
         }
 
-        public void Setup(int renderMax, Action cacheInstantiateComplete, Action<List<InfiniteListItem>> onRenderLists)
+
+        //IEnumerator TestItems(int num)
+        //{
+        //    for (int i = 0; i < num; i++)
+        //    {
+        //        yield return null;
+        //        AddItem(1,_itemSize.x* UnityEngine.Random.Range(1.0f,1.75f));
+        //    }
+        //}
+
+        public void Setup(int renderMax, Action cacheInstantiateComplete, Action<List<InfiniteListItem>> onRenderLists,Action onRenderHeader=null,Action onRenderTail=null)
         {
             _maskSize = _mask.rect.size;
-            _itemSize = _rendererItemPrefab.rect.size;
-            _itemSize.y = _itemSize.x = (_maskSize.x - _spacing * (_columns + 1)) / _columns;
+            //_itemSize = _rendererItemPrefab.rect.size;
+            float splitLengthSize = _renderLayout == Layout.Vertical ? _maskSize.x : _maskSize.y;
+            _itemSize.y = _itemSize.x = (splitLengthSize - _spacing * (_splitCount + 1)) / _splitCount;
             //_spacing = (_maskSize.x - _itemSize.x * _itemColumns) / (_itemColumns + 1);
-            Debug.Log($"InfiniteListView mask size: {_maskSize}. item prefab size: {_itemSize}. spacing: {_spacing}");
-            _renderMin = new Vector2(0 - _itemSize.x, -_maskSize.y - _itemSize.y);
-            _renderMax = new Vector2(_maskSize.x + _itemSize.x, 0 + _itemSize.y);
+            _renderMin = new Vector2(-_maskSize.x, -_maskSize.y);
+            _renderMax = new Vector2(_maskSize.x , _maskSize.y);
+            Debug.Log($"InfiniteListView mask size: {_maskSize}. item prefab size: {_itemSize}. spacing: {_spacing} renderMin: {_renderMin} renderMax: {_renderMax}");
             _onRenderItems = onRenderLists;
+            _onRenderHeader = onRenderHeader;
+            _onRenderTail = onRenderTail;
             StartCoroutine(InstantiateRenderCache(renderMax, cacheInstantiateComplete));
         }
 
-        public InfiniteListView AddItem(int num = 1, float height = 0.0f)
+        public InfiniteListView AddItem(int num = 1, float extLength = 0.0f)
         {
             if (num == 0)
                 return this;
 
             if (num > 0)
             {
-                Vector2 startPos = _itemSize * 0.5f;
-                if (_items.Count > 0)
-                {
-                    startPos = _items[0].Size * 0.5f;
-                }
-                startPos += Vector2.one * _spacing;
+               
 
                 int idIndex = _items.Count;
                 for (int i = 0; i < num; i++)
                 {
                     int id = idIndex + i;
                     InfiniteListItem item = new InfiniteListItem() { Id = id };
-                    int arrayIndex = id % _columns;
-                    int groupIndex = id / _columns;
-                    item.Size = new Vector2(_itemSize.x, height > 0.0f ? height : _itemSize.y);
-                    int lastId = id - _columns;
+                    int arrayIndex = id % _splitCount;
+                    //int groupIndex = id / _splitCount;
+                    if (_renderLayout == Layout.Vertical)
+                    {
+                        item.Size = new Vector2(_itemSize.x, extLength > 0.0f ? extLength : _itemSize.y);
+                    }
+                    else 
+                    {
+                        item.Size = new Vector2(extLength > 0.0f ? extLength : _itemSize.x, _itemSize.y);
+                    }
+
+                    Vector2 nextPosition;
+                    int lastId = id - _splitCount;
                     if (lastId >= 0)
                     {
                         var lastItem = _items[lastId];
-                        startPos.y = lastItem.Position.y - lastItem.Size.y * 0.5f - _spacing - item.Size.y * 0.5f;
+                        nextPosition.x = _renderLayout == Layout.Vertical ? lastItem.Position.x : lastItem.Position.x + lastItem.Size.x * 0.5f + _spacing + item.Size.x * 0.5f;
+                        nextPosition.y = _renderLayout == Layout.Vertical ? lastItem.Position.y - lastItem.Size.y * 0.5f - _spacing - item.Size.y * 0.5f: lastItem.Position.y;
                     }
                     else
                     {
-                        startPos.y = -item.Size.y * 0.5f - _spacing;
+                        //Vector2 startPos = _itemSize * 0.5f;
+                        //startPos += Vector2.one * _spacing;
+                        //nextPosition.x = _renderLayout == Layout.Vertical ? startPos.x + arrayIndex * (_itemSize.x + _spacing) : -item.Size.x * 0.5f - _spacing;
+                        //nextPosition.y = _renderLayout == Layout.Vertical ? -item.Size.y * 0.5f - _spacing : startPos.y + arrayIndex * (_itemSize.y + _spacing);
+                        Vector2 startPosition = new Vector2(-_maskSize.x * 0.5f, _maskSize.y * 0.5f);
+                        startPosition.x += _spacing + item.Size.x*0.5f;
+                        startPosition.y -= _spacing + item.Size.y * 0.5f;
+
+                        nextPosition.x= _renderLayout == Layout.Vertical ?0 + arrayIndex * (_itemSize.x + _spacing) :0;
+                        nextPosition.y = _renderLayout == Layout.Vertical ? 0 : 0 + -arrayIndex * (_itemSize.y + _spacing);
+
+                        nextPosition += startPosition;
+
+                        Debug.Log($"id: {id} position: {nextPosition}");
                     }
-                    item.Position = new Vector2(startPos.x + arrayIndex * (_itemSize.x + _spacing), startPos.y);
+                    //new Vector2(startPos.x + arrayIndex * (_itemSize.x + _spacing), startPos.y)
+               
+                    item.Position = nextPosition;
                     _items.Add(item);
                 }
             }
@@ -135,33 +162,46 @@ namespace Wanderer.GameFramework
                 }
             }
 
-            _maxHeight = 0.0f;
+            _maxLength = 0.0f;
+            _dragMin = Vector2.zero;
             _dragMax = Vector2.zero;
             if (_items.Count > 0)
             {
-                for (int i = _items.Count - 1; i >= _items.Count - _columns; i--)
+                for (int i = _items.Count - 1; i >= _items.Count - _splitCount; i--)
                 {
                     if (i >= 0)
                     {
                         var lastItem = _items[i];
-                        float maxHeight = -lastItem.Position.y + lastItem.Size.y * 0.5f + _spacing;
-                        if (maxHeight > _maxHeight)
+                        float maxLength = _renderLayout == Layout.Vertical?
+                            (-lastItem.Position.y + lastItem.Size.y * 0.5f + _spacing): 
+                            (lastItem.Position.x + lastItem.Size.x * 0.5f + _spacing);
+                        if (maxLength > _maxLength)
                         {
-                            _maxHeight = maxHeight;
+                            _maxLength = maxLength;
                         }
                     }
                 }
 
-                _dragMax.y = _maxHeight - _maskSize.y;
+                if (_renderLayout == Layout.Vertical)
+                {
+                    _dragMax.y = _maxLength - _maskSize.y*0.5f;
+                }
+                else
+                {
+                    _dragMin.x = -(_maxLength-_maskSize.x*0.5f);
+                }
             }
 
             RebuildItemRenderer();
             return this;
         }
 
-        private void RebuildItemRenderer()
+        private void RebuildItemRenderer(float dragFloat=0.0f)
         {
-            ClampDragPosition(10.0f);
+            if (_items == null || _items.Count == 0)
+                return;
+
+            ClampDragPosition(dragFloat);
 
             if (_renderItems.Count > _items.Count)
             {
@@ -200,11 +240,15 @@ namespace Wanderer.GameFramework
 
             List<InfiniteListItem> renderItems = new List<InfiniteListItem>();
 
+            //Vector2 startPosition = new Vector2(-_maskSize.x*0.5f, _maskSize.y*0.5f);
+            //startPosition.x += _spacing+_items[0].Size.x*0.5f;
+            //startPosition.y -= (_spacing + _items[0].Size.y * 0.5f);
+
             for (int i = 0; i < _items.Count; i++)
             {
                 var item = _items[i];
-                Vector2 renderPostion = _dragPosition + item.Position;
-
+                Vector2 renderPostion =  _dragPosition + item.Position;
+                Debug.Log($"id:{item.Id} _dragPosition: {_dragPosition} item.Position: {item.Position} renderPostion£º {renderPostion}");
                 if (OutRenderBounds(renderPostion))
                 {
                     item.RenderItem = null;
@@ -215,7 +259,7 @@ namespace Wanderer.GameFramework
                     if (renderIndex < _renderItems.Count)
                     {
                         item.RenderItem = _renderItems[renderIndex];
-                        item.RenderItem.localPosition = renderPostion;
+                        item.RenderItem.anchoredPosition = renderPostion;
                         item.RenderItem.sizeDelta = item.Size;
                         item.RenderItem.gameObject.SetActive(true);
                         renderItems.Add(item);
@@ -228,14 +272,25 @@ namespace Wanderer.GameFramework
             }
 
             _onRenderItems?.Invoke(renderItems);
+            if (renderItems.Contains(_items[0]))
+            {
+                _onRenderHeader?.Invoke();
+            }
+            if (renderItems.Contains(_items[_items.Count-1]))
+            {
+                _onRenderTail?.Invoke();
+            }
         }
 
         private IEnumerator InstantiateRenderCache(int renderMax, Action cacheInstantiateComplete)
         {
-            if (_rendererItemCachePool == null || _rendererItemCachePool.Count == 0)
+            int hasCount = (_renderItems == null ? 0 : _renderItems.Count) + (_rendererItemCachePool == null ? 0 : _rendererItemCachePool.Count);
+            if (renderMax > hasCount)
             {
-                _rendererItemCachePool = new Queue<RectTransform>();
-                for (int i = 0; i < renderMax; i++)
+                if (_rendererItemCachePool == null)
+                    _rendererItemCachePool = new Queue<RectTransform>();
+
+                for (int i = hasCount; i < renderMax; i++)
                 {
                     GameObject clone = GameObject.Instantiate(_rendererItemPrefab.gameObject);
                     clone.transform.SetParent(_mask.transform);
@@ -297,7 +352,7 @@ namespace Wanderer.GameFramework
 
         public void LayoutComplete()
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -307,15 +362,19 @@ namespace Wanderer.GameFramework
 
         public void OnDrag(PointerEventData eventData)
         {
-            _dragPosition.y += eventData.delta.y;
-            RebuildItemRenderer();
+            if (_renderLayout == Layout.Vertical)
+            {
+                _dragPosition.y += eventData.delta.y;
+            }
+            else
+            {
+                _dragPosition.x += eventData.delta.x;
+            }
+            RebuildItemRenderer(10.0f);
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            //throw new System.NotImplementedException();
-
-            ClampDragPosition();
             RebuildItemRenderer();
         }
 
@@ -330,15 +389,14 @@ namespace Wanderer.GameFramework
 
         public void Rebuild(CanvasUpdate executing)
         {
-            throw new System.NotImplementedException();
+            //RebuildItemRenderer();
         }
 
         #endregion
 
-
         private void ClampDragPosition(float floatDrag = 0.0f)
         {
-            if (_maxHeight > _maskSize.y)
+            if (_maxLength > _maskSize.y)
             {
                 _dragPosition.x = Mathf.Clamp(_dragPosition.x, _dragMin.x - floatDrag, _dragMax.x + floatDrag);
                 _dragPosition.y = Mathf.Clamp(_dragPosition.y, _dragMin.y - floatDrag, _dragMax.y + floatDrag);
