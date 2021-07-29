@@ -1,5 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using UnityEngine;
 
 namespace Wanderer.GameFramework
@@ -16,7 +20,7 @@ namespace Wanderer.GameFramework
 #if UNITY_IOS
             platformName = "iOS";
 #elif UNITY_ANDROID
-            platformName = "Android";
+			platformName = "Android";
 #elif UNITY_STANDALONE_OSX
             platformName = "OSX";
 #elif UNITY_STANDALONE_LINUX
@@ -90,7 +94,7 @@ namespace Wanderer.GameFramework
 			get
 			{
 				var config = GameFrameworkMode.GetModule<ConfigManager>();
-				if(config==null|| config["AppVersion"]==null)
+				if (config == null || config["AppVersion"] == null)
 				{
 					return Application.version;
 				}
@@ -174,6 +178,88 @@ namespace Wanderer.GameFramework
 		}
 
 
+		/// <summary>
+		/// AES加密
+		/// </summary>
+		/// <param name="data"></param>
+		/// <param name="key"></param>
+		/// <param name="mode"></param>
+		/// <returns></returns>
+		public static string AESEncrypt(string data, string key, CipherMode mode = CipherMode.CBC)
+		{
+			byte[] dataBytes = Encoding.UTF8.GetBytes(data);
+            RijndaelManaged rijndael = new RijndaelManaged();
+			rijndael.Key = Encoding.UTF8.GetBytes(key);
+			rijndael.Mode = mode;
+			rijndael.IV = Encoding.UTF8.GetBytes(key);
+			rijndael.Padding = PaddingMode.None;
+
+			int covering = dataBytes.Length % 16;
+			int coveringLength = 0;
+			if (covering != 0)//手动补位
+			{
+				coveringLength = 16 - covering;
+			}
+			int dataLength = dataBytes.Length + coveringLength;
+			byte[] inputData = new byte[dataLength];
+			Buffer.BlockCopy(dataBytes,0, inputData,0, dataBytes.Length);
+
+			string result = "";
+			using (MemoryStream memoryStream = new MemoryStream())
+			{
+				using (CryptoStream cryptoStream = new CryptoStream(memoryStream, rijndael.CreateEncryptor(),CryptoStreamMode.Write))
+				{
+					cryptoStream.Write(inputData, 0, inputData.Length);
+
+					byte[] tempData = memoryStream.ToArray();
+					result =Convert.ToBase64String(tempData);
+				}
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// AES解密
+		/// </summary>
+		/// <param name="data"></param>
+		/// <param name="key"></param>
+		/// <param name="mode"></param>
+		/// <returns></returns>
+		public static string AESDecrypt(string data, string key, CipherMode mode = CipherMode.CBC)
+		{
+			byte[] dataBytes = Convert.FromBase64String(data);
+            RijndaelManaged rijndael = new RijndaelManaged();
+			rijndael.Key = Encoding.UTF8.GetBytes(key);
+			rijndael.IV = Encoding.UTF8.GetBytes(key);
+			rijndael.Mode = mode;
+			rijndael.Padding = PaddingMode.None;
+
+			byte[] outData = new byte[dataBytes.Length];
+
+			string result = "";
+			using (MemoryStream memoryStream = new MemoryStream(dataBytes))
+			{
+				using (CryptoStream cryptoStream = new CryptoStream(memoryStream, rijndael.CreateDecryptor(), CryptoStreamMode.Read))
+				{
+					cryptoStream.Read(outData, 0, outData.Length);
+					int length = outData.Length;
+                    for (int i = 0; i < outData.Length; i++)
+                    {
+                        if (outData[i] == '\0')
+                        {
+                            length = i;
+                            //Log.Info($"{i} --# {outData[i]}");
+                            break;
+                        }
+                        //Log.Info($"{i}  --> {outData[i]}");
+                    }
+                    byte[] getData = new byte[length];
+					Buffer.BlockCopy(outData,0, getData,0,length);
+					result = Encoding.UTF8.GetString(getData);
+				}
+			}
+			return result;
+		}
 
 	}
 
