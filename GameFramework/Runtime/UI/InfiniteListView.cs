@@ -340,19 +340,19 @@ namespace Wanderer.GameFramework
 
 
         #region Interface
-        public float minWidth => throw new System.NotImplementedException();
+        public float minWidth => _maskSize.x;
 
-        public float preferredWidth => throw new System.NotImplementedException();
+        public float preferredWidth => _renderLayout==Layout.Vertical? _maskSize.x:(_maxLength>0?_maxLength: _maskSize.x);
 
-        public float flexibleWidth => throw new System.NotImplementedException();
+        public float flexibleWidth => _maskSize.x;
 
-        public float minHeight => throw new System.NotImplementedException();
+        public float minHeight => _maskSize.y;
 
-        public float preferredHeight => throw new System.NotImplementedException();
+        public float preferredHeight => _renderLayout == Layout.Vertical ? (_maxLength > 0 ? _maxLength : _maskSize.y):_maskSize.y ;
 
-        public float flexibleHeight => throw new System.NotImplementedException();
+        public float flexibleHeight => _maskSize.y;
 
-        public int layoutPriority => throw new System.NotImplementedException();
+        public int layoutPriority => 100;
 
 
         #endregion
