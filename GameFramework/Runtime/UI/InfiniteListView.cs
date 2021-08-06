@@ -155,11 +155,12 @@ namespace Wanderer.GameFramework
 
                         nextPosition += startPosition;
 
-                        Debug.Log($"id: {id} position: {nextPosition}");
                     }
+                    //Debug.Log($"id: {id} position: {nextPosition}");
                     //new Vector2(startPos.x + arrayIndex * (_itemSize.x + _spacing), startPos.y)
-               
+
                     item.Position = nextPosition;
+
                     _items.Add(item);
                 }
             }
@@ -180,14 +181,17 @@ namespace Wanderer.GameFramework
             _dragMax = Vector2.zero;
             if (_items.Count > 0)
             {
+                float startPos = _renderLayout == Layout.Vertical ? _items[0].Position.y : _items[0].Position.x;
+                float startSize = _renderLayout == Layout.Vertical ? _items[0].Size.y * 0.5f + _spacing : _items[0].Size.x * 0.5f + _spacing;
+
                 for (int i = _items.Count - 1; i >= _items.Count - _splitCount; i--)
                 {
                     if (i >= 0)
                     {
                         var lastItem = _items[i];
                         float maxLength = _renderLayout == Layout.Vertical?
-                            (-lastItem.Position.y + lastItem.Size.y * 0.5f + _spacing): 
-                            (lastItem.Position.x + lastItem.Size.x * 0.5f + _spacing);
+                            (-(lastItem.Position.y- startPos) + lastItem.Size.y*0.5f + _spacing+ startSize) : 
+                            ((lastItem.Position.x- startPos) + lastItem.Size.x*0.5f + _spacing+ startSize);
                         if (maxLength > _maxLength)
                         {
                             _maxLength = maxLength;
@@ -197,11 +201,11 @@ namespace Wanderer.GameFramework
 
                 if (_renderLayout == Layout.Vertical)
                 {
-                    _dragMax.y = _maxLength - _maskSize.y*0.5f;
+                    _dragMax.y = _maxLength - _maskSize.y;
                 }
                 else
                 {
-                    _dragMin.x = -(_maxLength-_maskSize.x*0.5f);
+                    _dragMin.x = -(_maxLength-_maskSize.x);
                 }
             }
 
@@ -431,7 +435,9 @@ namespace Wanderer.GameFramework
 
         private void ClampDragPosition(float floatDrag = 0.0f)
         {
-            if (_maxLength > _maskSize.y)
+            //Debug.Log($"_maxLength: {_maxLength} _maskSize.y:{_maskSize.y} _maskSize.x:{_maskSize.x}");
+            bool canDrag = _renderLayout == Layout.Vertical ? _maxLength > _maskSize.y : _maxLength > _maskSize.x;
+            if (canDrag)
             {
                 _dragPosition.x = Mathf.Clamp(_dragPosition.x, _dragMin.x - floatDrag, _dragMax.x + floatDrag);
                 _dragPosition.y = Mathf.Clamp(_dragPosition.y, _dragMin.y - floatDrag, _dragMax.y + floatDrag);
