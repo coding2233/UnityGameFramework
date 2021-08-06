@@ -97,15 +97,25 @@ namespace Wanderer.GameFramework
             StartCoroutine(InstantiateRenderCache(renderMax, cacheInstantiateComplete));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="num"></param>
+        /// <param name="extLength">正为绝对值，负为比例</param>
+        /// <returns></returns>
         public InfiniteListView AddItem(int num = 1, float extLength = 0.0f)
         {
             if (num == 0)
                 return this;
 
+            if (extLength < 0)
+            {
+                extLength = Mathf.Abs(extLength) * _itemSize.x;
+            }
+
             if (num > 0)
             {
                
-
                 int idIndex = _items.Count;
                 for (int i = 0; i < num; i++)
                 {
@@ -199,8 +209,28 @@ namespace Wanderer.GameFramework
             return this;
         }
 
+        public void ClearItem()
+        {
+            AddItem(-_items.Count);
+        }
+
+        public void SortItem()
+        {
+            for (int i = 0; i < _items.Count; i++)
+            {
+                var item = _items[i];
+                item.Id = i;
+                _items[i] = item;
+            }
+        }
+
         private void RebuildItemRenderer(float dragFloat=0.0f)
         {
+            foreach (var item in _renderItems)
+            {
+                item.gameObject.SetActive(false);
+            }
+
             if (_items == null || _items.Count == 0)
                 return;
 
@@ -234,10 +264,7 @@ namespace Wanderer.GameFramework
                 }
             }
 
-            foreach (var item in _renderItems)
-            {
-                item.gameObject.SetActive(false);
-            }
+  
 
             int renderIndex = -1;
 
@@ -251,7 +278,7 @@ namespace Wanderer.GameFramework
             {
                 var item = _items[i];
                 Vector2 renderPostion =  _dragPosition + item.Position;
-                Debug.Log($"id:{item.Id} _dragPosition: {_dragPosition} item.Position: {item.Position} renderPostion�� {renderPostion}");
+                //Debug.Log($"id:{item.Id} _dragPosition: {_dragPosition} item.Position: {item.Position} renderPostion�� {renderPostion}");
                 if (OutRenderBounds(renderPostion))
                 {
                     item.RenderItem = null;
@@ -395,6 +422,11 @@ namespace Wanderer.GameFramework
             //RebuildItemRenderer();
         }
 
+        public void Rebuild()
+        {
+            RebuildItemRenderer();   
+        }
+
         #endregion
 
         private void ClampDragPosition(float floatDrag = 0.0f)
@@ -408,7 +440,7 @@ namespace Wanderer.GameFramework
             {
                 _dragPosition = Vector2.zero;
             }
-            Debug.Log($"_dragPosition: {_dragPosition} {_dragMin} {_dragMax}");
+            //Debug.Log($"_dragPosition: {_dragPosition} {_dragMin} {_dragMax}");
         }
 
         private bool OutRenderBounds(Vector2 renderPosition)
@@ -421,7 +453,6 @@ namespace Wanderer.GameFramework
 
             return false;
         }
-
     }
 
 
