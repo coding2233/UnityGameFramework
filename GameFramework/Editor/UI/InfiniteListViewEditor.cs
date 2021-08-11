@@ -29,7 +29,7 @@ namespace Wanderer.GameFramework
             GameObject parent = menuCommand.context as GameObject;
             if (parent != null)
             {
-                if (parent.GetComponent<Canvas>() == null)
+                if (parent.GetComponentInParent<Canvas>() == null)
                     parent = null;
             }
             if (parent == null)
