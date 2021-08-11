@@ -77,88 +77,90 @@ namespace Wanderer.GameFramework
                 }
                 else if (itemIndex == 1)
                 {
-                    var settings = AddressableAssetSettingsDefaultObject.Settings;
-                    if (settings != null)
-                    {
-                        string binPath = ContentUpdateScript.GetContentStateDataPath(false);
-                        if (_config != null && _config.Count > 0)
-                        {
-                            for (int i = 0; i < _config.Count; i++)
-                            {
-                                JsonData item = _config[i];
-                                string groupName = item["GroupName"].ToString();
-                                var group = settings.FindGroup(groupName);
-                                if (group == null)
-                                {
-                                    group = settings.CreateGroup(groupName,false,false,false,null);
-                                }
+                    AddressablesEditor.SetAddressablesAssets();
+                    EditorApplication.ExecuteMenuItem("Window/Asset Management/Addressables/Groups");
+                    //var settings = AddressableAssetSettingsDefaultObject.Settings;
+                    //if (settings != null)
+                    //{
+                    //    string binPath = ContentUpdateScript.GetContentStateDataPath(false);
+                    //    if (_config != null && _config.Count > 0)
+                    //    {
+                    //        for (int i = 0; i < _config.Count; i++)
+                    //        {
+                    //            JsonData item = _config[i];
+                    //            string groupName = item["GroupName"].ToString();
+                    //            var group = settings.FindGroup(groupName);
+                    //            if (group == null)
+                    //            {
+                    //                group = settings.CreateGroup(groupName,false,false,false,null);
+                    //            }
 
-                                ContentUpdateGroupSchema cugSchema = group.GetSchema<ContentUpdateGroupSchema>();
-                                if (cugSchema == null)
-                                {
-                                    cugSchema = group.AddSchema<ContentUpdateGroupSchema>();
-                                }
-                                cugSchema.StaticContent = ((int)item["UpdateRestriction"] == 1);
-                                BundledAssetGroupSchema bagSchema =group.GetSchema<BundledAssetGroupSchema>();
-                                if (bagSchema == null)
-                                {
-                                    bagSchema= group.AddSchema<BundledAssetGroupSchema>();
-                                }
-                                bagSchema.BuildPath.SetVariableByName(settings, item["BuildPath"].ToString());
-                                bagSchema.LoadPath.SetVariableByName(settings, item["LoadPath"].ToString());
-                                if (cugSchema.StaticContent)
-                                {
-                                    bagSchema.UseAssetBundleCrc = false;
-                                    bagSchema.UseAssetBundleCrcForCachedBundles = false;
-                                }
+                    //            ContentUpdateGroupSchema cugSchema = group.GetSchema<ContentUpdateGroupSchema>();
+                    //            if (cugSchema == null)
+                    //            {
+                    //                cugSchema = group.AddSchema<ContentUpdateGroupSchema>();
+                    //            }
+                    //            cugSchema.StaticContent = ((int)item["UpdateRestriction"] == 1);
+                    //            BundledAssetGroupSchema bagSchema =group.GetSchema<BundledAssetGroupSchema>();
+                    //            if (bagSchema == null)
+                    //            {
+                    //                bagSchema= group.AddSchema<BundledAssetGroupSchema>();
+                    //            }
+                    //            bagSchema.BuildPath.SetVariableByName(settings, item["BuildPath"].ToString());
+                    //            bagSchema.LoadPath.SetVariableByName(settings, item["LoadPath"].ToString());
+                    //            if (cugSchema.StaticContent)
+                    //            {
+                    //                bagSchema.UseAssetBundleCrc = false;
+                    //                bagSchema.UseAssetBundleCrcForCachedBundles = false;
+                    //            }
 
-                                //Filter
-                                StringBuilder filterBuilder = new StringBuilder();
-                                for (int filterIndex = 0; filterIndex < item["Filter"].Count; filterIndex++)
-                                {
-                                    filterBuilder.Append($"t:{item["Filter"][filterIndex].ToString()} ");
-                                }
-                                //SearchInFolders
-                                List<string> folders = new List<string>();
-                                for (int folderIndex = 0; folderIndex < item["SearchInFolders"].Count; folderIndex++)
-                                {
-                                    folders.Add(item["SearchInFolders"][folderIndex].ToString());
-                                }
-                                //Labels
-                                List<string> labels = new List<string>();
-                                for (int labelIndex = 0; labelIndex < item["Labels"].Count; labelIndex++)
-                                {
-                                    labels.Add(item["Labels"][labelIndex].ToString());
-                                }
+                    //            //Filter
+                    //            StringBuilder filterBuilder = new StringBuilder();
+                    //            for (int filterIndex = 0; filterIndex < item["Filter"].Count; filterIndex++)
+                    //            {
+                    //                filterBuilder.Append($"t:{item["Filter"][filterIndex].ToString()} ");
+                    //            }
+                    //            //SearchInFolders
+                    //            List<string> folders = new List<string>();
+                    //            for (int folderIndex = 0; folderIndex < item["SearchInFolders"].Count; folderIndex++)
+                    //            {
+                    //                folders.Add(item["SearchInFolders"][folderIndex].ToString());
+                    //            }
+                    //            //Labels
+                    //            List<string> labels = new List<string>();
+                    //            for (int labelIndex = 0; labelIndex < item["Labels"].Count; labelIndex++)
+                    //            {
+                    //                labels.Add(item["Labels"][labelIndex].ToString());
+                    //            }
 
-                                //Find All Asset
-                                var findAssets = AssetDatabase.FindAssets(filterBuilder.ToString(), folders.ToArray());
-                                for (int findIndex = 0; findIndex < findAssets.Length; findIndex++)
-                                {
-                                    string guid = findAssets[findIndex];
-                                    string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                                    if (AssetDatabase.IsValidFolder(assetPath)|| assetPath.EndsWith(".cs"))
-                                    {
-                                        continue;
-                                    }
-                                    var entry = group.GetAssetEntry(guid);
-                                    if (entry == null)
-                                    {
-                                        entry = settings.CreateOrMoveEntry(guid, group);
-                                    }
-                                    entry.labels.Clear();
-                                    foreach (var itemLabel in labels)
-                                    {
-                                        entry.SetLabel(itemLabel, true);
-                                    }
-                                }
-                            }
-                        }
-                        EditorUtility.SetDirty(settings);
-                        AssetDatabase.Refresh();
+                    //            //Find All Asset
+                    //            var findAssets = AssetDatabase.FindAssets(filterBuilder.ToString(), folders.ToArray());
+                    //            for (int findIndex = 0; findIndex < findAssets.Length; findIndex++)
+                    //            {
+                    //                string guid = findAssets[findIndex];
+                    //                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                    //                if (AssetDatabase.IsValidFolder(assetPath)|| assetPath.EndsWith(".cs"))
+                    //                {
+                    //                    continue;
+                    //                }
+                    //                var entry = group.GetAssetEntry(guid);
+                    //                if (entry == null)
+                    //                {
+                    //                    entry = settings.CreateOrMoveEntry(guid, group);
+                    //                }
+                    //                entry.labels.Clear();
+                    //                foreach (var itemLabel in labels)
+                    //                {
+                    //                    entry.SetLabel(itemLabel, true);
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //    EditorUtility.SetDirty(settings);
+                    //    AssetDatabase.Refresh();
 
-                        EditorApplication.ExecuteMenuItem("Window/Asset Management/Addressables/Groups");
-                    }
+                    //    EditorApplication.ExecuteMenuItem("Window/Asset Management/Addressables/Groups");
+                    //}
                 }
                 else
                 {
