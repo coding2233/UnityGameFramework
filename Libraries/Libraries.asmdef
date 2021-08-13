@@ -1,6 +1,9 @@
 {
     "name": "Libraries",
-    "references": [],
+    "rootNamespace": "",
+    "references": [
+        "GUID:f58bf5af08bb9324f9b40f302f8a0eca"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
