@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -224,6 +224,16 @@ namespace Wanderer.GameFramework
         {
             WindowScale = _defaultWindowScale;
             FullRect = _defaultFullRect;
+        }
+
+        public override long CacheSize()
+        {
+            return Log.GetLogFileSize();
+        }
+
+        public override void ClearCache()
+        {
+            Log.DeleteLogFiles();
         }
 
         #region  内部函数

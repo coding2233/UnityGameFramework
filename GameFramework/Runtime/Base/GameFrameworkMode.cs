@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright>
 //     Copyright (c) 2018 wanderer. All rights reserved.
 // </copyright>
@@ -99,6 +99,31 @@ namespace Wanderer.GameFramework
             _allGameModules.Clear();
         }
 
+        /// <summary>
+        /// 获取缓存大小
+        /// </summary>
+        /// <returns>字节</returns>
+        public static long GetCacheSize()
+        {
+            long size = 0;
+            for (int i = 0; i < _allGameModules.Count; i++)
+            {
+                size+=_allGameModules[i].CacheSize();
+            }
+            return size;
+        }
+
+        /// <summary>
+        /// 清理缓存
+        /// </summary>
+        public static void ClearCache()
+        {
+            for (int i = 0; i < _allGameModules.Count; i++)
+            {
+                _allGameModules[i].ClearCache();
+            }
+        }
+        
         #endregion
 
 

@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright>
 //     Copyright (c) 2018 wanderer. All rights reserved.
 // </copyright>
@@ -25,5 +25,19 @@ namespace Wanderer.GameFramework
         /// </summary>
         public abstract void OnClose();
 
+        /// <summary>
+        /// 缓存大小 字节
+        /// </summary>
+        /// <returns></returns>
+        public virtual long CacheSize()
+        {
+            return 0;
+        }
+
+        /// <summary>
+        /// 清理缓存
+        /// </summary>
+        public virtual void ClearCache()
+        { }
     }
 }

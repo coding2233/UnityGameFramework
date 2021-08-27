@@ -20,6 +20,12 @@ namespace Wanderer.GameFramework
             Log.Info($"解密后 {newdata}");
         }
 
+        //[Test]
+        //public void CacheTestPasses()
+        //{
+        //    Log.Info($"缓存大小: {GameFrameworkMode.GetCacheSize()}");
+        //}
+
         // A Test behaves as an ordinary method
         [Test]
         public void FrameworkTestScriptSimplePasses()

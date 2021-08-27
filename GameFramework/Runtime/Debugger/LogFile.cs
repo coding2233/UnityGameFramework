@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -60,6 +60,7 @@ namespace Wanderer.GameFramework
 		{
 			//监听UnityEngine.Debug
 			Application.logMessageReceived += OnLogMessageReceived;
+
 			//检查日志文件所占的空间大小，如果太大还是需要自动删除
 			//CheckLogFileSize();
 			//创建文件流
@@ -123,7 +124,7 @@ namespace Wanderer.GameFramework
 		{
 			if (_useUnityLogger)
 			{
-				Debug.Log(message);
+				Debug.Log($"<color=green>[Info]</color> {message}");
 			}
 			else
 			{
@@ -139,7 +140,7 @@ namespace Wanderer.GameFramework
 		{
 			if (_useUnityLogger)
 			{
-				Debug.LogWarning(message);
+				Debug.LogWarning($"<color=yellow>[Warning]</color> {message}");
 			}
 			else
 			{
@@ -155,7 +156,7 @@ namespace Wanderer.GameFramework
 		{
 			if (_useUnityLogger)
 			{
-				Debug.LogError(message);
+				Debug.LogWarning($"<color=red>[Error]</color> {message}");
 			}
 			else
 			{
@@ -167,7 +168,8 @@ namespace Wanderer.GameFramework
 		{
 			if (_canWrite)
 			{
-				_logNodes.Enqueue(LogNodePool.Get(message, "", type));
+				string stack = new System.Diagnostics.StackTrace().ToString();
+				_logNodes.Enqueue(LogNodePool.Get(message, stack, type));
 			}
 		}
 
@@ -257,17 +259,45 @@ namespace Wanderer.GameFramework
 				}
 			}
 		}
+		
+		/// <summary>
+		/// 获取日志文件的大小
+		/// </summary>
+		/// <returns></returns>
+		public long GetLogFileSize()
+		{
+			string todayLog = $"{DateTime.Now.ToString("yyyy-MM-dd")}.log";
+
+			long size = 0;
+            string[] files = Directory.GetFiles(LogPath);
+            if (files != null )
+            {
+                for (int i = 0; i < files.Length; i++)
+                {
+					if (files[i].EndsWith(todayLog))
+						continue;
+					size += File.ReadAllBytes(files[i]).Length;
+				}
+			}
+			return size;
+        }
 
 		/// <summary>
-		/// 检查日志文件大小
+		/// 删除日志文件
 		/// </summary>
-		private void CheckLogFileSize()
+		public void DeleteLogFiles()
 		{
-			//string[] files = Directory.GetFiles(LogPath);
-			//if (files != null && files.Length > 1)
-			//{
-
-			//}
+			string todayLog = $"{DateTime.Now.ToString("yyyy-MM-dd")}.log";
+			string[] files = Directory.GetFiles(LogPath);
+			if (files != null)
+			{
+				for (int i = 0; i < files.Length; i++)
+				{
+					if (files[i].EndsWith(todayLog))
+						continue;
+					File.Delete(files[i]);
+				}
+			}
 		}
 
 		#endregion

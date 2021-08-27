@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright>
 //     Copyright (c) 2018 wanderer. All rights reserved.
 // </copyright>
@@ -85,6 +85,7 @@ namespace Wanderer.GameFramework
         IEnumerator Start()
         {
             GameMode.Self = this;
+         
             //默认不销毁
             DontDestroyOnLoad(gameObject);
 
@@ -125,7 +126,6 @@ namespace Wanderer.GameFramework
             #endregion
 
             yield return new WaitForEndOfFrame();
-
         }
 
         private void Update()
@@ -156,6 +156,16 @@ namespace Wanderer.GameFramework
         private void OnApplicationFocus(bool focus)
         {
             OnAppFocus?.Invoke(focus);
+        }
+
+        public static long GetCacheSize()
+        {
+            return GameFrameworkMode.GetCacheSize();
+        }
+
+        public static void ClearCache()
+        {
+            GameFrameworkMode.ClearCache();
         }
 
     }

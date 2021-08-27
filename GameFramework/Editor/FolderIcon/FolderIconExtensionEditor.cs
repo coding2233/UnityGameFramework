@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -25,64 +25,63 @@ namespace Wanderer.GameFramework
 				if (!assetPath.StartsWith("Assets/Game"))
 					return;
 
-				assetPath = assetPath.ToLower();
 				bool isSmall = IsIconSmall(selectionRect);
 				Rect iconRect = GetIconRect(selectionRect, isSmall);
 				Rect addIconRect = GetAddIconRect(iconRect, isSmall);
 				//	Rect textRect = GetTextRect(selectionRect, isSmall);
-				if (assetPath.StartsWith("assets/game/animation"))
+				if (assetPath.StartsWith("assets/game/animation", StringComparison.CurrentCultureIgnoreCase))
 				{
 					DrawAddIcon(addIconRect, "animation");
 				}
-				else if (assetPath.StartsWith("assets/game/audio"))
+				else if (assetPath.StartsWith("assets/game/audio", StringComparison.CurrentCultureIgnoreCase))
 				{
 					DrawAddIcon(addIconRect, "audio");
 				}
-				else if (assetPath.StartsWith("assets/game/datatable"))
+				else if (assetPath.StartsWith("assets/game/datatable", StringComparison.CurrentCultureIgnoreCase))
 				{
 					DrawAddIcon(addIconRect, "excel");
 				}
-				else if (assetPath.StartsWith("assets/game/font"))
+				else if (assetPath.StartsWith("assets/game/font", StringComparison.CurrentCultureIgnoreCase))
 				{
 					DrawAddIcon(addIconRect, "font");
 				}
-				else if (assetPath.StartsWith("assets/game/minigame"))
+				else if (assetPath.StartsWith("assets/game/minigame", StringComparison.CurrentCultureIgnoreCase))
 				{
 					DrawAddIcon(addIconRect, "game");
 				}
-				else if (assetPath.StartsWith("assets/game/scene"))
+				else if (assetPath.StartsWith("assets/game/scene", StringComparison.CurrentCultureIgnoreCase))
 				{
 					DrawAddIcon(addIconRect, "map");
 				}
-				else if (assetPath.StartsWith("assets/game/spine"))
+				else if (assetPath.StartsWith("assets/game/spine", StringComparison.CurrentCultureIgnoreCase))
 				{
 					DrawAddIcon(addIconRect, "spine");
 				}
-				else if (assetPath.StartsWith("assets/game/texture"))
+				else if (assetPath.StartsWith("assets/game/texture", StringComparison.CurrentCultureIgnoreCase))
 				{
 					DrawAddIcon(addIconRect, "picture");
 				}
-				else if (assetPath.StartsWith("assets/game/ui"))
+				else if (assetPath.StartsWith("assets/game/ui", StringComparison.CurrentCultureIgnoreCase))
 				{
 					DrawAddIcon(addIconRect, "phone");
 				}
-				else if (assetPath.StartsWith("assets/game/xlua"))
+				else if (assetPath.StartsWith("assets/game/xlua", StringComparison.CurrentCultureIgnoreCase))
 				{
 					DrawAddIcon(addIconRect, "lua");
 				}
-				else if (assetPath.StartsWith("assets/game/update"))
+				else if (assetPath.StartsWith("assets/game/update", StringComparison.CurrentCultureIgnoreCase))
 				{
 					DrawAddIcon(addIconRect, "update_circle");
 				}
-				else if (assetPath.StartsWith("assets/game/scripts"))
+				else if (assetPath.StartsWith("assets/game/scripts", StringComparison.CurrentCultureIgnoreCase))
 				{
 					DrawAddIcon(addIconRect, "script_01");
 				}
-				else if (assetPath.StartsWith("assets/game/shader"))
+				else if (assetPath.StartsWith("assets/game/shader", StringComparison.CurrentCultureIgnoreCase))
 				{
 					GUI.DrawTexture(addIconRect, EditorGUIUtility.IconContent("d_ShaderVariantCollection Icon").image, ScaleMode.ScaleToFit);
 				}
-				else if (assetPath.StartsWith("assets/game/material"))
+				else if (assetPath.StartsWith("assets/game/material", StringComparison.CurrentCultureIgnoreCase))
 				{
 					GUI.DrawTexture(addIconRect, EditorGUIUtility.IconContent("Material Icon").image, ScaleMode.ScaleToFit);
 				}
