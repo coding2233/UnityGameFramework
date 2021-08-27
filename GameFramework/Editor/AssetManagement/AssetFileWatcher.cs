@@ -21,7 +21,7 @@ namespace Wanderer.GameFramework
         {
             //Debug.Log($"AssetFileWatcher.RunAssetFileWatcher");
             _fileWatcher = new FileSystemWatcher();
-            _fileWatcher.Path = Path.Combine(Application.dataPath, "Game");
+            _fileWatcher.Path = Path.Combine(Application.dataPath);
             _fileWatcher.IncludeSubdirectories = true;
 
             _fileWatcher.Created += (sender, e) => { UpdateAddressables(e); };
@@ -49,7 +49,9 @@ namespace Wanderer.GameFramework
             //Debug.Log($"File watcher: {e.FullPath}");
             if (_isRuning)
                 return;
-            _isRuning = true;
+            string fullPath = e.FullPath.Replace("\\", "/");
+            if(fullPath.Contains("Assets/Game"))
+                _isRuning = true;
         }
     }
 }
