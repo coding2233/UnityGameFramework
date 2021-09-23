@@ -33,6 +33,7 @@ namespace Wanderer.GameFramework
         public static PoolManager Pool;
         public static DebuggerManager Debugger;
         public static ConfigManager Config;
+        public static TimerManager Timer;
         public static GameMode Self;
         
 
@@ -108,6 +109,7 @@ namespace Wanderer.GameFramework
             Network = GameFrameworkMode.GetModule<NetworkManager>();
             Pool = GameFrameworkMode.GetModule<PoolManager>();
             Debugger = GameFrameworkMode.GetModule<DebuggerManager>();
+            Timer = GameFrameworkMode.GetModule<TimerManager>();
             #endregion
 
             #region resource
