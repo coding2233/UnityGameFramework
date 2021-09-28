@@ -14,6 +14,9 @@ namespace Wanderer.GameFramework
 {
     public class AddressablesEditor
     {
+        //èµ„æºç®¡ç†æ’ä»¶
+        public static IAssetGroupPlugin AssetGroupPlugin;
+
         public static string ShellBuild(string activeProfileId = "Default")
         {
             bool buildPlayerContent = true;
@@ -37,7 +40,7 @@ namespace Wanderer.GameFramework
                         {
                             @string.AppendLine(item.address);
                         }
-                        //½«±»ĞŞ¸Ä¹ıµÄ×ÊÔ´µ¥¶À·Ö×é
+                        //ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸Ä¹ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                         var groupName = string.Format("UpdateGroup_{0}#", System.DateTime.Now.ToString("yyyyMMdd"));
                         ContentUpdateScript.CreateContentUpdateGroup(settings, entries, groupName);
                         var group= settings.FindGroup(groupName);
@@ -97,11 +100,17 @@ namespace Wanderer.GameFramework
         }
 
         /// <summary>
-        /// ÉèÖÃAddressableµÄËùÓĞ×ÊÔ´
+        /// ï¿½ï¿½ï¿½ï¿½Addressableï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´
         /// </summary>
         [MenuItem("Tools/Asset Management/Assets To Addressables")]
         public static void SetAddressablesAssets()
         {
+            if(AssetGroupPlugin!=null)
+            {
+                AssetGroupPlugin.MakeAssetGroup();
+                AssetDatabase.Refresh();
+            }
+
             JsonData config = ProjectSettingsConfig.LoadJsonData(AssetGroupEditor.ConfigName);
             var settings = AddressableAssetSettingsDefaultObject.Settings;
             if (settings != null)
