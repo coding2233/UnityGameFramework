@@ -34,6 +34,7 @@ namespace Wanderer.GameFramework
         public static DebuggerManager Debugger;
         public static ConfigManager Config;
         public static TimerManager Timer;
+        public static LiteDBManager LiteDB;
         public static GameMode Self;
         
 
@@ -110,6 +111,7 @@ namespace Wanderer.GameFramework
             Pool = GameFrameworkMode.GetModule<PoolManager>();
             Debugger = GameFrameworkMode.GetModule<DebuggerManager>();
             Timer = GameFrameworkMode.GetModule<TimerManager>();
+            LiteDB = GameFrameworkMode.GetModule<LiteDBManager>();
             #endregion
 
             #region resource
