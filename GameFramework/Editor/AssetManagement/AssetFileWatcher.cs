@@ -19,13 +19,14 @@ namespace Wanderer.GameFramework
         [InitializeOnLoadMethod]
         private static void RunAssetFileWatcher()
         {
-            //Debug.Log($"AssetFileWatcher.RunAssetFileWatcher");
+            Debug.Log($"AssetFileWatcher.RunAssetFileWatcher");
+
             _fileWatcher = new FileSystemWatcher();
             _fileWatcher.Path = Path.Combine(Application.dataPath);
             _fileWatcher.IncludeSubdirectories = true;
 
             _fileWatcher.Created += (sender, e) => { UpdateAddressables(e); };
-            //_fileWatcher.Deleted += (sender, e) => { UpdateAddressables(e); };
+            _fileWatcher.Deleted += (sender, e) => { UpdateAddressables(e); };
             _fileWatcher.Renamed += (sender, e) => { UpdateAddressables(e); };
 
             _fileWatcher.EnableRaisingEvents = true;
