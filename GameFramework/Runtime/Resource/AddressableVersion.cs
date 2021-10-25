@@ -1,3 +1,4 @@
+#if ADDRESSABLES_SUPPORT
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,11 +37,11 @@ namespace Wanderer.GameFramework
         }
 
         /// <summary>
-        /// ¸üĞÂ×ÊÔ´
+        /// æ›´æ–°èµ„æº
         /// </summary>
-        /// <param name="callback">ÏÂÔØ»Øµ÷[½ø¶È(0-1)£¬´óĞ¡(KB),ËÙ¶È(KB/S),Ê£ÓàÊ±¼ä(s)]</param>
-        /// <param name="downloadComplete">ÏÂÔØÍê³É</param>
-        /// <param name="errorCallback">ÏÂÔØ´íÎó</param>
+        /// <param name="callback">ä¸‹è½½å›è°ƒ[è¿›åº¦(0-1)ï¼Œå¤§å°(KB),é€Ÿåº¦(KB/S),å‰©ä½™æ—¶é—´(s)]</param>
+        /// <param name="downloadComplete">ä¸‹è½½å®Œæˆ</param>
+        /// <param name="errorCallback">ä¸‹è½½é”™è¯¯</param>
         /// <returns></returns>
         public override async void UpdateResource(Action<float, double, double, float> callback, Action downloadComplete, Action<string, string> errorCallback,string label)
         {
@@ -121,3 +122,4 @@ namespace Wanderer.GameFramework
     }
 
 }
+#endif

@@ -4,11 +4,12 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using LitJson;
+#if ADDRESSABLES_SUPPORT
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using System.Text;
 using UnityEditor.AddressableAssets.Build;
-
+#endif
 namespace Wanderer.GameFramework
 {
     public class AssetFileWatcher

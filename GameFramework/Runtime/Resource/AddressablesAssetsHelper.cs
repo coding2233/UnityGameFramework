@@ -1,3 +1,5 @@
+#if ADDRESSABLES_SUPPORT
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -138,3 +140,4 @@ namespace Wanderer.GameFramework
         }
     }
 }
+#endif

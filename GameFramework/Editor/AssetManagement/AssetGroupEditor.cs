@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
+#if ADDRESSABLES_SUPPORT
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Build;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
+#endif
+
 using UnityEditor.EditorTools;
 using UnityEngine;
 
@@ -36,12 +39,14 @@ namespace Wanderer.GameFramework
         private void OnFocus()
         {
             _assetFilter = AssetFilterEditor.GetAssetFilters().ToArray();
+            #if ADDRESSABLES_SUPPORT
             var settings = AddressableAssetSettingsDefaultObject.Settings;
             if (settings != null)
             {
                 _labels = settings.GetLabels().ToArray();
                 _profileVariables = settings.profileSettings.GetVariableNames();
             }
+#endif
         }
 
         private void OnEnable()
@@ -77,8 +82,11 @@ namespace Wanderer.GameFramework
                 }
                 else if (itemIndex == 1)
                 {
+#if ADDRESSABLES_SUPPORT
                     AddressablesEditor.SetAddressablesAssets();
                     EditorApplication.ExecuteMenuItem("Window/Asset Management/Addressables/Groups");
+#endif
+
                     //var settings = AddressableAssetSettingsDefaultObject.Settings;
                     //if (settings != null)
                     //{
@@ -354,3 +362,4 @@ namespace Wanderer.GameFramework
 	}
 
 }
+
