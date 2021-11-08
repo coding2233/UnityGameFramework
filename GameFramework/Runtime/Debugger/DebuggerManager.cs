@@ -49,6 +49,8 @@ namespace Wanderer.GameFramework
             //FullRect = _settingMgr.Get<Rect>("DebuggerManager.FullRect", _defaultFullRect);
             FullRect = _defaultFullRect;
             WindowScale = _settingMgr.Get<float>("DebuggerManager.WindowScale", _defaultWindowScale);
+
+            _defaultSmallRect.position = _settingMgr.Get<Vector2>("DebuggerManager.Small.Position",Vector2.one*10);
         }
 
         //初始化
@@ -175,7 +177,13 @@ namespace Wanderer.GameFramework
             }
             else
             {
-                _defaultSmallRect = GUILayout.Window(0, _defaultSmallRect, DrawDebuggerSmallWindow, "<b>DEBUGGER</b>");
+                var smallRect = GUILayout.Window(0, _defaultSmallRect, DrawDebuggerSmallWindow, "<b>DEBUGGER</b>");
+
+                if (smallRect != _defaultSmallRect)
+                {
+                    _defaultSmallRect = smallRect;
+                    _settingMgr.Set<Vector2>("DebuggerManager.Small.Position", _defaultSmallRect.position);
+                }
             }
             GUI.matrix = lastMatrix;
             GUI.skin = lastGuiSkin;

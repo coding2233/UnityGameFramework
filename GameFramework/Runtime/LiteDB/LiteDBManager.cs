@@ -2,6 +2,7 @@ using LiteDB;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Wanderer.GameFramework
@@ -10,15 +11,13 @@ namespace Wanderer.GameFramework
     {
         private Dictionary<string, LiteDBMapper> _litedbs = new Dictionary<string, LiteDBMapper>();
 
-
-        public LiteDBMapper Select(string dbName)
+        public LiteDBMapper Select(string dbPath)
         {
             LiteDBMapper mapper;
-            if (!_litedbs.TryGetValue(dbName, out mapper))
+            if (!_litedbs.TryGetValue(dbPath, out mapper))
             {
-                string dbPath = Path.Combine(Application.persistentDataPath, $"{dbName}.litedb");
                 mapper = new LiteDBMapper(dbPath);
-                _litedbs.Add(dbName, mapper);
+                _litedbs.Add(dbPath, mapper);
             }
             return mapper;
         }
@@ -75,6 +74,73 @@ namespace Wanderer.GameFramework
             var storage = _db.GetStorage<string>();
             storage.Download(key, localPath,true);
         }
+
+        public void SetData<T>(T value) where T: ILiteData
+        {
+            var col = _db.GetCollection<T>(GetTableName<T>());
+            var query = col.Query().Where(x => x.Id==value.Id);
+            if (query.Count() > 0)
+            {
+                col.Update(value);
+            }
+            else
+            {
+                col.Insert(value);
+            }
+        }
+
+        public T GetData<T>(int id, T defaultValue = default(T)) where T : ILiteData
+        {
+            var col = _db.GetCollection<T>(GetTableName<T>());
+            var value = col.Query().Where(x =>x.Id==id);
+            if (value.Count() > 0)
+            {
+                return value.First();
+            }
+
+            return defaultValue;
+        }
+
+        public void SetCustomerData<T>(string key, T value)
+        {
+            var col = _db.GetCollection<CustomerData<T>>(GetTableName<T>());
+            CustomerData<T> customerData;
+            var query = col.Query().Where(x => x.Key.Equals(key));
+            if (query.Count() > 0)
+            {
+                customerData = query.First();
+                customerData.Data = value;
+                col.Update(customerData);
+            }
+            else
+            {
+                customerData = new CustomerData<T>()
+                {
+                    Key = key,
+                    Data = value
+                };
+                col.Insert(customerData);
+            }
+        }
+
+        public T GetCustomerData<T>(string key, T defaultValue = default(T))
+        {
+            var col = _db.GetCollection<CustomerData<T>>(GetTableName<T>());
+            var value = col.Query().Where(x => x.Key.Equals(key));
+            if (value.Count() > 0)
+            {
+                return value.First().Data;
+            }
+
+            return defaultValue;
+        }
+        private string GetTableName<T>()
+        {
+            string tableName = Regex.Replace(typeof(T).Name, @"[^a-zA-Z0-9\u4e00-\u9fa5\s]", "");
+            tableName = $"{tableName}";
+            return tableName;
+        }
+
 
         public void Dispose()
         {
